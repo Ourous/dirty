@@ -28,7 +28,7 @@
 ⋰ // up-right dots
 ⋱ // up-left dots
 ‼ // output all of <mid>
-⁇ // double question mark
+⁇ // get all input, put into <mid>
   // no-op
 ! // output top of <mid>
 " // literal '
@@ -69,9 +69,9 @@ D // remove duplicates from <mid>
 E // length of <mid> (elements in..)
 F // permutations of <mid>
 G // greatest-common-divisor
-H
+H // maximum of <mid>
 I // has an imaginary component
-J
+J // just the real component
 K // keep from <left> where not <right>
 L // natural log of <mid>
 M // combinations of <mid>
@@ -101,9 +101,9 @@ d // retain only duplicates from <mid>
 e // eulers constant
 f // integer permutation using top of <left> and <right>
 g // least-common-multiple
-h
+h // minimum of <mid>
 i // imaginary unit
-j
+j // just the imaginary component
 k // keep from <left> where <right>
 l // log <left> in base<right>
 m // integer combinations using top of <left> and <right>
@@ -124,9 +124,9 @@ z // remove zeroes
 | // reflection around the vertical
 } // loop if <right> is true or empty
 ~ // conjugate
-⁈ // question-exclaim mark
-⁉ // exclaim-question mark
-‽ // interrobang
+⁈ // output <right>, read into <left>
+⁉ // output <left>, read into <right>
+‽ // output and pop <mid>, read into <mid>
 × // multiply
 ⨰ // vectorized multiplication
 ÷ // divide
@@ -184,24 +184,23 @@ z // remove zeroes
 Ū // upend the left, right, and mid stacks
 Ụ // upend from baseline
 Û // upend every stack
-ù // rotate left stack
-ú // rotate right stack
-ü // rotate left and right stacks
-ū // rotate left, right, and mid stacks
-ụ // rotate from baseline
-û // rotate every stack
+ù // rotate left stack by <mid>
+ú // rotate right stack by <mid>
+ü // rotate left and right stacks by <mid>
+ū // rotate left, right, and mid stacks by <mid>
+ụ // rotate from baseline by <mid>
+û // rotate every stack by <mid>
 Ẁ // wipe the left stack
 Ẃ // wipe the right stack
 Ẅ // wipe the left and right stacks
 Ẉ // wipe from baseline
 Ẇ // wipe the main stack
 Ŵ // wipe every stack
-ẁ // remove the <nth> element from the left stack
-ẃ // remove the <nth> element from the right stack
-ẅ // remove the <nth> element from the left and right stacks
-ẇ // something like below but with whole <main>?
-ẉ // remove the top element from baseline
-ŵ // remove the <nth> element from every stack
+ẁ // remove the <mid-th> elements from the left stack
+ẃ // remove the <mid-th> elements from the right stack
+ẅ // remove the <mid-th> elements from the left and right stacks
+ẇ // remove the <mid-th> elements from main stack
+ŵ // remove the <mid-th> elements from every stack
 ⤱ // mid -> right, mid -> left
 ⤲ // mid -> left, mid -> right
 ⤡ // swap top of left and mid
@@ -236,14 +235,14 @@ z // remove zeroes
 ∄ // none
 𝒫 // power set
 𝒮 // ordered subsets
-⬈ // NE black arrow
-⬀ // NE white arrow
-⬉ // NW black arrow
-⬁ // NW white arrow
-⬊ // SE black arrow
-⬂ // SE white arrow
-⬋ // SW black arrow
-⬃ // SW white arrow
+⬈ // bounce NE
+⬀ // conditional bounce NE
+⬉ // bounce NW
+⬁ // conditional bounce NW
+⬊ // bounce SE
+⬂ // conditional bounce SE
+⬋ // bounce SW
+⬃ // conditional bounce SW
 ⬚ // conditional universal reflect
 ⬜ // universal reflect
 Ḋ // remove duplicates from <main>
@@ -253,3 +252,5 @@ z // remove zeroes
 ⤗ // copy from <baseline> onto end of <main>
 ⤖ // duplicate <main>
 ⤐ // duplciate <mid>
+Ḧ // maximum of tops of <left> and <right>
+ḧ // minimum of tops of <left> and <right>

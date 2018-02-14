@@ -227,3 +227,13 @@ z
 ∄ // none
 𝒫 // power set
 𝒮 // ordered subsets
+⬈ // NE black arrow
+⬀ // NE white arrow
+⬉ // NW black arrow
+⬁ // NW white arrow
+⬊ // SE black arrow
+⬂ // SE white arrow
+⬋ // SW black arrow
+⬃ // SW white arrow
+⬚ // dotted box
+⬜ // solid box

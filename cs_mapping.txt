@@ -1,0 +1,229 @@
+⏻ // power symbol
+⏵
+⏴
+⏶
+⏷
+⭪ // left dotted arrow
+// bell character
+⭫ // up dotted arrow
+⭭ // down dotted arrow
+// newline
+⭬ // right dotted arrow
+⭮ // rotate counterclockwise
+⭯ // rotate clockwise
+⬅ // solid left arrow
+⇦ // white left arrow
+⬆ // solid up arrow
+⇧ // white up arrow
+⬇ // solid down arrow
+⇩ // white down arrow
+⮕ // solid right arrow
+⇨ // white right arrow
+⬌ // horizontal dual arrow
+⬄ // white horizontal arrow
+⬍ // vertical dual arrow
+⇳ // white vertical arrow
+⋮ // vertical dots
+⋯ // horizontal dots
+⋰ // up-right dots
+⋱ // up-left dots
+‼
+⁇ // double question mark
+ 
+!
+"
+#
+$
+%
+&
+'
+(
+)
+*
++
+,
+-
+.
+/
+0
+1
+2
+3
+4
+5
+6
+7
+8
+9
+:
+;
+<
+=
+>
+?
+@
+A
+B
+C
+D
+E
+F
+G
+H
+I
+J
+K
+L
+M
+N
+O
+P
+Q
+R
+S
+T
+U
+V
+W
+X
+Y
+Z
+[
+\
+]
+^
+_
+`
+a
+b
+c
+d
+e
+f
+g
+h
+i
+j
+k
+l
+m
+n
+o
+p
+q
+r
+s
+t
+u
+v
+w
+x
+y
+z
+{
+|
+}
+~
+⁈ // question-exclaim mark
+⁉ // exclaim-question mark
+‽ // interrobang
+×
+⨰ // vectorized multiplication
+÷
+
+∔ // vectorized plus
+√
+⅟
+∞
+∧ // and
+⩑ // vectorized and
+∨ // or
+⩒ // vectorized or
+¬ // not
+⊻ // xor
+⊽ // nor
+∥ // xnor
+⊼ // nand
+∩ // intersection
+∪ // union
+∈ // element of
+∉ // not element of
+∋ // contains as member
+∌ // does not contain
+⋖ // vectorized less-than
+⋗ // vectorized greater-than
+≐ // vectorized equals
+≤
+⩿ // vectorized less-or-equals
+≥
+⪀ // vectorized greater-or-equals
+≠
+≡ // identical to
+≢ // not identical to
+⊂ // subset of
+⊃ // superset of
+⊄ // not subset of
+⊅ // not superset of
+⊆ // subset or equal
+⊇ // superset or equal
+⊈ // not subset nor equal
+⊉ // not superset nor equal
+å // radians to angle
+Å // angle to radians
+¯ // ceiling
+« // left-shift
+» // right-shift
+⌛ // hourglass symbol (sleep)
+⌚ // watch symbol (timestamp)
+π // pi
+⇔ // swap the left and right stacks
+Ù // upend the left stack
+Ú // upend the right stack
+Ü // upend the left and right stacks
+Ū // upend the left, right, and mid stacks
+Û // upend every stack
+ù // rotate left stack
+ú // rotate right stack
+ü // rotate left and right stacks
+ū // rotate left, right, and mid stacks
+û // rotate every stack
+Ẁ // wipe the left stack
+Ẃ // wipe the right stack
+Ẅ // wipe the left and right stacks
+Ŵ // wipe every stack
+ẁ // remove the <nth> element from the left stack
+ẃ // remove the <nth> element from the right stack
+ẅ // remove the <nth> element from the left and right stacks
+ŵ // remove the <nth> element from every stack
+⤱ // mid -> right, mid -> left
+⤲ // mid -> left, mid -> right
+⤡ // swap top of left and mid
+⤢ // swap top of right and mid
+⭤ // swap top of right and left
+⭥ // swap top and bottom of mid
+⭢ // move top of left to right
+⭡ // move bottom of mid to top
+⭣ // move top of mid to bottom
+⭠ // move top of right to left
+⭦ // move top of mid to left
+⭧ // move top of mid to right
+⭨ // move top of left to mid
+⭩ // move top of right to mid
+⭰ // copy top of right to left
+⭱ // copy top of mid
+⭲ // copy top of left to right
+⭶ // copy top of mid to left
+⭷ // copy top of mid to right
+⭸ // copy top of left to mid
+⭹ // copy top of right to mid
+⮐ // rotate stacks clockwise
+⮑ // rotate stacks counterclockwise
+⮒ // rotate tops of stacks clockwise
+⮓ // rotate tops of stacks counterclockwise
+∏ // product
+∑ // sum
+∀ // all
+∃ // any
+∄ // none
+𝒫 // power set
+𝒮 // ordered subsets

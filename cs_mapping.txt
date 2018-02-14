@@ -85,8 +85,8 @@ T // arc-tangent
 U // upend the mid stack
 V // average
 W // wipe the mid stack
-X
-Y
+X // e(X)pand from unicode codepoint string into UTF-8 char string
+Y 
 Z // is an integer
 [ // loop if <mid> is true
 \ // reflection around NW->SE
@@ -114,10 +114,10 @@ q // every instruction traversed so far, in order
 r // round
 s // sine
 t // tangent
-u // rotate the mid stack
+u // rotate the mid stack by <mid>
 v // absolute value
-w // remove the <nth> element from the <mid> stack
-x
+w // remove the <nth> elements from the <mid> stack
+x // compress from utf-8 char string into unicode codepoint string
 y
 z // remove zeroes
 { // loop if <right> is true or empty

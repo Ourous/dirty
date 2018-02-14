@@ -35,7 +35,7 @@
 # // random
 $
 % // modulo
-& // join all mid stacks after <seq>
+& // join from <baseline>
 ' // start and end a string
 ( // loop if <left> is true or empty
 ) // loop if <left> is true or empty
@@ -86,7 +86,7 @@ U // upend the mid stack
 V // average
 W // wipe the mid stack
 X // e(X)pand from unicode codepoint string into UTF-8 char string
-Y 
+Y // join <main> with newlines
 Z // is an integer
 [ // loop if <mid> is true
 \ // reflection around NW->SE
@@ -118,7 +118,7 @@ u // rotate the mid stack by <mid>
 v // absolute value
 w // remove the <nth> elements from the <mid> stack
 x // compress from utf-8 char string into unicode codepoint string
-y
+y // split <mid> on newlines
 z // remove zeroes
 { // loop if <right> is true or empty
 | // reflection around the vertical

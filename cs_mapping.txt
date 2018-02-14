@@ -1,14 +1,14 @@
 ⏻ // power symbol
-⏵
-⏴
-⏶
-⏷
-⭪ // left dotted arrow
-// bell character
-⭫ // up dotted arrow
-⭭ // down dotted arrow
-// newline
-⭬ // right dotted arrow
+⏵ // start, going right
+⏴ // start, going left
+⏶ // start, going up
+⏷ // start, going down
+⭪ // move current baseline down 1
+🔔 // bell character
+⭫ // go to next baseline, if none, create new baseline at the end of <main>
+⭭ // go to last baseline, if none, go to index 0
+¶ // newline
+⭬ // move current baseline up 1
 ⭮ // rotate counterclockwise
 ⭯ // rotate clockwise
 ⬅ // solid left arrow
@@ -27,114 +27,113 @@
 ⋯ // horizontal dots
 ⋰ // up-right dots
 ⋱ // up-left dots
-‼
+‼ // output all of <mid>
 ⁇ // double question mark
- 
-!
-"
-#
+  // no-op
+! // output top of <mid>
+" // literal '
+# // random
 $
-%
-&
-'
-(
-)
-*
-+
-,
--
-.
-/
-0
-1
-2
-3
-4
-5
-6
-7
-8
-9
-:
-;
-<
-=
->
-?
-@
-A
-B
-C
-D
-E
-F
-G
+% // modulo
+& // join all mid stacks after <seq>
+' // start and end a string
+( // loop if <left> is true or empty
+) // loop if <left> is true or empty
+* // dot product
++ // plus
+, // from <left>, in steps of <right>
+- // minus
+. // from <mid> to zero, in steps of 1
+/ // reflection around SW->NE
+0 // multiply <mid> by 10
+1 // multiply <mid> by 10, add 1
+2 // multiply <mid> by 10, add 2
+3 // multiply <mid> by 10, add 3
+4 // multiply <mid> by 10, add 4
+5 // multiply <mid> by 10, add 5
+6 // multiply <mid> by 10, add 6
+7 // multiply <mid> by 10, add 7
+8 // multiply <mid> by 10, add 8
+9 // multiply <mid> by 10, add 9
+: // from <mid> away from zero in steps of 1
+; // from <left>, in magnitudes of <right>
+< // less-than
+= // top-equals
+> // greater-than
+? // get single char of input, store in <mid>
+@ // select the mid stack offset (from main stack) by the top of the mid stack
+A // uppercase alphabet
+B // convert <left> to a bunch of digits, in the base of <right>
+C // arc-cosine
+D // remove duplicates from <mid>
+E // length of <mid> (elements in..)
+F // permutations of <mid>
+G // greatest-common-divisor
 H
-I
+I // has an imaginary component
 J
-K
-L
-M
-N
-O
-P
-Q
-R
-S
-T
-U
-V
-W
+K // keep from <left> where not <right>
+L // natural log of <mid>
+M // combinations of <mid>
+N // is a natural number
+O // is ordered
+P // is prime
+Q // do a quine
+R // is a real number
+S // arc-sine
+T // arc-tangent
+U // upend the mid stack
+V // average
+W // wipe the mid stack
 X
 Y
-Z
-[
-\
-]
-^
-_
-`
-a
-b
-c
-d
-e
-f
-g
+Z // is an integer
+[ // loop if <mid> is true
+\ // reflection around NW->SE
+] // loop if <mid> is true
+^ // exponentiate
+_ // floor
+` // coefficients of the differential of a polynomial with coefficients of <mid>
+a // lowercase alphabet
+b // convert <left> stack to an integer, assuming it's in the base of <right>
+c // cosine
+d // retain only duplicates from <mid>
+e // eulers constant
+f // integer permutation using top of <left> and <right>
+g // least-common-multiple
 h
-i
+i // imaginary unit
 j
-k
-l
-m
-n
-o
-p
-q
-r
-s
-t
-u
-v
-w
+k // keep from <left> where <right>
+l // log <left> in base<right>
+m // integer combinations using top of <left> and <right>
+n // complex abs, then round, then abs
+o // order
+p // prime with the index of <mid>
+q // every instruction traversed so far, in order
+r // round
+s // sine
+t // tangent
+u // rotate the mid stack
+v // absolute value
+w // remove the <nth> element from the <mid> stack
 x
 y
-z
-{
-|
-}
-~
+z // remove zeroes
+{ // loop if <right> is true or empty
+| // reflection around the vertical
+} // loop if <right> is true or empty
+~ // conjugate
 ⁈ // question-exclaim mark
 ⁉ // exclaim-question mark
 ‽ // interrobang
-×
+× // multiply
 ⨰ // vectorized multiplication
-÷
-
+÷ // divide
 ∔ // vectorized plus
-√
-⅟
-∞
+√ // square root
+⅟ // reciprocal
+∞ // infinity
 ∧ // and
 ⩑ // vectorized and
 ∨ // or
@@ -153,13 +152,13 @@ z
 ⋖ // vectorized less-than
 ⋗ // vectorized greater-than
 ≐ // vectorized equals
-≤
+≤ // less or equals
 ⩿ // vectorized less-or-equals
-≥
+≥ // greater or equals
 ⪀ // vectorized greater-or-equals
-≠
-≡ // identical to
-≢ // not identical to
+≠ // not equals
+≡ // identical to (stack equals)
+≢ // not identical to (stack not equals)
 ⊂ // subset of
 ⊃ // superset of
 ⊄ // not subset of
@@ -177,23 +176,31 @@ z
 ⌚ // watch symbol (timestamp)
 π // pi
 ⇔ // swap the left and right stacks
+⤆ // append-copy the right stack to the left stack
+⤇ // append-copy the left stack to the right stack
 Ù // upend the left stack
 Ú // upend the right stack
 Ü // upend the left and right stacks
 Ū // upend the left, right, and mid stacks
+Ụ // upend from baseline
 Û // upend every stack
 ù // rotate left stack
 ú // rotate right stack
 ü // rotate left and right stacks
 ū // rotate left, right, and mid stacks
+ụ // rotate from baseline
 û // rotate every stack
 Ẁ // wipe the left stack
 Ẃ // wipe the right stack
 Ẅ // wipe the left and right stacks
+Ẉ // wipe from baseline
+Ẇ // wipe the main stack
 Ŵ // wipe every stack
 ẁ // remove the <nth> element from the left stack
 ẃ // remove the <nth> element from the right stack
 ẅ // remove the <nth> element from the left and right stacks
+ẇ // something like below but with whole <main>?
+ẉ // remove the top element from baseline
 ŵ // remove the <nth> element from every stack
 ⤱ // mid -> right, mid -> left
 ⤲ // mid -> left, mid -> right
@@ -216,6 +223,8 @@ z
 ⭷ // copy top of mid to right
 ⭸ // copy top of left to mid
 ⭹ // copy top of right to mid
+⭾ // copy top of left and right to eachother
+⭿ // copy top and bottom of mid to eachother
 ⮐ // rotate stacks clockwise
 ⮑ // rotate stacks counterclockwise
 ⮒ // rotate tops of stacks clockwise
@@ -235,5 +244,12 @@ z
 ⬂ // SE white arrow
 ⬋ // SW black arrow
 ⬃ // SW white arrow
-⬚ // dotted box
-⬜ // solid box
+⬚ // conditional universal reflect
+⬜ // universal reflect
+Ḋ // remove duplicates from <main>
+Ḍ // remove duplicates from <baseline>
+ḋ // retain only duplicates from <main>
+ḍ // retain only duplicates from <baseline>
+⤗ // copy from <baseline> onto end of <main>
+⤖ // duplicate <main>
+⤐ // duplciate <mid>

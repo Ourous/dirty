@@ -1,4 +1,5 @@
-` // start and end a string
+' // start and end a string
+" // literal ' character
 // newline
  // space
 (
@@ -123,8 +124,8 @@ b // convert left stack to an integer, assuming it's in the base of <right stack
 B // inverse of above
 p // prime with the index of <mid>
 P // is prime
-a // radians to angle
-A // angle to radians
+å // radians to angle
+Å // angle to radians
 f // the <nth> fibbonacci number
 F // is a fibbonacci number
 l // log <left> in base<right>
@@ -134,6 +135,8 @@ d // retain only duplicates
 D // remove duplicates
 o // order
 O // is ordered
+a // lowercase alphabet
+A // uppercase alphabet
 _ // floor
 ¯ // ceiling
 « // left-shift
@@ -205,12 +208,12 @@ w // remove the <nth> element from the mid stack
 ∏ // product
 ∑ // sum
 ∀ // all
+∃ // any
+∄ // none
 𝒫 // power set
 𝒮 // ordered subsets
 ; // from <left>, in magnitudes of <right>
 : // from <zero> to <mid> in steps of 1
-'
-"
 , // from <left>, in steps of <right>
 . // from <mid>, away from zero, in steps of 1
 $ // clear the console

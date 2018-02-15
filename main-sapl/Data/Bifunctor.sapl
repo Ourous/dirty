@@ -1,0 +1,9 @@
+|| ?module? Data.Bifunctor
+
+
+<{Data.Bifunctor.TD;Bifunctor;}> _x_0::B = _predefined._Nil
+
+
+|| Converted Records
+:: <{Data.Bifunctor.Bifunctor;}> = {!Data.Bifunctor.bifmap, !Data.Bifunctor.first, !Data.Bifunctor.second}
+

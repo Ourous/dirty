@@ -1,0 +1,14 @@
+|| ?module? StdTuple
+
+
+StdTuple.app2 !_x_0 !_x_1 = case _x_0 (_Tuple2 f1_1_0 f2_1_1 -> case _x_1 (_Tuple2 x1_2_0 x2_2_1 -> _Tuple2 (f1_1_0 x1_2_0) (f2_1_1 x2_2_1)) ) 
+StdTuple.app3 !_x_0 !_x_1 = case _x_0 (_Tuple3 f1_1_0 f2_1_1 f3_1_2 -> case _x_1 (_Tuple3 x1_2_0 x2_2_1 x3_2_2 -> _Tuple3 (f1_1_0 x1_2_0) (f2_1_1 x2_2_1) (f3_1_2 x3_2_2)) ) 
+StdTuple.curry !f_0 x_1 y_2 = f_0 (_Tuple2 x_1 y_2)
+StdTuple.uncurry !f_0 !_x_1 = case _x_1 (_Tuple2 x_1_0 y_1_1 -> f_0 x_1_0 y_1_1) 
+<{StdTuple.==_4}>::B !_vEq_0 !_vEq_1 !_x_2 !_x_3 = case _x_2 (_Tuple2 x1_1_0 y1_1_1 -> case _x_3 (_Tuple2 x2_2_0 y2_2_1 -> case (select (select _vEq_0::<{StdClass.Eq;}> 0)::<{StdOverloaded.==;}> 0 x1_1_0 x2_2_0) (True -> select (select _vEq_1::<{StdClass.Eq;}> 0)::<{StdOverloaded.==;}> 0 y1_1_1 y2_2_1) (False -> False) ) ) 
+<{StdTuple.==_5}>::B !_vEq_0 !_vEq_1 !_vEq_2 !_x_3 !_x_4 = case _x_3 (_Tuple3 x1_1_0 y1_1_1 z1_1_2 -> case _x_4 (_Tuple3 x2_2_0 y2_2_1 z2_2_2 -> case (select (select _vEq_0::<{StdClass.Eq;}> 0)::<{StdOverloaded.==;}> 0 x1_1_0 x2_2_0) (True -> case (select (select _vEq_1::<{StdClass.Eq;}> 0)::<{StdOverloaded.==;}> 0 y1_1_1 y2_2_1) (True -> select (select _vEq_2::<{StdClass.Eq;}> 0)::<{StdOverloaded.==;}> 0 z1_1_2 z2_2_2) (False -> False) ) (False -> False) ) ) 
+<{StdTuple.<_6}>::B !_vOrd_0 !_vOrd_1 !_x_2 !_x_3 = case _x_2 (_Tuple2 x1_1_0 y1_1_1 -> case _x_3 (_Tuple2 x2_2_0 y2_2_1 -> case (select (select _vOrd_0::<{StdClass.Ord;}> 0)::<{StdOverloaded.<;}> 0 x1_1_0 x2_2_0) (True -> True) (False -> case (select (select _vOrd_0::<{StdClass.Ord;}> 0)::<{StdOverloaded.<;}> 0 x2_2_0 x1_1_0) (True -> False) (False -> select (select _vOrd_1::<{StdClass.Ord;}> 0)::<{StdOverloaded.<;}> 0 y1_1_1 y2_2_1) ) ) ) 
+<{StdTuple.<_7}>::B !_vOrd_0 !_vOrd_1 !_vOrd_2 !_x_3 !_x_4 = case _x_3 (_Tuple3 x1_1_0 y1_1_1 z1_1_2 -> case _x_4 (_Tuple3 x2_2_0 y2_2_1 z2_2_2 -> case (select (select _vOrd_0::<{StdClass.Ord;}> 0)::<{StdOverloaded.<;}> 0 x1_1_0 x2_2_0) (True -> True) (False -> case (select (select _vOrd_0::<{StdClass.Ord;}> 0)::<{StdOverloaded.<;}> 0 x2_2_0 x1_1_0) (True -> False) (False -> <{StdTuple.<_6}> _vOrd_1 _vOrd_2 (_Tuple2 y1_1_1 z1_1_2) (_Tuple2 y2_2_1 z2_2_2)) ) ) ) 
+
+
+|| Converted Records

@@ -1,0 +1,18 @@
+|| ?module? types
+
+
+<{types.TD;Numeric}> _x_0::B = _predefined._Nil
+<{types.TD;Number}> _x_0::B = _predefined._Nil
+<{types.TD;Token}> _x_0::B = _predefined._Nil
+<{types.TD;Control}> _x_0::B = _predefined._Nil
+<{types.TD;CardinalDirection}> _x_0::B = _predefined._Nil
+<{types.TD;CompassDirection}> _x_0::B = _predefined._Nil
+
+:: types.Numeric = types.Int a1::I | types.Real a1::D
+:: types.Number = types.Rational a1 | types.Imaginary a1 | types.Complex a1 a2 | types.Infinity | types.NaN
+:: types.Token = types.Control | types.Literal | types.Stack | types.Operator | types.Interface
+:: types.Control = types.Control_Terminate | types.Control_Start a1 | types.Control_Change a1
+:: types.CardinalDirection = types.North | types.South | types.East | types.West
+:: types.CompassDirection = types.CardinalDirection | types.NorthWest | types.NorthEast | types.SouthWest | types.SouthEast
+
+|| Converted Records

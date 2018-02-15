@@ -1,0 +1,76 @@
+|| ?module? Control.Applicative
+
+
+Control.Applicative.unwrapMonad !_x_0 = case _x_0 (Control.Applicative.WrapMonad x_1_0 -> x_1_0) 
+Control.Applicative.getConst !_x_0 = case _x_0 (Control.Applicative.Const x_1_0 -> x_1_0) 
+Control.Applicative.lift !_vApplicative_0 x_1 = select _vApplicative_0::<{Control.Applicative.Applicative;}> 1 x_1
+Control.Applicative.anon_29 x_0 xs_1 = _predefined._Cons x_0 xs_1
+Control.Applicative.some !_vAlternative_0 v_1 = let some_v_1_0 = select (select _vAlternative_0::<{Control.Applicative.Alternative;}> 2)::<{Control.Applicative.Applicative;}> 0 (select (select (select _vAlternative_0::<{Control.Applicative.Alternative;}> 2)::<{Control.Applicative.Applicative;}> 2)::<{Data.Functor.Functor;}> 0 Control.Applicative.anon_29 v_1) (select _vAlternative_0::<{Control.Applicative.Alternative;}> 0 some_v_1_0 (Control.Applicative.lift (select _vAlternative_0::<{Control.Applicative.Alternative;}> 2) _predefined._Nil)) in some_v_1_0
+Control.Applicative.anon_30 x_0 xs_1 = _predefined._Cons x_0 xs_1
+Control.Applicative.many !_vAlternative_0 v_1 = let many_v_1_0 = select _vAlternative_0::<{Control.Applicative.Alternative;}> 0 (select (select _vAlternative_0::<{Control.Applicative.Alternative;}> 2)::<{Control.Applicative.Applicative;}> 0 (select (select (select _vAlternative_0::<{Control.Applicative.Alternative;}> 2)::<{Control.Applicative.Applicative;}> 2)::<{Data.Functor.Functor;}> 0 Control.Applicative.anon_30 v_1) many_v_1_0) (Control.Applicative.lift (select _vAlternative_0::<{Control.Applicative.Alternative;}> 2) _predefined._Nil) in many_v_1_0
+Control.Applicative.flip_32 !f_0 a_1 b_2 = f_0 b_2 a_1
+<{Control.Applicative.$_31}> !f_0 = f_0
+Control.Applicative.liftA2 !_vApplicative_0 f_1 a_2 b_3 = select _vApplicative_0::<{Control.Applicative.Applicative;}> 0 (select (select _vApplicative_0::<{Control.Applicative.Applicative;}> 2)::<{Data.Functor.Functor;}> 0 f_1 a_2) b_3
+Control.Applicative.flip_76 a_0 !b_1 = <{Control.Applicative.$_31}> b_1 a_0
+<{Control.Applicative.<**>}> !_vApplicative_0 fa_1 fab_2 = Control.Applicative.liftA2 _vApplicative_0 Control.Applicative.flip_76 fa_1 fab_2
+Control.Applicative.liftA !_vApplicative_0 f_1 a_2 = select _vApplicative_0::<{Control.Applicative.Applicative;}> 0 (Control.Applicative.lift _vApplicative_0 f_1) a_2
+Control.Applicative.liftA3 !_vApplicative_0 f_1 a_2 b_3 c_4 = select _vApplicative_0::<{Control.Applicative.Applicative;}> 0 (select _vApplicative_0::<{Control.Applicative.Applicative;}> 0 (select (select _vApplicative_0::<{Control.Applicative.Applicative;}> 2)::<{Data.Functor.Functor;}> 0 f_1 a_2) b_3) c_4
+Control.Applicative.optional !_vAlternative_0 v_1 = select _vAlternative_0::<{Control.Applicative.Alternative;}> 0 (select (select (select _vAlternative_0::<{Control.Applicative.Alternative;}> 2)::<{Control.Applicative.Applicative;}> 2)::<{Data.Functor.Functor;}> 0 Data.Maybe.Just v_1) (Control.Applicative.lift (select _vAlternative_0::<{Control.Applicative.Alternative;}> 2) Data.Maybe.Nothing)
+Control.Applicative.fmap_10 _x_0 !_x_1 = case _x_1 (Control.Applicative.Const v_1_0 -> Control.Applicative.Const v_1_0) 
+Control.Applicative.fmap_11 !_vMonad_0 f_1 !_x_2 = case _x_2 (Control.Applicative.WrapMonad v_1_0 -> Control.Applicative.WrapMonad (Control.Monad.liftM _vMonad_0 f_1 v_1_0)) 
+<{Control.Applicative.<*>_12}> !_vMonoid_0 !_x_1 !_x_2 = case _x_1 (Control.Applicative.Const f_1_0 -> case _x_2 (Control.Applicative.Const v_2_0 -> Control.Applicative.Const (select (select _vMonoid_0::<{Data.Monoid.Monoid;}> 1)::<{Data.Monoid.Semigroup;}> 0 f_1_0 v_2_0)) ) 
+Control.Applicative.pure_13 !_vMonoid_0 _x_1 = Control.Applicative.Const (select _vMonoid_0::<{Data.Monoid.Monoid;}> 0)
+<{Control.Applicative.<*>_14}> !_vMonad_0 !_x_1 !_x_2 = case _x_1 (Control.Applicative.WrapMonad f_1_0 -> case _x_2 (Control.Applicative.WrapMonad v_2_0 -> Control.Applicative.WrapMonad (Control.Monad.ap _vMonad_0 f_1_0 v_2_0)) ) 
+Control.Applicative.pure_15 !_vMonad_0 x_1 = Control.Applicative.WrapMonad (select (select _vMonad_0::<{Control.Monad.Monad;}> 1)::<{Control.Applicative.Applicative;}> 1 x_1)
+Control.Applicative.anon_33 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Control.Applicative.anon_77 !g_0 x_1 = Control.Applicative.unwrapMonad (g_0 x_1)
+Control.Applicative.bind_16 !_vMonad_0 !a_1 f_2 = Control.Applicative.WrapMonad (select _vMonad_0::<{Control.Monad.Monad;}> 0 (Control.Applicative.unwrapMonad a_1) (Control.Applicative.anon_77 f_2))
+<{Control.Applicative.<|>_17}> !_vMonadPlus_0 !_x_1 !_x_2 = case _x_1 (Control.Applicative.WrapMonad u_1_0 -> case _x_2 (Control.Applicative.WrapMonad v_2_0 -> Control.Applicative.WrapMonad (select _vMonadPlus_0::<{Control.Monad.MonadPlus;}> 0 u_1_0 v_2_0)) ) 
+Control.Applicative.empty_18 !_vMonadPlus_0 = Control.Applicative.WrapMonad (select _vMonadPlus_0::<{Control.Monad.MonadPlus;}> 1)
+Control.Applicative.mappend_19 !_vSemigroup_0 !_x_1 !_x_2 = case _x_1 (Control.Applicative.Const a_1_0 -> case _x_2 (Control.Applicative.Const b_2_0 -> Control.Applicative.Const (select _vSemigroup_0::<{Data.Monoid.Semigroup;}> 0 a_1_0 b_2_0)) ) 
+Control.Applicative.mempty_20 !_vMonoid_0 = Control.Applicative.Const (select _vMonoid_0::<{Data.Monoid.Monoid;}> 0)
+<{Control.Applicative.*>_21}> !_vApplicative_0 !fa_1 fb_2 = select _vApplicative_0::<{Control.Applicative.Applicative;}> 0 (select (select _vApplicative_0::<{Control.Applicative.Applicative;}> 2)::<{Data.Functor.Functor;}> 0 (StdFunc.const StdFunc.id) fa_1) fb_2
+<{Control.Applicative.<*_22}> !_vApplicative_0 !fa_1 fb_2 = Control.Applicative.liftA2 _vApplicative_0 StdFunc.const fa_1 fb_2
+<{Control.Applicative.TD;Const}> _x_0::B = _predefined._Nil
+<{Control.Applicative.TD;WrappedMonad}> _x_0::B = _predefined._Nil
+<{Control.Applicative.TD;Applicative;}> _x_0::B = _predefined._Nil
+<{Control.Applicative.TD;Alternative;}> _x_0::B = _predefined._Nil
+<{Control.Applicative.TD;*>;}> _x_0::B = _predefined._Nil
+<{Control.Applicative.TD;<*;}> _x_0::B = _predefined._Nil
+
+:: Control.Applicative.Const = Control.Applicative.Const a1
+:: Control.Applicative.WrappedMonad = Control.Applicative.WrapMonad a1
+
+|| Converted Records
+:: <{Control.Applicative.Applicative;}> = {!<{Control.Applicative.<*>}>, !Control.Applicative.pure, !Control.Applicative.Functor}
+
+:: <{Control.Applicative.Alternative;}> = {!<{Control.Applicative.<|>}>, !Control.Applicative.empty, !Control.Applicative.Applicative}
+
+:: <{Control.Applicative.*>;}> = {!<{Control.Applicative.*>}>}
+
+:: <{Control.Applicative.<*;}> = {!<{Control.Applicative.<*}>}
+
+:: <{Control.Applicative.gEq_s;}> = {!Control.Applicative.gEq_s}
+
+:: <{Control.Applicative.gEq_ss;}> = {!Control.Applicative.gEq_ss}
+
+:: <{Control.Applicative.gEq_sss;}> = {!Control.Applicative.gEq_sss}
+
+:: <{Control.Applicative.gEq_ssss;}> = {!Control.Applicative.gEq_ssss}
+
+:: <{Control.Applicative.gEq_sssss;}> = {!Control.Applicative.gEq_sssss}
+
+:: <{Control.Applicative.gEq_ssssss;}> = {!Control.Applicative.gEq_ssssss}
+
+:: <{Control.Applicative.gEq_sssssss;}> = {!Control.Applicative.gEq_sssssss}
+
+:: <{Control.Applicative.gEq_ssssssss;}> = {!Control.Applicative.gEq_ssssssss}
+
+:: <{Control.Applicative.gEq_sssssssss;}> = {!Control.Applicative.gEq_sssssssss}
+
+:: <{Control.Applicative.bimap_s;}> = {Control.Applicative.bimap_s}
+
+:: <{Control.Applicative.bimap_ss;}> = {Control.Applicative.bimap_ss}
+
+:: <{Control.Applicative.bimap_sss;}> = {Control.Applicative.bimap_sss}
+

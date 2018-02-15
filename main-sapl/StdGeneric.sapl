@@ -1,0 +1,89 @@
+|| ?module? StdGeneric
+
+
+StdGeneric.bimapId = StdGeneric._Bimap StdFunc.id StdFunc.id
+StdGeneric.doit_35 !i_0::I !n_1::I = case (<{StdInt.==_16}> n_1 0) (True -> StdMisc.abort "getConsPath: zero conses\n") (False -> case (StdBool.not (<{StdInt.<_17}> i_0 n_1)) (True -> StdMisc.abort "getConsPath: cons index >= number of conses") (False -> case (<{StdInt.==_16}> n_1 1) (True -> _predefined._Nil) (False -> case (<{StdInt.<_17}> i_0 (<{StdInt./_10}> n_1 2)) (True -> _predefined._Cons StdGeneric.ConsLeft (StdGeneric.doit_35 i_0 (<{StdInt./_10}> n_1 2))) (False -> _predefined._Cons StdGeneric.ConsRight (StdGeneric.doit_35 (<{StdInt.-_7}> i_0 (<{StdInt./_10}> n_1 2)) (<{StdInt.-_7}> n_1 (<{StdInt./_10}> n_1 2)))) ) ) ) 
+StdGeneric.getConsPath !_x_0 = case _x_0 (StdGeneric._GenericConsDescriptor gcd_name_1_0 gcd_arity_1_1 gcd_prio_1_2 _x_1_3 gcd_type_1_4 gcd_index_1_5 -> case _x_1_3 (StdGeneric._GenericTypeDefDescriptor gtd_name_2_0 gtd_arity_2_1 gtd_num_conses_2_2 gtd_conses_2_3 -> StdGeneric.doit_35 gcd_index_1_5 gtd_num_conses_2_2) ) 
+StdGeneric.is_id_33::B !f_0 = error "no AnyCodeExpr"
+StdGeneric.cast_34 !f_0 = error "no AnyCodeExpr"
+StdGeneric.anon_30 !g_0 h_1 x_2 = g_0 (h_1 x_2)
+StdGeneric.anon_31 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+StdGeneric.anon_32 !f_0 g_1 h_2 x_3 = f_0 (g_1 (h_2 x_3))
+StdGeneric.comp3 !f_0 g_1 !h_2 = case (StdGeneric.is_id_33 f_0) (True -> case (StdGeneric.is_id_33 h_2) (True -> StdGeneric.cast_34 g_1) (False -> StdGeneric.cast_34 (StdGeneric.anon_30 g_1 h_2)) ) (False -> case (StdGeneric.is_id_33 h_2) (True -> StdGeneric.cast_34 (StdGeneric.anon_31 f_0 g_1)) (False -> StdGeneric.anon_32 f_0 g_1 h_2) ) 
+StdGeneric.bimap_c_2 = StdGeneric._Bimap StdFunc.id StdFunc.id
+StdGeneric.map_to_36 bx_0 by_1 !_x_2 = case _x_2 (StdGeneric.PAIR x_1_0 y_1_1 -> StdGeneric.PAIR (select bx_0::StdGeneric._Bimap 0 x_1_0) (select by_1::StdGeneric._Bimap 0 y_1_1)) 
+StdGeneric.map_from_37 bx_0 by_1 !_x_2 = case _x_2 (StdGeneric.PAIR x_1_0 y_1_1 -> StdGeneric.PAIR (select bx_0::StdGeneric._Bimap 1 x_1_0) (select by_1::StdGeneric._Bimap 1 y_1_1)) 
+StdGeneric.bimap_PAIR_3 bx_0 by_1 = StdGeneric._Bimap (StdGeneric.map_to_36 bx_0 by_1) (StdGeneric.map_from_37 bx_0 by_1)
+StdGeneric.map_to_38 br_0 bl_1 !_x_2 = case _x_2 (StdGeneric.LEFT x_1_0 -> StdGeneric.LEFT (select bl_1::StdGeneric._Bimap 0 x_1_0)) (StdGeneric.RIGHT x_1_0 -> StdGeneric.RIGHT (select br_0::StdGeneric._Bimap 0 x_1_0)) 
+StdGeneric.map_from_39 br_0 bl_1 !_x_2 = case _x_2 (StdGeneric.LEFT x_1_0 -> StdGeneric.LEFT (select bl_1::StdGeneric._Bimap 1 x_1_0)) (StdGeneric.RIGHT x_1_0 -> StdGeneric.RIGHT (select br_0::StdGeneric._Bimap 1 x_1_0)) 
+StdGeneric.bimap_EITHER_4 bl_0 br_1 = StdGeneric._Bimap (StdGeneric.map_to_38 br_1 bl_0) (StdGeneric.map_from_39 br_1 bl_0)
+StdGeneric.map_to_48 barg_0 !_x_1 = case _x_1 (StdGeneric.OBJECT x_1_0 -> StdGeneric.OBJECT (select barg_0::StdGeneric._Bimap 0 x_1_0)) 
+StdGeneric.map_from_49 barg_0 !_x_1 = case _x_1 (StdGeneric.OBJECT x_1_0 -> StdGeneric.OBJECT (select barg_0::StdGeneric._Bimap 1 x_1_0)) 
+StdGeneric.bimap_OBJECT_5 barg_0 = StdGeneric._Bimap (StdGeneric.map_to_48 barg_0) (StdGeneric.map_from_49 barg_0)
+StdGeneric.map_to_42 barg_0 !_x_1 = case _x_1 (StdGeneric.CONS x_1_0 -> StdGeneric.CONS (select barg_0::StdGeneric._Bimap 0 x_1_0)) 
+StdGeneric.map_from_43 barg_0 !_x_1 = case _x_1 (StdGeneric.CONS x_1_0 -> StdGeneric.CONS (select barg_0::StdGeneric._Bimap 1 x_1_0)) 
+StdGeneric.bimap_CONS_6 barg_0 = StdGeneric._Bimap (StdGeneric.map_to_42 barg_0) (StdGeneric.map_from_43 barg_0)
+StdGeneric.map_to_44 barg_0 !_x_1 = case _x_1 (StdGeneric.RECORD x_1_0 -> StdGeneric.RECORD (select barg_0::StdGeneric._Bimap 0 x_1_0)) 
+StdGeneric.map_from_45 barg_0 !_x_1 = case _x_1 (StdGeneric.RECORD x_1_0 -> StdGeneric.RECORD (select barg_0::StdGeneric._Bimap 1 x_1_0)) 
+StdGeneric.bimap_RECORD_7 barg_0 = StdGeneric._Bimap (StdGeneric.map_to_44 barg_0) (StdGeneric.map_from_45 barg_0)
+StdGeneric.map_to_46 barg_0 !_x_1 = case _x_1 (StdGeneric.FIELD x_1_0 -> StdGeneric.FIELD (select barg_0::StdGeneric._Bimap 0 x_1_0)) 
+StdGeneric.map_from_47 barg_0 !_x_1 = case _x_1 (StdGeneric.FIELD x_1_0 -> StdGeneric.FIELD (select barg_0::StdGeneric._Bimap 1 x_1_0)) 
+StdGeneric.bimap_FIELD_8 barg_0 = StdGeneric._Bimap (StdGeneric.map_to_46 barg_0) (StdGeneric.map_from_47 barg_0)
+StdGeneric.map_to_40 !bres_0 !barg_1 f_2 = StdGeneric.comp3 (select bres_0::StdGeneric._Bimap 0) f_2 (select barg_1::StdGeneric._Bimap 1)
+StdGeneric.map_from_41 !bres_0 !barg_1 f_2 = StdGeneric.comp3 (select bres_0::StdGeneric._Bimap 1) f_2 (select barg_1::StdGeneric._Bimap 0)
+StdGeneric.bimap_ARROW_9 barg_0 bres_1 = StdGeneric._Bimap (StdGeneric.map_to_40 bres_1 barg_0) (StdGeneric.map_from_41 bres_1 barg_0)
+StdGeneric.map_to_50 y_0 x_1 !_x_2 = case _x_2 (StdGeneric._Bimap map_to_1_0 map_from_1_1 -> StdGeneric._Bimap (StdGeneric.comp3 (select y_0::StdGeneric._Bimap 0) map_to_1_0 (select x_1::StdGeneric._Bimap 1)) (StdGeneric.comp3 (select x_1::StdGeneric._Bimap 0) map_from_1_1 (select y_0::StdGeneric._Bimap 1))) 
+StdGeneric.map_from_51 y_0 x_1 !_x_2 = case _x_2 (StdGeneric._Bimap map_to_1_0 map_from_1_1 -> StdGeneric._Bimap (StdGeneric.comp3 (select y_0::StdGeneric._Bimap 1) map_to_1_0 (select x_1::StdGeneric._Bimap 0)) (StdGeneric.comp3 (select x_1::StdGeneric._Bimap 1) map_from_1_1 (select y_0::StdGeneric._Bimap 0))) 
+StdGeneric.bimap_Bimap_10 x_0 y_1 = StdGeneric._Bimap (StdGeneric.map_to_50 y_1 x_0) (StdGeneric.map_from_51 y_1 x_0)
+<{StdGeneric.TD;Bimap}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;UNIT}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;EITHER}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;PAIR}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;OBJECT}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;CONS}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;RECORD}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;FIELD}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;GenericTypeDefDescriptor}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;GenericConsDescriptor}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;GenConsPrio}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;GenConsAssoc}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;GenericRecordDescriptor}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;GenericFieldDescriptor}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;GenType}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;ConsPos}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;GenericDict}> _x_0::B = _predefined._Nil
+<{StdGeneric.TD;GenericDict0}> _x_0::B = _predefined._Nil
+
+:: StdGeneric.UNIT = StdGeneric.UNIT
+:: StdGeneric.EITHER = StdGeneric.LEFT a1 | StdGeneric.RIGHT a1
+:: StdGeneric.PAIR = StdGeneric.PAIR a1 a2
+:: StdGeneric.OBJECT = StdGeneric.OBJECT a1
+:: StdGeneric.CONS = StdGeneric.CONS a1
+:: StdGeneric.RECORD = StdGeneric.RECORD a1
+:: StdGeneric.FIELD = StdGeneric.FIELD a1
+:: StdGeneric.GenConsPrio = StdGeneric.GenConsNoPrio | StdGeneric.GenConsPrio a1 a2::I
+:: StdGeneric.GenConsAssoc = StdGeneric.GenConsAssocNone | StdGeneric.GenConsAssocLeft | StdGeneric.GenConsAssocRight
+:: StdGeneric.GenType = StdGeneric.GenTypeCons a1 | StdGeneric.GenTypeVar !a1::I | StdGeneric.GenTypeApp a1 a2 | StdGeneric.GenTypeArrow a1 a2
+:: StdGeneric.ConsPos = StdGeneric.ConsLeft | StdGeneric.ConsRight
+
+|| Converted Records
+:: StdGeneric._Bimap = {StdGeneric.map_to, StdGeneric.map_from}
+
+:: StdGeneric._GenericTypeDefDescriptor = {StdGeneric.gtd_name, StdGeneric.gtd_arity::I, StdGeneric.gtd_num_conses::I, StdGeneric.gtd_conses}
+
+:: StdGeneric._GenericConsDescriptor = {StdGeneric.gcd_name, StdGeneric.gcd_arity::I, StdGeneric.gcd_prio, StdGeneric.gcd_type_def, StdGeneric.gcd_type, StdGeneric.gcd_index::I}
+
+:: StdGeneric._GenericRecordDescriptor = {StdGeneric.grd_name, StdGeneric.grd_arity::I, StdGeneric.grd_type_arity::I, StdGeneric.grd_type, StdGeneric.grd_fields}
+
+:: StdGeneric._GenericFieldDescriptor = {StdGeneric.gfd_name, StdGeneric.gfd_index::I, StdGeneric.gfd_cons}
+
+:: StdGeneric._GenericDict = {!StdGeneric.generic_dict}
+
+:: StdGeneric._GenericDict0 = {StdGeneric.generic_dict0}
+
+:: <{StdGeneric.bimap_s;}> = {StdGeneric.bimap_s}
+
+:: <{StdGeneric.bimap_ss;}> = {StdGeneric.bimap_ss}
+
+:: <{StdGeneric.bimap_sss;}> = {StdGeneric.bimap_sss}
+

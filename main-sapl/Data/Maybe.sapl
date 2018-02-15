@@ -1,0 +1,56 @@
+|| ?module? Data.Maybe
+
+
+Data.Maybe.maybe x_0 _x_1 !_x_2 = case _x_2 (Data.Maybe.Nothing -> x_0) (Data.Maybe.Just x_1_0 -> _x_1 x_1_0) 
+Data.Maybe.maybeSt st_0 _x_1 !_x_2 = case _x_2 (Data.Maybe.Nothing -> st_0) (Data.Maybe.Just x_1_0 -> _x_1 x_1_0 st_0) 
+Data.Maybe.fromMaybe x_0 !mb_1 = Data.Maybe.maybe x_0 StdFunc.id mb_1
+Data.Maybe.isNothing::B !_x_0 = case _x_0 (Data.Maybe.Nothing -> True) (_ -> False)
+Data.Maybe.isNothingU !_x_0 = case _x_0 (Data.Maybe.Nothing -> <{_Tuple2!3}> True Data.Maybe.Nothing) (_ -> <{_Tuple2!3}> False _x_0)
+Data.Maybe.isJust::B !_x_0 = case _x_0 (Data.Maybe.Just _x_1_0 -> True) (_ -> False)
+Data.Maybe.isJustU !_x_0 = case _x_0 (Data.Maybe.Just x_1_0 -> <{_Tuple2!3}> True (Data.Maybe.Just x_1_0)) (_ -> <{_Tuple2!3}> False _x_0)
+Data.Maybe.fromJust !_x_0 = case _x_0 (Data.Maybe.Nothing -> StdMisc.abort "Data.Maybe.fromJust: argument is Nothing") (Data.Maybe.Just x_1_0 -> x_1_0) 
+Data.Maybe.maybeToList !_x_0 = case _x_0 (Data.Maybe.Nothing -> _predefined._Nil) (Data.Maybe.Just x_1_0 -> _predefined._Cons x_1_0 _predefined._Nil) 
+Data.Maybe.listToMaybe !_x_0 = case _x_0 (_predefined._Nil -> Data.Maybe.Nothing) (_predefined._Cons x_1_0 _x_1_1 -> Data.Maybe.Just x_1_0) 
+<{Data.Maybe.c;142;19_37}> !g_l_0 = <{Data.Maybe.g_c1;142;29_46}> g_l_0
+<{Data.Maybe.g_c1;142;29_46}> !g_l_0 = case g_l_0 (_predefined._Cons g_h_1_0 g_t_1_1 -> <{Data.Maybe.g_c2;142;29_45}> g_h_1_0 g_t_1_1) (_ -> _predefined._Nil)
+<{Data.Maybe.g_c2;142;29_45}> !g_h_0 g_t_1 = case g_h_0 (Data.Maybe.Just x_1_0 -> _predefined._Cons x_1_0 (<{Data.Maybe.c;142;19_37}> g_t_1)) (_ -> <{Data.Maybe.c;142;19_37}> g_t_1)
+Data.Maybe.catMaybes !xs_0 = <{Data.Maybe.c;142;19_37}> xs_0
+<{Data.Maybe.==_11}>::B !<{_v==_0}> !_x_1 !maybe_2 = case _x_1 (Data.Maybe.Nothing -> <{Data.Maybe._c;17;27_47}> maybe_2) (Data.Maybe.Just a_1_0 -> <{Data.Maybe._c;20;27_48}> maybe_2 <{_v==_0}> a_1_0) 
+<{Data.Maybe._c;20;27_48}>::B !maybe_0 <{_v==_1}> a_2 = case maybe_0 (Data.Maybe.Just b_1_0 -> select <{_v==_1}>::<{StdOverloaded.==;}> 0 a_2 b_1_0) (_ -> False)
+<{Data.Maybe._c;17;27_47}>::B !maybe_0 = case maybe_0 (Data.Maybe.Nothing -> True) (_ -> False)
+Data.Maybe.fmap_12 f_0 !_x_1 = case _x_1 (Data.Maybe.Nothing -> Data.Maybe.Nothing) (Data.Maybe.Just a_1_0 -> Data.Maybe.Just (f_0 a_1_0)) 
+<{Data.Maybe.<*>_13}> !_x_0 _x_1 = case _x_0 (Data.Maybe.Nothing -> Data.Maybe.Nothing) (Data.Maybe.Just f_1_0 -> Data.Maybe.fmap_12 f_1_0 _x_1) 
+Data.Maybe.pure_14 x_0 = Data.Maybe.Just x_0
+<{Data.Maybe.*>_15}> !_vApplicative_0 !_x_1 m_2 = case _x_1 (Data.Maybe.Just _x_1_0 -> m_2) (_ -> Data.Maybe.Nothing)
+<{Data.Maybe.<*_16}> !_vApplicative_0 !_x_1 _x_2 = case _x_1 (Data.Maybe.Nothing -> Data.Maybe.Nothing) (_ -> case _x_2 (Data.Maybe.Just _x_1_0 -> _x_1) (_ -> Data.Maybe.Nothing))
+<{Data.Maybe.<|>_17}> !_x_0 r_1 = case _x_0 (Data.Maybe.Nothing -> r_1) (_ -> _x_0)
+Data.Maybe.empty_18 = Data.Maybe.Nothing
+Data.Maybe.bind_19 !_x_0 k_1 = case _x_0 (Data.Maybe.Just x_1_0 -> k_1 x_1_0) (Data.Maybe.Nothing -> Data.Maybe.Nothing) 
+Data.Maybe.mplus_20 !_x_0 ys_1 = case _x_0 (Data.Maybe.Nothing -> ys_1) (_ -> _x_0)
+Data.Maybe.mzero_21 = Data.Maybe.Nothing
+Data.Maybe.mappend_22 !_vSemigroup_0 !_x_1 !m_2 = case _x_1 (Data.Maybe.Nothing -> m_2) (_ -> case m_2 (Data.Maybe.Nothing -> _x_1) (Data.Maybe.Just m2_1_0 -> case _x_1 (Data.Maybe.Just m1_2_0 -> Data.Maybe.Just (select _vSemigroup_0::<{Data.Monoid.Semigroup;}> 0 m1_2_0 m2_1_0)) ) )
+Data.Maybe.mempty_23 = Data.Maybe.Nothing
+Data.Maybe.anon_42 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Maybe.foldr_29 _x_0 z_1 !_x_2 = case _x_2 (Data.Maybe.Nothing -> z_1) (Data.Maybe.Just x_1_0 -> _x_0 x_1_0 z_1) 
+Data.Maybe.foldMap_25 !_vMonoid_0 f_1 !x_2 = Data.Maybe.foldr_29 (Data.Maybe.anon_42 (select (select _vMonoid_0::<{Data.Monoid.Monoid;}> 1)::<{Data.Monoid.Semigroup;}> 0) f_1) (select _vMonoid_0::<{Data.Monoid.Monoid;}> 0) x_2
+Data.Maybe.fold_24 !_vMonoid_0 !x_1 = Data.Maybe.foldMap_25 _vMonoid_0 StdFunc.id x_1
+Data.Maybe.foldl_26 _x_0 z_1 !_x_2 = case _x_2 (Data.Maybe.Nothing -> z_1) (Data.Maybe.Just x_1_0 -> _x_0 z_1 x_1_0) 
+Data.Maybe.mf_41 f_0 !_x_1 y_2 = case _x_1 (Data.Maybe.Nothing -> Data.Maybe.Just y_2) (Data.Maybe.Just x_1_0 -> Data.Maybe.Just (f_0 x_1_0 y_2)) 
+Data.Maybe.foldl1_27 f_0 !xs_1 = Data.Maybe.fromMaybe (StdMisc.abort "foldl1: empty structure") (Data.Maybe.foldl_26 (Data.Maybe.mf_41 f_0) Data.Maybe.Nothing xs_1)
+<{Data.Maybe.f`_39}> f_0 x_1 !k_2 z_3 = k_2 (f_0 z_3 x_1)
+<{Data.Maybe.foldl`_28}> f_0 !z0_1 !xs_2 = Data.Maybe.foldr_29 (<{Data.Maybe.f`_39}> f_0) StdFunc.id xs_2 z0_1
+Data.Maybe.mf_40 f_0 x_1 !_x_2 = case _x_2 (Data.Maybe.Nothing -> Data.Maybe.Just x_1) (Data.Maybe.Just y_1_0 -> Data.Maybe.Just (f_0 x_1 y_1_0)) 
+Data.Maybe.foldr1_30 f_0 !xs_1 = Data.Maybe.fromMaybe (StdMisc.abort "foldr1: empty structure") (Data.Maybe.foldr_29 (Data.Maybe.mf_40 f_0) Data.Maybe.Nothing xs_1)
+<{Data.Maybe.f`_38}> f_0 !k_1 x_2 z_3 = k_1 (f_0 x_2 z_3)
+<{Data.Maybe.foldr`_31}> f_0 !z0_1 !xs_2 = Data.Maybe.foldl_26 (<{Data.Maybe.f`_38}> f_0) StdFunc.id xs_2 z0_1
+Data.Maybe.anon_43 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Maybe.traverse_35 !_vApplicative_0 _x_1 !_x_2 = case _x_2 (Data.Maybe.Nothing -> select _vApplicative_0::<{Control.Applicative.Applicative;}> 1 Data.Maybe.Nothing) (Data.Maybe.Just x_1_0 -> select (select _vApplicative_0::<{Control.Applicative.Applicative;}> 2)::<{Data.Functor.Functor;}> 0 Data.Maybe.Just (_x_1 x_1_0)) 
+Data.Maybe.traverse_44 !_vMonad_0 _x_1 !_x_2 = case _x_2 (Data.Maybe.Nothing -> Control.Applicative.pure_15 _vMonad_0 Data.Maybe.Nothing) (Data.Maybe.Just x_1_0 -> Control.Applicative.fmap_11 _vMonad_0 Data.Maybe.Just (_x_1 x_1_0)) 
+Data.Maybe.mapM_32 !_vMonad_0 f_1 !x_2 = Control.Applicative.unwrapMonad (Data.Maybe.traverse_44 _vMonad_0 (Data.Maybe.anon_43 Control.Applicative.WrapMonad f_1) x_2)
+Data.Maybe.sequence_33 !_vMonad_0 !x_1 = Data.Maybe.mapM_32 _vMonad_0 StdFunc.id x_1
+Data.Maybe.sequenceA_34 !_vApplicative_0 !f_1 = Data.Maybe.traverse_35 _vApplicative_0 StdFunc.id f_1
+<{Data.Maybe.TD;Maybe}> _x_0::B = _predefined._Nil
+
+:: Data.Maybe.Maybe = Data.Maybe.Nothing | Data.Maybe.Just a1
+
+|| Converted Records

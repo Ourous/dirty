@@ -1,0 +1,63 @@
+|| ?module? StdOrdList
+
+
+StdOrdList.pair_20 !<{_v<_0}> !_x_1 = case _x_1 (_predefined._Cons x1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons x2_2_0 xs_2_1 -> case (select <{_v<_0}>::<{StdOverloaded.<;}> 0 x2_2_0 x1_1_0) (True -> _predefined._Cons (_predefined._Cons x2_2_0 (_predefined._Cons x1_1_0 _predefined._Nil)) (StdOrdList.pair_20 <{_v<_0}> xs_2_1)) (False -> _predefined._Cons (_predefined._Cons x1_1_0 (_predefined._Cons x2_2_0 _predefined._Nil)) (StdOrdList.pair_20 <{_v<_0}> xs_2_1)) ) ) (_ -> _predefined._Cons _x_1 _predefined._Nil)
+StdOrdList.merge !_vOrd_0 !_x_1 !y_2 = case _x_1 (_predefined._Nil -> y_2) (_predefined._Cons x_1_0 xs_1_1 -> case y_2 (_predefined._Nil -> _x_1) (_predefined._Cons y_2_0 ys_2_1 -> case (select (select _vOrd_0::<{StdClass.Ord;}> 0)::<{StdOverloaded.<;}> 0 y_2_0 x_1_0) (True -> _predefined._Cons y_2_0 (StdOrdList.merge _vOrd_0 _x_1 ys_2_1)) (False -> _predefined._Cons x_1_0 (StdOrdList.merge _vOrd_0 xs_1_1 y_2)) ) ) 
+StdOrdList.merge_stage_22 !_vOrd_0 !_x_1 = case _x_1 (_predefined._Cons xs1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons xs2_2_0 xxs_2_1 -> _predefined._Cons (StdOrdList.merge _vOrd_0 xs1_1_0 xs2_2_0) (StdOrdList.merge_stage_22 _vOrd_0 xxs_2_1)) ) (_ -> _x_1)
+StdOrdList.msort_21 !_vOrd_0 !_x_1 = case _x_1 (_predefined._Cons x1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons x2_2_0 xs_2_1 -> StdOrdList.msort_21 _vOrd_0 (StdOrdList.merge_stage_22 _vOrd_0 (_predefined._Cons x1_1_0 (_predefined._Cons x2_2_0 xs_2_1)))) ) (_ -> _x_1)
+StdOrdList.sort !_vOrd_0 !l_1 = StdList.hd (StdOrdList.msort_21 _vOrd_0 (StdOrdList.pair_20 (select _vOrd_0::<{StdClass.Ord;}> 0) l_1))
+StdOrdList.pair_23 less_f_0 !_x_1 = case _x_1 (_predefined._Cons x1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons x2_2_0 xs_2_1 -> case (less_f_0 x2_2_0 x1_1_0) (True -> _predefined._Cons (_predefined._Cons x2_2_0 (_predefined._Cons x1_1_0 _predefined._Nil)) (StdOrdList.pair_23 less_f_0 xs_2_1)) (False -> _predefined._Cons (_predefined._Cons x1_1_0 (_predefined._Cons x2_2_0 _predefined._Nil)) (StdOrdList.pair_23 less_f_0 xs_2_1)) ) ) (_ -> _predefined._Cons _x_1 _predefined._Nil)
+StdOrdList.mergeBy less_f_0 !_x_1 !y_2 = case _x_1 (_predefined._Nil -> y_2) (_predefined._Cons x_1_0 xs_1_1 -> case y_2 (_predefined._Nil -> _x_1) (_predefined._Cons y_2_0 ys_2_1 -> case (less_f_0 y_2_0 x_1_0) (True -> _predefined._Cons y_2_0 (StdOrdList.mergeBy less_f_0 _x_1 ys_2_1)) (False -> _predefined._Cons x_1_0 (StdOrdList.mergeBy less_f_0 xs_1_1 y_2)) ) ) 
+StdOrdList.merge_stage_25 less_f_0 !_x_1 = case _x_1 (_predefined._Cons xs1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons xs2_2_0 xxs_2_1 -> _predefined._Cons (StdOrdList.mergeBy less_f_0 xs1_1_0 xs2_2_0) (StdOrdList.merge_stage_25 less_f_0 xxs_2_1)) ) (_ -> _x_1)
+StdOrdList.msort_24 less_f_0 !_x_1 = case _x_1 (_predefined._Cons x1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons x2_2_0 xs_2_1 -> StdOrdList.msort_24 less_f_0 (StdOrdList.merge_stage_25 less_f_0 (_predefined._Cons x1_1_0 (_predefined._Cons x2_2_0 xs_2_1)))) ) (_ -> _x_1)
+StdOrdList.sortBy less_f_0 !l_1 = StdList.hd (StdOrdList.msort_24 less_f_0 (StdOrdList.pair_23 less_f_0 l_1))
+StdOrdList.max1_26 !_vOrd_0 m_1 !_x_2 = case _x_2 (_predefined._Cons hd_1_0 tl_1_1 -> case (select (select _vOrd_0::<{StdClass.Ord;}> 0)::<{StdOverloaded.<;}> 0 hd_1_0 m_1) (True -> StdOrdList.max1_26 _vOrd_0 m_1 tl_1_1) (False -> StdOrdList.max1_26 _vOrd_0 hd_1_0 tl_1_1) ) (_predefined._Nil -> m_1) 
+StdOrdList.maxList !_vOrd_0 !_x_1 = case _x_1 (_predefined._Cons a_1_0 x_1_1 -> StdOrdList.max1_26 _vOrd_0 a_1_0 x_1_1) (_predefined._Nil -> StdMisc.abort "maxList of []") 
+StdOrdList.max1_27 less_f_0 m_1 !_x_2 = case _x_2 (_predefined._Cons hd_1_0 tl_1_1 -> case (less_f_0 hd_1_0 m_1) (True -> StdOrdList.max1_27 less_f_0 m_1 tl_1_1) (False -> StdOrdList.max1_27 less_f_0 hd_1_0 tl_1_1) ) (_predefined._Nil -> m_1) 
+StdOrdList.maxListBy less_f_0 !_x_1 = case _x_1 (_predefined._Cons a_1_0 x_1_1 -> StdOrdList.max1_27 less_f_0 a_1_0 x_1_1) (_predefined._Nil -> StdMisc.abort "maxListBy of []") 
+StdOrdList.min1_28 !_vOrd_0 m_1 !_x_2 = case _x_2 (_predefined._Cons hd_1_0 tl_1_1 -> case (select (select _vOrd_0::<{StdClass.Ord;}> 0)::<{StdOverloaded.<;}> 0 m_1 hd_1_0) (True -> StdOrdList.min1_28 _vOrd_0 m_1 tl_1_1) (False -> StdOrdList.min1_28 _vOrd_0 hd_1_0 tl_1_1) ) (_predefined._Nil -> m_1) 
+StdOrdList.minList !_vOrd_0 !_x_1 = case _x_1 (_predefined._Cons a_1_0 x_1_1 -> StdOrdList.min1_28 _vOrd_0 a_1_0 x_1_1) (_predefined._Nil -> StdMisc.abort "minList of []") 
+StdOrdList.min1_29 less_f_0 m_1 !_x_2 = case _x_2 (_predefined._Cons hd_1_0 tl_1_1 -> case (less_f_0 m_1 hd_1_0) (True -> StdOrdList.min1_29 less_f_0 m_1 tl_1_1) (False -> StdOrdList.min1_29 less_f_0 hd_1_0 tl_1_1) ) (_predefined._Nil -> m_1) 
+StdOrdList.minListBy less_f_0 !_x_1 = case _x_1 (_predefined._Cons a_1_0 x_1_1 -> StdOrdList.min1_29 less_f_0 a_1_0 x_1_1) (_predefined._Nil -> StdMisc.abort "minListBy of []") 
+StdOrdList.pair_31 !_x_0 = case _x_0 (_predefined._Cons x1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons x2_2_0 xs_2_1 -> case (<{StdChar.<_19}> x2_2_0 x1_1_0) (True -> _predefined._Cons (_predefined._Cons x2_2_0 (_predefined._Cons x1_1_0 _predefined._Nil)) (StdOrdList.pair_31 xs_2_1)) (False -> _predefined._Cons (_predefined._Cons x1_1_0 (_predefined._Cons x2_2_0 _predefined._Nil)) (StdOrdList.pair_31 xs_2_1)) ) ) (_ -> _predefined._Cons _x_0 _predefined._Nil)
+StdOrdList.merge_34 !_x_0 !y_1 = case _x_0 (_predefined._Nil -> y_1) (_predefined._Cons x_1_0 xs_1_1 -> case y_1 (_predefined._Nil -> _x_0) (_predefined._Cons y_2_0 ys_2_1 -> case (<{StdChar.<_19}> y_2_0 x_1_0) (True -> _predefined._Cons y_2_0 (StdOrdList.merge_34 _x_0 ys_2_1)) (False -> _predefined._Cons x_1_0 (StdOrdList.merge_34 xs_1_1 y_1)) ) ) 
+StdOrdList.merge_stage_33 !_x_0 = case _x_0 (_predefined._Cons xs1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons xs2_2_0 xxs_2_1 -> _predefined._Cons (StdOrdList.merge_34 xs1_1_0 xs2_2_0) (StdOrdList.merge_stage_33 xxs_2_1)) ) (_ -> _x_0)
+StdOrdList.msort_32 !_x_0 = case _x_0 (_predefined._Cons x1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons x2_2_0 xs_2_1 -> StdOrdList.msort_32 (StdOrdList.merge_stage_33 (_predefined._Cons x1_1_0 (_predefined._Cons x2_2_0 xs_2_1)))) ) (_ -> _x_0)
+StdOrdList.sort_30 !l_0 = StdList.hd (StdOrdList.msort_32 (StdOrdList.pair_31 l_0))
+StdOrdList.sort_8 !l_0 = StdOrdList.sort_30 l_0
+StdOrdList.pair_36 !_x_0 = case _x_0 (_predefined._Cons x1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons x2_2_0 xs_2_1 -> case (<{StdInt.<_17}> x2_2_0 x1_1_0) (True -> _predefined._Cons (_predefined._Cons x2_2_0 (_predefined._Cons x1_1_0 _predefined._Nil)) (StdOrdList.pair_36 xs_2_1)) (False -> _predefined._Cons (_predefined._Cons x1_1_0 (_predefined._Cons x2_2_0 _predefined._Nil)) (StdOrdList.pair_36 xs_2_1)) ) ) (_ -> _predefined._Cons _x_0 _predefined._Nil)
+StdOrdList.merge_39 !_x_0 !y_1 = case _x_0 (_predefined._Nil -> y_1) (_predefined._Cons x_1_0 xs_1_1 -> case y_1 (_predefined._Nil -> _x_0) (_predefined._Cons y_2_0 ys_2_1 -> case (<{StdInt.<_17}> y_2_0 x_1_0) (True -> _predefined._Cons y_2_0 (StdOrdList.merge_39 _x_0 ys_2_1)) (False -> _predefined._Cons x_1_0 (StdOrdList.merge_39 xs_1_1 y_1)) ) ) 
+StdOrdList.merge_stage_38 !_x_0 = case _x_0 (_predefined._Cons xs1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons xs2_2_0 xxs_2_1 -> _predefined._Cons (StdOrdList.merge_39 xs1_1_0 xs2_2_0) (StdOrdList.merge_stage_38 xxs_2_1)) ) (_ -> _x_0)
+StdOrdList.msort_37 !_x_0 = case _x_0 (_predefined._Cons x1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons x2_2_0 xs_2_1 -> StdOrdList.msort_37 (StdOrdList.merge_stage_38 (_predefined._Cons x1_1_0 (_predefined._Cons x2_2_0 xs_2_1)))) ) (_ -> _x_0)
+StdOrdList.sort_35 !l_0 = StdList.hd (StdOrdList.msort_37 (StdOrdList.pair_36 l_0))
+StdOrdList.sort_9 !l_0 = StdOrdList.sort_35 l_0
+StdOrdList.pair_41 !_x_0 = case _x_0 (_predefined._Cons x1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons x2_2_0 xs_2_1 -> case (<{StdReal.<_12}> x2_2_0 x1_1_0) (True -> _predefined._Cons (_predefined._Cons x2_2_0 (_predefined._Cons x1_1_0 _predefined._Nil)) (StdOrdList.pair_41 xs_2_1)) (False -> _predefined._Cons (_predefined._Cons x1_1_0 (_predefined._Cons x2_2_0 _predefined._Nil)) (StdOrdList.pair_41 xs_2_1)) ) ) (_ -> _predefined._Cons _x_0 _predefined._Nil)
+StdOrdList.merge_44 !_x_0 !y_1 = case _x_0 (_predefined._Nil -> y_1) (_predefined._Cons x_1_0 xs_1_1 -> case y_1 (_predefined._Nil -> _x_0) (_predefined._Cons y_2_0 ys_2_1 -> case (<{StdReal.<_12}> y_2_0 x_1_0) (True -> _predefined._Cons y_2_0 (StdOrdList.merge_44 _x_0 ys_2_1)) (False -> _predefined._Cons x_1_0 (StdOrdList.merge_44 xs_1_1 y_1)) ) ) 
+StdOrdList.merge_stage_43 !_x_0 = case _x_0 (_predefined._Cons xs1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons xs2_2_0 xxs_2_1 -> _predefined._Cons (StdOrdList.merge_44 xs1_1_0 xs2_2_0) (StdOrdList.merge_stage_43 xxs_2_1)) ) (_ -> _x_0)
+StdOrdList.msort_42 !_x_0 = case _x_0 (_predefined._Cons x1_1_0 _x_1_1 -> case _x_1_1 (_predefined._Cons x2_2_0 xs_2_1 -> StdOrdList.msort_42 (StdOrdList.merge_stage_43 (_predefined._Cons x1_1_0 (_predefined._Cons x2_2_0 xs_2_1)))) ) (_ -> _x_0)
+StdOrdList.sort_40 !l_0 = StdList.hd (StdOrdList.msort_42 (StdOrdList.pair_41 l_0))
+StdOrdList.sort_10 !l_0 = StdOrdList.sort_40 l_0
+StdOrdList.merge_11 !_x_0 !y_1 = StdOrdList.merge_34 _x_0 y_1
+StdOrdList.merge_12 !_x_0 !y_1 = StdOrdList.merge_39 _x_0 y_1
+StdOrdList.merge_13 !_x_0 !y_1 = StdOrdList.merge_44 _x_0 y_1
+StdOrdList.max1_46::C !m_0::C !_x_1 = case _x_1 (_predefined._Cons hd_1_0 tl_1_1 -> case (<{StdChar.<_19}> hd_1_0 m_0) (True -> StdOrdList.max1_46 m_0 tl_1_1) (False -> StdOrdList.max1_46 hd_1_0 tl_1_1) ) (_predefined._Nil -> m_0) 
+StdOrdList.maxList_45::C !_x_0 = case _x_0 (_predefined._Cons a_1_0 x_1_1 -> StdOrdList.max1_46 a_1_0 x_1_1) (_predefined._Nil -> StdMisc.abort "maxList of []") 
+StdOrdList.maxList_14::C !_x_0 = StdOrdList.maxList_45 _x_0
+StdOrdList.max1_48::I !m_0::I !_x_1 = case _x_1 (_predefined._Cons hd_1_0 tl_1_1 -> case (<{StdInt.<_17}> hd_1_0 m_0) (True -> StdOrdList.max1_48 m_0 tl_1_1) (False -> StdOrdList.max1_48 hd_1_0 tl_1_1) ) (_predefined._Nil -> m_0) 
+StdOrdList.maxList_47::I !_x_0 = case _x_0 (_predefined._Cons a_1_0 x_1_1 -> StdOrdList.max1_48 a_1_0 x_1_1) (_predefined._Nil -> StdMisc.abort "maxList of []") 
+StdOrdList.maxList_15::I !_x_0 = StdOrdList.maxList_47 _x_0
+StdOrdList.max1_50::D !m_0::D !_x_1 = case _x_1 (_predefined._Cons hd_1_0 tl_1_1 -> case (<{StdReal.<_12}> hd_1_0 m_0) (True -> StdOrdList.max1_50 m_0 tl_1_1) (False -> StdOrdList.max1_50 hd_1_0 tl_1_1) ) (_predefined._Nil -> m_0) 
+StdOrdList.maxList_49::D !_x_0 = case _x_0 (_predefined._Cons a_1_0 x_1_1 -> StdOrdList.max1_50 a_1_0 x_1_1) (_predefined._Nil -> StdMisc.abort "maxList of []") 
+StdOrdList.maxList_16::D !_x_0 = StdOrdList.maxList_49 _x_0
+StdOrdList.min1_52::C !m_0::C !_x_1 = case _x_1 (_predefined._Cons hd_1_0 tl_1_1 -> case (<{StdChar.<_19}> m_0 hd_1_0) (True -> StdOrdList.min1_52 m_0 tl_1_1) (False -> StdOrdList.min1_52 hd_1_0 tl_1_1) ) (_predefined._Nil -> m_0) 
+StdOrdList.minList_51::C !_x_0 = case _x_0 (_predefined._Cons a_1_0 x_1_1 -> StdOrdList.min1_52 a_1_0 x_1_1) (_predefined._Nil -> StdMisc.abort "minList of []") 
+StdOrdList.minList_17::C !_x_0 = StdOrdList.minList_51 _x_0
+StdOrdList.min1_54::I !m_0::I !_x_1 = case _x_1 (_predefined._Cons hd_1_0 tl_1_1 -> case (<{StdInt.<_17}> m_0 hd_1_0) (True -> StdOrdList.min1_54 m_0 tl_1_1) (False -> StdOrdList.min1_54 hd_1_0 tl_1_1) ) (_predefined._Nil -> m_0) 
+StdOrdList.minList_53::I !_x_0 = case _x_0 (_predefined._Cons a_1_0 x_1_1 -> StdOrdList.min1_54 a_1_0 x_1_1) (_predefined._Nil -> StdMisc.abort "minList of []") 
+StdOrdList.minList_18::I !_x_0 = StdOrdList.minList_53 _x_0
+StdOrdList.min1_56::D !m_0::D !_x_1 = case _x_1 (_predefined._Cons hd_1_0 tl_1_1 -> case (<{StdReal.<_12}> m_0 hd_1_0) (True -> StdOrdList.min1_56 m_0 tl_1_1) (False -> StdOrdList.min1_56 hd_1_0 tl_1_1) ) (_predefined._Nil -> m_0) 
+StdOrdList.minList_55::D !_x_0 = case _x_0 (_predefined._Cons a_1_0 x_1_1 -> StdOrdList.min1_56 a_1_0 x_1_1) (_predefined._Nil -> StdMisc.abort "minList of []") 
+StdOrdList.minList_19::D !_x_0 = StdOrdList.minList_55 _x_0
+
+
+|| Converted Records

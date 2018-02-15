@@ -1,0 +1,13 @@
+|| ?module? StdCharList
+
+
+StdCharList.spaces !n_0::I = StdList.repeatn n_0 ' '
+StdCharList.cjustify !n_0::I !s_1 = let margin_1_0::I = <{StdInt.-_7}> n_0 (StdList.length_47 s_1), lmargin_1_1::I = <{StdInt./_10}> margin_1_0 2 in <{StdList.++}> (StdCharList.spaces lmargin_1_1) (<{StdList.++}> s_1 (StdCharList.spaces (<{StdInt.-_7}> margin_1_0 lmargin_1_1)))
+StdCharList.ljustify !n_0::I !s_1 = <{StdList.++}> s_1 (StdCharList.spaces (<{StdInt.-_7}> n_0 (StdList.length_47 s_1)))
+StdCharList.rjustify !n_0::I !s_1 = <{StdList.++}> (StdCharList.spaces (<{StdInt.-_7}> n_0 (StdList.length_47 s_1))) s_1
+StdCharList.flatlines !_x_0 = case _x_0 (_predefined._Cons a_1_0 x_1_1 -> <{StdList.++}> a_1_0 (_predefined._Cons '\n' (StdCharList.flatlines x_1_1))) (_predefined._Nil -> _predefined._Nil) 
+StdCharList.mklines !_x_0 = case _x_0 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons a_1_0 x_1_1 -> case (<{StdChar.==_18}> a_1_0 '\n') (True -> _predefined._Cons _predefined._Nil (StdCharList.mklines x_1_1)) (False -> let result_3_0 = <{StdCharList._c;32;17_6}> x_1_1 in _predefined._Cons (_predefined._Cons a_1_0 (StdList.hd result_3_0)) (StdList.tl result_3_0)) ) 
+<{StdCharList._c;32;17_6}> !x_0 = case x_0 (_predefined._Nil -> _predefined._Cons _predefined._Nil _predefined._Nil) (_ -> StdCharList.mklines x_0)
+
+
+|| Converted Records

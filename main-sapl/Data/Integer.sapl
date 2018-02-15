@@ -1,0 +1,41 @@
+|| ?module? Data.Integer
+
+
+Data.Integer.ltU::B !a_0::I !b_1::I = error "no AnyCodeExpr"
+Data.Integer.compare_p_arrays_27::I !i_0::I !a1_1 !a2_2 = case (StdBool.not (<{StdInt.<_17}> i_0 0)) (True -> case (<{StdInt.==_16}> (_SystemArray.select_11 a1_1 i_0) (_SystemArray.select_11 a2_2 i_0)) (True -> Data.Integer.compare_p_arrays_27 (<{StdInt.-_7}> i_0 1) a1_1 a2_2) (False -> case (Data.Integer.ltU (_SystemArray.select_11 a1_1 i_0) (_SystemArray.select_11 a2_2 i_0)) (True -> -1) (False -> 1) ) ) (False -> 0) 
+Data.Integer.compare_n_arrays_28::I !i_0::I !a1_1 !a2_2 = case (StdBool.not (<{StdInt.<_17}> i_0 0)) (True -> case (<{StdInt.==_16}> (_SystemArray.select_11 a1_1 i_0) (_SystemArray.select_11 a2_2 i_0)) (True -> Data.Integer.compare_n_arrays_28 (<{StdInt.-_7}> i_0 1) a1_1 a2_2) (False -> case (Data.Integer.ltU (_SystemArray.select_11 a1_1 i_0) (_SystemArray.select_11 a2_2 i_0)) (True -> 1) (False -> -1) ) ) (False -> 0) 
+Data.Integer.compare_same_sign_large_integers::I !sa1_0::I !sa2_1::I !s1_2::I !a1_3 !a2_4 = case (StdBool.not (<{StdInt.<_17}> s1_2 0)) (True -> case (<{StdInt.<_17}> sa1_0 sa2_1) (True -> -1) (False -> case (<{StdInt.<_17}> sa2_1 sa1_0) (True -> 1) (False -> Data.Integer.compare_p_arrays_27 (<{StdInt.-_7}> sa1_0 1) a1_3 a2_4) ) ) (False -> case (<{StdInt.<_17}> sa1_0 sa2_1) (True -> 1) (False -> case (<{StdInt.<_17}> sa2_1 sa1_0) (True -> -1) (False -> Data.Integer.compare_n_arrays_28 (<{StdInt.-_7}> sa1_0 1) a1_3 a2_4) ) ) 
+Data.Integer.ushiftr::I !a_0::I !b_1::I = error "no AnyCodeExpr"
+Data.Integer.divdu !a_0::I !b_1::I !c_2::I = error "no AnyCodeExpr"
+Data.Integer.mulud !a_0::I !b_1::I = error "no AnyCodeExpr"
+Data.Integer.addLU !_x_0::I !_x_1::I !_x_2::I = error "no AnyCodeExpr"
+Data.Integer.subLU !_x_0::I !_x_1::I !_x_2::I = error "no AnyCodeExpr"
+<{Data.Integer.+_0}> !a_0 !b_1 = Data.Integer.Add.add_integer a_0 b_1
+<{Data.Integer.*_1}> !a_0 !b_1 = Data.Integer.Mul.mul_integer a_0 b_1
+Data.Integer.zero_2 = Data.Integer._Integer 0 (_SystemArray._createArray_8 0)
+Data.Integer.one_3 = Data.Integer._Integer 1 (_SystemArray._createArray_8 0)
+<{Data.Integer.~_4}> !_x_0 = case _x_0 (Data.Integer._Integer integer_s_1_0 integer_a_1_1 -> case (<{StdInt.==_16}> (_SystemArray.size_12 integer_a_1_1) 0) (True -> case (StdBool.not (<{StdInt.==_16}> integer_s_1_0 -2147483648)) (True -> Data.Integer._Integer (<{StdInt.~_15}> integer_s_1_0) integer_a_1_1) (False -> Data.Integer._Integer 0 (_SystemArray.update_13 (_SystemArray._createArray_8 1) 0 integer_s_1_0)) ) (False -> Data.Integer._Integer (StdInt.bitnot integer_s_1_0) integer_a_1_1) ) 
+<{Data.Integer.-_5}> !a_0 !b_1 = Data.Integer.Add.sub_integer a_0 b_1
+Data.Integer.abs_6 !_x_0 = case _x_0 (Data.Integer._Integer integer_s_1_0 integer_a_1_1 -> case (<{StdInt.==_16}> (_SystemArray.size_12 integer_a_1_1) 0) (True -> case (StdBool.not (<{StdInt.<_17}> integer_s_1_0 0)) (True -> Data.Integer._Integer integer_s_1_0 integer_a_1_1) (False -> case (StdBool.not (<{StdInt.==_16}> integer_s_1_0 -2147483648)) (True -> Data.Integer._Integer (<{StdInt.~_15}> integer_s_1_0) integer_a_1_1) (False -> Data.Integer._Integer 0 (_SystemArray.update_13 (_SystemArray._createArray_8 1) 0 integer_s_1_0)) ) ) (False -> Data.Integer._Integer 0 integer_a_1_1) ) 
+Data.Integer.sign_7::I !_x_0 = case _x_0 (Data.Integer._Integer integer_s_1_0 integer_a_1_1 -> case (<{StdInt.==_16}> (_SystemArray.size_12 integer_a_1_1) 0) (True -> StdInt.sign_14 integer_s_1_0) (False -> <{StdInt.+_6}> (<{StdInt.+_6}> 1 integer_s_1_0) integer_s_1_0) ) 
+<{Data.Integer./_8}> !a_0 !b_1 = Data.Integer.Div.floordiv_integer a_0 b_1
+Data.Integer.rem_9 !a_0 !b_1 = Data.Integer.Div.rem_integer a_0 b_1
+Data.Integer.equal_arrays_29::B !i_0::I !s_1::I !a1_2 !a2_3 = case (<{StdInt.<_17}> i_0 s_1) (True -> case (<{StdInt.==_16}> (_SystemArray.select_11 a1_2 i_0) (_SystemArray.select_11 a2_3 i_0)) (True -> Data.Integer.equal_arrays_29 (<{StdInt.+_6}> i_0 1) s_1 a1_2 a2_3) (False -> False) ) (False -> True) 
+<{Data.Integer.==_10}>::B !_x_0 !_x_1 = case _x_0 (Data.Integer._Integer s1_1_0 a1_1_1 -> case _x_1 (Data.Integer._Integer s2_2_0 a2_2_1 -> case (StdBool.not (<{StdInt.==_16}> s1_1_0 s2_2_0)) (True -> False) (False -> let sa1_4_0::I = _SystemArray.size_12 a1_1_1, sa2_4_1::I = _SystemArray.size_12 a2_2_1 in case (case (<{StdInt.==_16}> sa1_4_0 0) (True -> <{StdInt.==_16}> sa2_4_1 0) (False -> False) ) (True -> True) (False -> case (StdBool.not (<{StdInt.==_16}> sa1_4_0 sa2_4_1)) (True -> False) (False -> Data.Integer.equal_arrays_29 0 sa1_4_0 a1_1_1 a2_2_1) ) ) ) ) 
+<{Data.Integer.<_11}>::B !_x_0 !_x_1 = case _x_0 (Data.Integer._Integer s1_1_0 a1_1_1 -> case _x_1 (Data.Integer._Integer s2_2_0 a2_2_1 -> case (<{StdInt.==_16}> (_SystemArray.size_12 a1_1_1) 0) (True -> case (<{StdInt.==_16}> (_SystemArray.size_12 a2_2_1) 0) (True -> <{StdInt.<_17}> s1_1_0 s2_2_0) (False -> StdBool.not (<{StdInt.<_17}> s2_2_0 0)) ) (False -> case (<{StdInt.==_16}> (_SystemArray.size_12 a2_2_1) 0) (True -> <{StdInt.<_17}> s1_1_0 0) (False -> case (StdBool.not (<{StdInt.==_16}> s1_1_0 s2_2_0)) (True -> <{StdInt.<_17}> s1_1_0 s2_2_0) (False -> <{StdInt.==_16}> (Data.Integer.compare_same_sign_large_integers (_SystemArray.size_12 a1_1_1) (_SystemArray.size_12 a2_2_1) s1_1_0 a1_1_1 a2_2_1) -1) ) ) ) ) 
+Data.Integer.toInt_13::I !_x_0 = case _x_0 (Data.Integer._Integer integer_s_1_0 integer_a_1_1 -> case (<{StdInt.==_16}> (_SystemArray.size_12 integer_a_1_1) 0) (True -> integer_s_1_0) (False -> <{StdInt.-_7}> (StdInt.bitxor (_SystemArray.select_11 integer_a_1_1 0) integer_s_1_0) integer_s_1_0) ) 
+Data.Integer.toChar_12::C !i_0 = StdChar.toChar_21 (Data.Integer.toInt_13 i_0)
+Data.Integer.toString_14 !i_0 = Data.Integer.ToString.integer_to_string i_0
+Data.Integer.toInteger_16 !i_0::I = error "no AnyCodeExpr"
+Data.Integer.toInteger_15 !c_0::C = Data.Integer.toInteger_16 (StdInt.toInt_20 c_0)
+Data.Integer.toInteger_17 !s_0 = Data.Integer.ToInteger.string_to_integer s_0
+<{Data.Integer.TD;Integer}> _x_0::B = _predefined._Nil
+<{Data.Integer.TD;toInteger;}> _x_0::B = _predefined._Nil
+<{Data.Integer.TD;Ordering}> _x_0::B = _predefined._Nil
+
+
+|| Converted Records
+:: Data.Integer._Integer = {!Data.Integer.integer_s::I, !Data.Integer.integer_a}
+
+:: <{Data.Integer.toInteger;}> = {!Data.Integer.toInteger}
+

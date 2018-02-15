@@ -75,7 +75,7 @@ J // just the real component
 K // keep from <left> where not <right>
 L // natural log of <mid>
 M // combinations of <mid>
-N // is a natural number
+N // join <main> with newlines
 O // is ordered
 P // is prime
 Q // do a quine
@@ -85,8 +85,8 @@ T // arc-tangent
 U // upend the mid stack
 V // average
 W // wipe the mid stack
-X // e(X)pand from unicode codepoint string into UTF-8 char string
-Y // join <main> with newlines
+X // to uppercase
+Y // is uppercase
 Z // is an integer
 [ // loop if <mid> is true
 \ // reflection around NW->SE
@@ -107,7 +107,7 @@ j // just the imaginary component
 k // keep from <left> where <right>
 l // log <left> in base<right>
 m // integer combinations using top of <left> and <right>
-n // complex abs, then round, then abs
+n // split <mid> on newlines
 o // order
 p // prime with the index of <mid>
 q // every instruction traversed so far, in order
@@ -117,8 +117,8 @@ t // tangent
 u // rotate the mid stack by <mid>
 v // absolute value
 w // remove the <nth> elements from the <mid> stack
-x // compress from utf-8 char string into unicode codepoint string
-y // split <mid> on newlines
+x // to lowercase
+y // is lowercase
 z // remove zeroes
 { // loop if <right> is true or empty
 | // reflection around the vertical

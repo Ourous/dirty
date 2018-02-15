@@ -1,0 +1,18 @@
+|| ?module? StdString
+
+
+<{StdString.+++.}> !a_0 !b_1 = error "no AnyCodeExpr"
+<{StdString.:=}> !s_0 !_x_1 = case _x_1 (_Tuple2 i_1_0 c_1_1 -> error "no AnyCodeExpr") 
+<{StdString.==_2}>::B !a_0 !b_1 = error "no AnyCodeExpr"
+<{StdString.<_3}>::B !a_0 !b_1 = error "no AnyCodeExpr"
+StdString.fromString_4 !a_0 = error "no AnyCodeExpr"
+StdString.toString_5 !a_0::I = error "no AnyCodeExpr"
+StdString.toString_6 !a_0::C = error "no AnyCodeExpr"
+StdString.toString_7 !a_0::D = error "no AnyCodeExpr"
+StdString.toString_8 !a_0::B = error "no AnyCodeExpr"
+StdString.toString_9 !a_0 = error "no AnyCodeExpr"
+<{StdString.%_10}> !str_0 !_x_1 = case _x_1 (_Tuple2 a_1_0 b_1_1 -> error "no AnyCodeExpr") 
+<{StdString.+++_11}> !a_0 !b_1 = error "no AnyCodeExpr"
+
+
+|| Converted Records

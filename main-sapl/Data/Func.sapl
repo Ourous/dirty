@@ -1,0 +1,24 @@
+|| ?module? Data.Func
+
+
+Data.Func.seqSt !f_0 !_x_1 !st_2 = case _x_1 (_predefined._Nil -> st_2) (_predefined._Cons x_1_0 xs_1_1 -> Data.Func.seqSt f_0 xs_1_1 (f_0 x_1_0 st_2)) 
+Data.Func.mapSt !f_0 !_x_1 !st_2 = case _x_1 (_predefined._Nil -> <{_Tuple2!3}> _predefined._Nil st_2) (_predefined._Cons x_1_0 xs_1_1 -> let !_x_2_0 = f_0 x_1_0 st_2, !_x_2_1 = Data.Func.mapSt f_0 xs_1_1 (select _x_2_0::_Tuple2 1) in <{_Tuple2!3}> (_predefined._Cons (select _x_2_0::_Tuple2 0) (select _x_2_1::_Tuple2 0)) (select _x_2_1::_Tuple2 1)) 
+Data.Func.fix !f_0 = let x_1_0 = f_0 x_1_0 in x_1_0
+Data.Func.anon_11 !f_0 g_1 x_2 y_3 = f_0 (g_1 x_2) (g_1 y_3)
+Data.Func.on f_0 g_1 = Data.Func.anon_11 f_0 g_1
+Data.Func.hyperstrict !a_0 = error "no AnyCodeExpr"
+Data.Func.anon_17 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Func.anon_12 !f_0 g_1 x_2 = Data.Func.anon_17 f_0 g_1 x_2
+Data.Func.fmap_5 f_0 !g_1 = Data.Func.anon_12 f_0 g_1
+Data.Func.anon_13 !f_0 g_1 x_2 = f_0 x_2 (g_1 x_2)
+<{Data.Func.<*>_6}> !f_0 g_1 = Data.Func.anon_13 f_0 g_1
+Data.Func.pure_7 !x_0 = StdFunc.const x_0
+Data.Func.anon_14 !a2mb_0 ma_1 r_2 = a2mb_0 (ma_1 r_2) r_2
+Data.Func.bind_8 !ma_0 a2mb_1 = Data.Func.anon_14 a2mb_1 ma_0
+Data.Func.anon_15 !_vSemigroup_0 f_1 g_2 x_3 = select _vSemigroup_0::<{Data.Monoid.Semigroup;}> 0 (f_1 x_3) (g_2 x_3)
+Data.Func.mappend_9 !_vSemigroup_0 !f_1 g_2 = Data.Func.anon_15 _vSemigroup_0 f_1 g_2
+Data.Func.anon_16 !_vMonoid_0 _x_1 = select _vMonoid_0::<{Data.Monoid.Monoid;}> 0
+Data.Func.mempty_10 !_vMonoid_0 = Data.Func.anon_16 _vMonoid_0
+
+
+|| Converted Records

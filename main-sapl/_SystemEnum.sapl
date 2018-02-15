@@ -1,0 +1,35 @@
+|| ?module? _SystemEnum
+
+
+_SystemEnum._from !_v_0 !_vOrd_1 n_2 = _predefined._Cons n_2 (_SystemEnum._from _v_0 _vOrd_1 (select (select _v_0::<{StdClass.IncDec;}> 0)::<{StdOverloaded.+;}> 0 n_2 (select (select _v_0::<{StdClass.IncDec;}> 2)::<{StdOverloaded.one;}> 0)))
+_SystemEnum._from_to !_vEnum_0 !n_1 !e_2 = case (StdBool.not (select (select _vEnum_0::<{StdClass.Enum;}> 0)::<{StdOverloaded.<;}> 0 e_2 n_1)) (True -> _predefined._Cons n_1 (_SystemEnum._from_to _vEnum_0 (select (select (select _vEnum_0::<{StdClass.Enum;}> 1)::<{StdClass.IncDec;}> 0)::<{StdOverloaded.+;}> 0 n_1 (select (select (select _vEnum_0::<{StdClass.Enum;}> 1)::<{StdClass.IncDec;}> 2)::<{StdOverloaded.one;}> 0)) e_2)) (False -> _predefined._Nil) 
+_SystemEnum._from_by_12 !_vEnum_0 n_1 s_2 = _predefined._Cons n_1 (_SystemEnum._from_by_12 _vEnum_0 (select (select (select _vEnum_0::<{StdClass.Enum;}> 1)::<{StdClass.IncDec;}> 0)::<{StdOverloaded.+;}> 0 n_1 s_2) s_2)
+_SystemEnum._from_then !_vEnum_0 n1_1 n2_2 = _predefined._Cons n1_1 (_SystemEnum._from_by_12 _vEnum_0 n2_2 (select (select (select _vEnum_0::<{StdClass.Enum;}> 1)::<{StdClass.IncDec;}> 1)::<{StdOverloaded.-;}> 0 n2_2 n1_1))
+_SystemEnum._from_by_to_13 !_vEnum_0 !n_1 !s_2 !e_3 = case (StdBool.not (select (select _vEnum_0::<{StdClass.Enum;}> 0)::<{StdOverloaded.<;}> 0 e_3 n_1)) (True -> _predefined._Cons n_1 (_SystemEnum._from_by_to_13 _vEnum_0 (select (select (select _vEnum_0::<{StdClass.Enum;}> 1)::<{StdClass.IncDec;}> 0)::<{StdOverloaded.+;}> 0 n_1 s_2) s_2 e_3)) (False -> _predefined._Nil) 
+_SystemEnum._from_by_down_to_14 !_vEnum_0 !n_1 !s_2 !e_3 = case (StdBool.not (select (select _vEnum_0::<{StdClass.Enum;}> 0)::<{StdOverloaded.<;}> 0 n_1 e_3)) (True -> _predefined._Cons n_1 (_SystemEnum._from_by_down_to_14 _vEnum_0 (select (select (select _vEnum_0::<{StdClass.Enum;}> 1)::<{StdClass.IncDec;}> 0)::<{StdOverloaded.+;}> 0 n_1 s_2) s_2 e_3)) (False -> _predefined._Nil) 
+_SystemEnum._from_then_to !_vEnum_0 !n1_1 !n2_2 !e_3 = case (StdBool.not (select (select _vEnum_0::<{StdClass.Enum;}> 0)::<{StdOverloaded.<;}> 0 n2_2 n1_1)) (True -> _SystemEnum._from_by_to_13 _vEnum_0 n1_1 (select (select (select _vEnum_0::<{StdClass.Enum;}> 1)::<{StdClass.IncDec;}> 1)::<{StdOverloaded.-;}> 0 n2_2 n1_1) e_3) (False -> _SystemEnum._from_by_down_to_14 _vEnum_0 n1_1 (select (select (select _vEnum_0::<{StdClass.Enum;}> 1)::<{StdClass.IncDec;}> 1)::<{StdOverloaded.-;}> 0 n2_2 n1_1) e_3) 
+_SystemEnum._from_15 !_vOrd_0 n_1::I = _predefined._Cons n_1 (_SystemEnum._from_15 _vOrd_0 (<{StdInt.+_6}> n_1 StdInt.one_11))
+_SystemEnum._from_4 n_0::I = _SystemEnum._from_15 (<{StdClass.Ord;}> (<{StdOverloaded.<;}> <{StdInt.<_17}>)) n_0
+_SystemEnum._from_16 !_vOrd_0 n_1::C = _predefined._Cons n_1 (_SystemEnum._from_16 _vOrd_0 (<{StdChar.+_14}> n_1 StdChar.one_17))
+_SystemEnum._from_5 n_0::C = _SystemEnum._from_16 (<{StdClass.Ord;}> (<{StdOverloaded.<;}> <{StdChar.<_19}>)) n_0
+_SystemEnum._from_to_17 !n_0::I !e_1::I = case (StdBool.not (<{StdInt.<_17}> e_1 n_0)) (True -> _predefined._Cons n_0 (_SystemEnum._from_to_17 (<{StdInt.+_6}> n_0 StdInt.one_11) e_1)) (False -> _predefined._Nil) 
+_SystemEnum._from_to_6 !n_0::I !e_1::I = _SystemEnum._from_to_17 n_0 e_1
+_SystemEnum._from_to_18 !n_0::C !e_1::C = case (StdBool.not (<{StdChar.<_19}> e_1 n_0)) (True -> _predefined._Cons n_0 (_SystemEnum._from_to_18 (<{StdChar.+_14}> n_0 StdChar.one_17) e_1)) (False -> _predefined._Nil) 
+_SystemEnum._from_to_7 !n_0::C !e_1::C = _SystemEnum._from_to_18 n_0 e_1
+_SystemEnum._from_by_20 n_0::I s_1::I = _predefined._Cons n_0 (_SystemEnum._from_by_20 (<{StdInt.+_6}> n_0 s_1) s_1)
+_SystemEnum._from_then_19 n1_0::I n2_1::I = _predefined._Cons n1_0 (_SystemEnum._from_by_20 n2_1 (<{StdInt.-_7}> n2_1 n1_0))
+_SystemEnum._from_then_8 n1_0::I n2_1::I = _SystemEnum._from_then_19 n1_0 n2_1
+_SystemEnum._from_by_22 n_0::C s_1::C = _predefined._Cons n_0 (_SystemEnum._from_by_22 (<{StdChar.+_14}> n_0 s_1) s_1)
+_SystemEnum._from_then_21 n1_0::C n2_1::C = _predefined._Cons n1_0 (_SystemEnum._from_by_22 n2_1 (<{StdChar.-_15}> n2_1 n1_0))
+_SystemEnum._from_then_9 n1_0::C n2_1::C = _SystemEnum._from_then_21 n1_0 n2_1
+_SystemEnum._from_by_to_24 !n_0::I !s_1::I !e_2::I = case (StdBool.not (<{StdInt.<_17}> e_2 n_0)) (True -> _predefined._Cons n_0 (_SystemEnum._from_by_to_24 (<{StdInt.+_6}> n_0 s_1) s_1 e_2)) (False -> _predefined._Nil) 
+_SystemEnum._from_by_down_to_25 !n_0::I !s_1::I !e_2::I = case (StdBool.not (<{StdInt.<_17}> n_0 e_2)) (True -> _predefined._Cons n_0 (_SystemEnum._from_by_down_to_25 (<{StdInt.+_6}> n_0 s_1) s_1 e_2)) (False -> _predefined._Nil) 
+_SystemEnum._from_then_to_23 !n1_0::I !n2_1::I !e_2::I = case (StdBool.not (<{StdInt.<_17}> n2_1 n1_0)) (True -> _SystemEnum._from_by_to_24 n1_0 (<{StdInt.-_7}> n2_1 n1_0) e_2) (False -> _SystemEnum._from_by_down_to_25 n1_0 (<{StdInt.-_7}> n2_1 n1_0) e_2) 
+_SystemEnum._from_then_to_10 !n1_0::I !n2_1::I !e_2::I = _SystemEnum._from_then_to_23 n1_0 n2_1 e_2
+_SystemEnum._from_by_to_27 !n_0::C !s_1::C !e_2::C = case (StdBool.not (<{StdChar.<_19}> e_2 n_0)) (True -> _predefined._Cons n_0 (_SystemEnum._from_by_to_27 (<{StdChar.+_14}> n_0 s_1) s_1 e_2)) (False -> _predefined._Nil) 
+_SystemEnum._from_by_down_to_28 !n_0::C !s_1::C !e_2::C = case (StdBool.not (<{StdChar.<_19}> n_0 e_2)) (True -> _predefined._Cons n_0 (_SystemEnum._from_by_down_to_28 (<{StdChar.+_14}> n_0 s_1) s_1 e_2)) (False -> _predefined._Nil) 
+_SystemEnum._from_then_to_26 !n1_0::C !n2_1::C !e_2::C = case (StdBool.not (<{StdChar.<_19}> n2_1 n1_0)) (True -> _SystemEnum._from_by_to_27 n1_0 (<{StdChar.-_15}> n2_1 n1_0) e_2) (False -> _SystemEnum._from_by_down_to_28 n1_0 (<{StdChar.-_15}> n2_1 n1_0) e_2) 
+_SystemEnum._from_then_to_11 !n1_0::C !n2_1::C !e_2::C = _SystemEnum._from_then_to_26 n1_0 n2_1 e_2
+
+
+|| Converted Records

@@ -1,0 +1,237 @@
+|| ?module? Data.List
+
+
+<{Data.List.!?}> !_x_0 !_x_1::I = case _x_0 (_predefined._Cons x_1_0 _x_1_1 -> case _x_1 (0 -> Data.Maybe.Just x_1_0) (_ -> <{Data.List.!?}> _x_1_1 (<{StdInt.-_7}> _x_1 1))) (_ -> Data.Maybe.Nothing)
+Data.List.head !xs_0 = StdList.hd xs_0
+Data.List.tail !xs_0 = StdList.tl xs_0
+Data.List.isnull::B !xs_0 = StdList.isEmpty xs_0
+Data.List.keep !n_0::I !xs_1 = StdList.drop (<{StdInt.-_7}> (StdList.length_47 xs_1) n_0) xs_1
+Data.List.unzip3 !_x_0 = case _x_0 (_predefined._Nil -> _Tuple3 _predefined._Nil _predefined._Nil _predefined._Nil) (_predefined._Cons _x_1_0 xyzs_1_1 -> case _x_1_0 (_Tuple3 x_2_0 y_2_1 z_2_2 -> let _x_3_0 = Data.List.unzip3 xyzs_1_1 in _Tuple3 (_predefined._Cons x_2_0 (select _x_3_0::_Tuple3 0)) (_predefined._Cons y_2_1 (select _x_3_0::_Tuple3 1)) (_predefined._Cons z_2_2 (select _x_3_0::_Tuple3 2))) ) 
+Data.List.unzip4 !_x_0 = case _x_0 (_predefined._Nil -> _Tuple4 _predefined._Nil _predefined._Nil _predefined._Nil _predefined._Nil) (_predefined._Cons _x_1_0 wxyzs_1_1 -> case _x_1_0 (_Tuple4 w_2_0 x_2_1 y_2_2 z_2_3 -> let _x_3_0 = Data.List.unzip4 wxyzs_1_1 in _Tuple4 (_predefined._Cons w_2_0 (select _x_3_0::_Tuple4 0)) (_predefined._Cons x_2_1 (select _x_3_0::_Tuple4 1)) (_predefined._Cons y_2_2 (select _x_3_0::_Tuple4 2)) (_predefined._Cons z_2_3 (select _x_3_0::_Tuple4 3))) ) 
+Data.List.unzip5 !_x_0 = case _x_0 (_predefined._Nil -> _Tuple5 _predefined._Nil _predefined._Nil _predefined._Nil _predefined._Nil _predefined._Nil) (_predefined._Cons _x_1_0 vwxyzs_1_1 -> case _x_1_0 (_Tuple5 v_2_0 w_2_1 x_2_2 y_2_3 z_2_4 -> let _x_3_0 = Data.List.unzip5 vwxyzs_1_1 in _Tuple5 (_predefined._Cons v_2_0 (select _x_3_0::_Tuple5 0)) (_predefined._Cons w_2_1 (select _x_3_0::_Tuple5 1)) (_predefined._Cons x_2_2 (select _x_3_0::_Tuple5 2)) (_predefined._Cons y_2_3 (select _x_3_0::_Tuple5 3)) (_predefined._Cons z_2_4 (select _x_3_0::_Tuple5 4))) ) 
+Data.List.replaceInList !cond_0 !new_1 !_x_2 = case _x_2 (_predefined._Nil -> _predefined._Cons new_1 _predefined._Nil) (_predefined._Cons x_1_0 xs_1_1 -> case (cond_0 new_1 x_1_0) (True -> _predefined._Cons new_1 xs_1_1) (False -> _predefined._Cons x_1_0 (Data.List.replaceInList cond_0 new_1 xs_1_1)) ) 
+Data.List.splitWith !f_0 !_x_1 = case _x_1 (_predefined._Nil -> <{_Tuple2!3}> _predefined._Nil _predefined._Nil) (_predefined._Cons x_1_0 xs_1_1 -> case (f_0 x_1_0) (True -> let _x_3_0 = Data.List.splitWith f_0 xs_1_1 in <{_Tuple2!3}> (_predefined._Cons x_1_0 (select _x_3_0::_Tuple2 0)) (select _x_3_0::_Tuple2 1)) (False -> let _x_3_0 = Data.List.splitWith f_0 xs_1_1 in <{_Tuple2!3}> (select _x_3_0::_Tuple2 0) (_predefined._Cons x_1_0 (select _x_3_0::_Tuple2 1))) ) 
+Data.List.snd_141 !tuple_0 = select tuple_0::_Tuple2 1
+Data.List.anon_118::B !<{_v<_0}> !_x_1 !_x_2 = case _x_1 (_Tuple2 a_1_0 _x_1_1 -> case _x_2 (_Tuple2 b_2_0 _x_2_1 -> select <{_v<_0}>::<{StdOverloaded.<;}> 0 a_1_0 b_2_0) ) 
+Data.List.anon_208::B !_x_0 !_x_1 = case _x_0 (_Tuple2 a_1_0 _x_1_1 -> case _x_1 (_Tuple2 b_2_0 _x_2_1 -> <{StdInt.<_17}> a_1_0 b_2_0) ) 
+Data.List.sortByIndex !l_0 = StdList.map Data.List.snd_141 (StdOrdList.sortBy Data.List.anon_208 l_0)
+Data.List.intersperse !i_0 !_x_1 = case _x_1 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons x_1_0 _x_1_1 -> case _x_1_1 (_predefined._Nil -> _predefined._Cons x_1_0 _predefined._Nil) (_ -> _predefined._Cons x_1_0 (_predefined._Cons i_0 (Data.List.intersperse i_0 _x_1_1)))) 
+Data.List.intercalate !xs_0 !xss_1 = StdList.flatten (Data.List.intersperse xs_0 xss_1)
+<{Data.List.c;136;76_120}> !g_l_0 = <{Data.List.g_c1;136;85_233}> g_l_0
+<{Data.List.g_c1;136;85_233}> !g_l_0 = case g_l_0 (_predefined._Cons g_h_1_0 g_t_1_1 -> <{Data.List.g_c2;136;85_232}> g_h_1_0 g_t_1_1) (_ -> _predefined._Nil)
+<{Data.List.g_c2;136;85_232}> !g_h_0 g_t_1 = case g_h_0 (_predefined._Cons h_1_0 t_1_1 -> _predefined._Cons t_1_1 (<{Data.List.c;136;76_120}> g_t_1)) (_ -> <{Data.List.c;136;76_120}> g_t_1)
+<{Data.List.c;136;37_119}> !g_l_0 = <{Data.List.g_c1;136;46_235}> g_l_0
+<{Data.List.g_c1;136;46_235}> !g_l_0 = case g_l_0 (_predefined._Cons g_h_1_0 g_t_1_1 -> <{Data.List.g_c2;136;46_234}> g_h_1_0 g_t_1_1) (_ -> _predefined._Nil)
+<{Data.List.g_c2;136;46_234}> !g_h_0 g_t_1 = case g_h_0 (_predefined._Cons h_1_0 t_1_1 -> _predefined._Cons h_1_0 (<{Data.List.c;136;37_119}> g_t_1)) (_ -> <{Data.List.c;136;37_119}> g_t_1)
+Data.List.transpose !_x_0 = case _x_0 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons _x_1_0 xss_1_1 -> case _x_1_0 (_predefined._Nil -> Data.List.transpose xss_1_1) (_predefined._Cons x_2_0 xs_2_1 -> _predefined._Cons (_predefined._Cons x_2_0 (<{Data.List.c;136;37_119}> xss_1_1)) (Data.List.transpose (_predefined._Cons xs_2_1 (<{Data.List.c;136;76_120}> xss_1_1)))) ) 
+Data.List.foldr_142 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> op_0 a_1_0 (Data.List.foldr_142 op_0 r_1 x_1_1)) 
+Data.List.f_121 x_0 ys_1 r_2 = _predefined._Cons ys_1 (_predefined._Cons (_predefined._Cons x_0 ys_1) r_2)
+Data.List.foldr_209 x_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.f_121 x_0 a_1_0 (Data.List.foldr_209 x_0 r_1 x_1_1)) 
+Data.List.nonEmptySubsequences !_x_0 = case _x_0 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons x_1_0 xs_1_1 -> _predefined._Cons (_predefined._Cons x_1_0 _predefined._Nil) (Data.List.foldr_209 x_1_0 _predefined._Nil (Data.List.nonEmptySubsequences xs_1_1))) 
+Data.List.subsequences xs_0 = _predefined._Cons _predefined._Nil (Data.List.nonEmptySubsequences xs_0)
+Data.List.foldr_144 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> op_0 a_1_0 (Data.List.foldr_144 op_0 r_1 x_1_1)) 
+Data.List.anon_143 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.List.anon_122 y_0 xs_1 = _predefined._Cons y_0 xs_1
+Data.List.anon_210 !f_0 y_1 x_2 = f_0 (Data.List.anon_122 y_1 x_2)
+<{Data.List.interleave`_124}> t_0 ts_1 _x_2 !_x_3 r_4 = case _x_3 (_predefined._Nil -> _Tuple2 ts_1 r_4) (_predefined._Cons y_1_0 ys_1_1 -> let _x_2_0 = <{Data.List.interleave`_124}> t_0 ts_1 (Data.List.anon_210 _x_2 y_1_0) ys_1_1 r_4, us_2_1 = select _x_2_0::_Tuple2 0 in _Tuple2 (_predefined._Cons y_1_0 us_2_1) (_predefined._Cons (_x_2 (_predefined._Cons t_0 (_predefined._Cons y_1_0 us_2_1))) (select _x_2_0::_Tuple2 1))) 
+Data.List.interleave_123 t_0 ts_1 !xs_2 r_3 = select (<{Data.List.interleave`_124}> t_0 ts_1 StdFunc.id xs_2 r_3)::_Tuple2 1
+Data.List.foldr_211 t_0 ts_1 r_2 !_x_3 = case _x_3 (_predefined._Nil -> r_2) (_predefined._Cons a_1_0 x_1_1 -> Data.List.interleave_123 t_0 ts_1 a_1_0 (Data.List.foldr_211 t_0 ts_1 r_2 x_1_1)) 
+Data.List.perms_125 !_x_0 _x_1 = case _x_0 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons t_1_0 ts_1_1 -> Data.List.foldr_211 t_1_0 ts_1_1 (Data.List.perms_125 ts_1_1 (_predefined._Cons t_1_0 _x_1)) (Data.List.permutations _x_1)) 
+Data.List.permutations xs0_0 = _predefined._Cons xs0_0 (Data.List.perms_125 xs0_0 _predefined._Nil)
+Data.List.foldl_145 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_145 op_0 (op_0 r_1 a_1_0) x_1_1) 
+Data.List.foldl1 f_0 !_x_1 = case _x_1 (_predefined._Cons x_1_0 xs_1_1 -> Data.List.foldl_145 f_0 x_1_0 xs_1_1) 
+Data.List.concatMap f_0 !ls_1 = StdList.flatten (StdList.map f_0 ls_1)
+Data.List.maximum !<{_v<_0}> !_x_1 = case _x_1 (_predefined._Cons x_1_0 _x_1_1 -> case _x_1_1 (_predefined._Nil -> x_1_0) (_ -> let y_2_0 = Data.List.maximum <{_v<_0}> _x_1_1 in case (select <{_v<_0}>::<{StdOverloaded.<;}> 0 x_1_0 y_2_0) (True -> y_2_0) (False -> x_1_0) )) 
+Data.List.min_146 !_vOrd_0 !x_1 !y_2 = case (select (select _vOrd_0::<{StdClass.Ord;}> 0)::<{StdOverloaded.<;}> 0 x_1 y_2) (True -> x_1) (False -> y_2) 
+Data.List.minimum !_vOrd_0 !xs_1 = Data.List.foldl1 (Data.List.min_146 _vOrd_0) xs_1
+<{Data.List.c;170;41_126}> !_vEq_0 !_vone_1 !<{_v+_2}> indexes_3 !g_l_4 idx_5 = <{Data.List.g_c1;170;33_236}> g_l_4 _vEq_0 idx_5 indexes_3 _vone_1 <{_v+_2}>
+<{Data.List.g_c1;170;33_236}> !g_l_0 _vEq_1 idx_2 indexes_3 _vone_4 <{_v+_5}> = case g_l_0 (_predefined._Cons x_1_0 g_t_1_1 -> case (StdList.isMember _vEq_1 idx_2 indexes_3) (True -> _predefined._Cons x_1_0 (<{Data.List.c;170;41_126}> _vEq_1 _vone_4 <{_v+_5}> indexes_3 g_t_1_1 (select <{_v+_5}>::<{StdOverloaded.+;}> 0 idx_2 (select _vone_4::<{StdOverloaded.one;}> 0)))) (False -> <{Data.List.c;170;41_126}> _vEq_1 _vone_4 <{_v+_5}> indexes_3 g_t_1_1 (select <{_v+_5}>::<{StdOverloaded.+;}> 0 idx_2 (select _vone_4::<{StdOverloaded.one;}> 0))) ) (_ -> _predefined._Nil)
+<{Data.List.c;170;41_212}> !_vone_0 !<{_v+_1}> indexes_2 !g_l_3 idx_4::I = <{Data.List.g_c1;170;33_237}> g_l_3 idx_4 indexes_2 _vone_0 <{_v+_1}>
+<{Data.List.g_c1;170;33_237}> !g_l_0 idx_1::I indexes_2 _vone_3 <{_v+_4}> = case g_l_0 (_predefined._Cons x_1_0 g_t_1_1 -> case (StdList.isMember_51 idx_1 indexes_2) (True -> _predefined._Cons x_1_0 (<{Data.List.c;170;41_212}> _vone_3 <{_v+_4}> indexes_2 g_t_1_1 (select <{_v+_4}>::<{StdOverloaded.+;}> 0 idx_1 (select _vone_3::<{StdOverloaded.one;}> 0)))) (False -> <{Data.List.c;170;41_212}> _vone_3 <{_v+_4}> indexes_2 g_t_1_1 (select <{_v+_4}>::<{StdOverloaded.+;}> 0 idx_1 (select _vone_3::<{StdOverloaded.one;}> 0))) ) (_ -> _predefined._Nil)
+<{Data.List.c;170;41_213}> !<{_v+_0}> indexes_1 !g_l_2 idx_3::I = <{Data.List.g_c1;170;33_238}> g_l_2 idx_3 indexes_1 <{_v+_0}>
+<{Data.List.g_c1;170;33_238}> !g_l_0 idx_1::I indexes_2 <{_v+_3}> = case g_l_0 (_predefined._Cons x_1_0 g_t_1_1 -> case (StdList.isMember_51 idx_1 indexes_2) (True -> _predefined._Cons x_1_0 (<{Data.List.c;170;41_213}> <{_v+_3}> indexes_2 g_t_1_1 (select <{_v+_3}>::<{StdOverloaded.+;}> 0 idx_1 StdInt.one_11))) (False -> <{Data.List.c;170;41_213}> <{_v+_3}> indexes_2 g_t_1_1 (select <{_v+_3}>::<{StdOverloaded.+;}> 0 idx_1 StdInt.one_11)) ) (_ -> _predefined._Nil)
+<{Data.List.c;170;41_214}> indexes_0 !g_l_1 idx_2::I = <{Data.List.g_c1;170;33_239}> g_l_1 idx_2 indexes_0
+<{Data.List.g_c1;170;33_239}> !g_l_0 idx_1::I indexes_2 = case g_l_0 (_predefined._Cons x_1_0 g_t_1_1 -> case (StdList.isMember_51 idx_1 indexes_2) (True -> _predefined._Cons x_1_0 (<{Data.List.c;170;41_214}> indexes_2 g_t_1_1 (<{StdInt.+_6}> idx_1 StdInt.one_11))) (False -> <{Data.List.c;170;41_214}> indexes_2 g_t_1_1 (<{StdInt.+_6}> idx_1 StdInt.one_11)) ) (_ -> _predefined._Nil)
+Data.List.getItems !list_0 !indexes_1 = <{Data.List.c;170;41_214}> indexes_1 list_0 0
+Data.List.scanl f_0 q_1 ls_2 = _predefined._Cons q_1 (<{Data.List._c;173;34_240}> ls_2 f_0 q_1)
+<{Data.List._c;173;34_240}> !ls_0 f_1 q_2 = case ls_0 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons x_1_0 xs_1_1 -> Data.List.scanl f_1 (f_1 q_2 x_1_0) xs_1_1) 
+Data.List.scanl1 f_0 !_x_1 = case _x_1 (_predefined._Cons x_1_0 xs_1_1 -> Data.List.scanl f_0 x_1_0 xs_1_1) (_predefined._Nil -> _predefined._Nil) 
+Data.List.foldr1 _x_0 !_x_1 = case _x_1 (_predefined._Cons x_1_0 _x_1_1 -> case _x_1_1 (_predefined._Nil -> x_1_0) (_ -> _x_0 x_1_0 (Data.List.foldr1 _x_0 _x_1_1))) 
+Data.List.replicate !n_0::I x_1 = StdList.take n_0 (StdList.repeat x_1)
+Data.List.cycle !xs_0 = let <{xs`_1_0}> = <{StdList.++}> xs_0 <{xs`_1_0}> in <{xs`_1_0}>
+Data.List.unfoldr !f_0 b_1 = <{Data.List._c;194;3_241}> (f_0 b_1) f_0
+<{Data.List._c;194;3_241}> !_x_0 f_1 = case _x_0 (Data.Maybe.Just _x_1_0 -> case _x_1_0 (_Tuple2 a_2_0 new_b_2_1 -> _predefined._Cons a_2_0 (Data.List.unfoldr f_1 new_b_2_1)) ) (Data.Maybe.Nothing -> _predefined._Nil) 
+Data.List.break _x_0 !xs_1 = case xs_1 (_predefined._Nil -> _Tuple2 xs_1 xs_1) (_predefined._Cons x_1_0 xs`_1_1 -> case (_x_0 x_1_0) (True -> _Tuple2 _predefined._Nil xs_1) (False -> let _x_3_0 = Data.List.break _x_0 <{xs`_1_1}> in _Tuple2 (_predefined._Cons x_1_0 (select _x_3_0::_Tuple2 0)) (select _x_3_0::_Tuple2 1)) ) 
+Data.List.stripPrefix !<{_v==_0}> !_x_1 ys_2 = case _x_1 (_predefined._Nil -> Data.Maybe.Just ys_2) (_predefined._Cons x_1_0 xs_1_1 -> case ys_2 (_predefined._Cons y_2_0 ys_2_1 -> case (select <{_v==_0}>::<{StdOverloaded.==;}> 0 x_1_0 y_2_0) (True -> Data.List.stripPrefix <{_v==_0}> xs_1_1 ys_2_1) ) ) (_ -> Data.Maybe.Nothing)
+Data.List.groupBy _x_0 !_x_1 = case _x_1 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons x_1_0 xs_1_1 -> let _x_2_0 = StdList.span (_x_0 x_1_0) xs_1_1 in _predefined._Cons (_predefined._Cons x_1_0 (select _x_2_0::_Tuple2 0)) (Data.List.groupBy _x_0 (select _x_2_0::_Tuple2 1))) 
+Data.List.group !<{_v==_0}> = Data.List.groupBy (select <{_v==_0}>::<{StdOverloaded.==;}> 0)
+Data.List.anon_127 x_0 ys_1 = _predefined._Cons x_0 ys_1
+Data.List.inits xs_0 = _predefined._Cons _predefined._Nil (<{Data.List._c;219;34_242}> xs_0)
+<{Data.List._c;219;34_242}> !xs_0 = case xs_0 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons x_1_0 xs`_1_1 -> StdList.map (Data.List.anon_127 x_1_0) (Data.List.inits <{xs`_1_1}>)) 
+Data.List.tails xs_0 = _predefined._Cons xs_0 (<{Data.List._c;224;34_243}> xs_0)
+<{Data.List._c;224;34_243}> !xs_0 = case xs_0 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons _x_1_0 xs`_1_1 -> Data.List.tails <{xs`_1_1}>) 
+Data.List.isPrefixOf::B !<{_v==_0}> !_x_1 _x_2 = case _x_1 (_predefined._Nil -> True) (_ -> case _x_2 (_predefined._Nil -> False) (_predefined._Cons y_1_0 ys_1_1 -> case _x_1 (_predefined._Cons x_2_0 xs_2_1 -> case (select <{_v==_0}>::<{StdOverloaded.==;}> 0 x_2_0 y_1_0) (True -> Data.List.isPrefixOf <{_v==_0}> xs_2_1 ys_1_1) (False -> False) ) ) )
+Data.List.isSuffixOf::B !<{_v==_0}> !x_1 y_2 = Data.List.isPrefixOf <{_v==_0}> (StdList.reverse x_1) (StdList.reverse y_2)
+Data.List.isInfixOf::B !<{_v==_0}> needle_1 haystack_2 = StdList.any (Data.List.isPrefixOf <{_v==_0}> needle_1) (Data.List.tails haystack_2)
+Data.List.foldl_147 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_147 op_0 (op_0 r_1 a_1_0) x_1_1) 
+Data.List.zip3 !_x_0 _x_1 _x_2 = case _x_0 (_predefined._Cons a_1_0 as_1_1 -> case _x_1 (_predefined._Cons b_2_0 bs_2_1 -> case _x_2 (_predefined._Cons c_3_0 cs_3_1 -> _predefined._Cons (_Tuple3 a_1_0 b_2_0 c_3_0) (Data.List.zip3 as_1_1 bs_2_1 cs_3_1)) ) ) (_ -> _predefined._Nil)
+Data.List.calc_129::I !<{_v==_0}> c_1 z_2::I !_x_3 = case _x_3 (_Tuple3 c`_1_0 x_1_1 y_1_2 -> StdOrdList.minList_18 (_predefined._Cons (<{StdInt.+_6}> y_1_2 1) (_predefined._Cons (<{StdInt.+_6}> z_2 1) (_predefined._Cons (<{StdInt.+_6}> (<{Data.List._if;244;46_244}> (StdBool.not (select <{_v==_0}>::<{StdOverloaded.==;}> 0 <{c`_1_0}> c_1))) x_1_1) _predefined._Nil)))) 
+<{Data.List._if;244;46_244}>::I !_x_0::B = case _x_0 (True -> 1) (_ -> 0)
+Data.List.transform_128 !<{_v==_0}> !xs_1 !ns_2 c_3 = case ns_2 (_predefined._Cons n_1_0 ns`_1_1 -> StdList.scan (Data.List.calc_129 <{_v==_0}> c_3) (<{StdInt.+_6}> n_1_0 1) (Data.List.zip3 xs_1 ns_2 <{ns`_1_1}>)) 
+Data.List.foldl_215 !<{_v==_0}> xs_1 !r_2 !_x_3 = case _x_3 (_predefined._Nil -> r_2) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_215 <{_v==_0}> xs_1 (Data.List.transform_128 <{_v==_0}> xs_1 r_2 a_1_0) x_1_1) 
+Data.List.levenshtein::I !<{_v==_0}> !xs_1 !ys_2 = StdList.last (Data.List.foldl_215 <{_v==_0}> xs_1 (_SystemEnum._from_to_6 0 (StdList.length_47 xs_1)) ys_2)
+Data.List.elem::B !<{_v==_0}> _x_1 !_x_2 = case _x_2 (_predefined._Nil -> False) (_predefined._Cons y_1_0 ys_1_1 -> case (select <{_v==_0}>::<{StdOverloaded.==;}> 0 _x_1 y_1_0) (True -> True) (False -> Data.List.elem <{_v==_0}> _x_1 ys_1_1) ) 
+Data.List.notElem::B !<{_v==_0}> _x_1 !_x_2 = case _x_2 (_predefined._Nil -> True) (_predefined._Cons y_1_0 ys_1_1 -> case (StdBool.not (select <{_v==_0}>::<{StdOverloaded.==;}> 0 _x_1 y_1_0)) (True -> Data.List.notElem <{_v==_0}> _x_1 ys_1_1) (False -> False) ) 
+Data.List.lookup !<{_v==_0}> _x_1 !_x_2 = case _x_2 (_predefined._Nil -> Data.Maybe.Nothing) (_predefined._Cons _x_1_0 xys_1_1 -> case _x_1_0 (_Tuple2 x_2_0 y_2_1 -> case (select <{_v==_0}>::<{StdOverloaded.==;}> 0 _x_1 x_2_0) (True -> Data.Maybe.Just y_2_1) (False -> Data.List.lookup <{_v==_0}> _x_1 xys_1_1) ) ) 
+Data.List.anon_148 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.List.anon_216 !g_0 x_1 = Data.Maybe.listToMaybe (g_0 x_1)
+Data.List.anon_217 _x_0 !x_1 = Data.Maybe.listToMaybe (StdList.filter _x_0 x_1)
+Data.List.find p_0 = Data.List.anon_217 p_0
+Data.List.select !p_0 !x_1 !_x_2 = case _x_2 (_Tuple2 ts_1_0 fs_1_1 -> case (p_0 x_1) (True -> <{_Tuple2!3}> (_predefined._Cons x_1 ts_1_0) fs_1_1) (False -> <{_Tuple2!3}> ts_1_0 (_predefined._Cons x_1 fs_1_1)) ) 
+<{Data.List.foldr`}> !_x_0 !acc_1 !_x_2 = case _x_2 (_predefined._Nil -> acc_1) (_predefined._Cons x_1_0 xs_1_1 -> let !tmp_2_0 = <{Data.List.foldr`}> _x_0 acc_1 xs_1_1 in _x_0 x_1_0 tmp_2_0) 
+Data.List.partition !p_0 !xs_1 = <{Data.List.foldr`}> (Data.List.select p_0) (_Tuple2 _predefined._Nil _predefined._Nil) xs_1
+Data.List.anon_130::B !<{_v==_0}> x_1 y_2 = select <{_v==_0}>::<{StdOverloaded.==;}> 0 x_1 y_2
+Data.List.anon_149 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+<{Data.List.c;287;24_132}> p_0 !g_l_1 = <{Data.List.g_c1;287;33_246}> g_l_1 p_0
+<{Data.List.g_c1;287;33_246}> !g_l_0 p_1 = case g_l_0 (_predefined._Cons g_h_1_0 g_t_1_1 -> <{Data.List.g_c2;287;33_245}> g_h_1_0 p_1 g_t_1_1) (_ -> _predefined._Nil)
+<{Data.List.g_c2;287;33_245}> !g_h_0 !p_1 g_t_2 = case g_h_0 (_Tuple2 x_1_0 i_1_1 -> case (p_1 x_1_0) (True -> _predefined._Cons i_1_1 (<{Data.List.c;287;24_132}> p_1 g_t_2)) ) (_ -> <{Data.List.c;287;24_132}> p_1 g_t_2)
+Data.List.findIndices p_0 !xs_1 = <{Data.List.c;287;24_132}> p_0 (StdList.zip2 xs_1 (_SystemEnum._from_4 0))
+Data.List.anon_218 !g_0 x_1 = Data.Maybe.listToMaybe (g_0 x_1)
+Data.List.anon_219 p_0 !x_1 = Data.Maybe.listToMaybe (Data.List.findIndices p_0 x_1)
+Data.List.findIndex p_0 = Data.List.anon_219 p_0
+Data.List.elemIndex !<{_v==_0}> x_1 = Data.List.findIndex (Data.List.anon_130 <{_v==_0}> x_1)
+Data.List.anon_131::B !<{_v==_0}> x_1 y_2 = select <{_v==_0}>::<{StdOverloaded.==;}> 0 x_1 y_2
+Data.List.elemIndices !<{_v==_0}> x_1 = Data.List.findIndices (Data.List.anon_131 <{_v==_0}> x_1)
+Data.List.zip4 !_x_0 _x_1 _x_2 _x_3 = case _x_0 (_predefined._Cons a_1_0 as_1_1 -> case _x_1 (_predefined._Cons b_2_0 bs_2_1 -> case _x_2 (_predefined._Cons c_3_0 cs_3_1 -> case _x_3 (_predefined._Cons d_4_0 ds_4_1 -> _predefined._Cons (_Tuple4 a_1_0 b_2_0 c_3_0 d_4_0) (Data.List.zip4 as_1_1 bs_2_1 cs_3_1 ds_4_1)) ) ) ) (_ -> _predefined._Nil)
+Data.List.zip5 !_x_0 _x_1 _x_2 _x_3 _x_4 = case _x_0 (_predefined._Cons a_1_0 as_1_1 -> case _x_1 (_predefined._Cons b_2_0 bs_2_1 -> case _x_2 (_predefined._Cons c_3_0 cs_3_1 -> case _x_3 (_predefined._Cons d_4_0 ds_4_1 -> case _x_4 (_predefined._Cons e_5_0 es_5_1 -> _predefined._Cons (_Tuple5 a_1_0 b_2_0 c_3_0 d_4_0 e_5_0) (Data.List.zip5 as_1_1 bs_2_1 cs_3_1 ds_4_1 es_5_1)) ) ) ) ) (_ -> _predefined._Nil)
+Data.List.zipSt z_0 !_x_1 _x_2 st_3 = case _x_1 (_predefined._Cons a_1_0 as_1_1 -> case _x_2 (_predefined._Cons b_2_0 bs_2_1 -> Data.List.zipSt z_0 as_1_1 bs_2_1 (z_0 a_1_0 b_2_0 st_3)) ) (_ -> st_3)
+Data.List.zipWith z_0 !_x_1 _x_2 = case _x_1 (_predefined._Cons a_1_0 as_1_1 -> case _x_2 (_predefined._Cons b_2_0 bs_2_1 -> _predefined._Cons (z_0 a_1_0 b_2_0) (Data.List.zipWith z_0 as_1_1 bs_2_1)) ) (_ -> _predefined._Nil)
+Data.List.zipWithSt z_0 !_x_1 _x_2 st_3 = case _x_1 (_predefined._Cons a_1_0 as_1_1 -> case _x_2 (_predefined._Cons b_2_0 bs_2_1 -> let _x_3_0 = z_0 a_1_0 b_2_0 st_3, _x_3_1 = Data.List.zipWithSt z_0 as_1_1 bs_2_1 (select _x_3_0::_Tuple2 1) in _Tuple2 (_predefined._Cons (select _x_3_0::_Tuple2 0) (select _x_3_1::_Tuple2 0)) (select _x_3_1::_Tuple2 1)) ) (_ -> _Tuple2 _predefined._Nil st_3)
+Data.List.zipWith3 z_0 !_x_1 _x_2 _x_3 = case _x_1 (_predefined._Cons a_1_0 as_1_1 -> case _x_2 (_predefined._Cons b_2_0 bs_2_1 -> case _x_3 (_predefined._Cons c_3_0 cs_3_1 -> _predefined._Cons (z_0 a_1_0 b_2_0 c_3_0) (Data.List.zipWith3 z_0 as_1_1 bs_2_1 cs_3_1)) ) ) (_ -> _predefined._Nil)
+Data.List.zipWith4 z_0 !_x_1 _x_2 _x_3 _x_4 = case _x_1 (_predefined._Cons a_1_0 as_1_1 -> case _x_2 (_predefined._Cons b_2_0 bs_2_1 -> case _x_3 (_predefined._Cons c_3_0 cs_3_1 -> case _x_4 (_predefined._Cons d_4_0 ds_4_1 -> _predefined._Cons (z_0 a_1_0 b_2_0 c_3_0 d_4_0) (Data.List.zipWith4 z_0 as_1_1 bs_2_1 cs_3_1 ds_4_1)) ) ) ) (_ -> _predefined._Nil)
+Data.List.zipWith5 z_0 !_x_1 _x_2 _x_3 _x_4 _x_5 = case _x_1 (_predefined._Cons a_1_0 as_1_1 -> case _x_2 (_predefined._Cons b_2_0 bs_2_1 -> case _x_3 (_predefined._Cons c_3_0 cs_3_1 -> case _x_4 (_predefined._Cons d_4_0 ds_4_1 -> case _x_5 (_predefined._Cons e_5_0 es_5_1 -> _predefined._Cons (z_0 a_1_0 b_2_0 c_3_0 d_4_0 e_5_0) (Data.List.zipWith5 z_0 as_1_1 bs_2_1 cs_3_1 ds_4_1 es_5_1)) ) ) ) ) (_ -> _predefined._Nil)
+<{Data.List.nub`_133}> !<{_v==_0}> !_x_1 _x_2 = case _x_1 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons x_1_0 xs_1_1 -> case (Data.List.elem <{_v==_0}> x_1_0 _x_2) (True -> <{Data.List.nub`_133}> <{_v==_0}> xs_1_1 _x_2) (False -> _predefined._Cons x_1_0 (<{Data.List.nub`_133}> <{_v==_0}> xs_1_1 (_predefined._Cons x_1_0 _x_2))) ) 
+Data.List.nub !<{_v==_0}> !l_1 = <{Data.List.nub`_133}> <{_v==_0}> l_1 _predefined._Nil
+Data.List.elem_by::B _x_0 _x_1 !_x_2 = case _x_2 (_predefined._Nil -> False) (_predefined._Cons x_1_0 xs_1_1 -> case (_x_0 _x_1 x_1_0) (True -> True) (False -> Data.List.elem_by _x_0 _x_1 xs_1_1) ) 
+<{Data.List.nubBy`_134}> eq_0 !_x_1 _x_2 = case _x_1 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons y_1_0 ys_1_1 -> case (Data.List.elem_by eq_0 y_1_0 _x_2) (True -> <{Data.List.nubBy`_134}> eq_0 ys_1_1 _x_2) (False -> _predefined._Cons y_1_0 (<{Data.List.nubBy`_134}> eq_0 ys_1_1 (_predefined._Cons y_1_0 _x_2))) ) 
+Data.List.nubBy eq_0 !l_1 = <{Data.List.nubBy`_134}> eq_0 l_1 _predefined._Nil
+Data.List.deleteBy _x_0 _x_1 !_x_2 = case _x_2 (_predefined._Nil -> _predefined._Nil) (_predefined._Cons y_1_0 ys_1_1 -> case (_x_0 _x_1 y_1_0) (True -> ys_1_1) (False -> _predefined._Cons y_1_0 (Data.List.deleteBy _x_0 _x_1 ys_1_1)) ) 
+Data.List.delete !<{_v==_0}> = Data.List.deleteBy (select <{_v==_0}>::<{StdOverloaded.==;}> 0)
+Data.List.foldl_152 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_152 op_0 (op_0 r_1 a_1_0) x_1_1) 
+Data.List.foldl_151 op_0 r_1 !l_2 = Data.List.foldl_152 op_0 r_1 l_2
+Data.List.flip_150 !f_0 a_1 b_2 = f_0 b_2 a_1
+Data.List.flip_220 _x_0 !a_1 b_2 = Data.List.deleteBy _x_0 b_2 a_1
+Data.List.foldl_222 _x_0 !r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_222 _x_0 (Data.List.flip_220 _x_0 r_1 a_1_0) x_1_1) 
+Data.List.foldl_221 _x_0 !r_1 !l_2 = Data.List.foldl_222 _x_0 r_1 l_2
+Data.List.deleteFirstsBy eq_0 = Data.List.foldl_221 eq_0
+Data.List.foldl_154 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_154 op_0 (op_0 r_1 a_1_0) x_1_1) 
+Data.List.flip_153 !f_0 a_1 b_2 = f_0 b_2 a_1
+Data.List.flip_223 _x_0 !a_1 b_2 = Data.List.deleteBy _x_0 b_2 a_1
+Data.List.foldl_224 _x_0 !r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_224 _x_0 (Data.List.flip_223 _x_0 r_1 a_1_0) x_1_1) 
+Data.List.differenceBy eq_0 !as_1 !bs_2 = Data.List.foldl_224 eq_0 as_1 bs_2
+Data.List.difference !<{_v==_0}> = Data.List.differenceBy (select <{_v==_0}>::<{StdOverloaded.==;}> 0)
+<{Data.List.c;384;31_135}> eq_0 ys_1 !g_l_2 = <{Data.List.g_c1;384;36_247}> g_l_2 eq_0 ys_1
+<{Data.List.g_c1;384;36_247}> !g_l_0 eq_1 ys_2 = case g_l_0 (_predefined._Cons x_1_0 g_t_1_1 -> case (StdList.any (eq_1 x_1_0) ys_2) (True -> _predefined._Cons x_1_0 (<{Data.List.c;384;31_135}> eq_1 ys_2 g_t_1_1)) (False -> <{Data.List.c;384;31_135}> eq_1 ys_2 g_t_1_1) ) (_ -> _predefined._Nil)
+Data.List.intersectBy _x_0 !_x_1 !_x_2 = case _x_1 (_predefined._Nil -> _predefined._Nil) (_ -> case _x_2 (_predefined._Nil -> _predefined._Nil) (_ -> <{Data.List.c;384;31_135}> _x_0 _x_2 _x_1))
+Data.List.intersect !<{_v==_0}> = Data.List.intersectBy (select <{_v==_0}>::<{StdOverloaded.==;}> 0)
+Data.List.foldl_156 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_156 op_0 (op_0 r_1 a_1_0) x_1_1) 
+Data.List.flip_155 !f_0 a_1 b_2 = f_0 b_2 a_1
+Data.List.flip_225 _x_0 !a_1 b_2 = Data.List.deleteBy _x_0 b_2 a_1
+Data.List.foldl_226 _x_0 !r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_226 _x_0 (Data.List.flip_225 _x_0 r_1 a_1_0) x_1_1) 
+Data.List.unionBy eq_0 !xs_1 ys_2 = <{StdList.++}> xs_1 (Data.List.foldl_226 eq_0 (Data.List.nubBy eq_0 ys_2) xs_1)
+Data.List.union !<{_v==_0}> = Data.List.unionBy (select <{_v==_0}>::<{StdOverloaded.==;}> 0)
+Data.List.isMemberGen::B !<{_vgEq*_0}> !x_1 !_x_2 = case _x_2 (_predefined._Cons hd_1_0 tl_1_1 -> case (select <{_vgEq*_0}>::<{Data.List.gEq_s;}> 0 hd_1_0 x_1) (True -> True) (False -> Data.List.isMemberGen <{_vgEq*_0}> x_1 tl_1_1) ) (_predefined._Nil -> False) 
+Data.List.strictFoldr !_x_0 !b_1 !_x_2 = case _x_2 (_predefined._Nil -> b_1) (_predefined._Cons x_1_0 xs_1_1 -> _x_0 x_1_0 (Data.List.strictFoldr _x_0 b_1 xs_1_1)) 
+Data.List.strictFoldl !_x_0 !b_1 !_x_2 = case _x_2 (_predefined._Nil -> b_1) (_predefined._Cons x_1_0 xs_1_1 -> let !r_2_0 = _x_0 b_1 x_1_0 in Data.List.strictFoldl _x_0 r_2_0 xs_1_1) 
+Data.List.strictTRMapAcc !f_0 !_x_1 !acc_2 = case _x_1 (_predefined._Nil -> acc_2) (_predefined._Cons x_1_0 xs_1_1 -> Data.List.strictTRMapAcc f_0 xs_1_1 (_predefined._Cons (f_0 x_1_0) acc_2)) 
+Data.List.strictTRMapRev !f_0 !xs_1 = Data.List.strictTRMapAcc f_0 xs_1 _predefined._Nil
+<{Data.List.rev`_136}> !_x_0 !acc_1 = case _x_0 (_predefined._Nil -> acc_1) (_predefined._Cons x_1_0 xs_1_1 -> <{Data.List.rev`_136}> xs_1_1 (_predefined._Cons x_1_0 acc_1)) 
+Data.List.reverseTR !xs_0 = <{Data.List.rev`_136}> xs_0 _predefined._Nil
+Data.List.strictTRMap !f_0 !xs_1 = Data.List.reverseTR (Data.List.strictTRMapAcc f_0 xs_1 _predefined._Nil)
+Data.List.flattenTRAcc !_x_0 acc_1 = case _x_0 (_predefined._Nil -> acc_1) (_predefined._Cons xs_1_0 xss_1_1 -> let !r_2_0 = <{StdList.++}> (Data.List.reverseTR xs_1_0) acc_1 in Data.List.flattenTRAcc xss_1_1 r_2_0) 
+Data.List.flattenTR !xss_0 = Data.List.reverseTR (Data.List.flattenTRAcc xss_0 _predefined._Nil)
+Data.List.strictFoldrSt !_x_0 !b_1 !_x_2 st_3 = case _x_2 (_predefined._Nil -> _Tuple2 b_1 st_3) (_predefined._Cons x_1_0 xs_1_1 -> let !_x_2_0 = Data.List.strictFoldrSt _x_0 b_1 xs_1_1 st_3, !_x_2_1 = _x_0 x_1_0 (select _x_2_0::_Tuple2 0) (select _x_2_0::_Tuple2 1) in _Tuple2 (select _x_2_1::_Tuple2 0) (select _x_2_1::_Tuple2 1)) 
+Data.List.strictFoldlSt !_x_0 !b_1 !_x_2 st_3 = case _x_2 (_predefined._Nil -> _Tuple2 b_1 st_3) (_predefined._Cons x_1_0 xs_1_1 -> let !_x_2_0 = _x_0 b_1 x_1_0 st_3 in Data.List.strictFoldlSt _x_0 (select _x_2_0::_Tuple2 0) xs_1_1 (select _x_2_0::_Tuple2 1)) 
+Data.List.strictTRMapStAcc !f_0 !_x_1 !acc_2 !st_3 = case _x_1 (_predefined._Nil -> <{_Tuple2!3}> acc_2 st_3) (_predefined._Cons x_1_0 xs_1_1 -> let !_x_2_0 = f_0 x_1_0 st_3 in Data.List.strictTRMapStAcc f_0 xs_1_1 (_predefined._Cons (select _x_2_0::_Tuple2 0) acc_2) (select _x_2_0::_Tuple2 1)) 
+Data.List.strictTRMapSt !f_0 !xs_1 !st_2 = let !_x_1_0 = Data.List.strictTRMapStAcc f_0 xs_1 _predefined._Nil st_2 in <{_Tuple2!3}> (Data.List.reverseTR (select _x_1_0::_Tuple2 0)) (select _x_1_0::_Tuple2 1)
+Data.List.strictTRZipWithAcc !f_0 !_x_1 !_x_2 !acc_3 = case _x_1 (_predefined._Cons a_1_0 as_1_1 -> case _x_2 (_predefined._Cons b_2_0 bs_2_1 -> Data.List.strictTRZipWithAcc f_0 as_1_1 bs_2_1 (_predefined._Cons (f_0 a_1_0 b_2_0) acc_3)) ) (_ -> acc_3)
+Data.List.strictTRZipWithRev !f_0 !as_1 !bs_2 = Data.List.strictTRZipWithAcc f_0 as_1 bs_2 _predefined._Nil
+Data.List.strictTRZipWith !f_0 !as_1 !bs_2 = Data.List.reverseTR (Data.List.strictTRZipWithRev f_0 as_1 bs_2)
+Data.List.strictTRZip4Acc !_x_0 !_x_1 !_x_2 !_x_3 !acc_4 = case _x_0 (_predefined._Cons a_1_0 as_1_1 -> case _x_1 (_predefined._Cons b_2_0 bs_2_1 -> case _x_2 (_predefined._Cons c_3_0 cs_3_1 -> case _x_3 (_predefined._Cons d_4_0 ds_4_1 -> Data.List.strictTRZip4Acc as_1_1 bs_2_1 cs_3_1 ds_4_1 (_predefined._Cons (_Tuple4 a_1_0 b_2_0 c_3_0 d_4_0) acc_4)) ) ) ) (_ -> acc_4)
+Data.List.strictTRZip4Rev !as_0 !bs_1 !cs_2 !ds_3 = Data.List.strictTRZip4Acc as_0 bs_1 cs_2 ds_3 _predefined._Nil
+Data.List.strictTRZip4 !as_0 !bs_1 !cs_2 !ds_3 = Data.List.reverseTR (Data.List.strictTRZip4Rev as_0 bs_1 cs_2 ds_3)
+Data.List.strictTRZip2Acc !_x_0 !_x_1 !acc_2 = case _x_0 (_predefined._Cons a_1_0 as_1_1 -> case _x_1 (_predefined._Cons b_2_0 bs_2_1 -> Data.List.strictTRZip2Acc as_1_1 bs_2_1 (_predefined._Cons (_Tuple2 a_1_0 b_2_0) acc_2)) ) (_ -> acc_2)
+Data.List.strictTRZip2Rev !as_0 !bs_1 = Data.List.strictTRZip2Acc as_0 bs_1 _predefined._Nil
+Data.List.strictTRZip2 !as_0 !bs_1 = Data.List.reverseTR (Data.List.strictTRZip2Rev as_0 bs_1)
+Data.List.strictTRZipWith3Acc !f_0 !_x_1 !_x_2 !_x_3 !acc_4 = case _x_1 (_predefined._Cons a_1_0 as_1_1 -> case _x_2 (_predefined._Cons b_2_0 bs_2_1 -> case _x_3 (_predefined._Cons c_3_0 cs_3_1 -> Data.List.strictTRZipWith3Acc f_0 as_1_1 bs_2_1 cs_3_1 (_predefined._Cons (f_0 a_1_0 b_2_0 c_3_0) acc_4)) ) ) (_ -> acc_4)
+Data.List.strictTRZipWith3Rev !f_0 !as_1 !bs_2 !cs_3 = Data.List.strictTRZipWith3Acc f_0 as_1 bs_2 cs_3 _predefined._Nil
+Data.List.strictTRZipWith3 !f_0 !as_1 !bs_2 !cs_3 = Data.List.reverseTR (Data.List.strictTRZipWith3Rev f_0 as_1 bs_2 cs_3)
+Data.List.product !<{_v*_0}> !_vone_1 !xs_2 = StdList.prod <{_v*_0}> _vone_1 xs_2
+<{Data.List.c;22;21_137}> f_0 !g_l_1 = <{Data.List.g_c1;22;26_248}> g_l_1 f_0
+<{Data.List.g_c1;22;26_248}> !g_l_0 f_1 = case g_l_0 (_predefined._Cons e_1_0 g_t_1_1 -> _predefined._Cons (f_1 e_1_0) (<{Data.List.c;22;21_137}> f_1 g_t_1_1)) (_ -> _predefined._Nil)
+Data.List.fmap_91 f_0 !l_1 = <{Data.List.c;22;21_137}> f_0 l_1
+Data.List.pure_93 x_0 = _predefined._Cons x_0 _predefined._Nil
+<{Data.List.<*>_92}> !xs_0 x_1 = Control.Applicative.liftA2 (<{Control.Applicative.Applicative;}> <{Data.List.<*>_92}> Data.List.pure_93 (<{Data.Functor.Functor;}> Data.List.fmap_91)) StdFunc.id xs_0 x_1
+<{Data.List.<|>_94}> !fa_0 <{fa`_1}> = <{StdList.++}> fa_0 <{fa`_1}>
+Data.List.empty_95 = _predefined._Nil
+Data.List.foldr_158 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> op_0 a_1_0 (Data.List.foldr_158 op_0 r_1 x_1_1)) 
+Data.List.anon_157 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.List.anon_227 !g_0 x_1 = <{StdList.++}> (g_0 x_1)
+Data.List.foldr_228 g_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.anon_227 g_0 a_1_0 (Data.List.foldr_228 g_0 r_1 x_1_1)) 
+Data.List.bind_96 !m_0 k_1 = Data.List.foldr_228 k_1 _predefined._Nil m_0
+Data.List.mplus_97 !xs_0 ys_1 = <{StdList.++}> xs_0 ys_1
+Data.List.mzero_98 = _predefined._Nil
+Data.List.mappend_99 !xs_0 ys_1 = <{StdList.++}> xs_0 ys_1
+Data.List.mempty_100 = _predefined._Nil
+Data.List.foldr_160 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> op_0 a_1_0 (Data.List.foldr_160 op_0 r_1 x_1_1)) 
+Data.List.anon_159 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.List.foldr_229 f_0 g_1 r_2 !_x_3 = case _x_3 (_predefined._Nil -> r_2) (_predefined._Cons a_1_0 x_1_1 -> Data.List.anon_159 f_0 g_1 a_1_0 (Data.List.foldr_229 f_0 g_1 r_2 x_1_1)) 
+Data.List.foldMap_102 !_vMonoid_0 f_1 !x_2 = Data.List.foldr_229 (select (select _vMonoid_0::<{Data.Monoid.Monoid;}> 1)::<{Data.Monoid.Semigroup;}> 0) f_1 (select _vMonoid_0::<{Data.Monoid.Monoid;}> 0) x_2
+Data.List.fold_101 !_vMonoid_0 !x_1 = Data.List.foldMap_102 _vMonoid_0 StdFunc.id x_1
+Data.List.foldl_161 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_161 op_0 (op_0 r_1 a_1_0) x_1_1) 
+Data.List.foldl_103 f_0 x_1 !y_2 = Data.List.foldl_161 f_0 x_1 y_2
+Data.List.foldl1_104 f_0 !x_1 = Data.List.foldl1 f_0 x_1
+Data.List.foldl_162 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_162 op_0 (op_0 r_1 a_1_0) x_1_1) 
+<{Data.List.foldl`_105}> f_0 !x_1 !y_2 = Data.List.foldl_162 f_0 x_1 y_2
+Data.List.foldr_163 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> op_0 a_1_0 (Data.List.foldr_163 op_0 r_1 x_1_1)) 
+Data.List.foldr_106 f_0 x_1 !y_2 = Data.List.foldr_163 f_0 x_1 y_2
+Data.List.foldr1_107 f_0 !x_1 = Data.List.foldr1 f_0 x_1
+Data.List.foldl_164 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_164 op_0 (op_0 r_1 a_1_0) x_1_1) 
+<{Data.List.f`_138}> f_0 !k_1 x_2 z_3 = k_1 (f_0 x_2 z_3)
+Data.List.foldl_230 f_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> Data.List.foldl_230 f_0 (<{Data.List.f`_138}> f_0 r_1 a_1_0) x_1_1) 
+<{Data.List.foldr`_108}> f_0 !z0_1 !xs_2 = Data.List.foldl_230 f_0 StdFunc.id xs_2 z0_1
+Data.List.mapM_109 !_vMonad_0 f_1 !x_2 = Control.Monad.mapM _vMonad_0 f_1 x_2
+Data.List.sequence_110 !_vMonad_0 !x_1 = Data.List.mapM_109 _vMonad_0 StdFunc.id x_1
+Data.List.foldr_165 op_0 r_1 !_x_2 = case _x_2 (_predefined._Nil -> r_1) (_predefined._Cons a_1_0 x_1_1 -> op_0 a_1_0 (Data.List.foldr_165 op_0 r_1 x_1_1)) 
+Data.List.anon_139 x_0 xs_1 = _predefined._Cons x_0 xs_1
+Data.List.cons_f_140 !_vApplicative_0 f_1 x_2 ys_3 = select _vApplicative_0::<{Control.Applicative.Applicative;}> 0 (select (select _vApplicative_0::<{Control.Applicative.Applicative;}> 2)::<{Data.Functor.Functor;}> 0 Data.List.anon_139 (f_1 x_2)) ys_3
+Data.List.foldr_231 !_vApplicative_0 f_1 r_2 !_x_3 = case _x_3 (_predefined._Nil -> r_2) (_predefined._Cons a_1_0 x_1_1 -> Data.List.cons_f_140 _vApplicative_0 f_1 a_1_0 (Data.List.foldr_231 _vApplicative_0 f_1 r_2 x_1_1)) 
+Data.List.traverse_112 !_vApplicative_0 f_1 !x_2 = Data.List.foldr_231 _vApplicative_0 f_1 (select _vApplicative_0::<{Control.Applicative.Applicative;}> 1 _predefined._Nil) x_2
+Data.List.sequenceA_111 !_vApplicative_0 !f_1 = Data.List.traverse_112 _vApplicative_0 StdFunc.id f_1
+
+
+|| Converted Records
+:: <{Data.List.gEq_s;}> = {!Data.List.gEq_s}
+
+:: <{Data.List.gEq_ss;}> = {!Data.List.gEq_ss}
+
+:: <{Data.List.gEq_sss;}> = {!Data.List.gEq_sss}
+
+:: <{Data.List.gEq_ssss;}> = {!Data.List.gEq_ssss}
+
+:: <{Data.List.gEq_sssss;}> = {!Data.List.gEq_sssss}
+
+:: <{Data.List.gEq_ssssss;}> = {!Data.List.gEq_ssssss}
+
+:: <{Data.List.gEq_sssssss;}> = {!Data.List.gEq_sssssss}
+
+:: <{Data.List.gEq_ssssssss;}> = {!Data.List.gEq_ssssssss}
+
+:: <{Data.List.gEq_sssssssss;}> = {!Data.List.gEq_sssssssss}
+
+:: <{Data.List.bimap_s;}> = {Data.List.bimap_s}
+
+:: <{Data.List.bimap_ss;}> = {Data.List.bimap_ss}
+
+:: <{Data.List.bimap_sss;}> = {Data.List.bimap_sss}
+

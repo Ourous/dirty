@@ -1,0 +1,27 @@
+|| ?module? StdClass
+
+
+<{StdClass.TD;PlusMin;}> _x_0::B = _predefined._Nil
+<{StdClass.TD;MultDiv;}> _x_0::B = _predefined._Nil
+<{StdClass.TD;Arith;}> _x_0::B = _predefined._Nil
+<{StdClass.TD;IncDec;}> _x_0::B = _predefined._Nil
+<{StdClass.TD;Enum;}> _x_0::B = _predefined._Nil
+<{StdClass.TD;Eq;}> _x_0::B = _predefined._Nil
+<{StdClass.TD;Ord;}> _x_0::B = _predefined._Nil
+
+
+|| Converted Records
+:: <{StdClass.PlusMin;}> = {!<{StdClass.+}>, !<{StdClass.-}>, !StdClass.zero}
+
+:: <{StdClass.MultDiv;}> = {!<{StdClass.*}>, !<{StdClass./}>, !StdClass.one}
+
+:: <{StdClass.Arith;}> = {!StdClass.PlusMin, !StdClass.MultDiv, !StdClass.abs, !StdClass.sign, !<{StdClass.~}>}
+
+:: <{StdClass.IncDec;}> = {!<{StdClass.+}>, !<{StdClass.-}>, !StdClass.one, !StdClass.zero}
+
+:: <{StdClass.Enum;}> = {!<{StdClass.<}>, !StdClass.IncDec}
+
+:: <{StdClass.Eq;}> = {!<{StdClass.==}>}
+
+:: <{StdClass.Ord;}> = {!<{StdClass.<}>}
+

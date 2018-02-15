@@ -1,0 +1,8 @@
+|| ?module? StdMisc
+
+
+StdMisc.abort !a_0 = error "no AnyCodeExpr"
+StdMisc.undef = StdMisc.abort "Run-time error! Program evaluated undefined value?!"
+
+
+|| Converted Records

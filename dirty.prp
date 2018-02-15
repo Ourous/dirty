@@ -1,0 +1,360 @@
+Version: 1.4
+MainModule
+	Name:	main
+	Dir:	{Project}
+	DclOpen:	False
+	Icl
+		WindowPosition
+			X:	76
+			Y:	26
+			SizeX:	800
+			SizeY:	640
+	IclOpen:	True
+OtherModules
+	Module
+		Name:	parser
+		Dir:	{Project}
+		Dcl
+			WindowPosition
+				X:	626
+				Y:	144
+				SizeX:	800
+				SizeY:	640
+		DclOpen:	False
+		Icl
+			WindowPosition
+				X:	10
+				Y:	10
+				SizeX:	800
+				SizeY:	640
+		IclOpen:	False
+	Module
+		Name:	runtime
+		Dir:	{Project}
+		Dcl
+			WindowPosition
+				X:	10
+				Y:	10
+				SizeX:	800
+				SizeY:	640
+		DclOpen:	False
+		Icl
+			WindowPosition
+				X:	10
+				Y:	10
+				SizeX:	800
+				SizeY:	640
+		IclOpen:	False
+	Module
+		Name:	types
+		Dir:	{Project}
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	_SystemDynamic
+		Dir:	{Application}\Libraries\Dynamics
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Control.Applicative
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Control.Monad
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Bifunctor
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Error
+		Dir:	{Application}\Libraries\Platform
+		Dcl
+			WindowPosition
+				X:	1191
+				Y:	336
+				SizeX:	800
+				SizeY:	640
+		DclOpen:	True
+		IclOpen:	False
+	Module
+		Name:	Data.Foldable
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Func
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Functor
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Generics.GenEq
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Integer
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Integer.Add
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Integer.Div
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Integer.Mul
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Integer.ToInteger
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Integer.ToString
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.List
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Maybe
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Monoid
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Traversable
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Data.Tuple
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	System.CommandLine
+		Dir:	{Application}\Libraries\Platform
+		Dcl
+			WindowPosition
+				X:	275
+				Y:	227
+				SizeX:	800
+				SizeY:	640
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	System.File
+		Dir:	{Application}\Libraries\Platform
+		Dcl
+			WindowPosition
+				X:	506
+				Y:	116
+				SizeX:	800
+				SizeY:	640
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	System.IO
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	System.OS
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	System.OSError
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	System.Time
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	System._Pointer
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	System._WinBase
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	System._WinDef
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	System._Windows
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	Text
+		Dir:	{Application}\Libraries\Platform
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdArray
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdBool
+		Dir:	{Application}\Libraries\StdEnv
+		Dcl
+			WindowPosition
+				X:	10
+				Y:	10
+				SizeX:	800
+				SizeY:	640
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdChar
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdCharList
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdClass
+		Dir:	{Application}\Libraries\StdEnv
+		Dcl
+			WindowPosition
+				X:	10
+				Y:	10
+				SizeX:	800
+				SizeY:	640
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdDebug
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdEnum
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdEnv
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdFile
+		Dir:	{Application}\Libraries\StdEnv
+		Dcl
+			WindowPosition
+				X:	10
+				Y:	10
+				SizeX:	800
+				SizeY:	640
+		DclOpen:	False
+		Icl
+			WindowPosition
+				X:	539
+				Y:	58
+				SizeX:	800
+				SizeY:	640
+		IclOpen:	False
+	Module
+		Name:	StdFunc
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdGeneric
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdInt
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdList
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdMisc
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdOrdList
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdOverloaded
+		Dir:	{Application}\Libraries\StdEnv
+		Dcl
+			WindowPosition
+				X:	436
+				Y:	208
+				SizeX:	800
+				SizeY:	640
+		DclOpen:	True
+		IclOpen:	False
+	Module
+		Name:	StdReal
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdString
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	StdTuple
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	_SystemArray
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False
+	Module
+		Name:	_SystemEnum
+		Dir:	{Application}\Libraries\StdEnv
+		DclOpen:	False
+		IclOpen:	False

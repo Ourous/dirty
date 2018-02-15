@@ -1,0 +1,40 @@
+|| ?module? StdInt
+
+
+StdInt.bitor::I !a_0::I !b_1::I = error "no AnyCodeExpr"
+StdInt.bitand::I !a_0::I !b_1::I = error "no AnyCodeExpr"
+StdInt.bitxor::I !a_0::I !b_1::I = error "no AnyCodeExpr"
+<{StdInt.<<}>::I !a_0::I !b_1::I = error "no AnyCodeExpr"
+<{StdInt.>>}>::I !a_0::I !b_1::I = error "no AnyCodeExpr"
+StdInt.bitnot::I !a_0::I = error "no AnyCodeExpr"
+<{StdInt.+_6}>::I !a_0::I !b_1::I = error "no AnyCodeExpr"
+<{StdInt.-_7}>::I !a_0::I !b_1::I = error "no AnyCodeExpr"
+StdInt.zero_8::I = error "no AnyCodeExpr"
+<{StdInt.*_9}>::I !a_0::I !b_1::I = error "no AnyCodeExpr"
+<{StdInt./_10}>::I !a_0::I !b_1::I = error "no AnyCodeExpr"
+StdInt.one_11::I = error "no AnyCodeExpr"
+StdInt.isEven_18::B !a_0::I = error "no AnyCodeExpr"
+StdInt.pow_31::I !_x_0::I !_x_1::I = case _x_1 (0 -> 1) (_ -> case (StdInt.isEven_18 _x_1) (True -> let x_2_0::I = StdInt.pow_31 _x_0 (<{StdInt.>>}> _x_1 1) in <{StdInt.*_9}> x_2_0 x_2_0) (False -> let x_2_0::I = StdInt.pow_31 _x_0 (<{StdInt.>>}> _x_1 1) in <{StdInt.*_9}> (<{StdInt.*_9}> _x_0 x_2_0) x_2_0) )
+<{StdInt.<_17}>::B !a_0::I !b_1::I = error "no AnyCodeExpr"
+<{StdInt.^_12}>::I !x_0::I !n_1::I = case (<{StdInt.<_17}> n_1 0) (True -> StdMisc.abort "^ (Int) called with negative power argument") (False -> StdInt.pow_31 x_0 n_1) 
+StdInt.abs_13::I !x_0::I = case (<{StdInt.<_17}> x_0 0) (True -> <{StdInt.-_7}> 0 x_0) (False -> x_0) 
+<{StdInt.==_16}>::B !a_0::I !b_1::I = error "no AnyCodeExpr"
+StdInt.sign_14::I !x_0::I = case (<{StdInt.==_16}> x_0 0) (True -> 0) (False -> case (<{StdInt.<_17}> x_0 0) (True -> -1) (False -> 1) ) 
+<{StdInt.~_15}>::I !x_0::I = error "no AnyCodeExpr"
+StdInt.isOdd_19::B !a_0::I = error "no AnyCodeExpr"
+StdInt.toInt_20::I !a_0::C = error "no AnyCodeExpr"
+StdInt.toInt_21::I !a_0::I = error "no AnyCodeExpr"
+StdInt.toInt_22::I !a_0::D = error "no AnyCodeExpr"
+StdInt.toInt2_33::I !len_0::I !posn_1::I !val_2::I !s_3 = case (<{StdInt.==_16}> len_0 posn_1) (True -> val_2) (False -> let n_2_0::I = <{StdInt.-_7}> (StdInt.toInt_20 (_SystemArray.select_19 s_3 posn_1)) (StdInt.toInt_20 '0') in case (case (StdBool.not (<{StdInt.<_17}> n_2_0 0)) (True -> StdBool.not (<{StdInt.<_17}> 9 n_2_0)) (False -> False) ) (True -> StdInt.toInt2_33 len_0 (<{StdInt.+_6}> posn_1 1) (<{StdInt.+_6}> n_2_0 (<{StdInt.*_9}> val_2 10)) s_3) (False -> 0) ) 
+StdInt.toInt_23::I !s_0 = let len_1_0::I = _SystemArray.size_20 s_0 in case (<{StdInt.==_16}> len_1_0 0) (True -> 0) (False -> case (<{StdChar.==_18}> (_SystemArray.select_19 s_0 0) '-') (True -> <{StdInt.~_15}> (StdInt.toInt2_33 len_1_0 1 0 s_0)) (False -> case (<{StdChar.==_18}> (_SystemArray.select_19 s_0 0) '+') (True -> StdInt.toInt2_33 len_1_0 1 0 s_0) (False -> StdInt.toInt2_33 len_1_0 0 0 s_0) ) ) 
+StdInt.fromInt_24::I !a_0::I = error "no AnyCodeExpr"
+StdInt.fromInt_25::C !a_0::I = error "no AnyCodeExpr"
+StdInt.fromInt_26::D !a_0::I = error "no AnyCodeExpr"
+StdInt.fromInt_27 !a_0::I = error "no AnyCodeExpr"
+StdInt.rem_28::I !a_0::I !b_1::I = error "no AnyCodeExpr"
+StdInt.gcdnat_32::I !x_0::I !_x_1::I = case _x_1 (0 -> x_0) (_ -> StdInt.gcdnat_32 _x_1 (StdInt.rem_28 x_0 _x_1))
+StdInt.gcd_29::I !x_0::I !y_1::I = StdInt.gcdnat_32 (StdInt.abs_13 x_0) (StdInt.abs_13 y_1)
+StdInt.lcm_30::I !_x_0::I !_x_1::I = case _x_1 (0 -> 0) (_ -> case _x_0 (0 -> 0) (_ -> StdInt.abs_13 (<{StdInt.*_9}> (<{StdInt./_10}> _x_0 (StdInt.gcd_29 _x_0 _x_1)) _x_1)))
+
+
+|| Converted Records

@@ -1,0 +1,14 @@
+|| ?module? System.OSError
+
+
+System.OSError.formatMessage !errorCode_0::I = let msgBuf_1_0::I = _SystemArray.createArray_9 1 0, ok_1_1 = System._WinBase.formatMessageA (StdInt.bitor (StdInt.bitor 256 4096) 512) 0 errorCode_0 1024 msgBuf_1_0 0 0 in case (StdBool.not (<{StdInt.==_16}> ok_1_1 ok_1_1)) (True -> StdMisc.undef) (False -> let message_3_0 = System._Pointer.derefString (_SystemArray.select_11 msgBuf_1_0 0) in case (StdBool.not (<{StdInt.==_16}> (_SystemArray.size_20 message_3_0) (_SystemArray.size_20 message_3_0))) (True -> StdMisc.undef) (False -> let hMem_5_0::I = System._WinBase.localFree (_SystemArray.select_11 msgBuf_1_0 0) in case (StdBool.not (<{StdInt.==_16}> hMem_5_0 hMem_5_0)) (True -> StdMisc.undef) (False -> <{StdString.%_10}> message_3_0 (_Tuple2 0 (<{StdInt.-_7}> (_SystemArray.size_20 message_3_0) 3))) ) ) 
+System.OSError.getLastOSError world_0 = let _x_1_0::I = System._WinBase.getLastError world_0, errorCode_1_1 = select _x_1_0::_Tuple2 0 in _Tuple2 (Data.Error.Error (_Tuple2 errorCode_1_1 (System.OSError.formatMessage errorCode_1_1))) (select _x_1_0::_Tuple2 1)
+System.OSError.getLastOSErrorCode world_0 = let _x_1_0 = System._WinBase.getLastError world_0 in _Tuple2 (Data.Error.Error (select _x_1_0::_Tuple2 0)) (select _x_1_0::_Tuple2 1)
+<{System.OSError.TD;OSErrorCode}> _x_0::B = _predefined._Nil
+<{System.OSError.TD;OSErrorMessage}> _x_0::B = _predefined._Nil
+<{System.OSError.TD;OSError}> _x_0::B = _predefined._Nil
+<{System.OSError.TD;MaybeOSError}> _x_0::B = _predefined._Nil
+<{System.OSError.TD;MaybeOSErrorCode}> _x_0::B = _predefined._Nil
+
+
+|| Converted Records

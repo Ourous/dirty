@@ -1,0 +1,57 @@
+|| ?module? Data.Monoid
+
+
+Data.Monoid.getDual !_x_0 = case _x_0 (Data.Monoid.Dual x_1_0 -> x_1_0) 
+Data.Monoid.appEndo !_x_0 = case _x_0 (Data.Monoid.Endo f_1_0 -> f_1_0) 
+Data.Monoid.getAll::B !_x_0 = case _x_0 (Data.Monoid.All b_1_0 -> b_1_0) 
+Data.Monoid.getAny::B !_x_0 = case _x_0 (Data.Monoid.Any b_1_0 -> b_1_0) 
+Data.Monoid.getSum !_x_0 = case _x_0 (Data.Monoid.Sum x_1_0 -> x_1_0) 
+Data.Monoid.getProduct !_x_0 = case _x_0 (Data.Monoid.Product x_1_0 -> x_1_0) 
+Data.Monoid.getFirst !_x_0 = case _x_0 (Data.Monoid.First x_1_0 -> x_1_0) 
+Data.Monoid.getLast !_x_0 = case _x_0 (Data.Monoid.Last x_1_0 -> x_1_0) 
+Data.Monoid.mappend_8 !_x_0 _x_1 = _predefined._Unit
+Data.Monoid.mempty_9 = _predefined._Unit
+Data.Monoid.mappend_10 !_vSemigroup_0 !_x_1 !_x_2 = case _x_1 (Data.Monoid.Dual x_1_0 -> case _x_2 (Data.Monoid.Dual y_2_0 -> Data.Monoid.Dual (select _vSemigroup_0::<{Data.Monoid.Semigroup;}> 0 y_2_0 x_1_0)) ) 
+Data.Monoid.anon_36 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Monoid.mappend_11 !_x_0 !_x_1 = case _x_0 (Data.Monoid.Endo f_1_0 -> case _x_1 (Data.Monoid.Endo g_2_0 -> Data.Monoid.Endo (Data.Monoid.anon_36 f_1_0 g_2_0)) ) 
+Data.Monoid.mappend_12 !_x_0 !_x_1 = case _x_0 (Data.Monoid.All x_1_0 -> case _x_1 (Data.Monoid.All y_2_0 -> Data.Monoid.All (Data.Monoid._f37_37 x_1_0 y_2_0)) ) 
+Data.Monoid._f37_37::B !x_0::B y_1::B = case x_0 (True -> y_1) (_ -> False)
+Data.Monoid.mappend_13 !_x_0 !_x_1 = case _x_0 (Data.Monoid.Any x_1_0 -> case _x_1 (Data.Monoid.Any y_2_0 -> Data.Monoid.Any (Data.Monoid._f38_38 x_1_0 y_2_0)) ) 
+Data.Monoid._f38_38::B !x_0::B y_1::B = case x_0 (True -> True) (_ -> y_1)
+Data.Monoid.mappend_14 !<{_v+_0}> !_vzero_1 !_x_2 !_x_3 = case _x_2 (Data.Monoid.Sum x_1_0 -> case _x_3 (Data.Monoid.Sum y_2_0 -> Data.Monoid.Sum (select <{_v+_0}>::<{StdOverloaded.+;}> 0 x_1_0 y_2_0)) ) 
+Data.Monoid.mappend_15 !<{_v*_0}> !_vone_1 !_x_2 !_x_3 = case _x_2 (Data.Monoid.Product x_1_0 -> case _x_3 (Data.Monoid.Product y_2_0 -> Data.Monoid.Product (select <{_v*_0}>::<{StdOverloaded.*;}> 0 x_1_0 y_2_0)) ) 
+Data.Monoid.mappend_16 !r_0 _x_1 = case r_0 (Data.Monoid.First _x_1_0 -> case _x_1_0 (Data.Maybe.Just _x_2_0 -> r_0) (Data.Maybe.Nothing -> _x_1) ) 
+Data.Monoid.mappend_17 !_x_0 !r_1 = case r_1 (Data.Monoid.Last _x_1_0 -> case _x_1_0 (Data.Maybe.Just _x_2_0 -> r_1) (Data.Maybe.Nothing -> _x_0) ) 
+Data.Monoid.mempty_18 !_vMonoid_0 = Data.Monoid.Dual (select _vMonoid_0::<{Data.Monoid.Monoid;}> 0)
+Data.Monoid.mempty_19 = Data.Monoid.Endo StdFunc.id
+Data.Monoid.mempty_20 = Data.Monoid.All True
+Data.Monoid.mempty_21 = Data.Monoid.Any False
+Data.Monoid.mempty_22 !<{_v+_0}> !_vzero_1 = Data.Monoid.Sum (select _vzero_1::<{StdOverloaded.zero;}> 0)
+Data.Monoid.mempty_23 !<{_v*_0}> !_vone_1 = Data.Monoid.Product (select _vone_1::<{StdOverloaded.one;}> 0)
+Data.Monoid.mempty_24 = Data.Monoid.First Data.Maybe.Nothing
+Data.Monoid.mempty_25 = Data.Monoid.Last Data.Maybe.Nothing
+<{Data.Monoid.TD;Dual}> _x_0::B = _predefined._Nil
+<{Data.Monoid.TD;Endo}> _x_0::B = _predefined._Nil
+<{Data.Monoid.TD;All}> _x_0::B = _predefined._Nil
+<{Data.Monoid.TD;Any}> _x_0::B = _predefined._Nil
+<{Data.Monoid.TD;Sum}> _x_0::B = _predefined._Nil
+<{Data.Monoid.TD;Product}> _x_0::B = _predefined._Nil
+<{Data.Monoid.TD;First}> _x_0::B = _predefined._Nil
+<{Data.Monoid.TD;Last}> _x_0::B = _predefined._Nil
+<{Data.Monoid.TD;Semigroup;}> _x_0::B = _predefined._Nil
+<{Data.Monoid.TD;Monoid;}> _x_0::B = _predefined._Nil
+
+:: Data.Monoid.Dual = Data.Monoid.Dual a1
+:: Data.Monoid.Endo = Data.Monoid.Endo a1
+:: Data.Monoid.All = Data.Monoid.All a1::B
+:: Data.Monoid.Any = Data.Monoid.Any a1::B
+:: Data.Monoid.Sum = Data.Monoid.Sum a1
+:: Data.Monoid.Product = Data.Monoid.Product a1
+:: Data.Monoid.First = Data.Monoid.First a1
+:: Data.Monoid.Last = Data.Monoid.Last a1
+
+|| Converted Records
+:: <{Data.Monoid.Semigroup;}> = {!Data.Monoid.mappend}
+
+:: <{Data.Monoid.Monoid;}> = {!Data.Monoid.mempty, !Data.Monoid.Semigroup}
+

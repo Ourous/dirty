@@ -1,0 +1,16 @@
+|| ?module? System._WinDef
+
+
+<{System._WinDef.TD;HANDLE}> _x_0::B = _predefined._Nil
+<{System._WinDef.TD;PHANDLE}> _x_0::B = _predefined._Nil
+<{System._WinDef.TD;DWORD}> _x_0::B = _predefined._Nil
+<{System._WinDef.TD;LPDWORD}> _x_0::B = _predefined._Nil
+<{System._WinDef.TD;LPCTSTR}> _x_0::B = _predefined._Nil
+<{System._WinDef.TD;LPTSTR}> _x_0::B = _predefined._Nil
+<{System._WinDef.TD;LPVOID}> _x_0::B = _predefined._Nil
+<{System._WinDef.TD;LPCVOID}> _x_0::B = _predefined._Nil
+<{System._WinDef.TD;SIZE_T}> _x_0::B = _predefined._Nil
+<{System._WinDef.TD;HLOCAL}> _x_0::B = _predefined._Nil
+
+
+|| Converted Records

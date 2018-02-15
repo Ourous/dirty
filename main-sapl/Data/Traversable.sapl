@@ -1,0 +1,67 @@
+|| ?module? Data.Traversable
+
+
+Data.Traversable.for !_vTraversable_0 !_vApplicative_1 x_2 f_3 = select _vTraversable_0::<{Data.Traversable.Traversable;}> 3 _vApplicative_1 f_3 x_2
+Data.Traversable.forM !_vTraversable_0 !_vMonad_1 x_2 f_3 = select _vTraversable_0::<{Data.Traversable.Traversable;}> 0 _vMonad_1 f_3 x_2
+Data.Traversable.anon_28 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Traversable.runStateL !_x_0 = case _x_0 (Data.Traversable.StateL f_1_0 -> f_1_0) 
+Data.Traversable.g_10 f_0 k_1 s_2 = let _x_1_0 = k_1 s_2 in _Tuple2 (f_0 (select _x_1_0::_Tuple2 0)) (select _x_1_0::_Tuple2 1)
+Data.Traversable.fmap_16 f_0 !_x_1 = case _x_1 (Data.Traversable.StateL k_1_0 -> Data.Traversable.StateL (Data.Traversable.g_10 f_0 k_1_0)) 
+Data.Traversable.f_12 kv_0 kf_1 s_2 = let _x_1_0 = kf_1 s_2, _x_1_1 = kv_0 (select _x_1_0::_Tuple2 1) in _Tuple2 (select _x_1_0::_Tuple2 0 (select _x_1_1::_Tuple2 0)) (select _x_1_1::_Tuple2 1)
+<{Data.Traversable.<*>_17}> !_x_0 !_x_1 = case _x_0 (Data.Traversable.StateL kf_1_0 -> case _x_1 (Data.Traversable.StateL kv_2_0 -> Data.Traversable.StateL (Data.Traversable.f_12 kv_2_0 kf_1_0)) ) 
+Data.Traversable.anon_11 x_0 s_1 = _Tuple2 x_0 s_1
+Data.Traversable.pure_18 x_0 = Data.Traversable.StateL (Data.Traversable.anon_11 x_0)
+Data.Traversable.mapAccumL !_vTraversable_0 f_1 t_2 s_3 = Data.Traversable.runStateL (select _vTraversable_0::<{Data.Traversable.Traversable;}> 3 (<{Control.Applicative.Applicative;}> <{Data.Traversable.<*>_17}> Data.Traversable.pure_18 (<{Data.Functor.Functor;}> Data.Traversable.fmap_16)) (Data.Traversable.anon_28 Data.Traversable.StateL f_1) t_2) s_3
+Data.Traversable.anon_29 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Traversable.runStateR !_x_0 = case _x_0 (Data.Traversable.StateR f_1_0 -> f_1_0) 
+Data.Traversable.g_13 f_0 k_1 s_2 = let _x_1_0 = k_1 s_2 in _Tuple2 (f_0 (select _x_1_0::_Tuple2 0)) (select _x_1_0::_Tuple2 1)
+Data.Traversable.fmap_19 f_0 !_x_1 = case _x_1 (Data.Traversable.StateR k_1_0 -> Data.Traversable.StateR (Data.Traversable.g_13 f_0 k_1_0)) 
+Data.Traversable.f_15 kf_0 kv_1 s_2 = let _x_1_0 = kv_1 s_2, _x_1_1 = kf_0 (select _x_1_0::_Tuple2 1) in _Tuple2 (select _x_1_1::_Tuple2 0 (select _x_1_0::_Tuple2 0)) (select _x_1_1::_Tuple2 1)
+<{Data.Traversable.<*>_20}> !_x_0 !_x_1 = case _x_0 (Data.Traversable.StateR kf_1_0 -> case _x_1 (Data.Traversable.StateR kv_2_0 -> Data.Traversable.StateR (Data.Traversable.f_15 kf_1_0 kv_2_0)) ) 
+Data.Traversable.anon_14 x_0 s_1 = _Tuple2 x_0 s_1
+Data.Traversable.pure_21 x_0 = Data.Traversable.StateR (Data.Traversable.anon_14 x_0)
+Data.Traversable.mapAccumR !_vTraversable_0 f_1 t_2 s_3 = Data.Traversable.runStateR (select _vTraversable_0::<{Data.Traversable.Traversable;}> 3 (<{Control.Applicative.Applicative;}> <{Data.Traversable.<*>_20}> Data.Traversable.pure_21 (<{Data.Functor.Functor;}> Data.Traversable.fmap_19)) (Data.Traversable.anon_29 Data.Traversable.StateR f_1) t_2) s_3
+Data.Traversable.anon_30 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Traversable.getId !_x_0 = case _x_0 (Data.Traversable.Id x_1_0 -> x_1_0) 
+Data.Traversable.fmap_22 f_0 !_x_1 = case _x_1 (Data.Traversable.Id x_1_0 -> Data.Traversable.Id (f_0 x_1_0)) 
+<{Data.Traversable.<*>_23}> !_x_0 !_x_1 = case _x_0 (Data.Traversable.Id f_1_0 -> case _x_1 (Data.Traversable.Id x_2_0 -> Data.Traversable.Id (f_1_0 x_2_0)) ) 
+Data.Traversable.pure_24 x_0 = Data.Traversable.Id x_0
+Data.Traversable.fmapDefault !_vTraversable_0 f_1 x_2 = Data.Traversable.getId (select _vTraversable_0::<{Data.Traversable.Traversable;}> 3 (<{Control.Applicative.Applicative;}> <{Data.Traversable.<*>_23}> Data.Traversable.pure_24 (<{Data.Functor.Functor;}> Data.Traversable.fmap_22)) (Data.Traversable.anon_30 Data.Traversable.Id f_1) x_2)
+Data.Traversable.anon_31 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Traversable.foldMapDefault !_vTraversable_0 !_vMonoid_1 f_2 x_3 = Control.Applicative.getConst (select _vTraversable_0::<{Data.Traversable.Traversable;}> 3 (<{Control.Applicative.Applicative;}> (<{Control.Applicative.<*>_12}> _vMonoid_1) (Control.Applicative.pure_13 _vMonoid_1) (<{Data.Functor.Functor;}> Control.Applicative.fmap_10)) (Data.Traversable.anon_31 Control.Applicative.Const f_2) x_3)
+<{Data.Traversable.TD;Traversable;}> _x_0::B = _predefined._Nil
+<{Data.Traversable.TD;StateL}> _x_0::B = _predefined._Nil
+<{Data.Traversable.TD;StateR}> _x_0::B = _predefined._Nil
+<{Data.Traversable.TD;Id}> _x_0::B = _predefined._Nil
+
+:: Data.Traversable.StateL = Data.Traversable.StateL a1
+:: Data.Traversable.StateR = Data.Traversable.StateR a1
+:: Data.Traversable.Id = Data.Traversable.Id a1
+
+|| Converted Records
+:: <{Data.Traversable.Traversable;}> = {!Data.Traversable.mapM, !Data.Traversable.sequence, !Data.Traversable.sequenceA, !Data.Traversable.traverse, !Data.Traversable.Functor, !Data.Traversable.Foldable}
+
+:: <{Data.Traversable.gEq_s;}> = {!Data.Traversable.gEq_s}
+
+:: <{Data.Traversable.gEq_ss;}> = {!Data.Traversable.gEq_ss}
+
+:: <{Data.Traversable.gEq_sss;}> = {!Data.Traversable.gEq_sss}
+
+:: <{Data.Traversable.gEq_ssss;}> = {!Data.Traversable.gEq_ssss}
+
+:: <{Data.Traversable.gEq_sssss;}> = {!Data.Traversable.gEq_sssss}
+
+:: <{Data.Traversable.gEq_ssssss;}> = {!Data.Traversable.gEq_ssssss}
+
+:: <{Data.Traversable.gEq_sssssss;}> = {!Data.Traversable.gEq_sssssss}
+
+:: <{Data.Traversable.gEq_ssssssss;}> = {!Data.Traversable.gEq_ssssssss}
+
+:: <{Data.Traversable.gEq_sssssssss;}> = {!Data.Traversable.gEq_sssssssss}
+
+:: <{Data.Traversable.bimap_s;}> = {Data.Traversable.bimap_s}
+
+:: <{Data.Traversable.bimap_ss;}> = {Data.Traversable.bimap_ss}
+
+:: <{Data.Traversable.bimap_sss;}> = {Data.Traversable.bimap_sss}
+

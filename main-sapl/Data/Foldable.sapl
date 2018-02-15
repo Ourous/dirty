@@ -1,0 +1,88 @@
+|| ?module? Data.Foldable
+
+
+<{Data.Foldable.f`_29}> !_vMonad_0 f_1 k_2 x_3 z_4 = select _vMonad_0::<{Control.Monad.Monad;}> 0 (f_1 x_3 z_4) k_2
+Data.Foldable.foldrM !_vFoldable_0 !_vMonad_1 f_2 z0_3 xs_4 = select _vFoldable_0::<{Data.Foldable.Foldable;}> 2 (<{Data.Foldable.f`_29}> _vMonad_1 f_2) (select (select _vMonad_1::<{Control.Monad.Monad;}> 1)::<{Control.Applicative.Applicative;}> 1) xs_4 z0_3
+<{Data.Foldable.f`_30}> !_vMonad_0 f_1 x_2 k_3 z_4 = select _vMonad_0::<{Control.Monad.Monad;}> 0 (f_1 z_4 x_2) k_3
+Data.Foldable.foldlM !_vFoldable_0 !_vMonad_1 f_2 z0_3 xs_4 = select _vFoldable_0::<{Data.Foldable.Foldable;}> 5 (<{Data.Foldable.f`_30}> _vMonad_1 f_2) (select (select _vMonad_1::<{Control.Monad.Monad;}> 1)::<{Control.Applicative.Applicative;}> 1) xs_4 z0_3
+Data.Foldable.anon_41 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Foldable.traverse_ !_vFoldable_0 !_vApplicative_1 !<{_v*>_2}> f_3 x_4 = select _vFoldable_0::<{Data.Foldable.Foldable;}> 5 (Data.Foldable.anon_41 (select <{_v*>_2}>::<{Control.Applicative.*>;}> 0 _vApplicative_1) f_3) (select _vApplicative_1::<{Control.Applicative.Applicative;}> 1 _predefined._Unit) x_4
+Data.Foldable.anon_42 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Foldable.anon_31 !mb_0 _x_1 = mb_0
+Data.Foldable.anon_32 !_vMonad_0 ma_1 mb_2 = select _vMonad_0::<{Control.Monad.Monad;}> 0 ma_1 (Data.Foldable.anon_31 mb_2)
+Data.Foldable.anon_93 !_vMonad_0 g_1 x_2 = Data.Foldable.anon_32 _vMonad_0 (g_1 x_2)
+Data.Foldable.mapM_ !_vFoldable_0 !_vMonad_1 f_2 x_3 = select _vFoldable_0::<{Data.Foldable.Foldable;}> 5 (Data.Foldable.anon_93 _vMonad_1 f_2) (select (select _vMonad_1::<{Control.Monad.Monad;}> 1)::<{Control.Applicative.Applicative;}> 1 _predefined._Unit) x_3
+Data.Foldable.sequenceA_ !_vFoldable_0 !_vApplicative_1 !<{_v*>_2}> x_3 = select _vFoldable_0::<{Data.Foldable.Foldable;}> 5 (select <{_v*>_2}>::<{Control.Applicative.*>;}> 0 _vApplicative_1) (select _vApplicative_1::<{Control.Applicative.Applicative;}> 1 _predefined._Unit) x_3
+Data.Foldable.concat !_vFoldable_0 x_1 = select _vFoldable_0::<{Data.Foldable.Foldable;}> 0 (<{Data.Monoid.Monoid;}> Data.List.mempty_100 (<{Data.Monoid.Semigroup;}> Data.List.mappend_99)) x_1
+Data.Foldable.concatMap !_vFoldable_0 f_1 x_2 = select _vFoldable_0::<{Data.Foldable.Foldable;}> 1 (<{Data.Monoid.Monoid;}> Data.List.mempty_100 (<{Data.Monoid.Semigroup;}> Data.List.mappend_99)) f_1 x_2
+Data.Foldable.and::B !_vFoldable_0 x_1 = Data.Monoid.getAll (select _vFoldable_0::<{Data.Foldable.Foldable;}> 1 (<{Data.Monoid.Monoid;}> Data.Monoid.mempty_20 (<{Data.Monoid.Semigroup;}> Data.Monoid.mappend_12)) Data.Monoid.All x_1)
+Data.Foldable.or::B !_vFoldable_0 x_1 = Data.Monoid.getAny (select _vFoldable_0::<{Data.Foldable.Foldable;}> 1 (<{Data.Monoid.Monoid;}> Data.Monoid.mempty_21 (<{Data.Monoid.Semigroup;}> Data.Monoid.mappend_13)) Data.Monoid.Any x_1)
+Data.Foldable.anon_43 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Foldable.any::B !_vFoldable_0 p_1 x_2 = Data.Monoid.getAny (select _vFoldable_0::<{Data.Foldable.Foldable;}> 1 (<{Data.Monoid.Monoid;}> Data.Monoid.mempty_21 (<{Data.Monoid.Semigroup;}> Data.Monoid.mappend_13)) (Data.Foldable.anon_43 Data.Monoid.Any p_1) x_2)
+Data.Foldable.anon_44 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Foldable.all::B !_vFoldable_0 p_1 x_2 = Data.Monoid.getAll (select _vFoldable_0::<{Data.Foldable.Foldable;}> 1 (<{Data.Monoid.Monoid;}> Data.Monoid.mempty_20 (<{Data.Monoid.Semigroup;}> Data.Monoid.mappend_12)) (Data.Foldable.anon_44 Data.Monoid.All p_1) x_2)
+Data.Foldable.sum !_vFoldable_0 !<{_v+_1}> !_vzero_2 x_3 = Data.Monoid.getSum (select _vFoldable_0::<{Data.Foldable.Foldable;}> 1 (<{Data.Monoid.Monoid;}> (Data.Monoid.mempty_22 <{_v+_1}> _vzero_2) (<{Data.Monoid.Semigroup;}> (Data.Monoid.mappend_14 <{_v+_1}> _vzero_2))) Data.Monoid.Sum x_3)
+Data.Foldable.product !_vFoldable_0 !<{_v*_1}> !_vone_2 x_3 = Data.Monoid.getProduct (select _vFoldable_0::<{Data.Foldable.Foldable;}> 1 (<{Data.Monoid.Monoid;}> (Data.Monoid.mempty_23 <{_v*_1}> _vone_2) (<{Data.Monoid.Semigroup;}> (Data.Monoid.mappend_15 <{_v*_1}> _vone_2))) Data.Monoid.Product x_3)
+Data.Foldable.max_45 !_vOrd_0 !x_1 !y_2 = case (select (select _vOrd_0::<{StdClass.Ord;}> 0)::<{StdOverloaded.<;}> 0 x_1 y_2) (True -> y_2) (False -> x_1) 
+Data.Foldable.maximum !_vFoldable_0 !_vOrd_1 x_2 = select _vFoldable_0::<{Data.Foldable.Foldable;}> 6 (Data.Foldable.max_45 _vOrd_1) x_2
+<{Data.Foldable.max`_33}> !cmp_0 x_1 y_2 = case (cmp_0 x_1 y_2) (True -> y_2) (False -> x_1) 
+Data.Foldable.maximumBy !_vFoldable_0 cmp_1 x_2 = select _vFoldable_0::<{Data.Foldable.Foldable;}> 6 (<{Data.Foldable.max`_33}> cmp_1) x_2
+Data.Foldable.min_46 !_vOrd_0 !x_1 !y_2 = case (select (select _vOrd_0::<{StdClass.Ord;}> 0)::<{StdOverloaded.<;}> 0 x_1 y_2) (True -> x_1) (False -> y_2) 
+Data.Foldable.minimum !_vFoldable_0 !_vOrd_1 x_2 = select _vFoldable_0::<{Data.Foldable.Foldable;}> 6 (Data.Foldable.min_46 _vOrd_1) x_2
+<{Data.Foldable.min`_34}> !cmp_0 x_1 y_2 = case (cmp_0 x_1 y_2) (True -> x_1) (False -> y_2) 
+Data.Foldable.minimumBy !_vFoldable_0 cmp_1 x_2 = select _vFoldable_0::<{Data.Foldable.Foldable;}> 6 (<{Data.Foldable.min`_34}> cmp_1) x_2
+Data.Foldable.anon_35::B !<{_v==_0}> x_1 z_2 = select <{_v==_0}>::<{StdOverloaded.==;}> 0 x_1 z_2
+Data.Foldable.elem::B !_vFoldable_0 !<{_v==_1}> x_2 y_3 = Data.Foldable.any _vFoldable_0 (Data.Foldable.anon_35 <{_v==_1}> x_2) y_3
+Data.Foldable.notElem::B !_vFoldable_0 !<{_v==_1}> x_2 y_3 = StdBool.not (Data.Foldable.elem _vFoldable_0 <{_v==_1}> x_2 y_3)
+Data.Foldable.anon_36 !p_0 x_1 = case (p_0 x_1) (True -> _predefined._Cons x_1 _predefined._Nil) (False -> _predefined._Nil) 
+Data.Foldable.find !_vFoldable_0 p_1 x_2 = Data.Maybe.listToMaybe (Data.Foldable.concatMap _vFoldable_0 (Data.Foldable.anon_36 p_1) x_2)
+Data.Foldable.foldMap_21 !_vMonoid_0 _x_1 !_x_2 = select _vMonoid_0::<{Data.Monoid.Monoid;}> 0
+Data.Foldable.fold_20 !_vMonoid_0 !x_1 = Data.Foldable.foldMap_21 _vMonoid_0 StdFunc.id x_1
+Data.Foldable.anon_49 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Foldable.anon_48 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Foldable.flip_47 !f_0 a_1 b_2 = f_0 b_2 a_1
+Data.Foldable.anon_94 !f_0 f_1 x_2 = f_0 (Data.Foldable.flip_47 f_1 x_2)
+Data.Foldable.anon_95 !f_0 f_1 f_2 x_3 = f_0 (Data.Foldable.anon_94 f_1 f_2 x_3)
+Data.Foldable.foldMap_96 _x_0 !_x_1 = Data.Monoid.mempty_18 (<{Data.Monoid.Monoid;}> Data.Monoid.mempty_19 (<{Data.Monoid.Semigroup;}> Data.Monoid.mappend_11))
+Data.Foldable.foldl_22 f_0 z_1 !t_2 = Data.Monoid.appEndo (Data.Monoid.getDual (Data.Foldable.foldMap_96 (Data.Foldable.anon_95 Data.Monoid.Dual Data.Monoid.Endo f_0) t_2)) z_1
+Data.Foldable.mf_40 f_0 !_x_1 y_2 = case _x_1 (Data.Maybe.Nothing -> Data.Maybe.Just y_2) (Data.Maybe.Just x_1_0 -> Data.Maybe.Just (f_0 x_1_0 y_2)) 
+Data.Foldable.foldl1_23 f_0 !xs_1 = Data.Maybe.fromMaybe (StdMisc.abort "foldl1: empty structure") (Data.Foldable.foldl_22 (Data.Foldable.mf_40 f_0) Data.Maybe.Nothing xs_1)
+<{Data.Foldable.f`_38}> f_0 x_1 !k_2 z_3 = k_2 (f_0 z_3 x_1)
+Data.Foldable.anon_50 !f_0 g_1 x_2 = f_0 (g_1 x_2)
+Data.Foldable.foldMap_97 _x_0 !_x_1 = Data.Monoid.mempty_19
+Data.Foldable.foldr_25 f_0 z_1 !t_2 = Data.Monoid.appEndo (Data.Foldable.foldMap_97 (Data.Foldable.anon_50 Data.Monoid.Endo f_0) t_2) z_1
+<{Data.Foldable.foldl`_24}> f_0 !z0_1 !xs_2 = Data.Foldable.foldr_25 (<{Data.Foldable.f`_38}> f_0) StdFunc.id xs_2 z0_1
+Data.Foldable.mf_39 f_0 x_1 !_x_2 = case _x_2 (Data.Maybe.Nothing -> Data.Maybe.Just x_1) (Data.Maybe.Just y_1_0 -> Data.Maybe.Just (f_0 x_1 y_1_0)) 
+Data.Foldable.foldr1_26 f_0 !xs_1 = Data.Maybe.fromMaybe (StdMisc.abort "foldr1: empty structure") (Data.Foldable.foldr_25 (Data.Foldable.mf_39 f_0) Data.Maybe.Nothing xs_1)
+<{Data.Foldable.f`_37}> f_0 !k_1 x_2 z_3 = k_1 (f_0 x_2 z_3)
+<{Data.Foldable.foldr`_27}> f_0 !z0_1 !xs_2 = Data.Foldable.foldl_22 (<{Data.Foldable.f`_37}> f_0) StdFunc.id xs_2 z0_1
+<{Data.Foldable.TD;Foldable;}> _x_0::B = _predefined._Nil
+
+
+|| Converted Records
+:: <{Data.Foldable.Foldable;}> = {!Data.Foldable.fold, !Data.Foldable.foldMap, !Data.Foldable.foldl, !Data.Foldable.foldl1, !<{Data.Foldable.foldl`}>, !Data.Foldable.foldr, !Data.Foldable.foldr1, !<{Data.Foldable.foldr`}>}
+
+:: <{Data.Foldable.gEq_s;}> = {!Data.Foldable.gEq_s}
+
+:: <{Data.Foldable.gEq_ss;}> = {!Data.Foldable.gEq_ss}
+
+:: <{Data.Foldable.gEq_sss;}> = {!Data.Foldable.gEq_sss}
+
+:: <{Data.Foldable.gEq_ssss;}> = {!Data.Foldable.gEq_ssss}
+
+:: <{Data.Foldable.gEq_sssss;}> = {!Data.Foldable.gEq_sssss}
+
+:: <{Data.Foldable.gEq_ssssss;}> = {!Data.Foldable.gEq_ssssss}
+
+:: <{Data.Foldable.gEq_sssssss;}> = {!Data.Foldable.gEq_sssssss}
+
+:: <{Data.Foldable.gEq_ssssssss;}> = {!Data.Foldable.gEq_ssssssss}
+
+:: <{Data.Foldable.gEq_sssssssss;}> = {!Data.Foldable.gEq_sssssssss}
+
+:: <{Data.Foldable.bimap_s;}> = {Data.Foldable.bimap_s}
+
+:: <{Data.Foldable.bimap_ss;}> = {Data.Foldable.bimap_ss}
+
+:: <{Data.Foldable.bimap_sss;}> = {Data.Foldable.bimap_sss}
+

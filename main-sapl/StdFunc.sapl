@@ -1,0 +1,15 @@
+|| ?module? StdFunc
+
+
+StdFunc.id !x_0 = x_0
+StdFunc.const !x_0 y_1 = x_0
+StdFunc.twice !f_0 x_1 = f_0 (f_0 x_1)
+StdFunc.while !p_0 f_1 x_2 = case (p_0 x_2) (True -> StdFunc.while p_0 f_1 (f_1 x_2)) (False -> x_2) 
+StdFunc.until !p_0 f_1 x_2 = case (p_0 x_2) (True -> x_2) (False -> StdFunc.until p_0 f_1 (f_1 x_2)) 
+StdFunc.iter !_x_0::I f_1 x_2 = case _x_0 (0 -> x_2) (_ -> case (<{StdInt.<_17}> 0 _x_0) (True -> StdFunc.iter (<{StdInt.-_7}> _x_0 1) f_1 (f_1 x_2)) (False -> StdMisc.abort "Error: Negative index given to iter.") )
+StdFunc.seq !_x_0 arg_1 = case _x_0 (_predefined._Cons f_1_0 fs_1_1 -> StdFunc.seq fs_1_1 (f_1_0 arg_1)) (_predefined._Nil -> arg_1) 
+StdFunc.seqList !_x_0 io_1 = case _x_0 (_predefined._Cons f_1_0 fs_1_1 -> let _x_2_0 = f_1_0 io_1, _x_2_1 = StdFunc.seqList fs_1_1 (select _x_2_0::_Tuple2 1) in _Tuple2 (_predefined._Cons (select _x_2_0::_Tuple2 0) (select _x_2_1::_Tuple2 0)) (select _x_2_1::_Tuple2 1)) (_predefined._Nil -> _Tuple2 _predefined._Nil io_1) 
+<{StdFunc.TD;St}> _x_0::B = _predefined._Nil
+
+
+|| Converted Records

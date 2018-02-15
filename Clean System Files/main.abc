@@ -1,0 +1,91 @@
+.comp 920 000111010001
+.start __main_Start
+.depend "System.OSError" "20180116013448"
+.depend "Data.Traversable" "20180116013448"
+.depend "Data.Foldable" "20180116013448"
+.depend "StdReal" "20180116013446"
+.depend "StdChar" "20180116013446"
+.depend "StdInt" "20180116013446"
+.depend "StdList" "20180116013446"
+.depend "Data.Monoid" "20180116013448"
+.depend "Data.Maybe" "20180116013448"
+.depend "Control.Applicative" "20180116013448"
+.depend "Control.Monad" "20180116013448"
+.depend "StdFunc" "20180116013446"
+.depend "Data.Functor" "20180116013448"
+.depend "Data.Error" "20180116013448"
+.depend "StdString" "20180116013446"
+.depend "System.Time" "20180116013448"
+.depend "StdBool" "20180116013446"
+.depend "StdClass" "20180116013446"
+.depend "StdFile" "20180116013446"
+.depend "System.File" "20180116013448"
+.depend "System.CommandLine" "20180116013448"
+.depend "parser" "20180215120758"
+.depend "runtime" "20180215120803"
+.depend "types" "20180215130956"
+.depend "StdOverloaded" "20180116013446"
+.depend "_SystemDynamic" "20180116013446"
+.module m_main "main" "20180215124631"
+.endinfo
+.impmod _system
+.implab _cycle_in_spine
+.implab _type_error
+.implab _hnf
+.impdesc e_system_dind
+.implab e_system_nind e_system_eaind
+.impdesc e_system_dif
+.implab e_system_nif e_system_eaif
+.implab e_system_sif
+.impdesc e_system_dAP
+.implab e_system_nAP e_system_eaAP
+.implab e_system_sAP
+.impdesc ARRAY
+.impdesc _Nil
+.impdesc _Cons
+.impdesc _Conss
+.implab n_Conss ea_Conss
+.impdesc _Consts
+.implab n_Consts ea_Consts
+.impdesc _Conssts
+.implab n_Conssts ea_Conssts
+.impdesc _Tuple
+.impdesc d_S.1
+.implab n_S.1 ea_S.1
+.impdesc d_S.2
+.implab n_S.2 ea_S.2
+.impdesc d_S.3
+.implab n_S.3 ea_S.3
+.impdesc d_S.4
+.implab n_S.4 ea_S.4
+.impdesc d_S.5
+.implab n_S.5 ea_S.5
+.impdesc d_S.6
+.implab n_S.6 ea_S.6
+.implab _driver
+.impmod types
+.impdesc e_types_dInt
+.impdesc e_types_dComplex
+.export __main_Start
+.o 0 0
+__main_Start
+	buildI 65536
+	build _ 1 n1
+.d 1 0
+	jmp _driver
+.n 1 _ ea1
+.o 1 0
+n1
+	push_node _cycle_in_spine 1
+.o 2 0
+ea1
+.o 2 0
+s1
+	buildI 7
+	buildh e_types_dInt 1
+	buildI 9
+	buildh e_types_dInt 1
+	fillh e_types_dComplex 2 3
+	pop_a 1
+.d 1 0
+	rtn

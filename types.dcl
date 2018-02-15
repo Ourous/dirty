@@ -34,6 +34,7 @@ definition module types
 	| Imaginary Numeric
 	| Complex Numeric Numeric
 	| Infinity
+	| Zero
 	| NaN
 	
 :: Token

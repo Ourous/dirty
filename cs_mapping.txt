@@ -70,8 +70,8 @@ E // length of <mid> (elements in..)
 F // permutations of <mid>
 G // greatest-common-divisor
 H // maximum of <mid>
-I // has an imaginary component
-J // just the real component
+I // just the imaginary part
+J // just the real part
 K // keep from <left> where not <right>
 L // natural log of <mid>
 M // combinations of <mid>
@@ -79,7 +79,7 @@ N // join <main> with newlines
 O // is ordered
 P // is prime
 Q // do a quine
-R // is a real number
+R // is a real number, or infinity
 S // arc-sine
 T // arc-tangent
 U // upend the mid stack
@@ -102,8 +102,8 @@ e // eulers constant
 f // integer permutation using top of <left> and <right>
 g // least-common-multiple
 h // minimum of <mid>
-i // imaginary unit
-j // just the imaginary component
+i // multiply <mid> by imaginary unit
+j // split an imaginary number into re <left>, im <right>
 k // keep from <left> where <right>
 l // log <left> in base<right>
 m // integer combinations using top of <left> and <right>
@@ -176,31 +176,31 @@ z // remove zeroes
 ⌚ // watch symbol (timestamp)
 π // pi
 ⇔ // swap the left and right stacks
-⤆ // append-copy the right stack to the left stack
-⤇ // append-copy the left stack to the right stack
+⇖ // move the <mid> stack onto the <left> stack
+⇗ // move the <mid> stack onto the <right> stack
 Ù // upend the left stack
 Ú // upend the right stack
 Ü // upend the left and right stacks
 Ū // upend the left, right, and mid stacks
 Ụ // upend from baseline
-Û // upend every stack
+Û // upend every substack
 ù // rotate left stack by <mid>
 ú // rotate right stack by <mid>
 ü // rotate left and right stacks by <mid>
 ū // rotate left, right, and mid stacks by <mid>
 ụ // rotate from baseline by <mid>
-û // rotate every stack by <mid>
+û // rotate every substack
 Ẁ // wipe the left stack
 Ẃ // wipe the right stack
 Ẅ // wipe the left and right stacks
 Ẉ // wipe from baseline
 Ẇ // wipe the main stack
-Ŵ // wipe every stack
+Ŵ // wipe every substack
 ẁ // remove the <mid-th> elements from the left stack
 ẃ // remove the <mid-th> elements from the right stack
 ẅ // remove the <mid-th> elements from the left and right stacks
+ẉ // remove the <mid-th> elements from baseline stack
 ẇ // remove the <mid-th> elements from main stack
-ŵ // remove the <mid-th> elements from every stack
 ⤱ // mid -> right, mid -> left
 ⤲ // mid -> left, mid -> right
 ⤡ // swap top of left and mid

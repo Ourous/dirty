@@ -66,7 +66,7 @@ A // uppercase alphabet
 B // convert <left> to a bunch of digits, in the base of <right>
 C // arc-cosine
 D // remove duplicates from <mid>
-E // length of <mid> (elements in..)
+E // e^x
 F // permutations of <mid>
 G // greatest-common-divisor
 H // maximum of <mid>
@@ -109,7 +109,7 @@ l // log <left> in base<right>
 m // integer combinations using top of <left> and <right>
 n // split <mid> on newlines
 o // order
-p // prime with the index of <mid>
+p // prime factorization
 q // every instruction traversed so far, in order
 r // round
 s // sine
@@ -146,9 +146,7 @@ z // remove zeroes
 ∩ // intersection
 ∪ // union
 ∈ // element of
-∉ // not element of
 ∋ // contains as member
-∌ // does not contain
 ⋖ // vectorized less-than
 ⋗ // vectorized greater-than
 ≐ // vectorized equals
@@ -178,6 +176,8 @@ z // remove zeroes
 ⇔ // swap the left and right stacks
 ⇖ // move the <mid> stack onto the <left> stack
 ⇗ // move the <mid> stack onto the <right> stack
+⇘ // move the <left> stack into the <mid> stack
+⇙ // move the <right> stack into the <mid> stack
 Ù // upend the left stack
 Ú // upend the right stack
 Ü // upend the left and right stacks
@@ -230,7 +230,7 @@ z // remove zeroes
 ⮓ // rotate tops of stacks counterclockwise
 ∏ // product
 ∑ // sum
-∀ // all
+№ // elements in <mid>
 ∃ // any
 ∄ // none
 𝒫 // power set

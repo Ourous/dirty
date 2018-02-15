@@ -26,13 +26,15 @@ definition module types
 	| Operator_IO_WriteOnce
 	| Operator_IO_ReadOnce
 	| Operator_IO_Interrobang
+	| Operator_IO_Bell
+	| Operator_IO_Sleep
 	| Operator_Math_Modulus
 	| Operator_Math_Addition
 	| Operator_Math_Multiplication
 	| Operator_Math_Subtraction
 	| Operator_Math_Division
 	| Operator_Math_Logarithm
-	| Operator_Math_Exponentiation
+	| Operator_Math_Exponent
 	| Operator_Math_DotProduct
 	| Operator_Math_Sum
 	| Operator_Math_Average
@@ -56,6 +58,17 @@ definition module types
 	| Operator_Math_Reciprocal
 	| Operator_Math_RadiansToDegrees
 	| Operator_Math_DegreesToRadians
+	| Operator_Math_Minimum
+	| Operator_Math_Maximum
+	| Operator_Math_SetMinimum
+	| Operator_Math_SetMaximum
+	| Operator_Math_IntPermutations
+	| Operator_Math_IntCombinations
+	| Operator_Math_PrimeFactors
+	| Operator_Math_GreatestCommonDivisor
+	| Operator_Math_LeastCommonMultiple
+	| Operator_Math_NaturalExponent
+	| Operator_Math_NaturalLogarithm
 	| Operator_Bitwise_And
 	| Operator_Bitwise_Or
 	| Operator_Bitwise_Xor
@@ -73,6 +86,18 @@ definition module types
 	| Operator_Logic_GreaterOrEqual
 	| Operator_Logic_SetEquality
 	| Operator_Logic_SetInequality
+	| Operator_Logic_ElementOf
+	| Operator_Logic_ContainedIn
+	| Operator_Logic_SubsetOf
+	| Operator_Logic_SubsetOrEqual
+	| Operator_Logic_NotSubsetOf
+	| Operator_Logic_NotSubsetNorEqual
+	| Operator_Logic_SupersetOf
+	| Operator_Logic_SupersetOrEqual
+	| Operator_Logic_NotSupersetOf
+	| Operator_Logic_NotSupersetNorEqual
+	| Operator_Logic_Any
+	| Operator_Logic_None
 	| Operator_Vector_Multiplication
 	| Operator_Vector_Addition
 	| Operator_Vector_Equality
@@ -80,6 +105,15 @@ definition module types
 	| Operator_Vector_GreaterThan
 	| Operator_Vector_LessOrEqual
 	| Operator_Vector_GreaterOrEqual
+	| Operator_Range_FromLeftStepRight
+	| Operator_Range_FromMiddleToZero
+	| Operator_Range_FromMiddleAvoidZero
+	| Operator_Range_FromLeftTimesRight
+	| Operator_Set_PowerSet
+	| Operator_Set_Subsets
+	| Operator_Set_Permutations
+	| Operator_Set_Combinations
+	| 
 	
 	
 :: Stack
@@ -117,8 +151,7 @@ definition module types
 	| Stack_SwapTop CompassAxis
 	| Stack_SwapLeftRight
 	| Stack_MoveTop CompassDirection
-	| Stack_MoveAll_MiddleToLeft
-	| Stack_MoveAll_MiddleToRight
+	| Stack_MoveAll DiagonalDirection
 	| Stack_CopyTop CompassDirection
 	| Stack_CopyBoth CardinalAxis
 	| Stack_Replicate_Base
@@ -131,6 +164,8 @@ definition module types
 	| Stack_Duplicates_Main
 	| Stack_Duplicates_Base
 	| Stack_ShiftBase CardinalDirection
+	| Stack_JoinFromBase
+	| Stack_AdjustOffset
 	
 :: Variable
 	= Variable_Random

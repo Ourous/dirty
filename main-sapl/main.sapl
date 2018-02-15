@@ -1,7 +1,0 @@
-|| ?module? main
-
-
-main.Start world_0 = types.Complex (types.Int 9) (types.Int 7)
-
-
-|| Converted Records

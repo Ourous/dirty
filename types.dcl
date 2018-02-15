@@ -1,5 +1,30 @@
 definition module types
 
+:: XYPair
+	= {
+		x :: Int,
+		y :: Int
+	}
+	
+:: State
+	= {
+		dimension :: XYPair,
+		location :: XYPair,
+		direction :: CardinalDirection,
+		program :: !{{!Token}},
+		random :: [Int],
+		history :: [Token],
+		memory :: Memory
+	}
+
+:: Memory
+	= {
+		left :: [Number],
+		right :: [Number],
+		bases :: [Int],
+		main :: [[Number]]
+	}
+
 :: Numeric
 	= Int Int
 	| Real Real
@@ -69,6 +94,10 @@ definition module types
 	| Operator_Math_LeastCommonMultiple
 	| Operator_Math_NaturalExponent
 	| Operator_Math_NaturalLogarithm
+	| Operator_Math_ConvertToBase
+	| Operator_Math_ConvertFromBase
+	| Operator_Math_Integral
+	| Operator_Math_Differential
 	| Operator_Bitwise_And
 	| Operator_Bitwise_Or
 	| Operator_Bitwise_Xor
@@ -88,16 +117,20 @@ definition module types
 	| Operator_Logic_SetInequality
 	| Operator_Logic_ElementOf
 	| Operator_Logic_ContainedIn
-	| Operator_Logic_SubsetOf
 	| Operator_Logic_SubsetOrEqual
-	| Operator_Logic_NotSubsetOf
+	| Operator_Logic_SubsetNotEqual
 	| Operator_Logic_NotSubsetNorEqual
-	| Operator_Logic_SupersetOf
 	| Operator_Logic_SupersetOrEqual
-	| Operator_Logic_NotSupersetOf
+	| Operator_Logic_SupersetNotEqual
 	| Operator_Logic_NotSupersetNorEqual
 	| Operator_Logic_Any
 	| Operator_Logic_None
+	| Operator_Logic_IsOrdered
+	| Operator_Logic_IsRealOrInf
+	| Operator_Logic_IsLowercase
+	| Operator_Logic_IsUppercase
+	| Operator_Logic_IsPrime
+	| Operator_Logic_IsInteger
 	| Operator_Vector_Multiplication
 	| Operator_Vector_Addition
 	| Operator_Vector_Equality
@@ -113,7 +146,14 @@ definition module types
 	| Operator_Set_Subsets
 	| Operator_Set_Permutations
 	| Operator_Set_Combinations
-	
+	| Operator_Set_MakeOrdered
+	| Operator_Set_Length
+	| Operator_Set_RemoveZeroes
+	| Operator_Set_Filter
+	| Operator_Set_Intersection
+	| Operator_Set_Union
+	| Operator_Alphabet_ToLowercase
+	| Operator_Alphabet_ToUppercase
 	
 :: Stack
 	= Stack_Reverse_Left
@@ -154,8 +194,10 @@ definition module types
 	| Stack_CopyTop CompassDirection
 	| Stack_CopyBoth CardinalAxis
 	| Stack_Replicate_Base
-	| Stack_Replicate_Main
-	| Stack_Replicate_Middle
+	| Stack_Replicate_TopOfMiddle
+	| Stack_Replicate_AllOfMiddle
+	| Stack_Repeat_TopOfMiddle
+	| Stack_Repeat_AllOfMiddle
 	| Stack_Uniques_Middle
 	| Stack_Uniques_Main
 	| Stack_Uniques_Base
@@ -169,9 +211,8 @@ definition module types
 :: Variable
 	= Variable_Random
 	| Variable_Quine
-	| Variable_Program
+	| Variable_History
 	| Variable_Time
-	
 	
 :: Literal
 	= Literal_Infinity
@@ -258,4 +299,3 @@ definition module types
 	| NorthEast
 	| SouthWest
 	| SouthEast
-	

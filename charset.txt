@@ -7,7 +7,7 @@
 🔔 // bell character
 ⭫ // go to next baseline, if none, create new baseline at the end of <main>
 ⭭ // go to last baseline, if none, go to index 0
-¶ // newline
+// newline
 ⭬ // move current baseline up 1
 ⭮ // rotate counterclockwise
 ⭯ // rotate clockwise
@@ -33,7 +33,7 @@
 ! // output top of <mid>
 " // literal '
 # // random
-$
+$ // integral of polynomial with coefficients on the stack
 % // modulo
 & // join from <baseline>
 ' // start and end a string

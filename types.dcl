@@ -113,7 +113,6 @@ definition module types
 	| Operator_Set_Subsets
 	| Operator_Set_Permutations
 	| Operator_Set_Combinations
-	| 
 	
 	
 :: Stack

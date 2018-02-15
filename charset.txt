@@ -157,8 +157,8 @@ z // remove zeroes
 ≠ // not equals
 ≡ // identical to (stack equals)
 ≢ // not identical to (stack not equals)
-⊂ // subset of
-⊃ // superset of
+⊊ // subset but not equal
+⊋ // superset but not equal
 ⊄ // not subset of
 ⊅ // not superset of
 ⊆ // subset or equal
@@ -251,6 +251,6 @@ z // remove zeroes
 ḍ // retain only duplicates from <baseline>
 ⤗ // copy from <baseline> onto end of <main>
 ⤖ // duplicate <main>
-⤐ // duplciate <mid>
+⤔ // duplciate <mid>
 Ḧ // maximum of tops of <left> and <right>
 ḧ // minimum of tops of <left> and <right>

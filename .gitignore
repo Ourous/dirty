@@ -1,4 +1,4 @@
-**/*.prp
+*.prp
 Clean System Files
 *-sapl
 *-www

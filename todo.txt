@@ -1,12 +1,4 @@
--	remove where corresponding elements are zero
--	remove all zeroes
--	remove all negatives
--	remove all positives
--	"if palindromic"
--	main stack position stack?
-	eg:
-		[[a]|[b],[c]]
-		b,c would be the stack of stacks it operates on
-		a wouldn't be touched
-		if a fn returned stack stacks it would go after C and update the new baseline
-		this should work like pushdir/popdir
+-	change set comparisons to: 
+			1. Subset (imp: or equal)
+			2. Not Subset (imp: nor equal)
+			3. Subset but not Equal

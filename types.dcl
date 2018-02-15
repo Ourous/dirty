@@ -53,7 +53,33 @@ definition module types
 	| Operator_Math_ArcSine
 	| Operator_Math_ArcCoSine
 	| Operator_Math_ArcTangent
-	| Operator_Math_Ar
+	| Operator_Math_Reciprocal
+	| Operator_Math_RadiansToDegrees
+	| Operator_Math_DegreesToRadians
+	| Operator_Bitwise_And
+	| Operator_Bitwise_Or
+	| Operator_Bitwise_Xor
+	| Operator_Bitwise_Xnor
+	| Operator_Bitwise_Nor
+	| Operator_Bitwose_Not
+	| Operator_Bitwise_Nand
+	| Operator_Bitwise_LeftShift
+	| Operator_Bitwise_RightShift
+	| Operator_Logic_Equality
+	| Operator_Logic_Inequality
+	| Operator_Logic_LessThan
+	| Operator_Logic_GreaterThan
+	| Operator_Logic_LessOrEqual
+	| Operator_Logic_GreaterOrEqual
+	| Operator_Logic_SetEquality
+	| Operator_Logic_SetInequality
+	| Operator_Vector_Multiplication
+	| Operator_Vector_Addition
+	| Operator_Vector_Equality
+	| Operator_Vector_LessThan
+	| Operator_Vector_GreaterThan
+	| Operator_Vector_LessOrEqual
+	| Operator_Vector_GreaterOrEqual
 	
 	
 :: Stack

@@ -40,6 +40,20 @@ definition module types
 	| Operator_Math_SquareRoot
 	| Operator_Math_Conjugate
 	| Operator_Math_RealPart
+	| Operator_Math_ImagPart
+	| Operator_Math_ImagUnit
+	| Operator_Math_ImagSplit
+	| Operator_Math_Floor
+	| Operator_Math_Abs
+	| Operator_Math_Ceiling
+	| Operator_Math_Round
+	| Operator_Math_Sine
+	| Operator_Math_CoSine
+	| Operator_Math_Tangent
+	| Operator_Math_ArcSine
+	| Operator_Math_ArcCoSine
+	| Operator_Math_ArcTangent
+	| Operator_Math_Ar
 	
 	
 :: Stack

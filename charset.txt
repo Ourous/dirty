@@ -159,8 +159,6 @@ z // remove zeroes
 ≢ // not identical to (stack not equals)
 ⊊ // subset but not equal
 ⊋ // superset but not equal
-⊄ // not subset of
-⊅ // not superset of
 ⊆ // subset or equal
 ⊇ // superset or equal
 ⊈ // not subset nor equal
@@ -249,8 +247,10 @@ z // remove zeroes
 Ḍ // remove duplicates from <baseline>
 ḋ // retain only duplicates from <main>
 ḍ // retain only duplicates from <baseline>
-⤗ // copy from <baseline> onto end of <main>
-⤖ // duplicate <main>
-⤔ // duplciate <mid>
+⤔ // copy from <baseline> onto end of <main>
+↦ // duplicate top element of <mid> into a new stack
+↣ // duplciate <mid>
+⤅ // repeat top element of <mid> forever
+⤖ // repeat <mid> forever
 Ḧ // maximum of tops of <left> and <right>
 ḧ // minimum of tops of <left> and <right>

@@ -1,29 +1,14 @@
-' // start and end a string
-" // literal ' character
-// newline
- // space
-(
-)
-⏜ // top parenthesis
-⏝ // bottom parenthesis
-[
-]
-⎴ // top square bracket
-⎵ // bottom square bracket
-⎶ // top and bottom square brackets
-{
-}
-⏞ // top curly bracket
-⏟ // bottom curly bracket
 ⏻ // power symbol
-⏵
-⏴
-⏶
-⏷
-⭪ // left dotted arrow
-⭫ // up dotted arrow
-⭬ // right dotted arrow
-⭭ // down dotted arrow
+⏵ // start, going right
+⏴ // start, going left
+⏶ // start, going up
+⏷ // start, going down
+⭪ // move current baseline down 1
+🔔 // bell character
+⭫ // go to next baseline, if none, create new baseline at the end of <main>
+⭭ // go to last baseline, if none, go to index 0
+¶ // newline
+⭬ // move current baseline up 1
 ⭮ // rotate counterclockwise
 ⭯ // rotate clockwise
 ⬅ // solid left arrow
@@ -42,29 +27,113 @@
 ⋯ // horizontal dots
 ⋰ // up-right dots
 ⋱ // up-left dots
-|
-‒
-/
-\
-# // not a number
-⁇ // double question mark
-⁈ // question-exclaim mark
-⁉ // exclaim-question mark
-‽ // interrobang
-‼
-?
-!
-×
+‼ // output all of <mid>
+⁇ // get all input, put into <mid>
+  // no-op
+! // output top of <mid>
+" // literal '
+# // random
+$
+% // modulo
+& // join from <baseline>
+' // start and end a string
+( // loop if <left> is true or empty
+) // loop if <left> is true or empty
+* // dot product
++ // plus
+, // from <left>, in steps of <right>
+- // minus
+. // from <mid> to zero, in steps of 1
+/ // reflection around SW->NE
+0 // multiply <mid> by 10
+1 // multiply <mid> by 10, add 1
+2 // multiply <mid> by 10, add 2
+3 // multiply <mid> by 10, add 3
+4 // multiply <mid> by 10, add 4
+5 // multiply <mid> by 10, add 5
+6 // multiply <mid> by 10, add 6
+7 // multiply <mid> by 10, add 7
+8 // multiply <mid> by 10, add 8
+9 // multiply <mid> by 10, add 9
+: // from <mid> away from zero in steps of 1
+; // from <left>, in magnitudes of <right>
+< // less-than
+= // top-equals
+> // greater-than
+? // get single char of input, store in <mid>
+@ // select the mid stack offset (from main stack) by the top of the mid stack
+A // uppercase alphabet
+B // convert <left> to a bunch of digits, in the base of <right>
+C // arc-cosine
+D // remove duplicates from <mid>
+E // e^x
+F // permutations of <mid>
+G // greatest-common-divisor
+H // maximum of <mid>
+I // just the imaginary part
+J // just the real part
+K // keep from <left> where not <right>
+L // natural log of <mid>
+M // combinations of <mid>
+N // join <main> with newlines
+O // is ordered
+P // is prime
+Q // do a quine
+R // is a real number, or infinity
+S // arc-sine
+T // arc-tangent
+U // upend the mid stack
+V // average
+W // wipe the mid stack
+X // to uppercase
+Y // is uppercase
+Z // is an integer
+[ // loop if <mid> is true
+\ // reflection around NW->SE
+] // loop if <mid> is true
+^ // exponentiate
+_ // floor
+` // coefficients of the differential of a polynomial with coefficients of <mid>
+a // lowercase alphabet
+b // convert <left> stack to an integer, assuming it's in the base of <right>
+c // cosine
+d // retain only duplicates from <mid>
+e // eulers constant
+f // integer permutation using top of <left> and <right>
+g // least-common-multiple
+h // minimum of <mid>
+i // multiply <mid> by imaginary unit
+j // split an imaginary number into re <left>, im <right>
+k // keep from <left> where <right>
+l // log <left> in base<right>
+m // integer combinations using top of <left> and <right>
+n // split <mid> on newlines
+o // order
+p // prime factorization
+q // every instruction traversed so far, in order
+r // round
+s // sine
+t // tangent
+u // rotate the mid stack by <mid>
+v // absolute value
+w // remove the <nth> elements from the <mid> stack
+x // to lowercase
+y // is lowercase
+z // remove zeroes
+{ // loop if <right> is true or empty
+| // reflection around the vertical
+} // loop if <right> is true or empty
+~ // conjugate
+⁈ // output <right>, read into <left>
+⁉ // output <left>, read into <right>
+‽ // output and pop <mid>, read into <mid>
+× // multiply
 ⨰ // vectorized multiplication
-÷
-%
-^
--
-+
+÷ // divide
 ∔ // vectorized plus
-√
-⅟
-∞
+√ // square root
+⅟ // reciprocal
+∞ // infinity
 ∧ // and
 ⩑ // vectorized and
 ∨ // or
@@ -77,22 +146,17 @@
 ∩ // intersection
 ∪ // union
 ∈ // element of
-∉ // not element of
 ∋ // contains as member
-∌ // does not contain
-<
 ⋖ // vectorized less-than
->
 ⋗ // vectorized greater-than
-=
 ≐ // vectorized equals
-≤
+≤ // less or equals
 ⩿ // vectorized less-or-equals
-≥
+≥ // greater or equals
 ⪀ // vectorized greater-or-equals
-≠
-≡ // identical to
-≢ // not identical to
+≠ // not equals
+≡ // identical to (stack equals)
+≢ // not identical to (stack not equals)
 ⊂ // subset of
 ⊃ // superset of
 ⊄ // not subset of
@@ -101,85 +165,42 @@
 ⊇ // superset or equal
 ⊈ // not subset nor equal
 ⊉ // not superset nor equal
-n // round, then absolute value
-z // round
-q // evaluate to rational
-r // evaluate to real
-N // is a natural number
-Z // is an integer
-Q // is rational
-R // is real
-C // is complex
-I // is imaginary
-i // imaginary unit
-e // eulers constant
-~ // conjugate
-s // sine
-c // cosine
-t // tangent
-S // arc-sine
-C // arc-cosine
-T // arc-tangent
-b // convert left stack to an integer, assuming it's in the base of <right stack>
-B // inverse of above
-p // prime with the index of <mid>
-P // is prime
 å // radians to angle
 Å // angle to radians
-f // the <nth> fibbonacci number
-F // is a fibbonacci number
-l // log <left> in base<right>
-L // natural log of <mid>
-g // gravitational constant
-d // retain only duplicates
-D // remove duplicates
-o // order
-O // is ordered
-a // lowercase alphabet
-A // uppercase alphabet
-_ // floor
 ¯ // ceiling
 « // left-shift
 » // right-shift
 ⌛ // hourglass symbol (sleep)
 ⌚ // watch symbol (timestamp)
-* // dot product
-0
-1
-2
-3
-4
-5
-6
-7
-8
-9
 π // pi
-& // join all mid stacks
-@ // select the mid stack offset (from main stack) by the top of the mid stack
 ⇔ // swap the left and right stacks
-U // upend the mid stack
+⇖ // move the <mid> stack onto the <left> stack
+⇗ // move the <mid> stack onto the <right> stack
+⇘ // move the <left> stack into the <mid> stack
+⇙ // move the <right> stack into the <mid> stack
 Ù // upend the left stack
 Ú // upend the right stack
 Ü // upend the left and right stacks
 Ū // upend the left, right, and mid stacks
-Û // upend every stack
-u // rotate the mid stack
-ù // rotate left stack
-ú // rotate right stack
-ü // rotate left and right stacks
-ū // rotate left, right, and mid stacks
-û // rotate every stack
-W // wipe the mid stack
+Ụ // upend from baseline
+Û // upend every substack
+ù // rotate left stack by <mid>
+ú // rotate right stack by <mid>
+ü // rotate left and right stacks by <mid>
+ū // rotate left, right, and mid stacks by <mid>
+ụ // rotate from baseline by <mid>
+û // rotate every substack
 Ẁ // wipe the left stack
 Ẃ // wipe the right stack
 Ẅ // wipe the left and right stacks
-Ŵ // wipe every stack
-w // remove the <nth> element from the mid stack
-ẁ // remove the <nth> element from the left stack
-ẃ // remove the <nth> element from the right stack
-ẅ // remove the <nth> element from the left and right stacks
-ŵ // remove the <nth> element from every stack
+Ẉ // wipe from baseline
+Ẇ // wipe the main stack
+Ŵ // wipe every substack
+ẁ // remove the <mid-th> elements from the left stack
+ẃ // remove the <mid-th> elements from the right stack
+ẅ // remove the <mid-th> elements from the left and right stacks
+ẉ // remove the <mid-th> elements from baseline stack
+ẇ // remove the <mid-th> elements from main stack
 ⤱ // mid -> right, mid -> left
 ⤲ // mid -> left, mid -> right
 ⤡ // swap top of left and mid
@@ -201,19 +222,35 @@ w // remove the <nth> element from the mid stack
 ⭷ // copy top of mid to right
 ⭸ // copy top of left to mid
 ⭹ // copy top of right to mid
+⭾ // copy top of left and right to eachother
+⭿ // copy top and bottom of mid to eachother
 ⮐ // rotate stacks clockwise
 ⮑ // rotate stacks counterclockwise
 ⮒ // rotate tops of stacks clockwise
 ⮓ // rotate tops of stacks counterclockwise
 ∏ // product
 ∑ // sum
-∀ // all
+№ // elements in <mid>
 ∃ // any
 ∄ // none
 𝒫 // power set
 𝒮 // ordered subsets
-; // from <left>, in magnitudes of <right>
-: // from <zero> to <mid> in steps of 1
-, // from <left>, in steps of <right>
-. // from <mid>, away from zero, in steps of 1
-$ // clear the console
+⬈ // bounce NE
+⬀ // conditional bounce NE
+⬉ // bounce NW
+⬁ // conditional bounce NW
+⬊ // bounce SE
+⬂ // conditional bounce SE
+⬋ // bounce SW
+⬃ // conditional bounce SW
+⬚ // conditional universal reflect
+⬜ // universal reflect
+Ḋ // remove duplicates from <main>
+Ḍ // remove duplicates from <baseline>
+ḋ // retain only duplicates from <main>
+ḍ // retain only duplicates from <baseline>
+⤗ // copy from <baseline> onto end of <main>
+⤖ // duplicate <main>
+⤐ // duplciate <mid>
+Ḧ // maximum of tops of <left> and <right>
+ḧ // minimum of tops of <left> and <right>

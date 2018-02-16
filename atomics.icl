@@ -3,6 +3,7 @@ implementation module atomics
 import types, StdOverloaded, StdBool, StdInt, StdReal
 from StdLib import isFinite
 from StdMisc import abort
+from StdFunc import id
 import StdClass
 
 FRAC_MAX :== 4503599627370496.0
@@ -132,6 +133,15 @@ instance < Numeric where
 	(<) (Real lhs) (Real rhs)
 		= lhs < rhs
 		
+		
+instance toInt Numeric where
+	toInt (Int val) = val
+	toInt (Real val) = toInt val
+
+instance toReal Numeric where
+	toReal (Int val) = toReal val
+	toReal (Real val) = val
+		
 instance mod Numeric where (mod) lhs rhs = applyBinaryInt (rem) (toInt) lhs rhs
 		
 instance gcd Numeric where gcd lhs rhs = applyBinaryInt gcd (toInt) lhs rhs
@@ -148,4 +158,12 @@ instance sqrt Numeric where sqrt val = applyUnaryReal sqrt (toReal) val
 
 instance sin Numeric where sin val = applyUnaryReal sin (toReal) val
 
-instance cos Numeric
+instance cos Numeric where cos val = applyUnaryReal cos (toReal) val
+
+instance tan Numeric where tan val = applyUnaryReal tan (toReal) val
+
+instance asin Numeric where asin val = applyUnaryReal asin (toReal) val
+
+instance acos Numeric where acos val = applyUnaryReal acos (toReal) val
+
+instance atan Numeric where atan val = applyUnaryReal atan (toReal) val

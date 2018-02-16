@@ -4,11 +4,11 @@ import types
 
 //nativeToUTF8 :: String -> String
 //utf8ToNative :: String -> String
-nativeToUTF8 string :== unicodeToUTF8 (nativeToUnicode string)
-utf8ToNative string :== unicodeToNative (utf8ToUnicode string)
+//nativeToUTF8 string :== unicodeToUTF8 (nativeToUnicode string)
+//utf8ToNative string :== unicodeToNative (utf8ToUnicode string)
 
-unicodeToUTF8 :: [Numeric] -> String
-utf8ToUnicode :: String -> [Numeric]
+unicodeToUTF8 :: [Number] -> String
+utf8ToUnicode :: String -> [Number]
 
-nativeToUnicode :: String -> [Numeric]
-unicodeToNative :: [Numeric] -> String
+//nativeToUnicode :: String -> [Number]
+//unicodeToNative :: [Number] -> String

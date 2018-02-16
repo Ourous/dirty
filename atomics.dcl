@@ -14,8 +14,11 @@ instance ~ Numeric
 instance == Numeric
 instance < Numeric
 
+instance toInt Numeric
+instance toReal Numeric
+
 instance mod Numeric
-instance gcd Numeric/*
+instance gcd Numeric
 instance lcm Numeric
 instance ln Numeric
 instance log10 Numeric
@@ -26,4 +29,4 @@ instance cos Numeric
 instance tan Numeric
 instance asin Numeric
 instance acos Numeric
-instance atan Numeric*/
+instance atan Numeric

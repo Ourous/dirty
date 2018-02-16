@@ -225,16 +225,16 @@ definition module types
 	| Literal_LowerAlpha
 	
 :: Digit
-	= Zero
-	| One
-	| Two
-	| Three
-	| Four
-	| Five
-	| Six
-	| Seven
-	| Eight
-	| Nine
+	= Digit_Zero
+	| Digit_One
+	| Digit_Two
+	| Digit_Three
+	| Digit_Four
+	| Digit_Five
+	| Digit_Six
+	| Digit_Seven
+	| Digit_Eight
+	| Digit_Nine
 	
 :: Control
 	= Control_Terminate

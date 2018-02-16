@@ -2,28 +2,41 @@ implementation module atomics
 
 import types, StdOverloaded, StdBool, StdInt, StdReal
 from StdLib import isFinite
+from StdMisc import abort
+import StdClass
 
 FRAC_MAX :== 4503599627370496.0
 FRAC_MIN :== -4503599627370496.0
 
 IS_INT real :== toReal (entier real) == real
 
-IS_ZERO numeric
-	:== case numeric of
-		(Int 0) = True
-		(Real 0.0) = True
-		(Real -0.0) = True
-		_ = False
+applyUnaryReal :: (Real -> Real) (Int -> Real) Numeric -> Numeric
+applyUnaryReal op conv (Real val) = (Real (op val))
+applyUnaryReal op conv (Int val) = (Real (op (conv val)))
 
-IS_NAN numeric
-	:== case numeric of
-		(Real val) = not (isFinite val || val <> 0.0)
-		_ = False
-		
-IS_INF numeric
-	:== case numeric of
-		(Real val) = not (isFinite val) && val <> 0.0
-		_ = False
+applyUnaryInt :: (Int -> Int) (Real -> Int) Numeric -> Numeric
+applyUnaryInt op conv (Real val) = (Int (op (conv val)))
+applyUnaryInt op conv (Int val) = (Int (op val))
+
+applyBinaryReal :: (Real Real -> Real) (Int -> Real) Numeric Numeric -> Numeric
+applyBinaryReal op conv (Real lhs) (Real rhs)
+	= (Real (op lhs rhs))
+applyBinaryReal op conv (Real lhs) (Int rhs)
+	= (Real (op lhs (conv rhs)))
+applyBinaryReal op conv (Int lhs) (Real rhs)
+	= (Real (op (conv lhs) rhs))
+applyBinaryReal op conv (Int lhs) (Int rhs)
+	= (Real (op (conv lhs) (conv rhs)))
+	
+applyBinaryInt :: (Int Int -> Int) (Real -> Int) Numeric Numeric -> Numeric
+applyBinaryInt op conv (Real lhs) (Real rhs)
+	= (Int (op (conv lhs) (conv rhs)))
+applyBinaryInt op conv (Real lhs) (Int rhs)
+	= (Int (op (conv lhs) rhs))
+applyBinaryInt op conv (Int lhs) (Real rhs)
+	= (Int (op lhs (conv rhs)))
+applyBinaryInt op conv (Int lhs) (Int rhs)
+	= (Int (op lhs rhs))
 
 // numeric implementations
 
@@ -63,7 +76,7 @@ instance * Numeric where
 
 instance / Numeric where
 	(/) (Int lhs) (Int rhs)
-		= if(lhs rem rhs == 0) (Int (lhs / rhs)) (Real (lhs / rhs))
+		= if(lhs rem rhs == 0) (Int (lhs / rhs)) (Real (toReal lhs / toReal rhs))
 	(/) (Int lhs) (Real rhs)
 		= (Real (toReal lhs / rhs))
 	(/) (Real lhs) (Int rhs)
@@ -87,6 +100,12 @@ instance abs Numeric where
 	abs (Real val)
 		= (Real (abs val))
 
+instance sign Numeric where
+	sign (Int val)
+		= sign val
+	sign (Real val)
+		= sign val
+		
 instance ~ Numeric where
 	~ (Int val)
 		= (Int (~ val))
@@ -112,42 +131,21 @@ instance < Numeric where
 		= lhs < toReal rhs
 	(<) (Real lhs) (Real rhs)
 		= lhs < rhs
-			
-// number implementations
-
-handle :: Number -> Number
-handle Zero = Zero
-handle NaN = NaN
-handle Infinity = Infinity
-handle (Rational val)
-	| IS_ZERO val = Zero
-	| IS_NAN val = NaN
-	| IS_INF val = Infinity
-	= (Rational val)
-handle (Imaginary val)
-	| IS_ZERO val = Zero
-	| IS_NAN val = NaN
-	| IS_INF val = Infinity
-	= (Imaginary val)
-handle (Complex re im)
-	| IS_NAN re || IS_NAN im = NaN
-	| IS_INF re || IS_INF im = Infinity
-	= case (IS_ZERO re) (IS_ZERO im) of
-		True True = Zero
-		True False = (Imaginary im)
-		False True = (Rational re)
-		False False = (Complex re im)
 		
-instance + Number where
-	(+) NaN _ = NaN
-	(+) _ NaN = NaN
-	(+) Infinity _ = Infinity
-	(+) _ Infinity = Infinity
-	(+) (Rational lhs) (Rational rhs)
-		= handle (lhs + rhs)
-	(+) (Rational lhs) (Imaginary rhs)
-		= handle (Complex lhs rhs)
-	(+) (Rational lhs) (Complex rhsRe rhsIm)
-		= handle (Complex (lhs + rhsRe) rhsIm)
-	(+) (Rational lhs) Infinity
-		| IS_NAN lhs = NaN
+instance mod Numeric where (mod) lhs rhs = applyBinaryInt (rem) (toInt) lhs rhs
+		
+instance gcd Numeric where gcd lhs rhs = applyBinaryInt gcd (toInt) lhs rhs
+
+instance lcm Numeric where lcm lhs rhs = applyBinaryInt lcm (toInt) lhs rhs
+
+instance ln Numeric where ln val = applyUnaryReal ln (toReal) val
+
+instance log10 Numeric where log10 val = applyUnaryReal log10 (toReal) val
+
+instance exp Numeric where exp val = applyUnaryReal exp (toReal) val
+
+instance sqrt Numeric where sqrt val = applyUnaryReal sqrt (toReal) val
+
+instance sin Numeric where sin val = applyUnaryReal sin (toReal) val
+
+instance cos Numeric

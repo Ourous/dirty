@@ -73,7 +73,7 @@ H // maximum of <mid>
 I // just the imaginary part
 J // just the real part
 K // keep from <left> where not <right>
-L // natural log of <mid>
+L // log <left> in base of <right>
 M // combinations of <mid>
 N // join <main> with newlines
 O // is ordered
@@ -98,14 +98,14 @@ a // lowercase alphabet
 b // convert <left> stack to an integer, assuming it's in the base of <right>
 c // cosine
 d // retain only duplicates from <mid>
-e // eulers constant
+e // natural logarithm
 f // integer permutation using top of <left> and <right>
 g // least-common-multiple
 h // minimum of <mid>
 i // multiply <mid> by imaginary unit
 j // split an imaginary number into re <left>, im <right>
 k // keep from <left> where <right>
-l // log <left> in base<right>
+l // base-10 log of <mid>
 m // integer combinations using top of <left> and <right>
 n // split <mid> on newlines
 o // order

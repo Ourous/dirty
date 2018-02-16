@@ -4,32 +4,26 @@ import types, StdOverloaded
 
 
 instance + Numeric
-instance + Number
-
 instance - Numeric
-instance - Number
-
-instance zero Number
-
 instance * Numeric
-instance * Number
-
 instance / Numeric
-instance / Number
-
-instance one Number
-
 instance ^ Numeric
-instance ^ Number
-
 instance abs Numeric
-instance abs Number
-
+instance sign Numeric
 instance ~ Numeric
-instance ~ Number
-
 instance == Numeric
-instance == Number
-
 instance < Numeric
-instance < Number
+
+instance mod Numeric
+instance gcd Numeric/*
+instance lcm Numeric
+instance ln Numeric
+instance log10 Numeric
+instance exp Numeric
+instance sqrt Numeric
+instance sin Numeric
+instance cos Numeric
+instance tan Numeric
+instance asin Numeric
+instance acos Numeric
+instance atan Numeric*/

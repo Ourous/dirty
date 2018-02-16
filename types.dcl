@@ -33,9 +33,18 @@ definition module types
 	= Rational Numeric
 	| Imaginary Numeric
 	| Complex Numeric Numeric
-	| Infinity
+	| Inf Infinite
 	| Zero
 	| NaN
+	
+:: Infinite
+	= Re Sign
+	| Im Sign
+	| Directed
+	
+:: Sign
+	= Positive
+	| Negative
 	
 :: Token
 	= Control

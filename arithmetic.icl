@@ -4,6 +4,23 @@ import types, atomics, StdBool, StdOverloaded, StdInt, StdReal, StdClass, Math.G
 from StdLibMisc import isFinite
 from StdMisc import abort
 
+instance == Sign where
+	(==) Positive Positive = True
+	(==) Negative Negative = True
+	(==) _ _ = False
+
+instance ~ Sign where
+	~ Positive = Negative
+	~ Negative = Positive
+	
+instance * Sign where
+	(*) Positive Positive = Positive
+	(*) Negative Negative = Positive
+	(*) _ _ = Negative
+	
+TO_SIGN numeric
+	:== if(sign numeric < 0) Negative Positive
+
 IS_ZERO numeric
 	:== case numeric of
 		(Int 0) = True
@@ -24,35 +41,45 @@ IS_INF numeric
 // number implementations
 
 handle :: Number -> Number
-handle Zero = Zero
-handle NaN = NaN
-handle Infinity = Infinity
 handle (Rational val)
 	| IS_ZERO val = Zero
 	| IS_NAN val = NaN
-	| IS_INF val = Infinity
+	| IS_INF val = (Inf (Re (TO_SIGN val)))
 	= (Rational val)
 handle (Imaginary val)
 	| IS_ZERO val = Zero
 	| IS_NAN val = NaN
-	| IS_INF val = Infinity
+	| IS_INF val = (Inf (Im (TO_SIGN val)))
 	= (Imaginary val)
 handle (Complex re im)
 	| IS_NAN re || IS_NAN im = NaN
-	| IS_INF re || IS_INF im = Infinity
+	| IS_INF re
+		| IS_INF im
+			= (Inf Directed)
+		= (Inf (Re (TO_SIGN re)))
+	| IS_INF im
+		= (Inf (Im (TO_SIGN im)))
 	= case ((IS_ZERO re), (IS_ZERO im)) of
 		(True, True) = Zero
 		(True, False) = (Imaginary im)
 		(False, True) = (Rational re)
 		(False, False) = (Complex re im)
+handle val = val
 
 instance + Number where
 	(+) NaN _ = NaN
 	(+) _ NaN = NaN
-	(+) Infinity _ = Infinity
-	(+) _ Infinity = Infinity
 	(+) Zero val = val
 	(+) val Zero = val
+	(+) (Inf (Re lhs)) (Inf (Re rhs))
+		| lhs == rhs = (Inf (Re lhs))
+		= NaN
+	(+) (Inf (Im lhs)) (Inf (Im rhs))
+		| lhs == rhs = (Inf (Im lhs))
+		= NaN
+	(+) (Inf _) (Inf _) = (Inf Directed)
+	(+) (Inf lhs) _ = (Inf lhs)
+	(+) _ (Inf rhs) = (Inf rhs)
 	(+) (Rational lhs) (Rational rhs)
 		= handle (Rational (lhs + rhs))
 	(+) (Rational lhs) (Imaginary rhs)
@@ -75,10 +102,17 @@ instance + Number where
 instance - Number where
 	(-) NaN _ = NaN
 	(-) _ NaN = NaN
-	(-) Infinity _ = Infinity
-	(-) _ Infinity = Infinity
-	(-) val Zero = val
-	(-) Zero val = ~val // this comes second for performance
+	(-) (Inf (Re lhs)) (Inf (Re rhs))
+		| lhs <> rhs = (Inf (Re lhs))
+		= NaN
+	(-) (Inf (Im lhs)) (Inf (Im rhs))
+		| lhs <> rhs = (Inf (Im lhs))
+		= NaN
+	(-) (Inf _) (Inf _) = (Inf Directed)
+	(-) (Inf lhs) _ = (Inf lhs)
+	(-) _ (Inf rhs) = ~(Inf rhs)
+	(-) lhs Zero = lhs
+	(-) Zero rhs = ~rhs // this comes second for performance
 	(-) (Rational lhs) (Rational rhs)
 		= handle (Rational (lhs - rhs))
 	(-) (Rational lhs) (Imaginary rhs)
@@ -106,8 +140,17 @@ instance * Number where
 	(*) _ NaN = NaN
 	(*) Zero _ = Zero
 	(*) _ Zero = Zero
-	(*) Infinity _ = Infinity
-	(*) _ Infinity = Infinity
+	(*) (Inf (Re lhs)) (Inf (Re rhs)) = (Inf (Re (lhs * rhs)))
+	(*) (Inf (Re lhs)) (Rational rhs) = (Inf (Re (lhs * TO_SIGN rhs)))
+	(*) (Rational lhs) (Inf (Re rhs)) = (Inf (Re (TO_SIGN lhs * rhs)))
+	(*) (Inf (Re lhs)) (Inf (Im rhs)) = (Inf (Im (lhs * rhs)))
+	(*) (Inf (Re lhs)) (Imaginary rhs) = (Inf (Im (lhs * TO_SIGN rhs)))
+	(*) (Inf (Im lhs)) (Inf (Re rhs)) = (Inf (Im (lhs * rhs)))
+	(*) (Inf (Im lhs)) (Inf (Im rhs)) = (Inf (Re (~(lhs * rhs))))
+	(*) (Inf Directed) _ = (Inf Directed)
+	(*) _ (Inf Directed) = (Inf Directed)
+	(*) (Inf _) (Complex _ _) = (Inf Directed)
+	(*) (Complex _ _) (Inf _) = (Inf Directed)
 	(*) (Rational lhs) (Rational rhs)
 		= handle (Rational (lhs * rhs))
 	(*) (Rational lhs) (Imaginary rhs)
@@ -130,12 +173,7 @@ instance * Number where
 instance / Number where
 	(/) NaN _ = NaN
 	(/) _ NaN = NaN
-	(/) Infinity Infinity = NaN
 	(/) Zero Zero = NaN
-	(/) Infinity _ = Infinity
-	(/) Zero _ = Zero
-	(/) _ Zero = Infinity
-	(/) _ Infinity = Zero
 	(/) (Rational lhs) (Rational rhs)
 		= handle (Rational (lhs / rhs))
 	(/) (Rational lhs) (Imaginary rhs)
@@ -164,20 +202,20 @@ instance one Number where
 instance ^ Number where
 	(^) NaN _ = NaN
 	(^) _ NaN = NaN
-	(^) _ Infinity = NaN
+	//(^) _ Infinity = NaN
 	(^) _ Zero = one
-	(^) Infinity (Rational rhs)
-		= case (sign rhs) of
-			1 = Infinity
-			0 = /*one*/ abort "tell Ourous you found a bug: Unhandled Zero at Exponential Infinity" // this should never happen
-			-1 = Zero
-	(^) Infinity (Imaginary _) = abort "Cannot raise `Infinity` to an Imaginary power"
-	(^) Infinity (Complex _ _) = abort "Cannot raise `Infinity` to a Complex power"
-	(^) Zero (Rational rhs)
-		= case (sign rhs) of
-			1 = Zero
-			0 = /*one*/ abort "tell Ourous you found a bug: Unhandled Zero at Exponential Zero" // this should never happen
-			-1 = Infinity
+	//(^) Infinity (Rational rhs)
+	//	= case (sign rhs) of
+	//		1 = Infinity
+	//		0 = /*one*/ abort "tell Ourous you found a bug: Unhandled Zero at Exponential Infinity" // this should never happen
+	//		-1 = Zero
+	//(^) Infinity (Imaginary _) = abort "Cannot raise `Infinity` to an Imaginary power"
+	//(^) Infinity (Complex _ _) = abort "Cannot raise `Infinity` to a Complex power"
+	//(^) Zero (Rational rhs)
+	//	= case (sign rhs) of
+	//		1 = Zero
+	//		0 = /*one*/ abort "tell Ourous you found a bug: Unhandled Zero at Exponential Zero" // this should never happen
+	//		-1 = Infinity
 	(^) Zero (Imaginary _) = abort "Cannot raise `Zero` to an Imaginary power"
 	(^) Zero (Complex _ _) = abort "Cannot raise `Zero` to a Complex power"
 	(^) (Rational lhs) (Rational rhs)
@@ -194,7 +232,7 @@ instance ^ Number where
 instance abs Number where
 	abs NaN = NaN
 	abs Zero = Zero
-	abs Infinity = Infinity
+	//abs Infinity = Infinity
 	abs (Rational val) = (Rational (abs val))
 	abs (Imaginary val) = (Rational (abs val))
 	abs (Complex re im) = (Rational ((re * re + im * im)^(Real 0.5)))
@@ -202,7 +240,7 @@ instance abs Number where
 instance ~ Number where
 	(~) NaN = NaN
 	(~) Zero = Zero
-	(~) Infinity = Infinity
+	//(~) Infinity = Infinity
 	(~) (Rational val) = (Rational (~ val))
 	(~) (Imaginary val) = (Imaginary (~ val))
 	(~) (Complex re im) = (Complex re (~ im))
@@ -210,7 +248,7 @@ instance ~ Number where
 instance == Number where
 	(==) NaN NaN = False
 	(==) Zero Zero = True
-	(==) Infinity Infinity = False
+	//(==) Infinity Infinity = False
 	(==) (Rational lhs) (Rational rhs) = lhs == rhs
 	(==) (Imaginary lhs) (Imaginary rhs) = lhs == rhs
 	(==) (Complex lhsRe lhsIm) (Complex rhsRe rhsIm) = lhsRe == rhsRe && lhsIm == rhsIm
@@ -219,8 +257,8 @@ instance == Number where
 instance < Number where
 	(<) NaN _ = False
 	(<) _ NaN = False
-	(<) Infinity _ = True
-	(<) _ Infinity = True
+	//(<) Infinity _ = True
+	//(<) _ Infinity = True
 	(<) Zero Zero = False
 	(<) Zero (Rational rhs) = sign rhs == 1
 	(<) (Rational lhs) Zero = sign lhs == -1
@@ -235,8 +273,8 @@ instance mod Number where
 	(mod) _ NaN = NaN
 	(mod) _ Zero = NaN
 	(mod) Zero _ = Zero
-	(mod) Infinity _ = NaN
-	(mod) val Infinity = val
+	//(mod) Infinity _ = NaN
+	//(mod) val Infinity = val
 	(mod) (Rational lhs) (Rational rhs)
 		= handle (Rational (lhs mod rhs))
 	(mod) (Rational lhs) (Imaginary rhs)
@@ -262,8 +300,8 @@ instance mod Number where
 instance gcd Number where
 	gcd NaN _ = NaN
 	gcd _ NaN = NaN
-	gcd Infinity _ = NaN
-	gcd _ Infinity = NaN
+	//gcd Infinity _ = NaN
+	//gcd _ Infinity = NaN
 	gcd Zero _ = NaN
 	gcd _ Zero = NaN
 	gcd (Rational lhs) (Rational rhs)
@@ -283,8 +321,8 @@ instance gcd Number where
 instance lcm Number where
 	lcm NaN _ = NaN
 	lcm _ NaN = NaN
-	lcm Infinity _ = NaN
-	lcm _ Infinity = NaN
+	//lcm Infinity _ = NaN
+	//lcm _ Infinity = NaN
 	lcm Zero _ = NaN
 	lcm _ Zero = NaN
 	lcm (Rational lhs) (Rational rhs)
@@ -303,7 +341,7 @@ instance lcm Number where
 	
 instance toInt Number where
 	toInt NaN = abort "Unimplemented Operation: toInt NaN"
-	toInt Infinity = abort "Unimplemented Operation: toInt Infinity"
+	//toInt Infinity = abort "Unimplemented Operation: toInt Infinity"
 	toInt Zero = 0
 	toInt (Rational val) = toInt val
 	toInt (Imaginary val) = toInt val
@@ -311,7 +349,7 @@ instance toInt Number where
 	
 instance toReal Number where
 	toReal NaN = abort "Unimplemented Operation: toReal NaN"
-	toReal Infinity = abort "Unimplemented Operation: toReal Infinity"
+	//toReal Infinity = abort "Unimplemented Operation: toReal Infinity"
 	toReal Zero = 0.0
 	toReal (Rational val) = toReal val
 	toReal (Imaginary val) = toReal val
@@ -321,7 +359,7 @@ instance fromInt Number where fromInt val = (Rational (Int val))
 	
 instance ln Number where
 	ln NaN = NaN
-	ln Infinity = Infinity
+	//ln Infinity = Infinity
 	ln Zero = NaN
 	ln (Rational val) = handle (Rational (ln val))
 	ln (Imaginary _) = abort "Unimplemented Operation: ln Im"
@@ -329,7 +367,7 @@ instance ln Number where
 	
 instance log10 Number where
 	log10 NaN = NaN
-	log10 Infinity = Infinity
+	//log10 Infinity = Infinity
 	log10 Zero = NaN
 	log10 (Rational val) = handle (Rational (log10 val))
 	log10 (Imaginary _) = abort "Unimplemented Operation: log10 Im"
@@ -337,7 +375,7 @@ instance log10 Number where
 	
 instance exp Number where
 	exp NaN = NaN
-	exp Infinity = Infinity
+	//exp Infinity = Infinity
 	exp Zero = one
 	exp (Rational val) = handle (Rational (exp val))
 	exp (Imaginary _) = abort "Unimplemented Operation: exp Im"
@@ -345,7 +383,7 @@ instance exp Number where
 	
 instance sqrt Number where
 	sqrt NaN = NaN
-	sqrt Infinity = Infinity
+	//sqrt Infinity = Infinity
 	sqrt Zero = Zero
 	sqrt (Rational val) = handle (Rational (sqrt val))
 	sqrt (Imaginary _) = abort "Unimplemented Operation: sqrt Im"
@@ -353,7 +391,7 @@ instance sqrt Number where
 	
 instance sin Number where
 	sin NaN = NaN
-	sin Infinity = NaN
+	//sin Infinity = NaN
 	sin Zero = Zero
 	sin (Rational val) = handle (Rational (sin val))
 	sin (Imaginary _) = abort "Unimplemented Operation: sin Im"
@@ -361,7 +399,7 @@ instance sin Number where
 	
 instance cos Number where
 	cos NaN = NaN
-	cos Infinity = NaN
+	//cos Infinity = NaN
 	cos Zero = one
 	cos (Rational val) = handle (Rational (cos val))
 	cos (Imaginary _) = abort "Unimplemented Operation: cos Im"
@@ -369,7 +407,7 @@ instance cos Number where
 	
 instance tan Number where
 	tan NaN = NaN
-	tan Infinity = NaN
+	//tan Infinity = NaN
 	tan Zero = Zero
 	tan (Rational val) = handle (Rational (tan val))
 	tan (Imaginary _) = abort "Unimplemented Operation: tan Im"
@@ -377,7 +415,7 @@ instance tan Number where
 	
 instance asin Number where
 	asin NaN = NaN
-	asin Infinity = Infinity
+	//asin Infinity = Infinity
 	asin Zero = Zero
 	asin (Rational val) = handle (Rational (asin val))
 	asin (Imaginary _) = abort "Unimplemented Operation: asin Im"
@@ -385,7 +423,7 @@ instance asin Number where
 	
 instance acos Number where
 	acos NaN = NaN
-	acos Infinity = Infinity
+	//acos Infinity = Infinity
 	acos Zero = (Rational (Real (pi/2.0)))
 	acos (Rational val) = handle (Rational (acos val))
 	acos (Imaginary _) = abort "Unimplemented Operation: acos Im"
@@ -393,7 +431,7 @@ instance acos Number where
 	
 instance atan Number where
 	atan NaN = NaN
-	atan Infinity = (Rational (Real (pi/2.0)))
+	//atan Infinity = (Rational (Real (pi/2.0)))
 	atan Zero = Zero
 	atan (Rational val) = handle (Rational (atan val))
 	atan (Imaginary _) = abort "Unimplemented Operation: atan Im"
@@ -402,8 +440,8 @@ instance atan Number where
 bitOR :: Number Number -> Number
 bitOR NaN _ = NaN
 bitOR _ NaN = NaN
-bitOR Infinity _ = Infinity
-bitOR _ Infinity = Infinity
+//bitOR Infinity _ = Infinity
+//bitOR _ Infinity = Infinity
 bitOR Zero rhs = rhs
 bitOR lhs Zero = lhs
 bitOR _ _ = abort "Unimplemented Operation: bitOR"

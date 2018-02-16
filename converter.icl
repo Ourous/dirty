@@ -27,7 +27,3 @@ where
 		native :: Char,
 		meaning :: Token
 	}
-
-nativeMaping :: [Token]
-nativeMapping =
-	[

@@ -1,3 +1,3 @@
 # dirty
 
-A two-dimensional, lazily evaluated golfing language, implemented in Clean.
+A two-dimensional, lazily evaluated recreational language, implemented in Clean.

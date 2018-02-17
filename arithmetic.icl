@@ -18,7 +18,12 @@ instance * Sign where
 	(*) Negative Negative = Positive
 	(*) _ _ = Negative
 	
-TO_SIGN numeric
+VAL_SIGN val
+	:== case val of
+		(Inf val) = val
+		(Fin val) = FIN_SIGN val
+	
+FIN_SIGN numeric
 	:== if(sign numeric < 0) Negative Positive
 
 IS_ZERO numeric
@@ -44,21 +49,21 @@ handle :: Number -> Number
 handle (Re (Fin val))
 	| IS_ZERO val = Zero
 	| IS_NAN val = NaN
-	| IS_INF val = (Re (Inf (TO_SIGN val)))
+	| IS_INF val = (Re (Inf (FIN_SIGN val)))
 	= (Re (Fin val))
 handle (Im (Fin val))
 	| IS_ZERO val = Zero
 	| IS_NAN val = NaN
-	| IS_INF val = (Im (Inf (TO_SIGN val)))
+	| IS_INF val = (Im (Inf (FIN_SIGN val)))
 	= (Im (Fin val))
 handle (Cx (Fin {re, im}))
 	| IS_NAN re || IS_NAN im = NaN
 	| IS_INF re
 		| IS_INF im
 			= (Cx (Inf Directed))
-		= (Re (Inf (TO_SIGN re)))
+		= (Re (Inf (FIN_SIGN re)))
 	| IS_INF im
-		= (Im (Inf (TO_SIGN im)))
+		= (Im (Inf (FIN_SIGN im)))
 	= case ((IS_ZERO re), (IS_ZERO im)) of
 		(True, True) = Zero
 		(True, False) = (Im (Fin im))
@@ -142,6 +147,8 @@ instance - Number where
 	(-) (Cx (Fin lhs)) (Cx (Fin rhs))
 		= handle (Cx (Fin {re=lhs.re-rhs.re, im=lhs.im-rhs.im}))
 		
+instance ~ Number where ~ val = val
+		
 instance zero Number where
 	zero = Zero
 	
@@ -150,35 +157,32 @@ instance * Number where
 	(*) _ NaN = NaN
 	(*) Zero _ = Zero
 	(*) _ Zero = Zero
-	(*) (Inf (Re lhs)) (Inf (Re rhs)) = (Inf (Re (lhs * rhs)))
-	(*) (Inf (Re lhs)) (Rational rhs) = (Inf (Re (lhs * TO_SIGN rhs)))
-	(*) (Rational lhs) (Inf (Re rhs)) = (Inf (Re (TO_SIGN lhs * rhs)))
-	(*) (Inf (Re lhs)) (Inf (Im rhs)) = (Inf (Im (lhs * rhs)))
-	(*) (Inf (Re lhs)) (Imaginary rhs) = (Inf (Im (lhs * TO_SIGN rhs)))
-	(*) (Inf (Im lhs)) (Inf (Re rhs)) = (Inf (Im (lhs * rhs)))
-	(*) (Inf (Im lhs)) (Inf (Im rhs)) = (Inf (Re (~(lhs * rhs))))
-	(*) (Inf Directed) _ = (Inf Directed)
-	(*) _ (Inf Directed) = (Inf Directed)
-	(*) (Inf _) (Complex _ _) = (Inf Directed)
-	(*) (Complex _ _) (Inf _) = (Inf Directed)
-	(*) (Rational lhs) (Rational rhs)
-		= handle (Rational (lhs * rhs))
-	(*) (Rational lhs) (Imaginary rhs)
-		= handle (Imaginary (lhs * rhs))
-	(*) (Imaginary lhs) (Rational rhs)
-		= handle (Imaginary (lhs * rhs))
-	(*) (Imaginary lhs) (Imaginary rhs)
-		= handle (Rational (~(lhs * rhs)))
-	(*) (Rational lhs) (Complex rhsRe rhsIm)
-		= handle (Complex (lhs * rhsRe) (lhs * rhsIm))
-	(*) (Imaginary lhs) (Complex rhsRe rhsIm)
-		= handle (Complex (~(lhs * rhsIm)) (lhs * rhsRe))
-	(*) (Complex lhsRe lhsIm) (Rational rhs)
-		= handle (Complex (lhsRe * rhs) (lhsIm * rhs))
-	(*) (Complex lhsRe lhsIm) (Imaginary rhs)
-		= handle (Complex (~(lhsIm * rhs)) (lhsRe * rhs))
-	(*) (Complex lhsRe lhsIm) (Complex rhsRe rhsIm)
-		= handle (Complex (lhsRe * rhsRe - lhsIm * rhsIm) (lhsIm * rhsRe + rhsIm * lhsRe))
+	(*) (Cx (Inf _)) _ = (Cx (Inf Directed))
+	(*) _ (Cx (Inf _)) = (Cx (Inf Directed))
+	(*) (Re (Fin lhs)) (Re (Fin rhs))
+		= handle (Re (Fin (lhs * rhs)))
+	(*) (Re (Fin lhs)) (Im (Fin rhs))
+		= handle (Im (Fin (lhs * rhs)))
+	(*) (Im (Fin lhs)) (Re (Fin rhs))
+		= handle (Im (Fin (lhs * rhs)))
+	(*) (Im (Fin lhs)) (Im (Fin rhs))
+		= handle (Re (Fin (~(lhs * rhs))))
+	(*) (Re lhs) (Re rhs) = (Re (Inf (VAL_SIGN lhs * VAL_SIGN rhs)))
+	(*) (Re lhs) (Im rhs) = (Im (Inf (VAL_SIGN lhs * VAL_SIGN rhs)))
+	(*) (Im lhs) (Re rhs) = (Im (Inf (VAL_SIGN lhs * VAL_SIGN rhs)))
+	(*) (Im lhs) (Im rhs) = (Im (Inf (~(VAL_SIGN lhs * VAL_SIGN rhs))))
+	(*) (Re (Fin lhs)) (Cx (Fin rhs))
+		= handle (Cx (Fin {re=lhs*rhs.re, im=lhs*rhs.im}))
+	(*) (Im (Fin lhs)) (Cx (Fin rhs))
+		= handle (Cx (Fin {re=(~(lhs*rhs.im)), im=lhs*rhs.re}))
+	(*) (Cx (Fin lhs)) (Re (Fin rhs))
+		= handle (Cx (Fin {re=lhs.re*rhs, im=lhs.im*rhs}))
+	(*) (Cx (Fin lhs)) (Im (Fin rhs))
+		= handle (Cx (Fin {re=(~(lhs.im*rhs)), im=lhs.re*rhs}))
+	(*) (Cx (Fin lhs)) (Cx (Fin rhs))
+		= handle (Cx (Fin {re=lhs.re*rhs.re-lhs.im*rhs.im, im=lhs.im*rhs.re+rhs.im*lhs.re}))
+
+		/*
 		
 instance / Number where
 	(/) NaN _ = NaN
@@ -476,4 +480,4 @@ numROUND _ = abort "Unimplemented Operation: numROUND"
 toRadians :: Number -> Number
 toRadians _ = abort "Unimplemented Operation: toRadians"
 toDegrees :: Number -> Number
-toDegrees _ = abort "Unimplemented Operation: toDegrees"
+toDegrees _ = abort "Unimplemented Operation: toDegrees"*/

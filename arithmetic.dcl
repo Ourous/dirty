@@ -7,7 +7,7 @@ from StdOverloaded import class +, class -, class *, class /, class ^, class ~, 
 instance + Number
 instance - Number
 instance zero Number
-instance * Number
+instance * Number/*
 instance / Number
 instance one Number
 instance ^ Number
@@ -47,4 +47,4 @@ numCEILING :: Number -> Number
 numROUND :: Number -> Number
 
 toRadians :: Number -> Number
-toDegrees :: Number -> Number
+toDegrees :: Number -> Number*/

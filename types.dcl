@@ -30,21 +30,28 @@ definition module types
 	| Real Real
 
 :: Number
-	= Rational Numeric
-	| Imaginary Numeric
-	| Complex Numeric Numeric
-	| Inf Infinite
-	| Zero
+	= Zero
+	| Re (Magnitude Sign Numeric)
+	| Im (Magnitude Sign Numeric)
+	| Cx (Magnitude Directed Complex)
 	| NaN
-	
-:: Infinite
-	= Re Sign
-	| Im Sign
-	| Directed
+
+:: Magnitude inf fin
+	= Fin fin
+	| Inf inf
 	
 :: Sign
 	= Positive
 	| Negative
+	
+:: Complex
+	= {
+		re :: Numeric,
+		im :: Numeric
+	}
+	
+:: Directed
+	= Directed
 	
 :: Token
 	= Control

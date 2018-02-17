@@ -41,29 +41,29 @@ IS_INF numeric
 // number implementations
 
 handle :: Number -> Number
-handle (Rational val)
+handle (Re (Fin val))
 	| IS_ZERO val = Zero
 	| IS_NAN val = NaN
-	| IS_INF val = (Inf (Re (TO_SIGN val)))
-	= (Rational val)
-handle (Imaginary val)
+	| IS_INF val = (Re (Inf (TO_SIGN val)))
+	= (Re (Fin val))
+handle (Im (Fin val))
 	| IS_ZERO val = Zero
 	| IS_NAN val = NaN
-	| IS_INF val = (Inf (Im (TO_SIGN val)))
-	= (Imaginary val)
-handle (Complex re im)
+	| IS_INF val = (Im (Inf (TO_SIGN val)))
+	= (Im (Fin val))
+handle (Cx (Fin {re, im}))
 	| IS_NAN re || IS_NAN im = NaN
 	| IS_INF re
 		| IS_INF im
-			= (Inf Directed)
-		= (Inf (Re (TO_SIGN re)))
+			= (Cx (Inf Directed))
+		= (Re (Inf (TO_SIGN re)))
 	| IS_INF im
-		= (Inf (Im (TO_SIGN im)))
+		= (Im (Inf (TO_SIGN im)))
 	= case ((IS_ZERO re), (IS_ZERO im)) of
 		(True, True) = Zero
-		(True, False) = (Imaginary im)
-		(False, True) = (Rational re)
-		(False, False) = (Complex re im)
+		(True, False) = (Im (Fin im))
+		(False, True) = (Re (Fin re))
+		(False, False) = (Cx (Fin {re, im}))
 handle val = val
 
 instance + Number where
@@ -71,15 +71,17 @@ instance + Number where
 	(+) _ NaN = NaN
 	(+) Zero val = val
 	(+) val Zero = val
-	(+) (Inf (Re lhs)) (Inf (Re rhs))
-		| lhs == rhs = (Inf (Re lhs))
+	(+) (Re (Inf lhs)) (Re (Inf rhs))
+		| lhs == rhs = (Re (Inf lhs))
 		= NaN
-	(+) (Inf (Im lhs)) (Inf (Im rhs))
-		| lhs == rhs = (Inf (Im lhs))
-		= NaN
-	(+) (Inf _) (Inf _) = (Inf Directed)
-	(+) (Inf lhs) _ = (Inf lhs)
-	(+) _ (Inf rhs) = (Inf rhs)
+	(+) (Im (Inf lhs)) (Im (Inf rhs))
+		| lhs == rhs = (Im (Inf lhs))
+		| NaN
+	(+) (Cx (Inf lhs)) _ = (Cx (Inf lhs))
+	(+) _ (Cx (Inf rhs)) = (Cx (Inf rhs))
+	(+) (Re (Inf _)) (Im (Inf _)) = (Cx (Inf Directed))
+	(+) (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
+	(+) 
 	(+) (Rational lhs) (Rational rhs)
 		= handle (Rational (lhs + rhs))
 	(+) (Rational lhs) (Imaginary rhs)

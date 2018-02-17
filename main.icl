@@ -2,7 +2,7 @@ module main
 import types, atomics, runtime, parser, arithmetic, System.CommandLine, System.File, Data.Error
 
 Start world
-	= (Cx (Inf Directed))//(Initial)
+	= (Cx (Fin {re=(Int 7), im=(Int -3)})) + (Im (Fin (Int 3))) + (Im (Inf Positive))//(Initial)
 /*
 	# ([_:args], world)
 		= getCommandLine world

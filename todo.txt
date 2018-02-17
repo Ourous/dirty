@@ -1,4 +1,2 @@
--	change set comparisons to: 
-			1. Subset (imp: or equal)
-			2. Not Subset (imp: nor equal)
-			3. Subset but not Equal
+- TeX front-end.
+- Make it compile to Clean and call the compiler Janitor.

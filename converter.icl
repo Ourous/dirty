@@ -55,4 +55,36 @@ nativeMapping =
 	,Control_Random NoLoop Horizontal
 	,Control_Random Always Vertical
 	,Control_Random NoLoop Vertical
+	,Control_Mirror NoLoop Vertical
+	,Control_Mirror NoLoop Horizontal
+	,Control_Mirror NoLoop Identity
+	,Control_Mirror NoLoop Inverse
+	,Operator_IO_WriteAll
+	,Operator_IO_ReadAll
+	,Control_NOOP
+	,Operator_IO_OutputOnce
+	,Literal_Quote
+	,Variable_Random
+	,Operator_Math_Integral
+	,Operator_Math_Modulus
+	,Stack_JoinFromBase
+	,Control_String
+	,Control_Loop Left West
+	,Control_Loop Left East
+	,Operator_Math_DotProduct
+	,Operator_Math_Addition
+	,Operator_Range_FromLeftStepRight
+	,Operator_Math_Subtraction
+	,Operator_Range_FromMiddleToZero
+	,Control_Mirror Always Identity
+	,Literal_Digit Digit_Zero
+	,Literal_Digit Digit_One
+	,Literal_Digit Digit_Two
+	,Literal_Digit Digit_Three
+	,Literal_Digit Digit_Four
+	,Literal_Digit Digit_Five
+	,Literal_Digit Digit_Six
+	,Literal_Digit Digit_Seven
+	,Literal_Digit Digit_Eight
+	,Literal_Digit Digit_Nine
 	

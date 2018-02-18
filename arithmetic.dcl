@@ -13,7 +13,7 @@ instance one Number
 //instance ^ Number
 instance abs Number
 instance ~ Number
-//instance == Number
+instance == Number
 //instance < Number
 //instance mod Number
 //instance gcd Number

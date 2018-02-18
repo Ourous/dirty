@@ -370,7 +370,7 @@ instance toReal Number where
 	toReal (Cx (Fin {re, im})) = toReal (sqrt (re*re + im*im)) * (toReal (sign re * sign im))
 	toReal _ = 0.0/0.0
 	
-instance fromInt Number where fromInt val = (Rational (Int val))
+instance fromInt Number where fromInt val = (Re (Fin (Int val)))
 /*
 instance ln Number where
 	ln NaN = NaN

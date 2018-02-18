@@ -5,16 +5,16 @@ import types, arithmetic, Text, Text.Unicode.Encodings.UTF8, Text.Unicode, Text.
 from StdFunc import o
 from StdList import map
 	
-unicodeToUTF8 :: [Number] -> String
+unicodeToUTF8 :: [Int] -> String
 unicodeToUTF8 string
-	= conv (fromUnicode (map (fromInt o toInt) string))
+	= conv (fromUnicode (map fromInt string))
 where
 	conv :: (UTF8 -> String)
 	conv = toString
 	
-utf8ToUnicode :: String -> [Number]
+utf8ToUnicode :: String -> [Int]
 utf8ToUnicode string
-	= map (fromInt o toInt) (toUnicode (conv string))
+	= map toInt (toUnicode (conv string))
 where
 	conv :: (String -> UTF8)
 	conv = fromString

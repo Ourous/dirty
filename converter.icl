@@ -107,4 +107,86 @@ nativeMapping =
 	,Operator_Set_AntiFilter
 	,Operator_Math_Logarithm
 	,Operator_Set_Combinations
+	,Operator_Chars_JoinWithNewlines
+	,Operator_Logic_IsOrdered
+	,Operator_Logic_IsPrime
+	,Literal_Quine
+	,Operator_Logic_IsReal
+	,Operator_Math_ArcSine
+	,Operator_Math_ArcTangent
+	,Stack_Reverse_Middle
+	,Operator_Math_Average
+	,Stack_Delete_Middle
+	,Operator_Chars_ToUppercase
+	,Operator_Logic_IsUppercase
+	,Operator_Logic_IsFinite
+	,Control_Loop Middle West
+	,Control_Mirror Always Inverse
+	,Control_Loop Middle East
+	,Operator_Math_Exponent
+	,Operator_Math_Floor
+	,Operator_Math_Differential
+	,Literal_LowerAlpha
+	,Operator_Math_ConvertFromBase
+	,Operator_Math_CoSine
+	,Stack_Duplicates_Middle
+	,Operator_Math_NaturalLogarithm
+	,Operator_Math_Permutations
+	,Operator_Math_LeastCommonMultiple
+	,Operator_Set_Minimum
+	,Operator_Math_ImaginaryUnit
+	,Operator_Math_ComplexSplit
+	,Operator_Set_Filter
+	,Operator_Math_Base10Logarithm
+	,Operator_Math_Combinations
+	,Operator_Chars_SplitOnNewlines
+	,Operator_Set_MakeOrdered
+	,Operator_Math_PrimeFactors
+	,Variable_Program
+	,Operator_Math_Round
+	,Operator_Math_Sine
+	,Operator_Math_Tangent
+	,Stack_Rotate_Middle
+	,Operator_Math_Abs
+	,Stack_Drop_Middle
+	,Operator_Logic_IsLowercase
+	,Operator_Logic_ToLowercase
+	,Operator_Math_Conjugate
+	,Control_Loop Right West
+	,Control_Mirror Always Vertical
+	,Control_Loop Right East
+	,Operator_Math_Negation
+	,Operator_IO_ReadWrite
+	,Operator_IO_WriteRead
+	,Operator_IO_Interrobang
+	,Operator_Math_Multiplication
+	,Operator_Vector_Multiplication
+	,Operator_Math_Division
+	,Operator_Vector_Addition
+	,Operator_Math_SquareRoot
+	,Operator_Math_Reciprocal
+	,Operator_Logic_IsInfinite
+	,Operator_Bitwise_Or
+	,Operator_Vector_Or
+	,Operator_Bitwise_And
+	,Operator_Vector_And
+	,Operator_Bitwise_Xor
+	,Operator_Bitwise_Not
+	,Operator_Bitwise_Nor
+	,Operator_Bitwise_Nand
+	,Operator_Bitwise_Xnor
+	,Operator_Set_Intersection
+	,Operator_Set_Union
+	,Operator_Logic_ElementOf
+	,Operator_Logic_Contains
+	,Operator_Vector_LessThan
+	,Operator_Vector_GreaterThan
+	,Operator_Vector_Equality
+	,Operator_Logic_LessOrEqual
+	,Operator_Vector_LessOrEqual
+	,Operator_Logic_GreaterOrEqual
+	,Operator_Vector_GreaterOrEqual
+	,Operator_Logic_Inequality
+	,Operator_Logic_SetEquality
+	,Operator_Logic_SetInequality
 	,

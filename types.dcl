@@ -79,7 +79,6 @@ definition module types
 	| Operator_Math_Exponent
 	| Operator_Math_DotProduct
 	| Operator_Math_Sum
-	| Operator_Math_Average
 	| Operator_Math_Product
 	| Operator_Math_SquareRoot
 	| Operator_Math_Negate
@@ -110,10 +109,12 @@ definition module types
 	| Operator_Math_LeastCommonMultiple
 	| Operator_Math_NaturalExponent
 	| Operator_Math_NaturalLogarithm
+	| Operator_Math_Base10Logarithm
 	| Operator_Math_ConvertToBase
 	| Operator_Math_ConvertFromBase
 	| Operator_Math_Integral
 	| Operator_Math_Differential
+	| Operator_Math_Average
 	| Operator_Bitwise_And
 	| Operator_Bitwise_Or
 	| Operator_Bitwise_Xor
@@ -132,7 +133,7 @@ definition module types
 	| Operator_Logic_SetEquality
 	| Operator_Logic_SetInequality
 	| Operator_Logic_ElementOf
-	| Operator_Logic_ContainedIn
+	| Operator_Logic_Contains
 	| Operator_Logic_SubsetOrEqual
 	| Operator_Logic_SubsetNotEqual
 	| Operator_Logic_NotSubsetNorEqual
@@ -146,8 +147,10 @@ definition module types
 	| Operator_Logic_IsUppercase
 	| Operator_Logic_IsPrime
 	| Operator_Logic_IsReal
-	| Operator_Logic_IsComplex
+	| Operator_Logic_IsFinite
 	| Operator_Logic_IsInfinite
+	| Operator_Vector_And
+	| Operator_Vector_Or
 	| Operator_Vector_Multiplication
 	| Operator_Vector_Addition
 	| Operator_Vector_Equality
@@ -171,8 +174,10 @@ definition module types
 	| Operator_Set_Union
 	| Operator_Set_Minimum
 	| Operator_Set_Maximuim
-	| Operator_Alphabet_ToLowercase
-	| Operator_Alphabet_ToUppercase
+	| Operator_Chars_ToLowercase
+	| Operator_Chars_ToUppercase
+	| Operator_Chars_JoinWithNewlines
+	| Operator_Chars_SplitOnNewlines
 	
 :: Stack
 	= Stack_Reverse_Left

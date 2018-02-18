@@ -135,15 +135,15 @@ z // conjugate
 √ // square root
 ⅟ // reciprocal
 ∞ // is a non-finite number, and not NaN
-∧ // and
-⩑ // vectorized and
 ∨ // or
 ⩒ // vectorized or
-¬ // not
+∧ // and
+⩑ // vectorized and
 ⊻ // xor
+¬ // not
 ⊽ // nor
-∥ // xnor
 ⊼ // nand
+∥ // xnor
 ∩ // intersection
 ∪ // union
 ∈ // element of

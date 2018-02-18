@@ -252,18 +252,18 @@ instance abs Number where
 instance ~ Number where
 	(~) NaN = NaN
 	(~) Zero = Zero
-	//(~) Infinity = Infinity
+	(~) (Re (Inf val)) = (Re (Inf (~val)))
 	(~) (Re (Fin val)) = (Re (Fin (~val)))
+	(~) (Im (Inf val)) = (Im (Inf (~val)))
 	(~) (Im (Fin val)) = (Im (Fin (~val)))
+	(~) (Cx (Inf Directed)) = (Cx (Inf Directed))
 	(~) (Cx (Fin val)) = (Cx (Fin {re=(~val.re), im=(~val.im)}))
 	
 instance == Number where
-	(==) NaN NaN = False
 	(==) Zero Zero = True
-	//(==) Infinity Infinity = False
-	(==) (Rational lhs) (Rational rhs) = lhs == rhs
-	(==) (Imaginary lhs) (Imaginary rhs) = lhs == rhs
-	(==) (Complex lhsRe lhsIm) (Complex rhsRe rhsIm) = lhsRe == rhsRe && lhsIm == rhsIm
+	(==) (Re (Fin lhs)) (Re (Fin rhs)) = lhs == rhs
+	(==) (Im (Fin lhs)) (Im (Fin rhs)) = lhs == rhs
+	(==) (Cx (Fin lhs)) (Cx (Fin rhs)) = lhs.re == rhs.re && lhs.im == rhs.im
 	(==) _ _ = False
 /*
 instance < Number where

@@ -11,9 +11,9 @@ definition module types
 		dimension :: XYPair,
 		location :: XYPair,
 		direction :: CardinalDirection,
-		program :: !{{!Token}},
+		program :: !{{!Command}},
 		random :: [Int],
-		history :: [Token],
+		history :: [Command],
 		memory :: Memory
 	}
 
@@ -53,223 +53,214 @@ definition module types
 :: Directed
 	= Directed
 	
-:: Token
-	= Control
-	| Literal
-	| Stack
-	| Operator
-	| Variable
+:: Command
+	= Control ControlCommand
+	| Literal LiteralCommand
+	| Variable VariableCommand
+	| Operator OperatorCommand
+	| Stack StackCommand
 	
-:: Operator
-	= Operator_IO_ReadAll
-	| Operator_IO_WriteAll
-	| Operator_IO_ReadWrite
-	| Operator_IO_WriteRead
-	| Operator_IO_WriteOnce
-	| Operator_IO_ReadOnce
-	| Operator_IO_Interrobang
-	| Operator_IO_Bell
-	| Operator_IO_Sleep
-	| Operator_Math_Modulus
-	| Operator_Math_Addition
-	| Operator_Math_Multiplication
-	| Operator_Math_Subtraction
-	| Operator_Math_Division
-	| Operator_Math_Logarithm
-	| Operator_Math_Exponent
-	| Operator_Math_DotProduct
-	| Operator_Math_Sum
-	| Operator_Math_Product
-	| Operator_Math_SquareRoot
-	| Operator_Math_Negation
-	| Operator_Math_Conjugate
-	| Operator_Math_RealPart
-	| Operator_Math_ImaginaryPart
-	| Operator_Math_ImaginaryUnit
-	| Operator_Math_ComplexSplit
-	| Operator_Math_Floor
-	| Operator_Math_Abs
-	| Operator_Math_Ceiling
-	| Operator_Math_Round
-	| Operator_Math_Sine
-	| Operator_Math_CoSine
-	| Operator_Math_Tangent
-	| Operator_Math_ArcSine
-	| Operator_Math_ArcCoSine
-	| Operator_Math_ArcTangent
-	| Operator_Math_Reciprocal
-	| Operator_Math_RadiansToDegrees
-	| Operator_Math_DegreesToRadians
-	| Operator_Math_Minimum
-	| Operator_Math_Maximum
-	| Operator_Math_Permutations
-	| Operator_Math_Combinations
-	| Operator_Math_PrimeFactors
-	| Operator_Math_GreatestCommonDivisor
-	| Operator_Math_LeastCommonMultiple
-	| Operator_Math_NaturalExponent
-	| Operator_Math_NaturalLogarithm
-	| Operator_Math_Base10Logarithm
-	| Operator_Math_ConvertToBase
-	| Operator_Math_ConvertFromBase
-	| Operator_Math_Integral
-	| Operator_Math_Differential
-	| Operator_Math_Average
-	| Operator_Bitwise_And
-	| Operator_Bitwise_Or
-	| Operator_Bitwise_Xor
-	| Operator_Bitwise_Xnor
-	| Operator_Bitwise_Nor
-	| Operator_Bitwise_Not
-	| Operator_Bitwise_Nand
-	| Operator_Bitwise_LeftShift
-	| Operator_Bitwise_RightShift
-	| Operator_Logic_Equality
-	| Operator_Logic_Inequality
-	| Operator_Logic_LessThan
-	| Operator_Logic_GreaterThan
-	| Operator_Logic_LessOrEqual
-	| Operator_Logic_GreaterOrEqual
-	| Operator_Logic_SetEquality
-	| Operator_Logic_SetInequality
-	| Operator_Logic_ElementOf
-	| Operator_Logic_Contains
-	| Operator_Logic_SubsetOrEqual
-	| Operator_Logic_SubsetNotEqual
-	| Operator_Logic_NotSubsetNorEqual
-	| Operator_Logic_SupersetOrEqual
-	| Operator_Logic_SupersetNotEqual
-	| Operator_Logic_NotSupersetNorEqual
-	| Operator_Logic_Any
-	| Operator_Logic_None
-	| Operator_Logic_IsOrdered
-	| Operator_Logic_IsLowercase
-	| Operator_Logic_IsUppercase
-	| Operator_Logic_IsPrime
-	| Operator_Logic_IsReal
-	| Operator_Logic_IsFinite
-	| Operator_Logic_IsInfinite
-	| Operator_Vector_And
-	| Operator_Vector_Or
-	| Operator_Vector_Multiplication
-	| Operator_Vector_Addition
-	| Operator_Vector_Equality
-	| Operator_Vector_LessThan
-	| Operator_Vector_GreaterThan
-	| Operator_Vector_LessOrEqual
-	| Operator_Vector_GreaterOrEqual
-	| Operator_Range_FromLeftStepRight
-	| Operator_Range_FromMiddleToZero
-	| Operator_Range_FromMiddleAvoidZero
-	| Operator_Range_FromLeftTimesRight
-	| Operator_Set_PowerSet
-	| Operator_Set_Subsets
-	| Operator_Set_Permutations
-	| Operator_Set_Combinations
-	| Operator_Set_MakeOrdered
-	| Operator_Set_Length
-	| Operator_Set_Filter
-	| Operator_Set_AntiFilter
-	| Operator_Set_Intersection
-	| Operator_Set_Union
-	| Operator_Set_Minimum
-	| Operator_Set_Maximum
-	| Operator_Chars_ToLowercase
-	| Operator_Chars_ToUppercase
-	| Operator_Chars_JoinWithNewlines
-	| Operator_Chars_SplitOnNewlines
+:: ControlCommand
+	= Terminate
+	| Start CardinalDirection
+	| Change Conditional CardinalDirection
+	| Bounce Conditional DiagonalDirection
+	| Either Conditional CardinalAxis
+	| Mirror Conditional AnyAxis
+	| Turn Rotation
+	| Loop StackID3 CardinalDirection
+	| String
+	| NOOP
+	| LINE
 	
-:: Stack
-	= Stack_Reverse_Left
-	| Stack_Reverse_Right
-	| Stack_Reverse_Middle
-	| Stack_Reverse_Both
-	| Stack_Reverse_Primary
-	| Stack_Reverse_Base
-	| Stack_Reverse_All
-	| Stack_Rotate_Left
-	| Stack_Rotate_Right
-	| Stack_Rotate_Middle
-	| Stack_Rotate_Both
-	| Stack_Rotate_Primary
-	| Stack_Rotate_Base
-	| Stack_Rotate_All
-	| Stack_Delete_Left
-	| Stack_Delete_Right
-	| Stack_Delete_Middle
-	| Stack_Delete_Both
-	| Stack_Delete_Base
-	| Stack_Delete_Main
-	| Stack_Delete_All
-	| Stack_Drop_Left
-	| Stack_Drop_Right
-	| Stack_Drop_Middle
-	| Stack_Drop_Both
-	| Stack_Drop_Base
-	| Stack_Drop_Main
-	| Stack_CycleTops Rotation
-	| Stack_CycleFull Rotation
-	| Stack_Unpack_LeftRight
-	| Stack_Unpack_RightLeft
-	| Stack_SwapTop CompassAxis
-	| Stack_SwapLeftRight
-	| Stack_MoveTop CompassDirection
-	| Stack_MoveAll DiagonalDirection
-	| Stack_CopyTop CompassDirection
-	| Stack_CopyBoth CardinalAxis
-	| Stack_Replicate_Base
-	| Stack_Replicate_TopOfMiddle
-	| Stack_Replicate_AllOfMiddle
-	| Stack_Repeat_TopOfMiddle
-	| Stack_Repeat_AllOfMiddle
-	| Stack_Uniques_Middle
-	| Stack_Uniques_Main
-	| Stack_Uniques_Base
-	| Stack_Duplicates_Middle
-	| Stack_Duplicates_Main
-	| Stack_Duplicates_Base
-	| Stack_ShiftBase CardinalDirection
-	| Stack_JoinFromBase
-	| Stack_AdjustOffset
+:: LiteralCommand
+	= Pi
+	| Quote
+	| Digit Int
+	| Alphabet LetterCase
 	
-:: Variable
-	= Variable_Random
-	| Variable_Quine
-	| Variable_History
-	| Variable_Time
+:: VariableCommand
+	= Random
+	| Quine
+	| History
 	
-:: Literal
-	= Literal_Digit Digit
-	| Literal_Quote
-	| Literal_Pi
-	| Literal_UpperAlpha
-	| Literal_LowerAlpha
+:: LetterCase
+	= Uppercase
+	| Lowercase
 	
-:: Digit
-	= Digit_Zero
-	| Digit_One
-	| Digit_Two
-	| Digit_Three
-	| Digit_Four
-	| Digit_Five
-	| Digit_Six
-	| Digit_Seven
-	| Digit_Eight
-	| Digit_Nine
+:: OperatorCommand
+	= IO_ReadAll
+	| IO_Timestamp
+	| IO_WriteAll
+	| IO_ReadWrite
+	| IO_WriteRead
+	| IO_WriteOnce
+	| IO_ReadOnce
+	| IO_Interrobang
+	| IO_Bell
+	| IO_Sleep
+	| Math_Modulus
+	| Math_Addition
+	| Math_Multiplication
+	| Math_Subtraction
+	| Math_Division
+	| Math_Logarithm
+	| Math_Exponent
+	| Math_DotProduct
+	| Math_Sum
+	| Math_Product
+	| Math_SquareRoot
+	| Math_Negation
+	| Math_Conjugate
+	| Math_RealPart
+	| Math_ImaginaryPart
+	| Math_ImaginaryUnit
+	| Math_ComplexSplit
+	| Math_Floor
+	| Math_Abs
+	| Math_Ceiling
+	| Math_Round
+	| Math_Sine
+	| Math_CoSine
+	| Math_Tangent
+	| Math_ArcSine
+	| Math_ArcCoSine
+	| Math_ArcTangent
+	| Math_Reciprocal
+	| Math_RadiansToDegrees
+	| Math_DegreesToRadians
+	| Math_Minimum
+	| Math_Maximum
+	| Math_Permutations
+	| Math_Combinations
+	| Math_PrimeFactors
+	| Math_GreatestCommonDivisor
+	| Math_LeastCommonMultiple
+	| Math_NaturalExponent
+	| Math_NaturalLogarithm
+	| Math_Base10Logarithm
+	| Math_ConvertToBase
+	| Math_ConvertFromBase
+	| Math_Integral
+	| Math_Differential
+	| Math_Average
+	| Bitwise_And
+	| Bitwise_Or
+	| Bitwise_Xor
+	| Bitwise_Xnor
+	| Bitwise_Nor
+	| Bitwise_Not
+	| Bitwise_Nand
+	| Bitwise_LeftShift
+	| Bitwise_RightShift
+	| Logic_Equality
+	| Logic_Inequality
+	| Logic_LessThan
+	| Logic_GreaterThan
+	| Logic_LessOrEqual
+	| Logic_GreaterOrEqual
+	| Logic_SetEquality
+	| Logic_SetInequality
+	| Logic_ElementOf
+	| Logic_Contains
+	| Logic_SubsetOrEqual
+	| Logic_SubsetNotEqual
+	| Logic_NotSubsetNorEqual
+	| Logic_SupersetOrEqual
+	| Logic_SupersetNotEqual
+	| Logic_NotSupersetNorEqual
+	| Logic_Any
+	| Logic_None
+	| Logic_IsOrdered
+	| Logic_IsLowercase
+	| Logic_IsUppercase
+	| Logic_IsPrime
+	| Logic_IsReal
+	| Logic_IsFinite
+	| Logic_IsInfinite
+	| Vector_And
+	| Vector_Or
+	| Vector_Multiplication
+	| Vector_Addition
+	| Vector_Equality
+	| Vector_LessThan
+	| Vector_GreaterThan
+	| Vector_LessOrEqual
+	| Vector_GreaterOrEqual
+	| Range_FromLeftStepRight
+	| Range_FromMiddleToZero
+	| Range_FromMiddleAvoidZero
+	| Range_FromLeftTimesRight
+	| Set_PowerSet
+	| Set_Subsets
+	| Set_Permutations
+	| Set_Combinations
+	| Set_MakeOrdered
+	| Set_Length
+	| Set_Filter
+	| Set_AntiFilter
+	| Set_Intersection
+	| Set_Union
+	| Set_Minimum
+	| Set_Maximum
+	| Chars_ToLowercase
+	| Chars_ToUppercase
+	| Chars_JoinWithNewlines
+	| Chars_SplitOnNewlines
 	
-:: Control
-	= Control_Terminate
-	| Control_Start CardinalDirection
-	| Control_Move Conditional CardinalDirection
-	| Control_Bounce Conditional DiagonalDirection
-	| Control_Random Conditional CardinalAxis
-	| Control_Mirror Conditional AnyAxis
-	| Control_Turn Rotation
-	| Control_Loop StackID3 CardinalDirection
-	| Control_String
-	| Control_NOOP
-	| Control_LINE
-	
+:: StackCommand
+	= Reverse_Left
+	| Reverse_Right
+	| Reverse_Middle
+	| Reverse_Both
+	| Reverse_Primary
+	| Reverse_Base
+	| Reverse_All
+	| Rotate_Left
+	| Rotate_Right
+	| Rotate_Middle
+	| Rotate_Both
+	| Rotate_Primary
+	| Rotate_Base
+	| Rotate_All
+	| Delete_Left
+	| Delete_Right
+	| Delete_Middle
+	| Delete_Both
+	| Delete_Base
+	| Delete_Main
+	| Delete_All
+	| Drop_Left
+	| Drop_Right
+	| Drop_Middle
+	| Drop_Both
+	| Drop_Base
+	| Drop_Main
+	| CycleTops Rotation
+	| CycleFull Rotation
+	| Unpack_LeftRight
+	| Unpack_RightLeft
+	| SwapTop CompassAxis
+	| SwapLeftRight
+	| MoveTop CompassDirection
+	| MoveAll DiagonalDirection
+	| CopyTop CompassDirection
+	| CopyBoth CardinalAxis
+	| Replicate_Base
+	| Replicate_TopOfMiddle
+	| Replicate_AllOfMiddle
+	| Repeat_TopOfMiddle
+	| Repeat_AllOfMiddle
+	| Uniques_Middle
+	| Uniques_Main
+	| Uniques_Base
+	| Duplicates_Middle
+	| Duplicates_Main
+	| Duplicates_Base
+	| ShiftBase CardinalDirection
+	| JoinFromBase
+	| AdjustOffset
+
 :: Conditional
 	= Depends
 	| Always

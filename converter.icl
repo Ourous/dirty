@@ -22,268 +22,263 @@ where
 //nativeToUnicode :: String -> [Number]
 //unicodeToNative :: [Number] -> String
 
-:: Mapping
-	= {
-		native :: Char,
-		meaning :: Token
-	}
 
-nativeMapping =
-	[Control_Terminate
-	,Control_Start East
-	,Control_Start West
-	,Control_Start North
-	,Control_Start South
-	,Stack_ShiftBase East
-	,Stack_ShiftBase West
-	,Operator_IO_Bell
-	,Stack_ShiftBase North
-	,Stack_ShiftBase South
-	,Operator_Set_Length
-	,Control_LINE
-	,Control_Turn Anticlockwise
-	,Control_Turn Clockwise
-	,Control_Move Always East
-	,Control_Move Depends East
-	,Control_Move Always West
-	,Control_Move Depends West
-	,Control_Move Always North
-	,Control_Move Depends North
-	,Control_Move Always South
-	,Control_Move Depends South
-	,Control_Random Always Horizontal
-	,Control_Random Depends Horizontal
-	,Control_Random Always Vertical
-	,Control_Random Depends Vertical
-	,Control_Mirror Depends Vertical
-	,Control_Mirror Depends Horizontal
-	,Control_Mirror Depends Identity
-	,Control_Mirror Depends Inverse
-	,Operator_IO_WriteAll
-	,Operator_IO_ReadAll
-	,Control_NOOP
-	,Operator_IO_WriteOnce
-	,Literal_Quote
-	,Variable_Random
-	,Operator_Math_Integral
-	,Operator_Math_Modulus
-	,Stack_JoinFromBase
-	,Control_String
-	,Control_Loop Left West
-	,Control_Loop Left East
-	,Operator_Math_DotProduct
-	,Operator_Math_Addition
-	,Operator_Range_FromLeftStepRight
-	,Operator_Math_Subtraction
-	,Operator_Range_FromMiddleToZero
-	,Control_Mirror Always Identity
-	,Literal_Digit Digit_Zero
-	,Literal_Digit Digit_One
-	,Literal_Digit Digit_Two
-	,Literal_Digit Digit_Three
-	,Literal_Digit Digit_Four
-	,Literal_Digit Digit_Five
-	,Literal_Digit Digit_Six
-	,Literal_Digit Digit_Seven
-	,Literal_Digit Digit_Eight
-	,Literal_Digit Digit_Nine
-	,Operator_Range_FromMiddleAvoidZero
-	,Operator_Range_FromLeftTimesRight
-	,Operator_Logic_LessThan
-	,Operator_Logic_Equality
-	,Operator_Logic_GreaterThan
-	,Operator_IO_ReadOnce
-	,Stack_AdjustOffset
-	,Literal_UpperAlpha
-	,Operator_Math_ConvertToBase
-	,Operator_Math_ArcCoSine
-	,Stack_Uniques_Middle
-	,Operator_Math_NaturalExponent
-	,Operator_Set_Permutations
-	,Operator_Math_GreatestCommonDivisor
-	,Operator_Set_Maximum
-	,Operator_Math_ImaginaryPart
-	,Operator_Math_RealPart
-	,Operator_Set_AntiFilter
-	,Operator_Math_Logarithm
-	,Operator_Set_Combinations
-	,Operator_Chars_JoinWithNewlines
-	,Operator_Logic_IsOrdered
-	,Operator_Logic_IsPrime
-	,Variable_Quine
-	,Operator_Logic_IsReal
-	,Operator_Math_ArcSine
-	,Operator_Math_ArcTangent
-	,Stack_Reverse_Middle
-	,Operator_Math_Average
-	,Stack_Delete_Middle
-	,Operator_Chars_ToUppercase
-	,Operator_Logic_IsUppercase
-	,Operator_Logic_IsFinite
-	,Control_Loop Middle West
-	,Control_Mirror Always Inverse
-	,Control_Loop Middle East
-	,Operator_Math_Exponent
-	,Operator_Math_Floor
-	,Operator_Math_Differential
-	,Literal_LowerAlpha
-	,Operator_Math_ConvertFromBase
-	,Operator_Math_CoSine
-	,Stack_Duplicates_Middle
-	,Operator_Math_NaturalLogarithm
-	,Operator_Math_Permutations
-	,Operator_Math_LeastCommonMultiple
-	,Operator_Set_Minimum
-	,Operator_Math_ImaginaryUnit
-	,Operator_Math_ComplexSplit
-	,Operator_Set_Filter
-	,Operator_Math_Base10Logarithm
-	,Operator_Math_Combinations
-	,Operator_Chars_SplitOnNewlines
-	,Operator_Set_MakeOrdered
-	,Operator_Math_PrimeFactors
-	,Variable_History
-	,Operator_Math_Round
-	,Operator_Math_Sine
-	,Operator_Math_Tangent
-	,Stack_Rotate_Middle
-	,Operator_Math_Abs
-	,Stack_Drop_Middle
-	,Operator_Logic_IsLowercase
-	,Operator_Chars_ToLowercase
-	,Operator_Math_Conjugate
-	,Control_Loop Right West
-	,Control_Mirror Always Vertical
-	,Control_Loop Right East
-	,Operator_Math_Negation
-	,Operator_IO_ReadWrite
-	,Operator_IO_WriteRead
-	,Operator_IO_Interrobang
-	,Operator_Math_Multiplication
-	,Operator_Vector_Multiplication
-	,Operator_Math_Division
-	,Operator_Vector_Addition
-	,Operator_Math_SquareRoot
-	,Operator_Math_Reciprocal
-	,Operator_Logic_IsInfinite
-	,Operator_Bitwise_Or
-	,Operator_Vector_Or
-	,Operator_Bitwise_And
-	,Operator_Vector_And
-	,Operator_Bitwise_Xor
-	,Operator_Bitwise_Not
-	,Operator_Bitwise_Nor
-	,Operator_Bitwise_Nand
-	,Operator_Bitwise_Xnor
-	,Operator_Set_Intersection
-	,Operator_Set_Union
-	,Operator_Logic_ElementOf
-	,Operator_Logic_Contains
-	,Operator_Vector_LessThan
-	,Operator_Vector_GreaterThan
-	,Operator_Vector_Equality
-	,Operator_Logic_LessOrEqual
-	,Operator_Vector_LessOrEqual
-	,Operator_Logic_GreaterOrEqual
-	,Operator_Vector_GreaterOrEqual
-	,Operator_Logic_Inequality
-	,Operator_Logic_SetEquality
-	,Operator_Logic_SetInequality
-	,Operator_Logic_SubsetNotEqual
-	,Operator_Logic_SupersetNotEqual
-	,Operator_Logic_SubsetOrEqual
-	,Operator_Logic_SupersetOrEqual
-	,Operator_Logic_NotSubsetNorEqual
-	,Operator_Logic_NotSupersetNorEqual
-	,Operator_Math_RadiansToDegrees
-	,Operator_Math_DegreesToRadians
-	,Operator_Math_Ceiling
-	,Operator_Bitwise_LeftShift
-	,Operator_Bitwise_RightShift
-	,Operator_IO_Sleep
-	,Variable_Time
-	,Literal_Pi
-	,Stack_SwapLeftRight
-	,Stack_MoveAll NorthWest
-	,Stack_MoveAll NorthEast
-	,Stack_MoveAll SouthEast
-	,Stack_MoveAll SouthWest
-	,Stack_Reverse_Left
-	,Stack_Reverse_Right
-	,Stack_Reverse_Both
-	,Stack_Reverse_Primary
-	,Stack_Reverse_Base
-	,Stack_Reverse_All
-	,Stack_Rotate_Left
-	,Stack_Rotate_Right
-	,Stack_Rotate_Both
-	,Stack_Rotate_Primary
-	,Stack_Rotate_Base
-	,Stack_Rotate_All
-	,Stack_Delete_Left
-	,Stack_Delete_Right
-	,Stack_Delete_Both
-	,Stack_Delete_Base
-	,Stack_Delete_Main
-	,Stack_Delete_All
-	,Stack_Drop_Left
-	,Stack_Drop_Right
-	,Stack_Drop_Both
-	,Stack_Drop_Base
-	,Stack_Drop_Main
-	,Stack_Unpack_RightLeft
-	,Stack_Unpack_LeftRight
-	,Stack_SwapTop Inverse
-	,Stack_SwapTop Identity
-	,Stack_SwapTop Horizontal
-	,Stack_SwapTop Vertical
-	,Stack_MoveTop East
-	,Stack_MoveTop West
-	,Stack_MoveTop North
-	,Stack_MoveTop South
-	,Stack_MoveTop NorthWest
-	,Stack_MoveTop NorthEast
-	,Stack_MoveTop SouthEast
-	,Stack_MoveTop SouthWest
-	,Stack_CopyTop East
-	,Stack_CopyTop West
-	,Stack_CopyTop North
-	,Stack_CopyTop NorthWest
-	,Stack_CopyTop NorthEast
-	,Stack_CopyTop SouthEast
-	,Stack_CopyTop SouthWest
-	,Stack_CopyBoth Horizontal
-	,Stack_CopyBoth Vertical
-	,Stack_CycleFull Clockwise
-	,Stack_CycleFull Anticlockwise
-	,Stack_CycleTops Clockwise
-	,Stack_CycleTops Anticlockwise
-	,Operator_Math_Product
-	,Operator_Math_Sum
-	,Operator_Logic_Any
-	,Operator_Logic_None
-	,Operator_Set_PowerSet
-	,Operator_Set_Subsets
-	,Control_Bounce Always NorthEast
-	,Control_Bounce Depends NorthEast
-	,Control_Bounce Always NorthWest
-	,Control_Bounce Depends NorthWest
-	,Control_Bounce Always SouthEast
-	,Control_Bounce Depends SouthEast
-	,Control_Bounce Always SouthWest
-	,Control_Bounce Depends SouthWest
-	,Control_Mirror Always Reflection
-	,Control_Mirror Depends Reflection
-	,Stack_Uniques_Main
-	,Stack_Uniques_Base
-	,Stack_Duplicates_Main
-	,Stack_Duplicates_Base
-	,Stack_Replicate_Base
-	,Stack_Replicate_TopOfMiddle
-	,Stack_Replicate_AllOfMiddle
-	,Stack_Repeat_TopOfMiddle
-	,Stack_Repeat_AllOfMiddle
-	,Operator_Math_Maximum
-	,Operator_Math_Minimum
+unicodeMapping =
+	[(Control (Terminate))
+	,(Control (Start East))
+	,(Control (Start West))
+	,(Control (Start North))
+	,(Control (Start South))
+	,(Stack (ShiftBase East))
+	,(Stack (ShiftBase West))
+	,(Operator (IO_Bell))
+	,(Stack (ShiftBase North))
+	,(Stack (ShiftBase South))
+	,(Operator (Set_Length))
+	,(Control (LINE))
+	,(Control (Turn Anticlockwise))
+	,(Control (Turn Clockwise))
+	,(Control (Change Always East))
+	,(Control (Change Depends East))
+	,(Control (Change Always West))
+	,(Control (Change Depends West))
+	,(Control (Change Always North))
+	,(Control (Change Depends North))
+	,(Control (Change Always South))
+	,(Control (Change Depends South))
+	,(Control (Either Always Horizontal))
+	,(Control (Either Depends Horizontal))
+	,(Control (Either Always Vertical))
+	,(Control (Either Depends Vertical))
+	,(Control (Mirror Depends Vertical))
+	,(Control (Mirror Depends Horizontal))
+	,(Control (Mirror Depends Identity))
+	,(Control (Mirror Depends Inverse))
+	,(Operator (IO_WriteAll))
+	,(Operator (IO_ReadAll))
+	,(Control (NOOP))
+	,(Operator (IO_WriteOnce))
+	,(Literal (Quote))
+	,(Variable (Random))
+	,(Operator (Math_Integral))
+	,(Operator (Math_Modulus))
+	,(Stack (JoinFromBase))
+	,(Control (String))
+	,(Control (Loop Left West))
+	,(Control (Loop Left East))
+	,(Operator (Math_DotProduct))
+	,(Operator (Math_Addition))
+	,(Operator (Range_FromLeftStepRight))
+	,(Operator (Math_Subtraction))
+	,(Operator (Range_FromMiddleToZero))
+	,(Control (Mirror Always Identity))
+	,(Literal (Digit 0))
+	,(Literal (Digit 1))
+	,(Literal (Digit 2))
+	,(Literal (Digit 3))
+	,(Literal (Digit 4))
+	,(Literal (Digit 5))
+	,(Literal (Digit 6))
+	,(Literal (Digit 7))
+	,(Literal (Digit 8))
+	,(Literal (Digit 9))
+	,(Operator (Range_FromMiddleAvoidZero))
+	,(Operator (Range_FromLeftTimesRight))
+	,(Operator (Logic_LessThan))
+	,(Operator (Logic_Equality))
+	,(Operator (Logic_GreaterThan))
+	,(Operator (IO_ReadOnce))
+	,(Stack (AdjustOffset))
+	,(Literal (Alphabet Uppercase))
+	,(Operator (Math_ConvertToBase))
+	,(Operator (Math_ArcCoSine))
+	,(Stack (Uniques_Middle))
+	,(Operator (Math_NaturalExponent))
+	,(Operator (Set_Permutations))
+	,(Operator (Math_GreatestCommonDivisor))
+	,(Operator (Set_Maximum))
+	,(Operator (Math_ImaginaryPart))
+	,(Operator (Math_RealPart))
+	,(Operator (Set_AntiFilter))
+	,(Operator (Math_Logarithm))
+	,(Operator (Set_Combinations))
+	,(Operator (Chars_JoinWithNewlines))
+	,(Operator (Logic_IsOrdered))
+	,(Operator (Logic_IsPrime))
+	,(Variable (Quine))
+	,(Operator (Logic_IsReal))
+	,(Operator (Math_ArcSine))
+	,(Operator (Math_ArcTangent))
+	,(Stack (Reverse_Middle))
+	,(Operator (Math_Average))
+	,(Stack (Delete_Middle))
+	,(Operator (Chars_ToUppercase))
+	,(Operator (Logic_IsUppercase))
+	,(Operator (Logic_IsFinite))
+	,(Control (Loop Middle West))
+	,(Control (Mirror Always Inverse))
+	,(Control (Loop Middle East))
+	,(Operator (Math_Exponent))
+	,(Operator (Math_Floor))
+	,(Operator (Math_Differential))
+	,(Literal (Alphabet Lowercase))
+	,(Operator (Math_ConvertFromBase))
+	,(Operator (Math_CoSine))
+	,(Stack (Duplicates_Middle))
+	,(Operator (Math_NaturalLogarithm))
+	,(Operator (Math_Permutations))
+	,(Operator (Math_LeastCommonMultiple))
+	,(Operator (Set_Minimum))
+	,(Operator (Math_ImaginaryUnit))
+	,(Operator (Math_ComplexSplit))
+	,(Operator (Set_Filter))
+	,(Operator (Math_Base10Logarithm))
+	,(Operator (Math_Combinations))
+	,(Operator (Chars_SplitOnNewlines))
+	,(Operator (Set_MakeOrdered))
+	,(Operator (Math_PrimeFactors))
+	,(Variable (History))
+	,(Operator (Math_Round))
+	,(Operator (Math_Sine))
+	,(Operator (Math_Tangent))
+	,(Stack (Rotate_Middle))
+	,(Operator (Math_Abs))
+	,(Stack (Drop_Middle))
+	,(Operator (Logic_IsLowercase))
+	,(Operator (Chars_ToLowercase))
+	,(Operator (Math_Conjugate))
+	,(Control (Loop Right West))
+	,(Control (Mirror Always Vertical))
+	,(Control (Loop Right East))
+	,(Operator (Math_Negation))
+	,(Operator (IO_ReadWrite))
+	,(Operator (IO_WriteRead))
+	,(Operator (IO_Interrobang))
+	,(Operator (Math_Multiplication))
+	,(Operator (Vector_Multiplication))
+	,(Operator (Math_Division))
+	,(Operator (Vector_Addition))
+	,(Operator (Math_SquareRoot))
+	,(Operator (Math_Reciprocal))
+	,(Operator (Logic_IsInfinite))
+	,(Operator (Bitwise_Or))
+	,(Operator (Vector_Or))
+	,(Operator (Bitwise_And))
+	,(Operator (Vector_And))
+	,(Operator (Bitwise_Xor))
+	,(Operator (Bitwise_Not))
+	,(Operator (Bitwise_Nor))
+	,(Operator (Bitwise_Nand))
+	,(Operator (Bitwise_Xnor))
+	,(Operator (Set_Intersection))
+	,(Operator (Set_Union))
+	,(Operator (Logic_ElementOf))
+	,(Operator (Logic_Contains))
+	,(Operator (Vector_LessThan))
+	,(Operator (Vector_GreaterThan))
+	,(Operator (Vector_Equality))
+	,(Operator (Logic_LessOrEqual))
+	,(Operator (Vector_LessOrEqual))
+	,(Operator (Logic_GreaterOrEqual))
+	,(Operator (Vector_GreaterOrEqual))
+	,(Operator (Logic_Inequality))
+	,(Operator (Logic_SetEquality))
+	,(Operator (Logic_SetInequality))
+	,(Operator (Logic_SubsetNotEqual))
+	,(Operator (Logic_SupersetNotEqual))
+	,(Operator (Logic_SubsetOrEqual))
+	,(Operator (Logic_SupersetOrEqual))
+	,(Operator (Logic_NotSubsetNorEqual))
+	,(Operator (Logic_NotSupersetNorEqual))
+	,(Operator (Math_RadiansToDegrees))
+	,(Operator (Math_DegreesToRadians))
+	,(Operator (Math_Ceiling))
+	,(Operator (Bitwise_LeftShift))
+	,(Operator (Bitwise_RightShift))
+	,(Operator (IO_Sleep))
+	,(Operator (IO_Timestamp))
+	,(Literal (Pi))
+	,(Stack (SwapLeftRight))
+	,(Stack (MoveAll NorthWest))
+	,(Stack (MoveAll NorthEast))
+	,(Stack (MoveAll SouthEast))
+	,(Stack (MoveAll SouthWest))
+	,(Stack (Reverse_Left))
+	,(Stack (Reverse_Right))
+	,(Stack (Reverse_Both))
+	,(Stack (Reverse_Primary))
+	,(Stack (Reverse_Base))
+	,(Stack (Reverse_All))
+	,(Stack (Rotate_Left))
+	,(Stack (Rotate_Right))
+	,(Stack (Rotate_Both))
+	,(Stack (Rotate_Primary))
+	,(Stack (Rotate_Base))
+	,(Stack (Rotate_All))
+	,(Stack (Delete_Left))
+	,(Stack (Delete_Right))
+	,(Stack (Delete_Both))
+	,(Stack (Delete_Base))
+	,(Stack (Delete_Main))
+	,(Stack (Delete_All))
+	,(Stack (Drop_Left))
+	,(Stack (Drop_Right))
+	,(Stack (Drop_Both))
+	,(Stack (Drop_Base))
+	,(Stack (Drop_Main))
+	,(Stack (Unpack_RightLeft))
+	,(Stack (Unpack_LeftRight))
+	,(Stack (SwapTop Inverse))
+	,(Stack (SwapTop Identity))
+	,(Stack (SwapTop Horizontal))
+	,(Stack (SwapTop Vertical))
+	,(Stack (MoveTop East))
+	,(Stack (MoveTop West))
+	,(Stack (MoveTop North))
+	,(Stack (MoveTop South))
+	,(Stack (MoveTop NorthWest))
+	,(Stack (MoveTop NorthEast))
+	,(Stack (MoveTop SouthEast))
+	,(Stack (MoveTop SouthWest))
+	,(Stack (CopyTop East))
+	,(Stack (CopyTop West))
+	,(Stack (CopyTop North))
+	,(Stack (CopyTop NorthWest))
+	,(Stack (CopyTop NorthEast))
+	,(Stack (CopyTop SouthEast))
+	,(Stack (CopyTop SouthWest))
+	,(Stack (CopyBoth Horizontal))
+	,(Stack (CopyBoth Vertical))
+	,(Stack (CycleFull Clockwise))
+	,(Stack (CycleFull Anticlockwise))
+	,(Stack (CycleTops Clockwise))
+	,(Stack (CycleTops Anticlockwise))
+	,(Operator (Math_Product))
+	,(Operator (Math_Sum))
+	,(Operator (Logic_Any))
+	,(Operator (Logic_None))
+	,(Operator (Set_PowerSet))
+	,(Operator (Set_Subsets))
+	,(Control (Bounce Always NorthEast))
+	,(Control (Bounce Depends NorthEast))
+	,(Control (Bounce Always NorthWest))
+	,(Control (Bounce Depends NorthWest))
+	,(Control (Bounce Always SouthEast))
+	,(Control (Bounce Depends SouthEast))
+	,(Control (Bounce Always SouthWest))
+	,(Control (Bounce Depends SouthWest))
+	,(Control (Mirror Always Reflection))
+	,(Control (Mirror Depends Reflection))
+	,(Stack (Uniques_Main))
+	,(Stack (Uniques_Base))
+	,(Stack (Duplicates_Main))
+	,(Stack (Duplicates_Base))
+	,(Stack (Replicate_Base))
+	,(Stack (Replicate_TopOfMiddle))
+	,(Stack (Replicate_AllOfMiddle))
+	,(Stack (Repeat_TopOfMiddle))
+	,(Stack (Repeat_AllOfMiddle))
+	,(Operator (Math_Maximum))
+	,(Operator (Math_Minimum))
 	]
 	

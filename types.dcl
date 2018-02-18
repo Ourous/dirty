@@ -10,7 +10,7 @@ definition module types
 	= {
 		dimension :: XYPair,
 		location :: XYPair,
-		direction :: CardinalDirection,
+		direction :: Direction,
 		program :: !{{!Command}},
 		random :: [Int],
 		history :: [Command],
@@ -62,13 +62,13 @@ definition module types
 	
 :: ControlCommand
 	= Terminate
-	| Start CardinalDirection
-	| Change Conditional CardinalDirection
-	| Bounce Conditional DiagonalDirection
-	| Either Conditional CardinalAxis
-	| Mirror Conditional AnyAxis
+	| Start Direction
+	| Change Conditional Direction
+	| Bounce Conditional Direction
+	| Either Conditional Axes
+	| Mirror Conditional Axes
 	| Turn Rotation
-	| Loop StackID3 CardinalDirection
+	| Loop StackID3 Direction
 	| String
 	| NOOP
 	| LINE
@@ -240,12 +240,12 @@ definition module types
 	| CycleFull Rotation
 	| Unpack_LeftRight
 	| Unpack_RightLeft
-	| SwapTop CompassAxis
+	| SwapTop Axes
 	| SwapLeftRight
-	| MoveTop CompassDirection
-	| MoveAll DiagonalDirection
-	| CopyTop CompassDirection
-	| CopyBoth CardinalAxis
+	| MoveTop Direction
+	| MoveAll Direction
+	| CopyTop Direction
+	| CopyBoth Axes
 	| Replicate_Base
 	| Replicate_TopOfMiddle
 	| Replicate_AllOfMiddle
@@ -257,7 +257,7 @@ definition module types
 	| Duplicates_Middle
 	| Duplicates_Main
 	| Duplicates_Base
-	| ShiftBase CardinalDirection
+	| ShiftBase Direction
 	| JoinFromBase
 	| AdjustOffset
 
@@ -269,50 +269,24 @@ definition module types
 	= Clockwise
 	| Anticlockwise
 	
-:: StackID1
+:: StackID3
 	= Middle
-
-:: StackID2
-	= Left
+	| Left
 	| Right
 	
-:: StackID3
-	= StackID1
-	| StackID2
-	
-:: StackID5
-	= StackID3
-	| Main
-	| Base
-	
-:: CardinalAxis
-	= Vertical
+:: Axes
+	= Reflection
+	| Inverse
+	| Identity
+	| Vertical
 	| Horizontal
 	
-:: DiagonalAxis
-	= Inverse
-	| Identity
-	
-:: CompassAxis
-	= CardinalAxis
-	| DiagonalAxis
-	
-:: AnyAxis
-	= CompassAxis
-	| Reflection
-	
-:: CardinalDirection
+:: Direction
 	= North
 	| South
 	| East
 	| West
-
-:: CompassDirection
-	= CardinalDirection
-	| DiagonalDirection
-
-:: DiagonalDirection
-	= NorthWest
+	| NorthWest
 	| NorthEast
 	| SouthWest
 	| SouthEast

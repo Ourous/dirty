@@ -18,6 +18,10 @@ instance * Sign where
 	(*) Negative Negative = Positive
 	(*) _ _ = Negative
 	
+instance sign Sign where
+	sign Positive = 1
+	sign Negative = -1
+	
 VAL_SIGN val
 	:== case val of
 		(Inf val) = val
@@ -350,25 +354,24 @@ instance lcm Number where
 	lcm (Complex _ _) (Rational _) = abort "Unimplemented Operation: lcm Cx Re"
 	lcm (Complex _ _) (Imaginary _) = abort "Unimplemented Operation: lcm Cx Im"
 	lcm (Complex _ _) (Complex _ _) = abort "Unimplemented Operation: lcm Cx Cx"
-	
+*/
 instance toInt Number where
-	toInt NaN = abort "Unimplemented Operation: toInt NaN"
-	//toInt Infinity = abort "Unimplemented Operation: toInt Infinity"
 	toInt Zero = 0
-	toInt (Rational val) = toInt val
-	toInt (Imaginary val) = toInt val
-	toInt (Complex re im) = toInt (sqrt (re*re + im*im))
+	toInt (Re (Fin val)) = toInt val
+	toInt (Im (Fin val)) = toInt val
+	toInt (Cx (Fin {re, im})) = toInt (sqrt (re*re + im*im)) * sign re * sign im
 	
 instance toReal Number where
-	toReal NaN = abort "Unimplemented Operation: toReal NaN"
-	//toReal Infinity = abort "Unimplemented Operation: toReal Infinity"
 	toReal Zero = 0.0
-	toReal (Rational val) = toReal val
-	toReal (Imaginary val) = toReal val
-	toReal (Complex re im) = toReal (sqrt (re*re + im*im))
+	toReal (Re (Inf val)) = (toReal (sign val)) / 0.0
+	toReal (Re (Fin val)) = toReal val
+	toReal (Im (Inf val)) = (toReal (sign val)) / 0.0
+	toReal (Im (Fin val)) = toReal val
+	toReal (Cx (Fin {re, im})) = toReal (sqrt (re*re + im*im)) * (toReal (sign re * sign im))
+	toReal _ = 0.0/0.0
 	
 instance fromInt Number where fromInt val = (Rational (Int val))
-	
+/*
 instance ln Number where
 	ln NaN = NaN
 	//ln Infinity = Infinity

@@ -189,4 +189,23 @@ nativeMapping =
 	,Operator_Logic_Inequality
 	,Operator_Logic_SetEquality
 	,Operator_Logic_SetInequality
-	,
+	,Operator_Logic_SubsetNotEqual
+	,Operator_Logic_SupersetNotEqual
+	,Operator_Logic_SubsetOrEqual
+	,Operator_Logic_SupersetOrEqual
+	,Operator_Logic_NotSubsetNorEqual
+	,Operator_Logic_NotSupersetNorEqual
+	,Operator_Math_RadiansToDegrees
+	,Operator_Math_DegreesToRadians
+	,Operator_Math_Ceiling
+	,Operator_Bitwise_LeftShift
+	,Operator_Bitwise_RightShift
+	,Operator_IO_Sleep
+	,Variable_Time
+	,Literal_Pi
+	,Stack_SwapLeftRight
+	,Stack_MoveAll NorthWest
+	,Stack_MoveAll NorthEast
+	,Stack_MoveAll SouthEast
+	,Stack_MoveAll SouthWest
+	

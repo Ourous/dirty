@@ -81,7 +81,7 @@ definition module types
 	| Operator_Math_Sum
 	| Operator_Math_Product
 	| Operator_Math_SquareRoot
-	| Operator_Math_Negate
+	| Operator_Math_Negation
 	| Operator_Math_Conjugate
 	| Operator_Math_RealPart
 	| Operator_Math_ImaginaryPart
@@ -120,7 +120,7 @@ definition module types
 	| Operator_Bitwise_Xor
 	| Operator_Bitwise_Xnor
 	| Operator_Bitwise_Nor
-	| Operator_Bitwose_Not
+	| Operator_Bitwise_Not
 	| Operator_Bitwise_Nand
 	| Operator_Bitwise_LeftShift
 	| Operator_Bitwise_RightShift
@@ -173,7 +173,7 @@ definition module types
 	| Operator_Set_Intersection
 	| Operator_Set_Union
 	| Operator_Set_Minimum
-	| Operator_Set_Maximuim
+	| Operator_Set_Maximum
 	| Operator_Chars_ToLowercase
 	| Operator_Chars_ToUppercase
 	| Operator_Chars_JoinWithNewlines

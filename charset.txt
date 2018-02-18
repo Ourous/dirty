@@ -207,16 +207,16 @@ z // conjugate
 ⭤ // swap top of right and left
 ⭥ // swap top and bottom of mid
 ⭢ // move top of left to right
+⭠ // move top of right to left
 ⭡ // move bottom of mid to top
 ⭣ // move top of mid to bottom
-⭠ // move top of right to left
 ⭦ // move top of mid to left
 ⭧ // move top of mid to right
 ⭨ // move top of left to mid
 ⭩ // move top of right to mid
+⭲ // copy top of left to right
 ⭰ // copy top of right to left
 ⭱ // copy top of mid
-⭲ // copy top of left to right
 ⭶ // copy top of mid to left
 ⭷ // copy top of mid to right
 ⭸ // copy top of left to mid
@@ -241,8 +241,8 @@ z // conjugate
 ⬂ // conditional bounce SE
 ⬋ // bounce SW
 ⬃ // conditional bounce SW
-⬚ // conditional universal reflect
 ⬜ // universal reflect
+⬚ // conditional universal reflect
 Ḋ // remove duplicates from <main>
 Ḍ // remove duplicates from <baseline>
 ḋ // retain only duplicates from <main>

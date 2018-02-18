@@ -62,7 +62,7 @@ nativeMapping =
 	,Operator_IO_WriteAll
 	,Operator_IO_ReadAll
 	,Control_NOOP
-	,Operator_IO_OutputOnce
+	,Operator_IO_WriteOnce
 	,Literal_Quote
 	,Variable_Random
 	,Operator_Math_Integral
@@ -110,7 +110,7 @@ nativeMapping =
 	,Operator_Chars_JoinWithNewlines
 	,Operator_Logic_IsOrdered
 	,Operator_Logic_IsPrime
-	,Literal_Quine
+	,Variable_Quine
 	,Operator_Logic_IsReal
 	,Operator_Math_ArcSine
 	,Operator_Math_ArcTangent
@@ -142,7 +142,7 @@ nativeMapping =
 	,Operator_Chars_SplitOnNewlines
 	,Operator_Set_MakeOrdered
 	,Operator_Math_PrimeFactors
-	,Variable_Program
+	,Variable_History
 	,Operator_Math_Round
 	,Operator_Math_Sine
 	,Operator_Math_Tangent
@@ -150,7 +150,7 @@ nativeMapping =
 	,Operator_Math_Abs
 	,Stack_Drop_Middle
 	,Operator_Logic_IsLowercase
-	,Operator_Logic_ToLowercase
+	,Operator_Chars_ToLowercase
 	,Operator_Math_Conjugate
 	,Control_Loop Right West
 	,Control_Mirror Always Vertical
@@ -208,4 +208,82 @@ nativeMapping =
 	,Stack_MoveAll NorthEast
 	,Stack_MoveAll SouthEast
 	,Stack_MoveAll SouthWest
+	,Stack_Reverse_Left
+	,Stack_Reverse_Right
+	,Stack_Reverse_Both
+	,Stack_Reverse_Primary
+	,Stack_Reverse_Base
+	,Stack_Reverse_All
+	,Stack_Rotate_Left
+	,Stack_Rotate_Right
+	,Stack_Rotate_Both
+	,Stack_Rotate_Primary
+	,Stack_Rotate_Base
+	,Stack_Rotate_All
+	,Stack_Delete_Left
+	,Stack_Delete_Right
+	,Stack_Delete_Both
+	,Stack_Delete_Base
+	,Stack_Delete_Main
+	,Stack_Delete_All
+	,Stack_Drop_Left
+	,Stack_Drop_Right
+	,Stack_Drop_Both
+	,Stack_Drop_Base
+	,Stack_Drop_Main
+	,Stack_Unpack_RightLeft
+	,Stack_Unpack_LeftRight
+	,Stack_SwapTop Inverse
+	,Stack_SwapTop Identity
+	,Stack_SwapTop Horizontal
+	,Stack_SwapTop Vertical
+	,Stack_MoveTop East
+	,Stack_MoveTop West
+	,Stack_MoveTop North
+	,Stack_MoveTop South
+	,Stack_MoveTop NorthWest
+	,Stack_MoveTop NorthEast
+	,Stack_MoveTop SouthEast
+	,Stack_MoveTop SouthWest
+	,Stack_CopyTop East
+	,Stack_CopyTop West
+	,Stack_CopyTop North
+	,Stack_CopyTop NorthWest
+	,Stack_CopyTop NorthEast
+	,Stack_CopyTop SouthEast
+	,Stack_CopyTop SouthWest
+	,Stack_CopyBoth Horizontal
+	,Stack_CopyBoth Vertical
+	,Stack_CycleFull Clockwise
+	,Stack_CycleFull Anticlockwise
+	,Stack_CycleTops Clockwise
+	,Stack_CycleTops Anticlockwise
+	,Operator_Math_Product
+	,Operator_Math_Sum
+	,Operator_Logic_Any
+	,Operator_Logic_None
+	,Operator_Set_PowerSet
+	,Operator_Set_Subsets
+	,Control_Bounce Always NorthEast
+	,Control_Bounce Depends NorthEast
+	,Control_Bounce Always NorthWest
+	,Control_Bounce Depends NorthWest
+	,Control_Bounce Always SouthEast
+	,Control_Bounce Depends SouthEast
+	,Control_Bounce Always SouthWest
+	,Control_Bounce Depends SouthWest
+	,Control_Mirror Always Reflection
+	,Control_Mirror Depends Reflection
+	,Stack_Uniques_Main
+	,Stack_Uniques_Base
+	,Stack_Duplicates_Main
+	,Stack_Duplicates_Base
+	,Stack_Replicate_Base
+	,Stack_Replicate_TopOfMiddle
+	,Stack_Replicate_AllOfMiddle
+	,Stack_Repeat_TopOfMiddle
+	,Stack_Repeat_AllOfMiddle
+	,Operator_Math_Maximum
+	,Operator_Math_Minimum
+	]
 	

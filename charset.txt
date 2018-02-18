@@ -79,7 +79,7 @@ N // join <main> with newlines
 O // is ordered
 P // is prime
 Q // do a quine
-R // is a real number, or infinity
+R // is a finite real number
 S // arc-sine
 T // arc-tangent
 U // upend the mid stack
@@ -87,7 +87,7 @@ V // average
 W // wipe the mid stack
 X // to uppercase
 Y // is uppercase
-Z // is an integer
+Z // is a finite number
 [ // loop if <mid> is true
 \ // reflection around NW->SE
 ] // loop if <mid> is true
@@ -119,11 +119,11 @@ v // absolute value
 w // remove the <nth> elements from the <mid> stack
 x // to lowercase
 y // is lowercase
-z // remove zeroes
+z // conjugate
 { // loop if <right> is true or empty
 | // reflection around the vertical
 } // loop if <right> is true or empty
-~ // conjugate
+~ // negate
 ⁈ // output <right>, read into <left>
 ⁉ // output <left>, read into <right>
 ‽ // output and pop <mid>, read into <mid>
@@ -133,7 +133,7 @@ z // remove zeroes
 ∔ // vectorized plus
 √ // square root
 ⅟ // reciprocal
-∞ // infinity
+∞ // is a non-finite number, and not NaN
 ∧ // and
 ⩑ // vectorized and
 ∨ // or

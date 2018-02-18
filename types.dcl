@@ -82,6 +82,7 @@ definition module types
 	| Operator_Math_Average
 	| Operator_Math_Product
 	| Operator_Math_SquareRoot
+	| Operator_Math_Negate
 	| Operator_Math_Conjugate
 	| Operator_Math_RealPart
 	| Operator_Math_ImagPart
@@ -102,10 +103,8 @@ definition module types
 	| Operator_Math_DegreesToRadians
 	| Operator_Math_Minimum
 	| Operator_Math_Maximum
-	| Operator_Math_SetMinimum
-	| Operator_Math_SetMaximum
-	| Operator_Math_IntPermutations
-	| Operator_Math_IntCombinations
+	| Operator_Math_Permutations
+	| Operator_Math_Combinations
 	| Operator_Math_PrimeFactors
 	| Operator_Math_GreatestCommonDivisor
 	| Operator_Math_LeastCommonMultiple
@@ -143,11 +142,12 @@ definition module types
 	| Operator_Logic_Any
 	| Operator_Logic_None
 	| Operator_Logic_IsOrdered
-	| Operator_Logic_IsRealOrInf
 	| Operator_Logic_IsLowercase
 	| Operator_Logic_IsUppercase
 	| Operator_Logic_IsPrime
-	| Operator_Logic_IsInteger
+	| Operator_Logic_IsReal
+	| Operator_Logic_IsComplex
+	| Operator_Logic_IsInfinite
 	| Operator_Vector_Multiplication
 	| Operator_Vector_Addition
 	| Operator_Vector_Equality
@@ -165,10 +165,11 @@ definition module types
 	| Operator_Set_Combinations
 	| Operator_Set_MakeOrdered
 	| Operator_Set_Length
-	| Operator_Set_RemoveZeroes
 	| Operator_Set_Filter
 	| Operator_Set_Intersection
 	| Operator_Set_Union
+	| Operator_Set_Minimum
+	| Operator_Set_Maximuim
 	| Operator_Alphabet_ToLowercase
 	| Operator_Alphabet_ToUppercase
 	
@@ -232,11 +233,9 @@ definition module types
 	| Variable_Time
 	
 :: Literal
-	= Literal_Infinity
-	| Literal_Digit Digit
+	= Literal_Digit Digit
 	| Literal_Quote
 	| Literal_Pi
-	| Literal_E
 	| Literal_UpperAlpha
 	| Literal_LowerAlpha
 	

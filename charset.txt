@@ -3,8 +3,8 @@
 ⏴ // start, going left
 ⏶ // start, going up
 ⏷ // start, going down
-⭪ // move current baseline down 1
 ⭬ // move current baseline up 1
+⭪ // move current baseline down 1
 🔔 // bell character
 ⭫ // go to next baseline, if none, create new baseline at the end of <main>
 ⭭ // go to last baseline, if none, go to index 0
@@ -12,14 +12,14 @@
 // newline
 ⭮ // rotate counterclockwise
 ⭯ // rotate clockwise
+⮕ // solid right arrow
+⇨ // white right arrow
 ⬅ // solid left arrow
 ⇦ // white left arrow
 ⬆ // solid up arrow
 ⇧ // white up arrow
 ⬇ // solid down arrow
 ⇩ // white down arrow
-⮕ // solid right arrow
-⇨ // white right arrow
 ⬌ // horizontal dual arrow
 ⬄ // white horizontal arrow
 ⬍ // vertical dual arrow

@@ -254,15 +254,19 @@ definition module types
 :: Control
 	= Control_Terminate
 	| Control_Start CardinalDirection
-	| Control_Move Bool CardinalDirection
-	| Control_Bounce Bool DiagonalDirection
-	| Control_Random Bool CardinalAxis
-	| Control_Mirror Bool AnyAxis
+	| Control_Move Conditional CardinalDirection
+	| Control_Bounce Conditional DiagonalDirection
+	| Control_Random Conditional CardinalAxis
+	| Control_Mirror Conditional AnyAxis
 	| Control_Turn Rotation
 	| Control_Loop StackID3 CardinalDirection
 	| Control_String
 	| Control_NOOP
 	| Control_LINE
+	
+:: Conditional
+	= NoLoop
+	| Always
 
 :: Rotation
 	= Clockwise

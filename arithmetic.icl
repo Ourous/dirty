@@ -147,8 +147,6 @@ instance - Number where
 	(-) (Cx (Fin lhs)) (Cx (Fin rhs))
 		= handle (Cx (Fin {re=lhs.re-rhs.re, im=lhs.im-rhs.im}))
 		
-instance ~ Number where ~ val = val
-		
 instance zero Number where
 	zero = Zero
 	
@@ -209,10 +207,10 @@ instance / Number where
 	(/) (Complex lhsRe lhsIm) (Complex rhsRe rhsIm)
 		# denominator = rhsRe * rhsRe + rhsIm * rhsIm
 		= handle (Complex ((lhsRe * rhsRe + lhsIm * rhsIm) / denominator) ((lhsIm * rhsRe - lhsRe * rhsIm) / denominator))
-		
+*/		
 instance one Number where
-	one = (Rational (Int 1))
-	
+	one = (Re (Fin (Int 1)))
+/*	
 instance ^ Number where
 	(^) NaN _ = NaN
 	(^) _ NaN = NaN
@@ -242,22 +240,22 @@ instance ^ Number where
 	(^) (Complex _ _) (Rational _) = abort "Unimplemented Operation: Cx^Re"
 	(^) (Complex _ _) (Imaginary _) = abort "Unimplemented Operation: Cx^Im"
 	(^) (Complex _ _) (Complex _ _) = abort "Unimplemented Operation: Cx^Cx"
-		
+*/
 instance abs Number where
 	abs NaN = NaN
 	abs Zero = Zero
-	//abs Infinity = Infinity
-	abs (Rational val) = (Rational (abs val))
-	abs (Imaginary val) = (Rational (abs val))
-	abs (Complex re im) = (Rational ((re * re + im * im)^(Real 0.5)))
+	abs (Re (Fin val)) = (Re (Fin (abs val)))
+	abs (Im (Fin val)) = (Re (Fin (abs val)))
+	abs (Cx (Fin val)) = (Re (Fin (sqrt(val.re*val.re+val.im*val.im))))
+	abs _ = (Re (Inf Positive))
 	
 instance ~ Number where
 	(~) NaN = NaN
 	(~) Zero = Zero
 	//(~) Infinity = Infinity
-	(~) (Rational val) = (Rational (~ val))
-	(~) (Imaginary val) = (Imaginary (~ val))
-	(~) (Complex re im) = (Complex re (~ im))
+	(~) (Re (Fin val)) = (Re (Fin (~val)))
+	(~) (Im (Fin val)) = (Im (Fin (~val)))
+	(~) (Cx (Fin val)) = (Cx (Fin {re=(~val.re), im=(~val.im)}))
 	
 instance == Number where
 	(==) NaN NaN = False
@@ -267,7 +265,7 @@ instance == Number where
 	(==) (Imaginary lhs) (Imaginary rhs) = lhs == rhs
 	(==) (Complex lhsRe lhsIm) (Complex rhsRe rhsIm) = lhsRe == rhsRe && lhsIm == rhsIm
 	(==) _ _ = False
-	
+/*
 instance < Number where
 	(<) NaN _ = False
 	(<) _ NaN = False
@@ -281,7 +279,7 @@ instance < Number where
 	(<) (Rational lhs) (Rational rhs) = lhs < rhs
 	(<) (Imaginary lhs) (Imaginary rhs) = lhs < rhs
 	(<) (Complex lhsRe lhsIm) (Complex rhsRe rhsIm) = lhsRe < rhsRe && lhsIm < rhsIm
-	
+
 instance mod Number where
 	(mod) NaN _ = NaN
 	(mod) _ NaN = NaN

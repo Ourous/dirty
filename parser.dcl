@@ -4,4 +4,4 @@ import types, converter
 
 parseUTF8 :: String -> State
 
-//parsetNative :: String -> State
+parseNative :: String -> State

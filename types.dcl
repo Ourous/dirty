@@ -11,7 +11,7 @@ definition module types
 		dimension :: XYPair,
 		location :: XYPair,
 		direction :: Direction,
-		program :: [[Command]],
+		program :: [[Char]],
 		random :: [Int],
 		history :: [Command],
 		memory :: Memory

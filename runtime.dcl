@@ -4,4 +4,4 @@ import types
 
 execute :: State Memory *World -> *World
 
-evaluate :: String -> Memory
+//evaluate :: String -> Memory

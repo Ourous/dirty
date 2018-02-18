@@ -3,9 +3,15 @@ implementation module parser
 import types, converter, StdEnv, Text
 
 parseUTF8 :: String -> State
-parseUTF8 string
+parseUTF8 string 
+	# string
+		= {#i \\ i <- ['\0'..] & u <- unicodeCharset, c <- utf8ToUnicode string | c == u}
+	= parseNative string
+		
+parseNative :: String -> State
+parseNative string
 	# lines
-		= map tokenizeUTF8Line (split "\n" string)
+		= map tokenizeLine (split "\n" string)
 	# dimensions
 		= {x=last(sort(map length lines)), y=length lines}
 	# (dir, x, y)
@@ -27,14 +33,9 @@ parseUTF8 string
 			main = [[]]
 			}
 		}
-
 where
-	tokenizeUTF8Line line
-		= [com
-			\\ com <- commandMapping
-			& uni <- unicodeCharset
-			, chr <- (utf8ToUnicode line)
-			| uni == chr]
+	tokenizeLine line
+		= [commandMapping !! (toInt c) \\ c <-: line]
 			
 	findStart [[(Control (Start dir)):_]:_]
 		= (dir, 0, 0)

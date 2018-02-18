@@ -10,5 +10,11 @@ import types
 unicodeToUTF8 :: [Number] -> String
 utf8ToUnicode :: String -> [Number]
 
+unicodeCharset :: [Int]
+
+nativeCharset :: [Int]
+
+commandMapping :: [Command]
+
 //nativeToUnicode :: String -> [Number]
 //unicodeToNative :: [Number] -> String

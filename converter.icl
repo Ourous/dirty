@@ -29,4 +29,9 @@ where
 	}
 
 nativeMapping =
-	[1]
+	[Control_Terminate
+	,Control_Start East
+	,Control_Start West
+	,Control_Start North
+	,Control_Start South
+	

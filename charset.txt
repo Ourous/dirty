@@ -4,11 +4,12 @@
 ⏶ // start, going up
 ⏷ // start, going down
 ⭪ // move current baseline down 1
+⭬ // move current baseline up 1
 🔔 // bell character
 ⭫ // go to next baseline, if none, create new baseline at the end of <main>
 ⭭ // go to last baseline, if none, go to index 0
+№ // elements in <mid>
 // newline
-⭬ // move current baseline up 1
 ⭮ // rotate counterclockwise
 ⭯ // rotate clockwise
 ⬅ // solid left arrow
@@ -228,7 +229,6 @@ z // conjugate
 ⮓ // rotate tops of stacks counterclockwise
 ∏ // product
 ∑ // sum
-№ // elements in <mid>
 ∃ // any
 ∄ // none
 𝒫 // power set

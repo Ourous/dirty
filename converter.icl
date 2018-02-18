@@ -44,21 +44,21 @@ nativeMapping =
 	,Control_Turn Anticlockwise
 	,Control_Turn Clockwise
 	,Control_Move Always East
-	,Control_Move NoLoop East
+	,Control_Move Depends East
 	,Control_Move Always West
-	,Control_Move NoLoop West
+	,Control_Move Depends West
 	,Control_Move Always North
-	,Control_Move NoLoop North
+	,Control_Move Depends North
 	,Control_Move Always South
-	,Control_Move NoLoop South
+	,Control_Move Depends South
 	,Control_Random Always Horizontal
-	,Control_Random NoLoop Horizontal
+	,Control_Random Depends Horizontal
 	,Control_Random Always Vertical
-	,Control_Random NoLoop Vertical
-	,Control_Mirror NoLoop Vertical
-	,Control_Mirror NoLoop Horizontal
-	,Control_Mirror NoLoop Identity
-	,Control_Mirror NoLoop Inverse
+	,Control_Random Depends Vertical
+	,Control_Mirror Depends Vertical
+	,Control_Mirror Depends Horizontal
+	,Control_Mirror Depends Identity
+	,Control_Mirror Depends Inverse
 	,Operator_IO_WriteAll
 	,Operator_IO_ReadAll
 	,Control_NOOP
@@ -87,4 +87,24 @@ nativeMapping =
 	,Literal_Digit Digit_Seven
 	,Literal_Digit Digit_Eight
 	,Literal_Digit Digit_Nine
-	
+	,Operator_Range_FromMiddleAvoidZero
+	,Operator_Range_FromLeftTimesRight
+	,Operator_Logic_LessThan
+	,Operator_Logic_Equality
+	,Operator_Logic_GreaterThan
+	,Operator_IO_ReadOnce
+	,Stack_AdjustOffset
+	,Literal_UpperAlpha
+	,Operator_Math_ConvertToBase
+	,Operator_Math_ArcCoSine
+	,Stack_Uniques_Middle
+	,Operator_Math_NaturalExponent
+	,Operator_Set_Permutations
+	,Operator_Math_GreatestCommonDivisor
+	,Operator_Set_Maximum
+	,Operator_Math_ImaginaryPart
+	,Operator_Math_RealPart
+	,Operator_Set_AntiFilter
+	,Operator_Math_Logarithm
+	,Operator_Set_Combinations
+	,

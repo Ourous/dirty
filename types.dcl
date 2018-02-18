@@ -85,9 +85,9 @@ definition module types
 	| Operator_Math_Negate
 	| Operator_Math_Conjugate
 	| Operator_Math_RealPart
-	| Operator_Math_ImagPart
-	| Operator_Math_ImagUnit
-	| Operator_Math_ImagSplit
+	| Operator_Math_ImaginaryPart
+	| Operator_Math_ImaginaryUnit
+	| Operator_Math_ComplexSplit
 	| Operator_Math_Floor
 	| Operator_Math_Abs
 	| Operator_Math_Ceiling
@@ -166,6 +166,7 @@ definition module types
 	| Operator_Set_MakeOrdered
 	| Operator_Set_Length
 	| Operator_Set_Filter
+	| Operator_Set_AntiFilter
 	| Operator_Set_Intersection
 	| Operator_Set_Union
 	| Operator_Set_Minimum
@@ -265,7 +266,7 @@ definition module types
 	| Control_LINE
 	
 :: Conditional
-	= NoLoop
+	= Depends
 	| Always
 
 :: Rotation

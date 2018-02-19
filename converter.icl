@@ -291,8 +291,8 @@ unicodeCharset =
 	,128276
 	,11115
 	,11117
-	,8470
 	,10
+	,8470
 	,11118
 	,11119
 	,11157
@@ -555,8 +555,8 @@ commandMapping =
 	,(Operator (IO_Bell))
 	,(Stack (ShiftBase North))
 	,(Stack (ShiftBase South))
-	,(Operator (Set_Length))
 	,(Control (LINE))
+	,(Operator (Set_Length))
 	,(Control (Turn Anticlockwise))
 	,(Control (Turn Clockwise))
 	,(Control (Change Always East))

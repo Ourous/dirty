@@ -34,6 +34,8 @@ where
 			&location = moveLocation 1 location dir
 			,direction = dir
 			} memory world
+	process (Control (Mirror Always axis)) world
+		= abort "todo"
 	process (Control Terminate) world
 		= (memory, world)
 	process (Control String) world

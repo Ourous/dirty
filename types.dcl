@@ -13,7 +13,8 @@ definition module types
 		direction :: Direction,
 		program :: [[Char]],
 		random :: [Int],
-		history :: [Command]
+		history :: [Command],
+		wrapping :: Bool
 	}
 
 :: Memory

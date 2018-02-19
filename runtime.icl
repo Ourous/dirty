@@ -12,7 +12,9 @@ evaluate string
 	= {left=[],right=[],bases=[],main=[]}
 
 execute :: State Memory *World -> *(Memory, *World)
-execute {dimension, location, direction, program, random, history} memory world
+execute state=:{dimension, location, direction, program, random, history, wrapping} memory world
+	| location.x >= dimension.x || location.y >= dimension.y
+		= if(wrapping) (execute {state&location={x=location.x rem dimension.x, y=location.y rem dimension.y}} memory world) (memory, world) 
 	= process (toCommand ((program !! location.y) !! location.x)) world
 where
 	process (Control (Start dir)) world
@@ -23,6 +25,7 @@ where
 			,program=program
 			,random=random
 			,history=history
+			,wrapping=wrapping
 			} memory world
 	process (Control Terminate) world
 		= (memory, world)
@@ -35,11 +38,12 @@ where
 			= utf8ToUnicode (toString content)
 		= execute 
 			{dimension=dimension
-			,location={location& x=(location.x + length content+2) rem dimension.x}
+			,location={location& x=location.x + length content+2}
 			,direction=direction
 			,program=program
 			,random=random
 			,history=history
+			,wrapping=wrapping
 			} {memory& main=[map fromInt content:memory.main]} world
 	process (Operator (IO_WriteAll)) world
 		# [out:main]
@@ -55,4 +59,5 @@ where
 			,program=program
 			,random=random
 			,history=history
+			,wrapping=wrapping
 			} {memory& main=main} world

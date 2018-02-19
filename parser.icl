@@ -19,7 +19,9 @@ parseNative string
 	# (dir, x, y)
 		= findStart commands
 	# location
-		= {x=x, y=y}
+		= if((x, y) == (-1, -1)) {x=0, y=0} {x=x, y=y}
+	# wrapping
+		= isWrapping commands
 	# direction = dir
 	= {
 		dimension = dimensions,
@@ -27,15 +29,22 @@ parseNative string
 		direction = direction,
 		program = tokens,
 		random = [],
-		history = []
+		history = [],
+		wrapping = wrapping
 		}
 where		
 	findStart [[(Control (Start dir)):_]:_]
 		= (dir, 0, 0)
 	findStart [[_:line]:lines]
 		# (dir, x, y) = findStart [line:lines]
+		| (x, y) == (-1, -1)
+			= (dir, x, y)
 		= (dir, x+1, y)
 	findStart [[]:lines]
 		# (dir, x, y) = findStart lines
+		| (x, y) == (-1, -1)
+			= (dir, x, y)
 		= (dir, x, y+1)
-	findStart _ = (East, 0, 0)
+	findStart _ = (East, -1, -1)
+	isWrapping commands
+		= 0 < sum[1\\(Control Terminate) <- flatten commands]

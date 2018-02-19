@@ -1,10 +1,10 @@
 module main
-import types, atomics, runtime, parser, converter, arithmetic, System.CommandLine, System.File, Data.Error, StdEnv
+import types, atomics, runtime, parser, converter, arithmetic, System.CommandLine, System.IO, System.File, Data.Error, StdEnv
 Start world
 	# ([_:args], world)
 		= getCommandLine world
 	| isEmpty args
-		= abort "Usage: dirty [-utf8] <file> [<stack>]"
+		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<stack>]\n\tformat: utf8\n\tflags: none"
 	# (parser, [file:args])
 		= case args of
 			["-utf8":args] = (parseUTF8, args)

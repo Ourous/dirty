@@ -2,7 +2,7 @@ Version: 1.4
 Global
 	ProjectRoot:	.
 	Target:	iTasks
-	Exec:	{Project}\dirty.exe
+	Exec:	{Project}/dirty.exe
 	CodeGen
 		CheckStacks:	True
 		CheckIndexes:	True

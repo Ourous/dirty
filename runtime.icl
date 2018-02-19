@@ -13,6 +13,7 @@ evaluate string
 
 execute :: State Memory *World -> *(Memory, *World)
 execute state=:{dimension, location, direction, program, random, history, wrapping} memory world
+	//| length history > 100 = (memory, world)
 	| location.x >= dimension.x || location.y >= dimension.y
 		= if(wrapping) (execute {state&location={x=location.x rem dimension.x, y=location.y rem dimension.y}} memory world) (memory, world) 
 	= process (toCommand ((program !! location.y) !! location.x)) world
@@ -21,6 +22,7 @@ where
 		= execute
 			{state
 			&location = moveLocation 1 location direction
+			,history=[(Control NOOP): history]
 			} memory world
 	process (Control (Start dir)) world
 		= execute

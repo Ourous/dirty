@@ -3,14 +3,11 @@ import types, atomics, runtime, parser, converter, arithmetic, System.CommandLin
 Start world
 	# ([_:args], world)
 		= getCommandLine world
+	//# args = ["-utf8", "recursion_test.txt"]
 	| isEmpty args
 		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<stack>]\n\tformat: utf8\n\tflags: none"
-	# (parser, args)
-		= case args of
-			["-utf8":args] = (parseUTF8, args)
-			args = (parseNative, args)
 	# (flags, [file:args])
-		= span (\e -> e%(0,1) == "-") args
+		= span (\e -> e%(0,0) == "-") args
 	# parser
 		= last [parseNative:[parser \\ (flag, parser) <- [("-utf8", parseUTF8)]]]
 	# (file, world)

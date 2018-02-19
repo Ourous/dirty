@@ -1,18 +1,29 @@
 module main
-import types, atomics, runtime, parser, converter, arithmetic, System.CommandLine, System.IO, System.File, Data.Error, StdEnv
+import types, atomics, runtime, parser, converter, arithmetic
+import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
 	# ([_:args], world)
 		= getCommandLine world
 	//# args = ["-utf8", "recursion_test.txt"]
 	| isEmpty args
-		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<stack>]\n\tformat: utf8\n\tflags: none"
+		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n\tformat: utf8\n\tflags: none"
 	# (flags, [file:args])
 		= span (\e -> e%(0,0) == "-") args
+	# (flags, format)
+		= partition (\e -> e%(0,1) == "--") flags
 	# parser
-		= last [parseNative:[parser \\ (flag, parser) <- [("-utf8", parseUTF8)]]]
+		= case format of
+			[] = parseNative
+			["-utf8"] = parseUTF8
+			_ = abort "Cannot parse the given format!"
 	# (file, world)
 		= case (readFile file world) of
-			(Error _, _) = abort "Cannot open the file specified!"
 			(Ok file, world) = (file, world)
-	= execute (parser file) (evaluate args) world
+			_ = abort "Cannot open the file specified!"
+	# (memory, world)
+		= evaluate args world
+	= execute (parser file) memory (toFlags flags) world
 	//= map(map toInt)(parseUTF8 file).program
+	
+toFlags _
+	= {debug = False, dump = False, ints = False}

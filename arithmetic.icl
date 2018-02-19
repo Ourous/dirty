@@ -371,6 +371,9 @@ instance toReal Number where
 	toReal _ = 0.0/0.0
 	
 instance fromInt Number where fromInt val = (Re (Fin (Int val)))
+
+instance fromReal Number where fromReal val = (Re (Fin (Real val)))
+
 /*
 instance ln Number where
 	ln NaN = NaN

@@ -11,9 +11,8 @@ definition module types
 		dimension :: XYPair,
 		location :: XYPair,
 		direction :: Direction,
-		program :: [[Char]],
-		random :: [Int],
-		history :: [Command],
+		source :: [[Char]],
+		program :: [[Command]],
 		wrapping :: Bool
 	}
 
@@ -22,7 +21,16 @@ definition module types
 		left :: [Number],
 		right :: [Number],
 		bases :: [Int],
-		main :: [[Number]]
+		main :: [[Number]],
+		random :: [Number],
+		history :: [Char]
+	}
+	
+:: Flags
+	= {
+		debug :: Bool,
+		dump :: Bool,
+		ints :: Bool
 	}
 
 :: Numeric

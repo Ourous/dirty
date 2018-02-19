@@ -27,9 +27,8 @@ parseNative string
 		dimension = dimensions,
 		location = location,
 		direction = direction,
-		program = tokens,
-		random = [],
-		history = [],
+		source = tokens,
+		program = commands,
 		wrapping = wrapping
 		}
 where		

@@ -2,7 +2,7 @@ Version: 1.4
 Global
 	ProjectRoot:	.
 	Target:	iTasks
-	Exec:	{Project}\dirty.exe
+	Exec:	{Project}\dirty
 	CodeGen
 		CheckStacks:	True
 		CheckIndexes:	True
@@ -269,7 +269,273 @@ OtherModules
 			ReuseUniqueNodes:	True
 			Fusion:	False
 	Module
+		Name:	Data.Generics.GenBimap
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Generics.GenCompress
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
 		Name:	Data.Generics.GenEq
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Data.Generics.GenFMap
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Generics.GenHylo
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Generics.GenLexOrd
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Generics.GenMap
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Generics.GenMapSt
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Generics.GenMonad
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Generics.GenParse
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Generics.GenPrint
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Generics.GenReduce
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Generics.GenZip
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Generics._Array
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	Data.Integer
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Data.Integer.Add
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Data.Integer.Div
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Data.Integer.Mul
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Data.Integer.ToInteger
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Data.Integer.ToString
 		Dir:	{Application}\Libraries\Platform
 		Compiler
 			NeverMemoryProfile:	False
@@ -380,6 +646,20 @@ OtherModules
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
 			Fusion:	False
+	Module
+		Name:	Math.Random
+		Dir:	{Application}\Libraries\Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
 	Module
 		Name:	System.CommandLine
 		Dir:	{Application}\Libraries\Platform
@@ -584,6 +864,202 @@ OtherModules
 			ObjectFile:	WCsubst.
 			ObjectFile:	bsearch.
 	Module
+		Name:	GenBimap
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenCompress
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenEq
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenFMap
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenHylo
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenLexOrd
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenLib
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenMap
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenMapSt
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenMonad
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenParse
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenPrint
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenReduce
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
+		Name:	GenZip
+		Dir:	{Application}\Libraries\Platform\Deprecated\Generics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	True
+	Module
 		Name:	StdArrayExtensions
 		Dir:	{Application}\Libraries\Platform\Deprecated\StdLib
 		Compiler
@@ -680,7 +1156,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	StdChar
 		Dir:	{Application}\Libraries\StdEnv
@@ -694,7 +1170,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	StdCharList
 		Dir:	{Application}\Libraries\StdEnv
@@ -711,6 +1187,20 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdClass
+		Dir:	{Application}\Libraries\StdEnv
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	StdDebug
 		Dir:	{Application}\Libraries\StdEnv
 		Compiler
 			NeverMemoryProfile:	False
@@ -764,7 +1254,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	StdFunc
 		Dir:	{Application}\Libraries\StdEnv
@@ -806,7 +1296,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	StdList
 		Dir:	{Application}\Libraries\StdEnv
@@ -834,7 +1324,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	StdOrdList
 		Dir:	{Application}\Libraries\StdEnv
@@ -876,7 +1366,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	StdString
 		Dir:	{Application}\Libraries\StdEnv
@@ -890,7 +1380,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	StdTuple
 		Dir:	{Application}\Libraries\StdEnv

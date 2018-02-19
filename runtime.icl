@@ -35,14 +35,20 @@ where
 			,direction = dir
 			} memory world
 	process (Control (Mirror Always axis)) world
-		= abort "todo"
+		= abort "Mirrors not implemented, sorry!"
 	process (Control Terminate) world
 		= world
 	process (Control String) world
+		# (line, dif)
+			= case direction of
+				East = (program!!location.y, location.x+1)
+				West = (reverse(program!!location.y), dimension.x-location.x)
+				North = ((transpose program)!!location.x, location.y+1)
+				South = (reverse((transpose program)!!location.x), dimension.y-location.y)
 		# line
-			= (program !! location.y)++['\n']++(program !! location.y)
+			= line++['\n']++line
 		# content
-			= takeWhile ((<>)'\'') (drop (location.x+1) line)
+			= takeWhile ((<>)'\'') (drop dif line)
 		# content
 			= utf8ToUnicode (toString content)
 		= execute 

@@ -2,10 +2,10 @@ implementation module runtime
 
 import types, converter, atomics, arithmetic, System.IO, StdEnv, StdLib
 
-moveLocation {x, y} East = {x=x+1, y=y}
-moveLocation {x, y} West = {x=x-1, y=y}
-moveLocation {x, y} North = {x=x, y=y-1}
-moveLocation {x, y} South = {x=x, y=y+1}
+moveLocation dist {x, y} East = {x=x+dist, y=y}
+moveLocation dist {x, y} West = {x=x-dist, y=y}
+moveLocation dist {x, y} North = {x=x, y=y-dist}
+moveLocation dist {x, y} South = {x=x, y=y+dist}
 
 evaluate :: [String] -> Memory
 evaluate string
@@ -17,15 +17,22 @@ execute state=:{dimension, location, direction, program, random, history, wrappi
 		= if(wrapping) (execute {state&location={x=location.x rem dimension.x, y=location.y rem dimension.y}} memory world) (memory, world) 
 	= process (toCommand ((program !! location.y) !! location.x)) world
 where
+	process (Control (NOOP)) world
+		= execute
+			{state
+			&location = moveLocation 1 location direction
+			} memory world
 	process (Control (Start dir)) world
-		= execute 
-			{dimension=dimension
-			,location=moveLocation location dir
-			,direction=dir
-			,program=program
-			,random=random
-			,history=history
-			,wrapping=wrapping
+		= execute
+			{state
+			&location = moveLocation 1 location dir
+			,direction = dir
+			} memory world
+	process (Control (Change Always dir)) world
+		= execute
+			{state
+			&location = moveLocation 1 location dir
+			,direction = dir
 			} memory world
 	process (Control Terminate) world
 		= (memory, world)
@@ -38,7 +45,7 @@ where
 			= utf8ToUnicode (toString content)
 		= execute 
 			{dimension=dimension
-			,location={location& x=location.x + length content+2}
+			,location=moveLocation (length content + 2) location direction
 			,direction=direction
 			,program=program
 			,random=random
@@ -53,11 +60,6 @@ where
 		# world
 			= execIO (putStrLn out) world
 		= execute
-			{dimension=dimension
-			,location=moveLocation location direction
-			,direction=direction
-			,program=program
-			,random=random
-			,history=history
-			,wrapping=wrapping
+			{state
+			&location = moveLocation 1 location direction
 			} {memory& main=main} world

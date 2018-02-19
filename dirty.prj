@@ -2,17 +2,17 @@ Version: 1.4
 Global
 	ProjectRoot:	.
 	Target:	iTasks
-	Exec:	{Project}\main.exe
+	Exec:	{Project}\dirty
 	CodeGen
-		CheckStacks:	False
+		CheckStacks:	True
 		CheckIndexes:	True
 	Application
-		HeapSize:	314572800
-		StackSize:	512000
+		HeapSize:	262144000
+		StackSize:	52428800
 		ExtraMemory:	8192
-		IntialHeapSize:	204800
-		HeapSizeMultiplier:	4096
-		ShowExecutionTime:	False
+		IntialHeapSize:	256000
+		HeapSizeMultiplier:	2560
+		ShowExecutionTime:	True
 		ShowGC:	False
 		ShowStackSize:	False
 		MarkingCollector:	False
@@ -26,7 +26,7 @@ Global
 			Dynamics:	True
 			DescExL:	False
 		Output
-			Output:	ShowConstructors
+			Output:	NoReturnType
 			Font:	Monaco
 			FontSize:	9
 			WriteStdErr:	False

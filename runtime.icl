@@ -11,18 +11,16 @@ evaluate :: [String] -> Memory
 evaluate string
 	= {left=[],right=[],bases=[],main=[]}
 
-execute :: State Memory *World -> *(Memory, *World)
+execute :: State Memory *World -> *World
 execute state=:{dimension, location, direction, program, random, history, wrapping} memory world
-	//| length history > 100 = (memory, world)
 	| location.x >= dimension.x || location.y >= dimension.y
-		= if(wrapping) (execute {state&location={x=location.x rem dimension.x, y=location.y rem dimension.y}} memory world) (memory, world) 
+		= if(wrapping) (execute {state&location={x=location.x rem dimension.x, y=location.y rem dimension.y}} memory world) world
 	= process (toCommand ((program !! location.y) !! location.x)) world
 where
 	process (Control (NOOP)) world
 		= execute
 			{state
 			&location = moveLocation 1 location direction
-			,history=[(Control NOOP): history]
 			} memory world
 	process (Control (Start dir)) world
 		= execute
@@ -39,7 +37,7 @@ where
 	process (Control (Mirror Always axis)) world
 		= abort "todo"
 	process (Control Terminate) world
-		= (memory, world)
+		= world
 	process (Control String) world
 		# line
 			= (program !! location.y)++['\n']++(program !! location.y)
@@ -48,13 +46,8 @@ where
 		# content
 			= utf8ToUnicode (toString content)
 		= execute 
-			{dimension=dimension
-			,location=moveLocation (length content + 2) location direction
-			,direction=direction
-			,program=program
-			,random=random
-			,history=history
-			,wrapping=wrapping
+			{state
+			&location=moveLocation (length content + 2) location direction
 			} {memory& main=[map fromInt content:memory.main]} world
 	process (Operator (IO_WriteAll)) world
 		# [out:main]

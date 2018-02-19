@@ -14,6 +14,5 @@ Start world
 		= case (readFile file world) of
 			(Error _, _) = abort "Cannot open the file specified!"
 			(Ok file, world) = (file, world)
-	#! (memory, world) = execute (parser file) (evaluate args) world
-	= world
+	= execute (parser file) (evaluate args) world
 	//= map(map toInt)(parseUTF8 file).program

@@ -3,7 +3,7 @@ import types, atomics, runtime, parser, converter, arithmetic, System.CommandLin
 Start world
 	# ([_:args], world)
 		= getCommandLine world
-	# args = ["-utf8", "recursion_test.txt"]
+	//# args = ["-utf8", "recursion_test.txt"]
 	| isEmpty args
 		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<stack>]\n\tformat: utf8\n\tflags: none"
 	# (flags, [file:args])

@@ -11,6 +11,10 @@ moveLocation dist {x, y} South = {x=x, y=y+dist}
 
 evaluate :: [String] *World -> *(Memory, *World)
 evaluate args world
+	| isEmpty args
+		# (Timestamp seed, world)
+			= time world
+		= ({left=[],right=[],bases=[0],main=[],history=[],random=[]}, world)
 	# ((seed, world), args)
 		= case (parseInt (hd args), world) of
 			(Just seed, world) = ((seed, world), tl args)

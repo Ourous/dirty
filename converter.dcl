@@ -9,10 +9,13 @@ import types
 
 unicodeToUTF8 :: [Int] -> String
 utf8ToUnicode :: String -> [Int]
+//unicodeToNative :: [Int] -> String
 
 unicodeCharset :: [Int]
 
 nativeCharset :: [Int]
+
+toCommand :: Char -> Command
 
 commandMapping :: [Command]
 

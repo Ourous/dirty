@@ -5,17 +5,19 @@ import types, converter, StdEnv, Text
 parseUTF8 :: String -> State
 parseUTF8 string 
 	# string
-		= {#i \\ i <- ['\0'..] & u <- unicodeCharset, c <- utf8ToUnicode string | c == u}
+		= {#i \\ c <- utf8ToUnicode string, i <- ['\0'..] & u <- unicodeCharset | c == u}
 	= parseNative string
 		
 parseNative :: String -> State
 parseNative string
-	# lines
-		= map tokenizeLine (split "\n" string)
+	# tokens
+		= map fromString (split "\n" string)
+	# commands
+		= map (map toCommand) tokens
 	# dimensions
-		= {x=last(sort(map length lines)), y=length lines}
+		= {x=last(sort(map length tokens)), y=length tokens}
 	# (dir, x, y)
-		= findStart lines
+		= findStart commands
 	# location
 		= {x=x, y=y}
 	# direction = dir
@@ -23,20 +25,11 @@ parseNative string
 		dimension = dimensions,
 		location = location,
 		direction = direction,
-		program = lines,
+		program = tokens,
 		random = [],
-		history = [],
-		memory = {
-			left = [],
-			right = [],
-			bases = [0],
-			main = [[]]
-			}
+		history = []
 		}
-where
-	tokenizeLine line
-		= [commandMapping !! (toInt c) \\ c <-: line]
-			
+where		
 	findStart [[(Control (Start dir)):_]:_]
 		= (dir, 0, 0)
 	findStart [[_:line]:lines]
@@ -45,3 +38,4 @@ where
 	findStart [[]:lines]
 		# (dir, x, y) = findStart lines
 		= (dir, x, y+1)
+	findStart _ = (East, 0, 0)

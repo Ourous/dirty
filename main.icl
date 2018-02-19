@@ -1,11 +1,10 @@
 module main
 import types, atomics, runtime, parser, converter, arithmetic, System.CommandLine, System.File, Data.Error, StdEnv
 Start world
-	//# ([_:args], world)
-	//	= getCommandLine world
-	# args = ["-utf8", "helloworld.txt"]
+	# ([_:args], world)
+		= getCommandLine world
 	| isEmpty args
-		= abort "Usage: dirty [-utf8] <file> [<stack> [<stack...>]]"
+		= abort "Usage: dirty [-utf8] <file> [<stack>]"
 	# (parser, [file:args])
 		= case args of
 			["-utf8":args] = (parseUTF8, args)
@@ -14,5 +13,5 @@ Start world
 		= case (readFile file world) of
 			(Error _, _) = abort "Cannot open the file specified!"
 			(Ok file, world) = (file, world)
-	//= execute (parser file) (evaluate args) world
-	= parser file
+	#! (memory, world) = execute (parser file) (evaluate args) world
+	= world

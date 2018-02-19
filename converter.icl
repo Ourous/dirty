@@ -3,7 +3,7 @@ implementation module converter
 import StdBool, StdInt
 import types, arithmetic, Text, Text.Unicode.Encodings.UTF8, Text.Unicode, Text.Unicode.UChar
 from StdFunc import o
-from StdList import map
+from StdList import map, !!
 	
 unicodeToUTF8 :: [Int] -> String
 unicodeToUTF8 string
@@ -19,11 +19,8 @@ where
 	conv :: (String -> UTF8)
 	conv = fromString
 
-//nativeToUnicode :: String -> [Number]
-//unicodeToNative :: [Number] -> String
-
 nativeCharset :: [Int]
-nativeCharset =:
+nativeCharset =
 	[0
 	,1
 	,2
@@ -283,7 +280,7 @@ nativeCharset =:
 	]
 
 unicodeCharset :: [Int]
-unicodeCharset =:
+unicodeCharset =
 	[9211
 	,9205
 	,9204
@@ -376,6 +373,7 @@ unicodeCharset =:
 	,89
 	,90
 	,91
+	,92
 	,93
 	,94
 	,95
@@ -540,6 +538,10 @@ unicodeCharset =:
 	,7718
 	,7719
 	]
+	
+toCommand :: Char -> Command
+toCommand char
+	= commandMapping !! (toInt char)
 
 commandMapping :: [Command]
 commandMapping =

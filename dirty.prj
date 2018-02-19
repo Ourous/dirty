@@ -7,7 +7,7 @@ Global
 		CheckStacks:	False
 		CheckIndexes:	True
 	Application
-		HeapSize:	2097152
+		HeapSize:	314572800
 		StackSize:	512000
 		ExtraMemory:	8192
 		IntialHeapSize:	204800
@@ -26,7 +26,7 @@ Global
 			Dynamics:	True
 			DescExL:	False
 		Output
-			Output:	ShowConstructors
+			Output:	NoReturnType
 			Font:	Monaco
 			FontSize:	9
 			WriteStdErr:	False

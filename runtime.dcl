@@ -2,6 +2,6 @@ definition module runtime
 
 import types
 
-execute :: State Memory *World -> *World
+execute :: State Memory *World -> *(Memory, *World)
 
-//evaluate :: String -> Memory
+evaluate :: [String] -> Memory

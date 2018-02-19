@@ -2,7 +2,7 @@ implementation module runtime
 
 import types, converter, atomics, arithmetic
 import StdEnv, StdLib, System.IO, System.Time, Math.Random
-import qualified GenLib as GenLib
+import qualified Data.Generics.GenParse as GenLib
 
 moveLocation dist {x, y} East = {x=x+dist, y=y}
 moveLocation dist {x, y} West = {x=x-dist, y=y}
@@ -14,18 +14,20 @@ evaluate args world
 	| isEmpty args
 		# (Timestamp seed, world)
 			= time world
-		= ({left=[],right=[],bases=[0],main=[],history=[],random=[]}, world)
+		= ({left=[],right=[],main=[[]],history=[],random=genRandInt seed}, world)
 	# ((seed, world), args)
 		= case (parseInt (hd args), world) of
 			(Just seed, world) = ((seed, world), tl args)
 			(Nothing, world) = ((0, world), args)
-	= ({left=[],right=[],bases=[0],main=[],history=[],random=[]}, world)
+	= ({left=[],right=[],main=[[]],history=[],random=genRandInt seed}, world)
 where
 	parseInt :: (String -> (Maybe Int))
 	parseInt = 'GenLib'.parseString
+	parseReal :: (String -> (Maybe Real))
+	parseReal = 'GenLib'.parseString
 
 execute :: State Memory Flags *World -> *World
-execute state=:{dimension, location, direction, source, program, wrapping} memory=:{left, right, main, bases, random, history} flags world
+execute state=:{dimension, location, direction, source, program, wrapping} memory=:{left, right, main, random, history} flags world
 	| location.x >= dimension.x || location.y >= dimension.y
 		= if(wrapping) (execute {state&location={x=location.x rem dimension.x, y=location.y rem dimension.y}} memory flags world) world
 	= process ((program !! location.y) !! location.x) world

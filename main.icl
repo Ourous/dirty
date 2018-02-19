@@ -6,7 +6,7 @@ Start world
 		= getCommandLine world
 	//# args = ["-utf8", "recursion_test.txt"]
 	| isEmpty args
-		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n\tformat: utf8\n\tflags: none"
+		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n\tformat: utf8\n\tflags: none\n"
 	# (flags, [file:args])
 		= span (\e -> e%(0,0) == "-") args
 	# (flags, format)

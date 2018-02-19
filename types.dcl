@@ -20,9 +20,8 @@ definition module types
 	= {
 		left :: [Number],
 		right :: [Number],
-		bases :: [Int],
 		main :: [[Number]],
-		random :: [Number],
+		random :: [Int],
 		history :: [Char]
 	}
 	

@@ -105,12 +105,22 @@ where
 			([], [rhs,lhs:right], [[[]:_]:_]) = (Just (lhs, rhs), {memory&right=right})
 			([lhs:left], [], [[[rhs:mid]:base]:other]) = (Just (lhs, rhs), {memory&left=left,main=[[mid:base]:other]})
 			([lhs,rhs:left], [], [[[]:_]:_]) = (Just (lhs, rhs), {memory&left=left})
-			([], [], [[[lhs,rhs:mid]:base]:other]) = (Just (lhs, rhs), {memory&main=[[mid:base]:other]})
+			//([], [], [[[lhs,rhs:mid]:base]:other]) = (Just (lhs, rhs), {memory&main=[[mid:base]:other]})
 			_ = (Nothing, memory)
 	getMiddleSingleArg memory=:{main}
 		= case (CHECK_MIDDLE main) of
 			[[[arg:mid]:base]:other] = (Just arg, {memory&main=[[mid:base]:other]})
 			_ = (Nothing, memory)// abort "Cannot find argument, perhaps you lost it?"
+	getLeftSingleArg memory=:{left, main}
+		= case (left, CHECK_MIDDLE main) of
+			([arg:left], _) = (Just arg, {memory&left=left})
+			([], [[[arg:mid]:base]:other]) = (Just arg, {memory&main=[[mid:base]:other]})
+			_ = (Nothing, memory)
+	getRightSingleArg memory=:{right, main}
+		= case (right, CHECK_MIDDLE main) of
+			([arg:right], _) = (Just arg, {memory&right=right})
+			([], [[[arg:mid]:base]:other]) = (Just arg, {memory&main=[[mid:base]:other]})
+			_ = (Nothing, memory)
 	getMiddleStackArg memory=:{main}
 		= case (CHECK_BASELINE main) of
 			[[arg:base]:other] = (Just arg, {memory&main=[base:other]})
@@ -121,7 +131,8 @@ where
 			_ = (Nothing, memory)//abort "Empty main stack!"
 	getBothStackArgs memory=:{left, right, main}
 		= case (left, right, CHECK_MIDDLE main) of
-			([], [], [[lhs,rhs:base]:other]) = (Just (lhs, rhs), {memory&main=[base:other]})
+			//([], [], [[lhs,rhs:base]:other]) = (Just (lhs, rhs), {memory&main=[base:other]})
+			([], [], _) = (Nothing, memory)
 			([], rhs, [[lhs:base]:other]) = (Just (lhs, rhs), {memory&right=[],main=[base:other]})
 			(lhs, [], [[rhs:base]:other]) = (Just (lhs, rhs), {memory&left=[],main=[base:other]})
 			(lhs, rhs, _) = (Just (lhs, rhs), {memory&left=[],right=[]})

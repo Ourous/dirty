@@ -677,7 +677,7 @@ commandMapping =:
 	,(Operator (IO_Interrobang))
 	,(Operator (Binary (*)))//(Operator (Math_Multiplication))
 	,(Operator (Vector_Multiplication))
-	,(Operator (Math_Division))
+	,(Operator (Binary (/)))//(Operator (Math_Division))
 	,(Operator (Vector_Addition))
 	,(Operator (Math_SquareRoot))
 	,(Operator (Math_Reciprocal))

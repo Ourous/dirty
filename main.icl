@@ -32,4 +32,5 @@ usage =: foldr ((+++)) ""
 	,"\t-utf8: use the UTF-8 parser\n"
 	,"\t--n: numeric output\n"
 	,"\t--s: dump stacks\n"
+	//,"\t--g: take args greedily"
 	]

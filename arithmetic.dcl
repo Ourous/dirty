@@ -8,7 +8,7 @@ instance + Number
 instance - Number
 instance zero Number
 instance * Number
-//instance / Number
+instance / Number
 instance one Number
 //instance ^ Number
 instance abs Number

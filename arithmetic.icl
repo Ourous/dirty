@@ -183,38 +183,59 @@ instance * Number where
 		= handle (Cx (Fin {re=(~(lhs.im*rhs)), im=lhs.re*rhs}))
 	(*) (Cx (Fin lhs)) (Cx (Fin rhs))
 		= handle (Cx (Fin {re=lhs.re*rhs.re-lhs.im*rhs.im, im=lhs.im*rhs.re+rhs.im*lhs.re}))
-
-		/*
 		
 instance / Number where
 	(/) NaN _ = NaN
 	(/) _ NaN = NaN
 	(/) Zero Zero = NaN
-	(/) (Rational lhs) (Rational rhs)
-		= handle (Rational (lhs / rhs))
-	(/) (Rational lhs) (Imaginary rhs)
-		= handle (Imaginary (~(lhs / rhs)))
-	(/) (Imaginary lhs) (Rational rhs)
-		= handle (Imaginary (lhs / rhs))
-	(/) (Imaginary lhs) (Imaginary rhs)
-		= handle (Rational (lhs / rhs))
-	(/) (Rational lhs) (Complex rhsRe rhsIm)
-		# denominator = rhsRe * rhsRe + rhsIm * rhsIm
-		= handle (Complex ((lhs * rhsRe) / denominator) (~((lhs * rhsIm) / denominator)))
-	(/) (Imaginary lhs) (Complex rhsRe rhsIm)
-		# denominator = rhsRe * rhsRe + rhsIm * rhsIm
-		= handle (Complex ((lhs * rhsIm) / denominator) ((lhs * rhsRe) / denominator))
-	(/) (Complex lhsRe lhsIm) (Rational rhs)
-		= handle (Complex (lhsRe / rhs) (lhsIm / rhs))
-	(/) (Complex lhsRe lhsIm) (Imaginary rhs)
-		= handle (Complex (lhsIm / rhs) (~(lhsRe / rhs)))
-	(/) (Complex lhsRe lhsIm) (Complex rhsRe rhsIm)
-		# denominator = rhsRe * rhsRe + rhsIm * rhsIm
-		= handle (Complex ((lhsRe * rhsRe + lhsIm * rhsIm) / denominator) ((lhsIm * rhsRe - lhsRe * rhsIm) / denominator))
-*/		
+	(/) Zero _ = Zero
+	(/) (Re lhs) Zero = (Re (Inf (VAL_SIGN lhs)))
+	(/) (Im lhs) Zero = (Im (Inf (VAL_SIGN lhs)))
+	(/) (Cx _) Zero = (Cx (Inf Directed))
+	(/) (Re (Inf lhs)) (Re (Fin rhs)) = (Re (Inf (lhs * FIN_SIGN rhs)))
+	(/) (Re (Inf lhs)) (Im (Fin rhs)) = (Im (Inf (~(lhs * FIN_SIGN rhs))))
+	(/) (Im (Inf lhs)) (Re (Fin rhs)) = (Im (Inf (lhs * FIN_SIGN rhs)))
+	(/) (Im (Inf lhs)) (Im (Fin rhs)) = (Re (Inf (lhs * FIN_SIGN rhs)))
+	(/) (Re (Inf _)) (Cx (Fin _)) = (Cx (Inf Directed))
+	(/) (Im (Inf _)) (Cx (Fin _)) = (Cx (Inf Directed))
+	(/) (Cx (Inf _)) (Re (Fin _)) = (Cx (Inf Directed))
+	(/) (Cx (Inf _)) (Im (Fin _)) = (Cx (Inf Directed))
+	(/) (Cx (Inf _)) (Cx (Fin _)) = (Cx (Inf Directed))
+	(/) (Re (Fin _)) (Re (Inf _)) = Zero
+	(/) (Re (Fin _)) (Im (Inf _)) = Zero
+	(/) (Im (Fin _)) (Re (Inf _)) = Zero
+	(/) (Im (Fin _)) (Im (Inf _)) = Zero
+	(/) (Re (Fin _)) (Cx (Inf _)) = Zero
+	(/) (Im (Fin _)) (Cx (Inf _)) = Zero
+	(/) (Cx (Fin _)) (Re (Inf _)) = Zero
+	(/) (Cx (Fin _)) (Im (Inf _)) = Zero
+	(/) (Cx (Fin _)) (Cx (Inf _)) = Zero
+	(/) (Re (Fin lhs)) (Re (Fin rhs))
+		= handle (Re (Fin (lhs / rhs)))
+	(/) (Re (Fin lhs)) (Im (Fin rhs))
+		= handle (Im (Fin (~(lhs / rhs))))
+	(/) (Im (Fin lhs)) (Re (Fin rhs))
+		= handle (Im (Fin (lhs / rhs)))
+	(/) (Im (Fin lhs)) (Im (Fin rhs))
+		= handle (Re (Fin (lhs / rhs)))
+	(/) (Re (Fin lhs)) (Cx (Fin rhs))
+		# denominator = rhs.re * rhs.re + rhs.im * rhs.im
+		= handle (Cx (Fin {re=((lhs * rhs.re) / denominator), im=(~((lhs * rhs.im) / denominator))}))
+	(/) (Im (Fin lhs)) (Cx (Fin rhs))
+		# denominator = rhs.re * rhs.re + rhs.im * rhs.im
+		= handle (Cx (Fin {re=((lhs * rhs.im) / denominator), im=((lhs * rhs.re) / denominator)}))
+	(/) (Cx (Fin lhs)) (Re (Fin rhs))
+		= handle (Cx (Fin {re=(lhs.re / rhs), im=(lhs.im / rhs)}))
+	(/) (Cx (Fin lhs)) (Im (Fin rhs))
+		= handle (Cx (Fin {re=(lhs.im / rhs), im=(~(lhs.re / rhs))}))
+	(/) (Cx (Fin lhs)) (Cx (Fin rhs))
+		# denominator = rhs.re * rhs.re + rhs.im * rhs.im
+		= handle (Cx (Fin {re=((lhs.re * rhs.re + lhs.im * rhs.im) / denominator), im=((lhs.im * rhs.re - lhs.re * rhs.im) / denominator)}))
+	(/) _ _ = NaN
+	
 instance one Number where
 	one = (Re (Fin (Int 1)))
-/*	
+/*
 instance ^ Number where
 	(^) NaN _ = NaN
 	(^) _ NaN = NaN

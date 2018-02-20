@@ -30,6 +30,7 @@ TRAVERSE_SOME dist loc=:{x,y} dir
 		NorthWest = {x=x-dist,y=y-dist}
 		SouthWest = {x=x-dist,y=y+dist}
 		SouthEast = {x=x+dist,y=y+dist}
+		
 TRAVERSE_ONE :== (TRAVERSE_SOME 1)
 
 CHECK_BASELINE stack
@@ -80,6 +81,16 @@ where
 			[NaN:_] = False
 			[Zero:_] = False
 			_ = True
+	getBothArgs memory=:{left, right, main}
+		# (lhs, rhs, main) = case (left, right, CHECK_MIDDLE main) of
+			([lhs:_],  [rhs:_], _) = (lhs, rhs, main)
+			([], [rhs:_], [[[lhs:mid]:base]:other]) = (lhs, rhs, [[mid:base]:other])
+			([], [rhs,lhs:_], [[[]:_]:_]) = (lhs, rhs, main)
+			([lhs:_], [], [[[rhs:mid]:base]:other]) = (lhs, rhs, [[mid:base]:other])
+			([lhs,rhs:_], [], [[[]:_]:_]) = (lhs, rhs, main)
+			([], [], [[[lhs,rhs:mid]:base]:other]) = (lhs, rhs, [[mid:base]:other])
+			_ = abort "Cannot find arguments, perhaps you lost them?"
+		= ((lhs, rhs), {memory&main=main})
 	doNOOP = {state&location = TRAVERSE_ONE location direction}
 	process :: Command *World -> *(Flags -> *World)
 	process (Control Terminate) world = const world
@@ -235,7 +246,7 @@ where
 	process (Operator (IO_WriteOnce)) world
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# [top:mid] = mid
-		# out = toString top
+		# out = unicodeToUTF8 [toInt top]
 		# world = execIO (putStr out) world
 		# memory = {memory&main=[[mid:base]:other]}
 		= execute doNOOP (SET_HISTORY memory command) world
@@ -255,11 +266,23 @@ where
 		= abort "Bell unimplemented!"
 	process (Operator (IO_Timestamp)) world
 		# [[mid:base]:other] = CHECK_MIDDLE main
-		# transform = (\e -> (\{sec,min,hour,mday,mon,year,wday,yday} -> [toInt(accUnsafe time),year+1900,yday,mon,mday-1,wday,hour,min,sec]) (accUnsafe (toLocalTime (Timestamp e))))
+		# transform = (\e -> (\{sec,min,hour,mday,mon,year,wday,yday} -> [toInt(accUnsafe time),sec,min,hour,wday,mday-1,mon,yday,year+1900]) (accUnsafe (toLocalTime (Timestamp e))))
 		# (stamp, mid) = case mid of
 			[] = (transform (toInt (accUnsafe time)), mid)
 			[top:mid] = (transform (if(isTrue Middle) (toInt top) (toInt (accUnsafe time))), mid)
 		# memory = {memory&main=[[map fromInt stamp++mid:base]:other]}
 		= execute doNOOP (SET_HISTORY memory command) world
-		
-		
+	process (Operator (IO_Sleep)) world
+		= abort "Sleep unimplemented!"
+	process (Operator (Math_Modulus)) world
+		= abort "Modulus unimplemented!"
+	process (Operator (Math_Addition)) world
+		# ((lhs, rhs), memory=:{main}) = getBothArgs memory
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# memory = {memory&main=[[[lhs+rhs:mid]:base]:other]}
+		= execute doNOOP (SET_HISTORY memory command) world
+	process (Operator (Math_Multiplication)) world
+		# ((lhs, rhs), memory=:{main}) = getBothArgs memory
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# memory = {memory&main=[[[lhs*rhs:mid]:base]:other]}
+		= execute doNOOP (SET_HISTORY memory command) world

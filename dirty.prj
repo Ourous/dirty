@@ -48,8 +48,8 @@ MainModule
 	Name:	main
 	Dir:	{Project}
 	Compiler
-		NeverMemoryProfile:	False
-		NeverTimeProfile:	False
+		NeverMemoryProfile:	True
+		NeverTimeProfile:	True
 		StrictnessAnalysis:	True
 		ListTypes:	StrictExportTypes
 		ListAttributes:	True
@@ -57,7 +57,7 @@ MainModule
 		Verbose:	True
 		ReadableABC:	False
 		ReuseUniqueNodes:	True
-		Fusion:	False
+		Fusion:	True
 OtherModules
 	Module
 		Name:	arithmetic
@@ -128,7 +128,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	types
 		Dir:	{Project}

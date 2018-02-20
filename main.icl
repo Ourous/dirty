@@ -2,9 +2,9 @@ module main
 import types, atomics, runtime, parser, converter, arithmetic
 import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
-	# ([_:args], world)
-		= getCommandLine world
-	//# args = ["-utf8", "recursion_test.txt"]
+	//# ([_:args], world)
+	//	= getCommandLine world
+	# args = ["-utf8", "loop_test.txt"]
 	| isEmpty args
 		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n\tformat: utf8\n\tflags: none\n"
 	# (flags, [file:args])
@@ -22,8 +22,8 @@ Start world
 			_ = abort "Cannot open the file specified!"
 	# (memory, world)
 		= evaluate args world
-	= execute (parser file) memory (toFlags flags) world
-	//= map(map toInt)(parseUTF8 file).program
+	= execute (parser file) memory  world(toFlags flags)
+	//= (parser file)
 	
 toFlags _
 	= {debug = False, dump = False, ints = False}

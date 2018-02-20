@@ -20,7 +20,7 @@ definition module types
 	= {
 		left :: [Number],
 		right :: [Number],
-		main :: [[Number]],
+		main :: [[[Number]]],
 		random :: [Int],
 		history :: [Char]
 	}
@@ -70,10 +70,10 @@ definition module types
 :: ControlCommand
 	= Terminate
 	| Start Direction
-	| Change Conditional Direction
-	| Bounce Conditional Direction
-	| Either Conditional Axes
-	| Mirror Conditional Axes
+	| Change Bool Direction 
+	| Bounce Bool Direction
+	| Either Bool Axes
+	| Mirror Bool Axes
 	| Turn Rotation
 	| Loop StackID3 Direction
 	| String
@@ -267,10 +267,6 @@ definition module types
 	| ShiftBase Direction
 	| JoinFromBase
 	| AdjustOffset
-
-:: Conditional
-	= Depends
-	| Always
 
 :: Rotation
 	= Clockwise

@@ -26,7 +26,7 @@ Global
 			Dynamics:	True
 			DescExL:	False
 		Output
-			Output:	NoReturnType
+			Output:	ShowConstructors
 			Font:	Monaco
 			FontSize:	9
 			WriteStdErr:	False

@@ -2,82 +2,218 @@ implementation module runtime
 
 import types, converter, atomics, arithmetic
 import StdEnv, StdLib, System.IO, System.Time, Math.Random
-import qualified Data.Generics.GenParse as GenLib
+from Math.Geometry import pi
+import qualified Data.Generics.GenParse as GenParse
 
-moveLocation dist {x, y} East = {x=x+dist, y=y}
-moveLocation dist {x, y} West = {x=x-dist, y=y}
-moveLocation dist {x, y} North = {x=x, y=y-dist}
-moveLocation dist {x, y} South = {x=x, y=y+dist}
+SAME_STACK_ID lhs rhs
+	:== case (lhs, rhs) of
+		(Left, Left) = True
+		(Right, Right) = True
+		(Middle, Middle) = True
+		_ = False
+		
+SAME_DIRECTION lhs rhs
+	:== case (lhs, rhs) of
+		(North, North) = True
+		(West, West) = True
+		(East, East) = True
+		(South, South) = True
+		_ = False
+
+TRAVERSE_SOME dist loc=:{x,y} dir
+	:== case dir of 
+		East = {loc&x=x+dist}
+		West = {loc&x=x-dist}
+		North = {loc&y=y-dist}
+		South = {loc&y=y+dist}
+		NorthEast = {x=x+dist,y=y-dist}
+		NorthWest = {x=x-dist,y=y-dist}
+		SouthWest = {x=x-dist,y=y+dist}
+		SouthEast = {x=x+dist,y=y+dist}
+TRAVERSE_ONE :== (TRAVERSE_SOME 1)
+
+CHECK_BASELINE stack
+	:== case stack of
+		[] = [[]]
+		stack = stack
+
+CHECK_MIDDLE stack
+	:== case stack of
+		[] = [[[]]]
+		[[]:tail] = [[[]]:tail]
+		stack = stack
+	
+SET_HISTORY memory=:{history} command
+	:== {memory&history=[command:history]}
 
 evaluate :: [String] *World -> *(Memory, *World)
 evaluate args world
 	| isEmpty args
 		# (Timestamp seed, world)
 			= time world
-		= ({left=[],right=[],main=[[]],history=[],random=genRandInt seed}, world)
+		= ({left=[],right=[],main=[],history=[],random=genRandInt seed}, world)
 	# ((seed, world), args)
 		= case (parseInt (hd args), world) of
 			(Just seed, world) = ((seed, world), tl args)
-			(Nothing, world) = ((0, world), args)
-	= ({left=[],right=[],main=[[]],history=[],random=genRandInt seed}, world)
+			(Nothing, world) = ((\(Timestamp seed, world) -> (seed, world))(time world), args)
+	= ({left=[],right=[],main=[],history=[],random=genRandInt seed}, world)
 where
 	parseInt :: (String -> (Maybe Int))
-	parseInt = 'GenLib'.parseString
+	parseInt = 'GenParse'.parseString
 	parseReal :: (String -> (Maybe Real))
-	parseReal = 'GenLib'.parseString
+	parseReal = 'GenParse'.parseString
 
-execute :: State Memory Flags *World -> *World
-execute state=:{dimension, location, direction, source, program, wrapping} memory=:{left, right, main, random, history} flags world
-	| location.x >= dimension.x || location.y >= dimension.y
-		= if(wrapping) (execute {state&location={x=location.x rem dimension.x, y=location.y rem dimension.y}} memory flags world) world
-	= process ((program !! location.y) !! location.x) world
+execute :: State Memory *World Flags -> *World
+execute state=:{dimension, location, direction, source, program, wrapping} memory=:{left, right, main, random, history} world flags
+	| location.x < 0 || location.x >= dimension.x || location.y < 0 || location.y >= dimension.y
+		= if(wrapping) (execute {state&location={x=location.x rem dimension.x, y=location.y rem dimension.y}} (SET_HISTORY memory '\n') world flags) world
+	= process ((program !! location.y) !! location.x) world flags
 where
+	command = (source !! location.y) !! location.x
+	isTrue stack
+		# val = case stack of
+			Left = left
+			Right = right
+			Middle = hd(hd(CHECK_MIDDLE main))
+		= case val of
+			[] = False
+			[NaN:_] = False
+			[Zero:_] = False
+			_ = True
+	doNOOP = {state&location = TRAVERSE_ONE location direction}
+	process (Control Terminate) world = const world
 	process (Control (NOOP)) world
-		= execute
-			{state
-			&location = moveLocation 1 location direction
-			} memory flags world
+		= execute doNOOP (SET_HISTORY memory command) world
 	process (Control (Start dir)) world
-		= execute
-			{state
-			&location = moveLocation 1 location dir
+		= execute {state
+			&location = TRAVERSE_ONE location dir
 			,direction = dir
-			} memory flags world
-	process (Control (Change Always dir)) world
-		= execute
-			{state
-			&location = moveLocation 1 location dir
+			} (SET_HISTORY memory command) world
+	process (Control (Change cond dir)) world
+		= execute (if(cond || isTrue Middle) {state
+			&location = TRAVERSE_ONE location dir
 			,direction = dir
-			} memory flags world
-	process (Control (Mirror Always axis)) world
-		= abort "Mirrors not implemented, sorry!"
-	process (Control Terminate) world
-		= world
+			} doNOOP) (SET_HISTORY memory command) world
+	process (Control (Bounce cond angle)) world
+		# dir = case (direction, angle) of
+			(West, NorthEast) = North
+			(South, NorthEast) = East
+			(East, NorthWest) = North
+			(South, NorthWest) = West
+			(East, SouthWest) = South
+			(North, SouthWest) = West
+			(West, SouthEast) = South
+			(North, SouthEast) = East
+			(dir, _) = dir
+		= execute (if(cond || isTrue Middle) {state
+			&location = TRAVERSE_ONE location angle
+			,direction = dir
+			} doNOOP) (SET_HISTORY memory command) world
+	process (Control (Either cond axis)) world
+		# [val:random] = random
+		# dir = case axis of
+			Horizontal = if(isEven val) West East
+			Vertical = if(isEven val) North South
+		= execute (if(cond || isTrue Middle) {state
+			&location = TRAVERSE_ONE location dir
+			,direction = dir
+			} doNOOP) (SET_HISTORY memory command) world
+	process (Control (Mirror cond axis)) world
+		# dir = case (direction, axis) of
+			(East, Reflection) = West
+			(West, Reflection) = East
+			(North, Reflection) = South
+			(South, Reflection) = North
+			(East, Vertical) = West
+			(West, Vertical) = East
+			(dir, Vertical) = dir
+			(North, Horizontal) = South
+			(South, Horizontal) = North
+			(dir, Horizontal) = dir
+			(East, Identity) = North
+			(West, Identity) = South
+			(North, Identity) = East
+			(South, Identity) = West
+			(East, Inverse) = South
+			(West, Inverse) = North
+			(North, Inverse) = West
+			(South, Inverse) = East
+		= execute (if(cond || isTrue Middle) {state
+			&location = TRAVERSE_ONE location dir
+			,direction = dir
+			} doNOOP) (SET_HISTORY memory command) world
+	process (Control (Turn rot)) world
+		# dir = case (direction, rot) of
+			(East, Anticlockwise) = North
+			(West, Anticlockwise) = South
+			(North, Anticlockwise) = West
+			(South, Anticlockwise) = East
+			(East, Clockwise) = South
+			(West, Clockwise) = North
+			(North, Clockwise) = East
+			(South, Clockwise) = West
+		= execute {state
+			&location = TRAVERSE_ONE location dir
+			,direction = dir
+			} (SET_HISTORY memory command) world
+	process (Control (Loop stack dir)) world
+		# match = case dir of
+			West = TRAVERSE_SOME (hd [i
+				\\(Control (Loop s West)) <- drop (location.x+1) ((flatten o repeatn 2)program!!location.y)
+				& i <- [0..] | SAME_STACK_ID stack s]) location East
+			East = TRAVERSE_SOME (hd [i
+				\\(Control (Loop s East)) <- drop (dimension.x-location.x) ((flatten o repeatn 2 o reverse)program!!location.y)
+				& i <- [0..] | SAME_STACK_ID stack s]) location West
+			South = TRAVERSE_SOME (hd [i
+				\\(Control (Loop s South)) <- drop (dimension.y-location.y) ((flatten o repeatn 2 o reverse)(transpose program!!location.x))
+				& i <- [0..] | SAME_STACK_ID stack s]) location North
+			North = TRAVERSE_SOME (hd [i
+				\\(Control (Loop s North)) <- drop (location.y+1) ((flatten o repeatn 2)(transpose program!!location.x))
+				& i <- [0..] | SAME_STACK_ID stack s]) location South
+		= execute (if(SAME_DIRECTION direction dir && isTrue stack) {state
+			&location = match
+			} doNOOP) (SET_HISTORY memory command) world
 	process (Control String) world
-		# (line, dif)
-			= case direction of
-				East = (source!!location.y, location.x+1)
-				West = (reverse(source!!location.y), dimension.x-location.x)
-				North = ((transpose source)!!location.x, location.y+1)
-				South = (reverse((transpose source)!!location.x), dimension.y-location.y)
-		# line
-			= line++['\n']++line
-		# content
-			= takeWhile ((<>)'\'') (drop dif line)
-		# content
-			= utf8ToUnicode (toString content)
-		= execute 
-			{state
-			&location=moveLocation (length content + 2) location direction
-			} {memory& main=[map fromInt content:memory.main]} flags world
+		# (line, dif) = case direction of
+			East = (source!!location.y, location.x+1)
+			West = (reverse(source!!location.y), dimension.x-location.x)
+			North = (reverse(transpose source!!location.x), dimension.y-location.y)
+			South = (transpose source!!location.x, location.y+1)
+		# line = line++['\n']++line
+		# content = takeWhile ((<>)'\'') (drop dif line)
+		# content = utf8ToUnicode (toString content)
+		# [base:other] = CHECK_BASELINE main
+		# memory = {memory&main=[[map fromInt content:base]:other]}
+		= execute {state
+			&location=TRAVERSE_SOME (length content + 2) location direction
+			} (SET_HISTORY memory command) world
+	process (Literal (Pi)) world
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# memory = {memory&main=[[[fromReal pi:mid]:base]:other]}
+		= execute doNOOP (SET_HISTORY memory command) world
+	process (Literal (Quote)) world
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# memory = {memory&main=[[[fromInt(toInt'\''):mid]:base]:other]}
+		= execute doNOOP (SET_HISTORY memory command) world
+	process (Literal (Digit int)) world
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# (top, mid) = if(isEmpty history || not (isDigit (hd history))) (Zero, mid) (hd mid, tl mid)
+		# memory = {memory&main=[[[top*(fromInt 10)+(fromInt int):mid]:base]:other]}
+		= execute doNOOP (SET_HISTORY memory command) world
+	process (Literal (Alphabet ltr)) world
+		# [base:other] = CHECK_BASELINE main
+		# alphabet = utf8ToUnicode case ltr of
+			Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+			Lowercase = "abcdefghijklmnopqrtsuvwxyz"
+		# memory = {memory&main=[[map fromInt alphabet:base]:other]}
+		= execute doNOOP (SET_HISTORY memory command) world
+	process (Variable (Random)) world
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# memory = {memory&main=[[[fromInt (hd random):mid]:base]:other],random=tl random}
+		= execute doNOOP (SET_HISTORY memory command) world
 	process (Operator (IO_WriteAll)) world
-		# [out:main]
-			= memory.main
-		# out
-			= unicodeToUTF8 (map toInt out)
-		# world
-			= execIO (putStrLn out) world
-		= execute
-			{state
-			&location = moveLocation 1 location direction
-			} {memory& main=main} flags world
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# out = unicodeToUTF8 (map toInt mid)
+		# world = execIO (putStrLn out) world
+		# memory = {memory& main=[base:other]}	
+		= execute doNOOP (SET_HISTORY memory command) world

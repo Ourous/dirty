@@ -1,2 +1,3 @@
 - TeX front-end.
 - Make it compile to Clean and call the compiler Janitor.
+- Insert the operation implementing functions into the algebraic token types to reduce clutter in the runtime.

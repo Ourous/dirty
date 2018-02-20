@@ -22,7 +22,7 @@ Start world
 			_ = abort "Cannot open the file specified!"
 	# (memory, world)
 		= evaluate args world
-	= execute (parser file) memory (toFlags flags) world
+	= execute (parser file) memory (toFlags flags) world 
 	
 toFlags flags
 	= {debug = False, dump = isMember "--s" flags, nums = isMember "--n" flags}

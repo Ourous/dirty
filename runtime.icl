@@ -1,9 +1,17 @@
 implementation module runtime
 
 import types, converter, atomics, arithmetic
-import StdEnv, StdLib, System.IO, System.Time, Math.Random, System._Unsafe, Text
+import StdEnv, StdLib, System.IO, System.Time, Math.Random, Text
 from Math.Geometry import pi
 import qualified Data.Generics.GenParse as GenParse
+
+unsafe :: !(*World -> *(.a, !*World)) -> .a
+unsafe fn = fst (fn newWorld)
+
+newWorld :: *World
+newWorld = code inline {
+	fillI 65536 0
+}
 
 UNCURRY_EXEC (stack, memory, flags) :== execute stack memory flags
 
@@ -108,7 +116,7 @@ where
 		= execute {state
 			&location = TRAVERSE_ONE location dir
 			,direction = dir
-			} (SET_HISTORY memory command)flags world
+			} (SET_HISTORY memory command) flags world
 	process (Control (Change cond dir)) world
 		= execute (if(cond || isTrue Middle) {state
 			&location = TRAVERSE_ONE location dir
@@ -128,7 +136,7 @@ where
 		= execute (if(cond || isTrue Middle) {state
 			&location = TRAVERSE_ONE location angle
 			,direction = dir
-			} contState) (SET_HISTORY memory command)flags world
+			} contState) (SET_HISTORY memory command) flags world
 	process (Control (Either cond axis)) world
 		# [val:random] = random
 		# dir = case axis of
@@ -137,7 +145,7 @@ where
 		= execute (if(cond || isTrue Middle) {state
 			&location = TRAVERSE_ONE location dir
 			,direction = dir
-			} contState) (SET_HISTORY memory command)flags world
+			} contState) (SET_HISTORY memory command)  flags world
 	process (Control (Mirror cond axis)) world
 		# dir = case (direction, axis) of
 			(East, Reflection) = West
@@ -161,7 +169,7 @@ where
 		= execute (if(cond || isTrue Middle) {state
 			&location = TRAVERSE_ONE location dir
 			,direction = dir
-			} contState) (SET_HISTORY memory command) flags world
+			} contState) (SET_HISTORY memory command)   flags world
 	process (Control (Turn rot)) world
 		# dir = case (direction, rot) of
 			(East, Anticlockwise) = North
@@ -175,7 +183,7 @@ where
 		= execute {state
 			&location = TRAVERSE_ONE location dir
 			,direction = dir
-			} (SET_HISTORY memory command) flags world
+			} (SET_HISTORY memory command)   flags world
 	process (Control (Loop stack dir)) world
 		# match = case dir of
 			West = TRAVERSE_SOME (hd [i
@@ -192,7 +200,7 @@ where
 				& i <- [0..] | SAME_STACK_ID stack s]) location South
 		= execute (if(SAME_DIRECTION direction dir && isTrue stack) {state
 			&location = match
-			} contState) (SET_HISTORY memory command)flags world
+			} contState) (SET_HISTORY memory command)  flags world
 	process (Control String) world
 		# (line, dif) = case direction of
 			East = (source!!location.y, location.x+1)
@@ -206,31 +214,31 @@ where
 		# memory = {memory&main=[[map fromInt content:base]:other]}
 		= execute {state
 			&location=TRAVERSE_SOME (length content + 2) location direction
-			} (SET_HISTORY memory command) flags world
+			} (SET_HISTORY memory command)   flags world
 	process (Literal (Pi)) world
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# memory = {memory&main=[[[fromReal pi:mid]:base]:other]}
-		= execute contState (SET_HISTORY memory command) flags  world
+		= execute contState (SET_HISTORY memory command)    flags world
 	process (Literal (Quote)) world
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# memory = {memory&main=[[[fromInt(toInt'\''):mid]:base]:other]}
-		= execute contState (SET_HISTORY memory command) flags world
+		= execute contState (SET_HISTORY memory command)   flags world
 	process (Literal (Digit int)) world
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# (top, mid) = if(isEmpty history || not (isDigit (hd history))) (Zero, mid) (hd mid, tl mid)
 		# memory = {memory&main=[[[top*(fromInt 10)+(fromInt int):mid]:base]:other]}
-		= execute contState (SET_HISTORY memory command) flags world
+		= execute contState (SET_HISTORY memory command)   flags world
 	process (Literal (Alphabet ltr)) world
 		# [base:other] = CHECK_BASELINE main
 		# alphabet = utf8ToUnicode case ltr of
 			Uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 			Lowercase = "abcdefghijklmnopqrtsuvwxyz"
 		# memory = {memory&main=[[map fromInt alphabet:base]:other]}
-		= execute contState (SET_HISTORY memory command) flags world
+		= execute contState (SET_HISTORY memory command)   flags world
 	process (Variable (Random)) world
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# memory = {memory&main=[[[fromInt (hd random):mid]:base]:other],random=tl random}
-		= execute contState (SET_HISTORY memory command) flags world
+		= execute contState (SET_HISTORY memory command)   flags world
 	process (Variable (Quine)) world
 		= abort "Quine unimplemented!"
 	process (Variable (History)) world
@@ -243,7 +251,7 @@ where
 		= execute contState (SET_HISTORY memory command) flags world
 	process (Operator (IO_ReadAll)) world
 		# [base:other] = CHECK_MIDDLE main
-		# str = accUnsafe (evalIO getLine)
+		#! str = unsafePerformIO (evalIO getLine)
 		# str = utf8ToUnicode str
 		# memory = {memory&main=[[map fromInt str:base]:other]}
 		= execute contState (SET_HISTORY memory command) flags world
@@ -255,31 +263,31 @@ where
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# [top:mid] = mid
 		# out = writeSingle top
-		# world = execIO out world
+		#!world = execIO out world
 		# memory = {memory&main=[[mid:base]:other]}
-		= execute contState (SET_HISTORY memory command)flags world
+		= execute contState (SET_HISTORY memory command) flags world
 	process (Operator (IO_ReadOnce)) world
 		# [[mid:base]:other] = CHECK_MIDDLE main
-		# chr = toInt (accUnsafe (evalIO getChar))
+		#!chr = toInt (unsafePerformIO (evalIO getChar))
 		# str = [chr]
-		# str = str ++ if(chr >= 194) [toInt (accUnsafe (evalIO getChar))] []
-		# str = str ++ if(chr >= 224) [toInt (accUnsafe (evalIO getChar))] []
-		# str = str ++ if(chr >= 240) [toInt (accUnsafe (evalIO getChar))] []
+		#!str = str ++ if(chr >= 194) [toInt (unsafePerformIO (evalIO getChar))] []
+		#!str = str ++ if(chr >= 224) [toInt (unsafePerformIO (evalIO getChar))] []
+		#!str = str ++ if(chr >= 240) [toInt (unsafePerformIO (evalIO getChar))] []
 		# str = utf8ToUnicode (toString str)
 		# memory = {memory&main=[[map fromInt str++mid:base]:other]}
-		= execute contState (SET_HISTORY memory command)flags world
+		= execute contState (SET_HISTORY memory command) flags world
 	process (Operator (IO_Interrobang)) world
 		= abort "Interrobang unimplemented!"
 	process (Operator (IO_Bell)) world
 		= abort "Bell unimplemented!"
 	process (Operator (IO_Timestamp)) world
 		# [[mid:base]:other] = CHECK_MIDDLE main
-		# transform = (\e -> (\{sec,min,hour,mday,mon,year,wday,yday} -> [toInt(accUnsafe time),sec,min,hour,wday,mday-1,mon,yday,year+1900]) (accUnsafe (toLocalTime (Timestamp e))))
+		# transform = (\e -> (\{sec,min,hour,mday,mon,year,wday,yday} -> [toInt(unsafePerformIO time),sec,min,hour,wday,mday-1,mon,yday,year+1900]) (unsafePerformIO (toLocalTime (Timestamp e))))
 		# (stamp, mid) = case mid of
-			[] = (transform (toInt (accUnsafe time)), mid)
-			[top:mid] = (transform (if(isTrue Middle) (toInt top) (toInt (accUnsafe time))), mid)
+			[] = (transform (toInt (unsafePerformIO time)), mid)
+			[top:mid] = (transform (if(isTrue Middle) (toInt top) (toInt (unsafePerformIO time))), mid)
 		# memory = {memory&main=[[map fromInt stamp++mid:base]:other]}
-		= execute contState (SET_HISTORY memory command)flags world
+		= execute contState (SET_HISTORY memory command) flags world
 	process (Operator (IO_Sleep)) world
 		= abort "Sleep unimplemented!"
 	process (Operator (Math_Modulus)) world
@@ -288,7 +296,7 @@ where
 		# ((lhs, rhs), memory=:{main}) = getBothArgs memory
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# memory = {memory&main=[[[op lhs rhs:mid]:base]:other]}
-		= execute contState (SET_HISTORY memory command)flags world
+		= execute contState (SET_HISTORY memory command)  flags world
 	/*
 	process (Operator (Math_Addition)) world
 		# ((lhs, rhs), memory=:{main}) = getBothArgs memory

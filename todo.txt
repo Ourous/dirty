@@ -1,3 +1,5 @@
 - TeX front-end.
 - Make it compile to Clean and call the compiler Janitor.
 - Insert the operation implementing functions into the algebraic token types to reduce clutter in the runtime.
+- try `Command -> Tape a -> *World -> (((), Tape a), *World)` or similar for the runtime
+	- this might allow the problem with non-terminating programs blowing the heap to be avoided when using *World for input

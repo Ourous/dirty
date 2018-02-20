@@ -1,6 +1,6 @@
 implementation module arithmetic
 
-import types, atomics, StdBool, StdOverloaded, StdInt, StdReal, StdClass, Math.Geometry
+import types, atomics, StdBool, StdOverloaded, StdInt, StdReal, StdClass, Math.Geometry, StdString
 from StdLibMisc import isFinite
 from StdMisc import abort
 
@@ -369,6 +369,17 @@ instance toReal Number where
 	toReal (Im (Fin val)) = toReal val
 	toReal (Cx (Fin {re, im})) = toReal (sqrt (re*re + im*im)) * (toReal (sign re * sign im))
 	toReal _ = 0.0/0.0
+	
+instance toString Number where
+	toString Zero = "0"
+	toString NaN = "NaN"
+	toString (Re (Inf val)) = if(val == Negative) "-ReInf" "ReInf"
+	toString (Re (Fin val)) = toString val
+	toString (Im (Inf val)) = if(val == Negative) "-ImInf" "ImInf"
+	toString (Im (Fin val)) = toString val +++ "i"
+	toString (Cx (Inf _ )) = "?CxInf"
+	toString (Cx (Fin {re, im}))
+		= toString re +++ (if(sign im == -1) "-" "+") +++ toString (abs im) +++ "i"
 	
 instance fromInt Number where fromInt val = (Re (Fin (Int val)))
 

@@ -2,9 +2,9 @@ module main
 import types, atomics, runtime, parser, converter, arithmetic
 import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
-	//# ([_:args], world)
-	//	= getCommandLine world
-	# args = ["-utf8", "loop_test.txt"]
+	# ([_:args], world)
+		= getCommandLine world
+	//# args = ["-utf8", "loop_test.txt"]
 	| isEmpty args
 		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n\tformat: utf8\n\tflags: none\n"
 	# (flags, [file:args])

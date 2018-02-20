@@ -1,6 +1,6 @@
 implementation module atomics
 
-import types, StdOverloaded, StdBool, StdInt, StdReal
+import types, StdOverloaded, StdBool, StdInt, StdReal, StdString
 from StdLib import isFinite
 from StdMisc import abort
 from StdFunc import id
@@ -141,6 +141,10 @@ instance toInt Numeric where
 instance toReal Numeric where
 	toReal (Int val) = toReal val
 	toReal (Real val) = val
+	
+instance toString Numeric where
+	toString (Int val) = toString val
+	toString (Real val) = toString val
 		
 instance mod Numeric where (mod) lhs rhs = applyBinaryInt (rem) (toInt) lhs rhs
 		

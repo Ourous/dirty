@@ -96,15 +96,15 @@ definition module types
 	| Lowercase
 	
 :: OperatorCommand
-	= IO_ReadAll
-	| IO_Timestamp
-	| IO_WriteAll
+	= IO_WriteAll
+	| IO_ReadAll
 	| IO_ReadWrite
 	| IO_WriteRead
 	| IO_WriteOnce
 	| IO_ReadOnce
 	| IO_Interrobang
 	| IO_Bell
+	| IO_Timestamp
 	| IO_Sleep
 	| Math_Modulus
 	| Math_Addition

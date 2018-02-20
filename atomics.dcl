@@ -16,6 +16,7 @@ instance < Numeric
 
 instance toInt Numeric
 instance toReal Numeric
+instance toString Numeric
 
 instance mod Numeric
 instance gcd Numeric

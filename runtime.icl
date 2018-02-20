@@ -1,7 +1,7 @@
 implementation module runtime
 
 import types, converter, atomics, arithmetic
-import StdEnv, StdLib, System.IO, System.Time, Math.Random
+import StdEnv, StdLib, System.IO, System.Time, Math.Random, System._Unsafe
 from Math.Geometry import pi
 import qualified Data.Generics.GenParse as GenParse
 
@@ -81,6 +81,7 @@ where
 			[Zero:_] = False
 			_ = True
 	doNOOP = {state&location = TRAVERSE_ONE location direction}
+	process :: Command *World -> *(Flags -> *World)
 	process (Control Terminate) world = const world
 	process (Control (NOOP)) world
 		= execute doNOOP (SET_HISTORY memory command) world
@@ -211,9 +212,54 @@ where
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# memory = {memory&main=[[[fromInt (hd random):mid]:base]:other],random=tl random}
 		= execute doNOOP (SET_HISTORY memory command) world
+	process (Variable (Quine)) world
+		= abort "Quine unimplemented!"
+	process (Variable (History)) world
+		= abort "History unimplemented!"
 	process (Operator (IO_WriteAll)) world
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# out = unicodeToUTF8 (map toInt mid)
 		# world = execIO (putStrLn out) world
-		# memory = {memory& main=[base:other]}	
+		# memory = {memory& main=[base:other]}
 		= execute doNOOP (SET_HISTORY memory command) world
+	process (Operator (IO_ReadAll)) world
+		# [base:other] = CHECK_MIDDLE main
+		# str = accUnsafe (evalIO getLine)
+		# str = utf8ToUnicode str
+		# memory = {memory&main=[[map fromInt str:base]:other]}
+		= execute doNOOP (SET_HISTORY memory command) world
+	process (Operator (IO_ReadWrite)) world
+		= abort "ReadWrite unimplemented!"
+	process (Operator (IO_WriteRead)) world
+		= abort "WriteRead unimplemented!"
+	process (Operator (IO_WriteOnce)) world
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# [top:mid] = mid
+		# out = toString top
+		# world = execIO (putStr out) world
+		# memory = {memory&main=[[mid:base]:other]}
+		= execute doNOOP (SET_HISTORY memory command) world
+	process (Operator (IO_ReadOnce)) world
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# chr = toInt (accUnsafe (evalIO getChar))
+		# str = [chr]
+		# str = str ++ if(chr >= 194) [toInt (accUnsafe (evalIO getChar))] []
+		# str = str ++ if(chr >= 224) [toInt (accUnsafe (evalIO getChar))] []
+		# str = str ++ if(chr >= 240) [toInt (accUnsafe (evalIO getChar))] []
+		# str = utf8ToUnicode (toString str)
+		# memory = {memory&main=[[map fromInt str++mid:base]:other]}
+		= execute doNOOP (SET_HISTORY memory command) world
+	process (Operator (IO_Interrobang)) world
+		= abort "Interrobang unimplemented!"
+	process (Operator (IO_Bell)) world
+		= abort "Bell unimplemented!"
+	process (Operator (IO_Timestamp)) world
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# transform = (\e -> (\{sec,min,hour,mday,mon,year,wday,yday} -> [toInt(accUnsafe time),year+1900,yday,mon,mday-1,wday,hour,min,sec]) (accUnsafe (toLocalTime (Timestamp e))))
+		# (stamp, mid) = case mid of
+			[] = (transform (toInt (accUnsafe time)), mid)
+			[top:mid] = (transform (if(isTrue Middle) (toInt top) (toInt (accUnsafe time))), mid)
+		# memory = {memory&main=[[map fromInt stamp++mid:base]:other]}
+		= execute doNOOP (SET_HISTORY memory command) world
+		
+		

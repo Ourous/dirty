@@ -4,7 +4,7 @@ import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
 	# ([_:args], world)
 		= getCommandLine world
-	//# args = ["-utf8", "--n", "--s", "loop_test.txt"]
+	//# args = ["-utf8", "--n", "--s", "add_test.txt"]
 	| isEmpty args
 		= abort usage
 	# (flags, [file:args])

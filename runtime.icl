@@ -83,6 +83,10 @@ execute state=:{dimension, location, direction, source, program, wrapping} memor
 		= if(wrapping) (execute {state&location={x=location.x rem dimension.x, y=location.y rem dimension.y}} (SET_HISTORY memory '\n') (flags, world)) (if(flags.dump) (execIO (putStrLn("{left="+STACK_TO_STR left+",right="+STACK_TO_STR right+",main="+(STACK_TO_STR o (map STACK_TO_STR) o (map (map STACK_TO_STR))) main+"}"))) id world)
 	= process ((program !! location.y) !! location.x) (flags, world)
 where
+	curryExec state memory = execute state (SET_HISTORY memory command)
+	curryCtrl state = execute state (SET_HISTORY memory command)
+	curryOper memory = execute contState (SET_HISTORY memory command)
+	curryNone = execute contState (SET_HISTORY memory command)
 	command = (source !! location.y) !! location.x
 	isTrue stack
 		# val = case stack of
@@ -94,16 +98,40 @@ where
 			[NaN:_] = False
 			[Zero:_] = False
 			_ = True
-	getBothArgs memory=:{left, right, main}
-		# (lhs, rhs, main) = case (left, right, CHECK_MIDDLE main) of
-			([lhs:_],  [rhs:_], _) = (lhs, rhs, main)
-			([], [rhs:_], [[[lhs:mid]:base]:other]) = (lhs, rhs, [[mid:base]:other])
-			([], [rhs,lhs:_], [[[]:_]:_]) = (lhs, rhs, main)
-			([lhs:_], [], [[[rhs:mid]:base]:other]) = (lhs, rhs, [[mid:base]:other])
-			([lhs,rhs:_], [], [[[]:_]:_]) = (lhs, rhs, main)
-			([], [], [[[lhs,rhs:mid]:base]:other]) = (lhs, rhs, [[mid:base]:other])
-			_ = abort "Cannot find arguments, perhaps you lost them?"
-		= ((lhs, rhs), {memory&main=main})
+	getBothSingleArgs memory=:{left, right, main}
+		= case (left, right, CHECK_MIDDLE main) of
+			([lhs:left],  [rhs:right], _) = (Just (lhs, rhs), {memory&left=left,right=right})
+			([], [rhs:right], [[[lhs:mid]:base]:other]) = (Just (lhs, rhs), {memory&right=right,main=[[mid:base]:other]})
+			([], [rhs,lhs:right], [[[]:_]:_]) = (Just (lhs, rhs), {memory&right=right})
+			([lhs:left], [], [[[rhs:mid]:base]:other]) = (Just (lhs, rhs), {memory&left=left,main=[[mid:base]:other]})
+			([lhs,rhs:left], [], [[[]:_]:_]) = (Just (lhs, rhs), {memory&left=left})
+			([], [], [[[lhs,rhs:mid]:base]:other]) = (Just (lhs, rhs), {memory&main=[[mid:base]:other]})
+			_ = (Nothing, memory)
+	getMiddleSingleArg memory=:{main}
+		= case (CHECK_MIDDLE main) of
+			[[[arg:mid]:base]:other] = (Just arg, {memory&main=[[mid:base]:other]})
+			_ = (Nothing, memory)// abort "Cannot find argument, perhaps you lost it?"
+	getMiddleStackArg memory=:{main}
+		= case (CHECK_BASELINE main) of
+			[[arg:base]:other] = (Just arg, {memory&main=[base:other]})
+			_ = (Nothing, memory)// abort "Not enogh stacks!"
+	getBaselineArg memory=:{main}
+		= case main of
+			[arg:other] = (Just arg, {memory&main=other})
+			_ = (Nothing, memory)//abort "Empty main stack!"
+	getBothStackArgs memory=:{left, right, main}
+		= case (left, right, CHECK_MIDDLE main) of
+			([], [], [[lhs,rhs:base]:other]) = (Just (lhs, rhs), {memory&main=[base:other]})
+			([], rhs, [[lhs:base]:other]) = (Just (lhs, rhs), {memory&right=[],main=[base:other]})
+			(lhs, [], [[rhs:base]:other]) = (Just (lhs, rhs), {memory&left=[],main=[base:other]})
+			(lhs, rhs, _) = (Just (lhs, rhs), {memory&left=[],right=[]})
+			_ = (Nothing, memory)// abort "Cannot find stack arguments, perhaps you lost them?"
+	getStackSingleArgs memory=:{left, right, main}
+		= case (left, right, CHECK_MIDDLE main) of
+			([], [rhs:right], [[lhs:base]:other]) = (Just (lhs, rhs), {memory&right=right,main=[base:other]})
+			(lhs, [], [[[rhs:mid]:base]:other]) = (Just (lhs, rhs), {memory&left=[],main=[[mid:base]:other]})
+			(lhs, [rhs:right], _) = (Just (lhs, rhs), {memory&left=[],right=right})
+			_ = (Nothing, memory)// abort "Cannot unpack arguments!"
 	writeSingle number = if(flags.nums) (putStr (toString number)) (putStr (unicodeToUTF8 [toInt number]))
 	writeMany numbers = if(flags.nums) (putStrLn ("["+join","(map toString numbers)+"]")) (putStrLn (unicodeToUTF8 (map toInt numbers)))
 	contState = {state&location=TRAVERSE_ONE location direction}
@@ -244,27 +272,26 @@ where
 	process (Variable (History)) fw
 		= abort "History unimplemented!" 
 	process (Operator (IO_WriteAll)) (flags, world)
-		# [[mid:base]:other] = CHECK_MIDDLE main
-		# out = writeMany mid
-		#!world = execIO out world
-		# memory = {memory& main=[base:other]}
-		= execute contState (SET_HISTORY memory command) (flags, world)
+		# (mid, memory) = getMiddleStackArg memory
+		| isNothing mid = curryNone (flags, world)
+		# (Just mid) = mid
+		#!world = execIO (writeMany mid) world
+		= curryOper memory (flags, world)
 	process (Operator (IO_ReadAll)) (flags, world)
 		# [base:other] = CHECK_MIDDLE main
 		#!(str, world) = evalIO getLine world
 		# str = utf8ToUnicode str
 		# memory = {memory&main=[[map fromInt str:base]:other]}
-		= execute contState (SET_HISTORY memory command) (flags, world)
+		= curryOper memory (flags, world)
 	process (Operator (IO_ReadWrite)) fw
 		= abort "ReadWrite unimplemented!"
 	process (Operator (IO_WriteRead)) fw
 		= abort "WriteRead unimplemented!"
 	process (Operator (IO_WriteOnce)) (flags, world)
-		# [[mid:base]:other] = CHECK_MIDDLE main
-		# [top:mid] = mid
-		# out = writeSingle top
-		#!world = execIO out world
-		# memory = {memory&main=[[mid:base]:other]}
+		# (arg, memory) = getMiddleSingleArg memory
+		| isNothing arg = curryNone (flags, world)
+		# (Just arg) = arg
+		#!world = execIO (writeSingle arg) world
 		= execute contState (SET_HISTORY memory command) (flags, world)
 	process (Operator (IO_ReadOnce)) (flags, world)
 		# [[mid:base]:other] = CHECK_MIDDLE main
@@ -291,10 +318,17 @@ where
 		= execute contState (SET_HISTORY memory command) (flags, world)
 	process (Operator (IO_Sleep)) (flags, world)
 		= abort "Sleep unimplemented!"
-	process (Operator (Math_Modulus)) fw
-		= abort "Modulus unimplemented!"
 	process (Operator (Binary op)) fw
-		# ((lhs, rhs), memory=:{main}) = getBothArgs memory
+		# (args, memory=:{main}) = getBothSingleArgs memory
+		| isNothing args = curryNone fw
+		# (Just (lhs, rhs)) = args
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# memory = {memory&main=[[[op lhs rhs:mid]:base]:other]}
-		= execute contState (SET_HISTORY memory command) fw
+		= curryOper memory fw
+	process (Operator (Unary op)) fw
+		# (arg, memory=:{main}) = getMiddleSingleArg memory
+		| isNothing arg = curryNone fw
+		# (Just arg) = arg
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# memory = {memory&main=[[[op arg:mid]:base]:other]}
+		= curryOper memory fw

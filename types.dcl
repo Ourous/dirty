@@ -107,6 +107,7 @@ definition module types
 	| IO_Timestamp
 	| IO_Sleep
 	| Binary (Number Number -> Number)
+	| Unary (Number -> Number)
 	| Math_Modulus
 	| Math_Addition
 	| Math_Multiplication

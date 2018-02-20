@@ -6,7 +6,7 @@ Start world
 		= getCommandLine world
 	//# args = ["-utf8", "loop_test.txt"]
 	| isEmpty args
-		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n\tformat: utf8\n\tflags: none\n"
+		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n\tformat:\n\t\tutf8: Parse using the UTF-8 front-end\n\tflags:\n\t\tn: Output as Number literals\n"
 	# (flags, [file:args])
 		= span (\e -> e%(0,0) == "-") args
 	# (flags, format)
@@ -22,8 +22,9 @@ Start world
 			_ = abort "Cannot open the file specified!"
 	# (memory, world)
 		= evaluate args world
-	= execute (parser file) memory  world(toFlags flags)
+	= execute (parser file) memory  world (toFlags flags)
 	//= (parser file)
 	
-toFlags _
-	= {debug = False, dump = False, ints = False}
+toFlags flags
+	| isEmpty flags = {debug = False, dump = False, ints = False}
+	= abort "Flags currently unsupported."

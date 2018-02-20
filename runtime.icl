@@ -286,3 +286,8 @@ where
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# memory = {memory&main=[[[lhs*rhs:mid]:base]:other]}
 		= execute doNOOP (SET_HISTORY memory command) world
+	process (Operator (Math_Subtraction)) world
+		# ((lhs, rhs), memory=:{main}) = getBothArgs memory
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# memory = {memory&main=[[[lhs-rhs:mid]:base]:other]}
+		= execute doNOOP (SET_HISTORY memory command) world

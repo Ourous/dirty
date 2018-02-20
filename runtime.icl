@@ -271,9 +271,9 @@ where
 		#!(chr, world) = evalIO getChar world
 		# chr = toInt chr
 		# str = [chr]
-		# str = str ++ if(chr >= 194) [toInt (unsafePerformIO (evalIO getChar))] []
-		# str = str ++ if(chr >= 224) [toInt (unsafePerformIO (evalIO getChar))] []
-		# str = str ++ if(chr >= 240) [toInt (unsafePerformIO (evalIO getChar))] []
+		# str = str ++ if(chr >= 194) [toInt (unsafePerformIO (evalIO getChar))] [] // TODO: make safe
+		# str = str ++ if(chr >= 224) [toInt (unsafePerformIO (evalIO getChar))] [] // TODO: make safe
+		# str = str ++ if(chr >= 240) [toInt (unsafePerformIO (evalIO getChar))] [] // TODO: make safe
 		# str = utf8ToUnicode (toString str)
 		# memory = {memory&main=[[map fromInt str++mid:base]:other]}
 		= execute contState (SET_HISTORY memory command) (flags, world)
@@ -283,10 +283,10 @@ where
 		= abort "Bell unimplemented!"
 	process (Operator (IO_Timestamp)) (flags, world)
 		# [[mid:base]:other] = CHECK_MIDDLE main
-		# transform = (\e -> (\{sec,min,hour,mday,mon,year,wday,yday} -> [toInt(unsafePerformIO time),sec,min,hour,wday,mday-1,mon,yday,year+1900]) (unsafePerformIO (toLocalTime (Timestamp e))))
+		# transform = (\e -> (\{sec,min,hour,mday,mon,year,wday,yday} -> [toInt(unsafePerformIO time),sec,min,hour,wday,mday-1,mon,yday,year+1900]) (unsafePerformIO (toLocalTime (Timestamp e)))) // TODO: make safe
 		# (stamp, mid) = case mid of
-			[] = (transform (toInt (unsafePerformIO time)), mid)
-			[top:mid] = (transform (if(isTrue Middle) (toInt top) (toInt (unsafePerformIO time))), mid)
+			[] = (transform (toInt (unsafePerformIO time)), mid) // TODO: make safe
+			[top:mid] = (transform (if(isTrue Middle) (toInt top) (toInt (unsafePerformIO time))), mid) // TODO: make safe
 		# memory = {memory&main=[[map fromInt stamp++mid:base]:other]}
 		= execute contState (SET_HISTORY memory command) (flags, world)
 	process (Operator (IO_Sleep)) (flags, world)
@@ -298,19 +298,3 @@ where
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# memory = {memory&main=[[[op lhs rhs:mid]:base]:other]}
 		= execute contState (SET_HISTORY memory command) fw
-	/*
-	process (Operator (Math_Addition)) world
-		# ((lhs, rhs), memory=:{main}) = getBothArgs memory
-		# [[mid:base]:other] = CHECK_MIDDLE main
-		# memory = {memory&main=[[[lhs+rhs:mid]:base]:other]}
-		= execute contState (SET_HISTORY memory command)flags world
-	process (Operator (Math_Multiplication)) world
-		# ((lhs, rhs), memory=:{main}) = getBothArgs memory
-		# [[mid:base]:other] = CHECK_MIDDLE main
-		# memory = {memory&main=[[[lhs*rhs:mid]:base]:other]}
-		= execute contState (SET_HISTORY memory command)flags world
-	process (Operator (Math_Subtraction)) world
-		# ((lhs, rhs), memory=:{main}) = getBothArgs memory
-		# [[mid:base]:other] = CHECK_MIDDLE main
-		# memory = {memory&main=[[[lhs-rhs:mid]:base]:other]}
-		= execute contState (SET_HISTORY memory command)flags world*/

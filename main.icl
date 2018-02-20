@@ -4,9 +4,9 @@ import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
 	# ([_:args], world)
 		= getCommandLine world
-	//# args = ["-utf8", "loop_test.txt"]
+	//# args = ["-utf8", "--n", "--s", "loop_test.txt"]
 	| isEmpty args
-		= abort "Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n\tformat:\n\t\tutf8: Parse using the UTF-8 front-end\n\tflags:\n\t\tn: Output as Number literals\n"
+		= abort usage
 	# (flags, [file:args])
 		= span (\e -> e%(0,0) == "-") args
 	# (flags, format)
@@ -23,8 +23,13 @@ Start world
 	# (memory, world)
 		= evaluate args world
 	= execute (parser file) memory  world (toFlags flags)
-	//= (parser file)
 	
 toFlags flags
-	| isEmpty flags = {debug = False, dump = False, ints = False}
-	= abort "Flags currently unsupported."
+	= {debug = False, dump = isMember "--s" flags, nums = isMember "--n" flags}
+	
+usage =: foldr ((+++)) ""
+	["Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n"
+	,"\t-utf8: use the UTF-8 parser\n"
+	,"\t--n: numeric output\n"
+	,"\t--s: dump stacks\n"
+	]

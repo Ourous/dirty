@@ -29,7 +29,7 @@ definition module types
 	= {
 		debug :: Bool,
 		dump :: Bool,
-		ints :: Bool
+		nums :: Bool
 	}
 
 :: Numeric

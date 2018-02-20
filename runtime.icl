@@ -284,6 +284,12 @@ where
 		= abort "Sleep unimplemented!"
 	process (Operator (Math_Modulus)) world
 		= abort "Modulus unimplemented!"
+	process (Operator (Binary op)) world
+		# ((lhs, rhs), memory=:{main}) = getBothArgs memory
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# memory = {memory&main=[[[op lhs rhs:mid]:base]:other]}
+		= execute contState (SET_HISTORY memory command)flags world
+	/*
 	process (Operator (Math_Addition)) world
 		# ((lhs, rhs), memory=:{main}) = getBothArgs memory
 		# [[mid:base]:other] = CHECK_MIDDLE main
@@ -298,4 +304,4 @@ where
 		# ((lhs, rhs), memory=:{main}) = getBothArgs memory
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# memory = {memory&main=[[[lhs-rhs:mid]:base]:other]}
-		= execute contState (SET_HISTORY memory command)flags world
+		= execute contState (SET_HISTORY memory command)flags world*/

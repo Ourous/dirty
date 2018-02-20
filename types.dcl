@@ -106,6 +106,7 @@ definition module types
 	| IO_Bell
 	| IO_Timestamp
 	| IO_Sleep
+	| Binary (Number Number -> Number)
 	| Math_Modulus
 	| Math_Addition
 	| Math_Multiplication

@@ -6,24 +6,29 @@ definition module types
 		y :: !Int
 	}
 	
-:: State
+:: Program
 	= {
-		dimension :: !XYPair,
-		location :: !XYPair,
-		direction :: !Direction,
+		dimension :: XYPair,
 		source :: [[Char]],
 		program :: [[Command]],
 		wrapping :: Bool,
-		history :: Char
+		direction :: Direction,
+		location :: XYPair
+	}	
+	
+:: *State
+	= {
+		direction :: !Direction,
+		location :: !*XYPair,
+		history :: !*Char
 	}
 
-:: *Memory
+:: Memory
 	= {
-		left :: [Number],
-		right :: [Number],
-		main :: [[[Number]]],
-		random :: [Int]//,
-		//history :: [Char]
+		left :: ![Number],
+		right :: ![Number],
+		main :: ![[Number]],
+		random :: [Int]
 	}
 	
 :: Flags

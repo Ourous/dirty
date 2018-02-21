@@ -298,90 +298,6 @@ OtherModules
 			ReuseUniqueNodes:	True
 			Fusion:	True
 	Module
-		Name:	Data.Integer
-		Dir:	{Application}\Libraries\Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Integer.Add
-		Dir:	{Application}\Libraries\Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Integer.Div
-		Dir:	{Application}\Libraries\Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Integer.Mul
-		Dir:	{Application}\Libraries\Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Integer.ToInteger
-		Dir:	{Application}\Libraries\Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Integer.ToString
-		Dir:	{Application}\Libraries\Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
 		Name:	Data.List
 		Dir:	{Application}\Libraries\Platform
 		Compiler
@@ -793,7 +709,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	True
+			Fusion:	False
 	Module
 		Name:	StdChar
 		Dir:	{Application}\Libraries\StdEnv
@@ -807,7 +723,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	True
+			Fusion:	False
 	Module
 		Name:	StdCharList
 		Dir:	{Application}\Libraries\StdEnv
@@ -824,20 +740,6 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdClass
-		Dir:	{Application}\Libraries\StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdDebug
 		Dir:	{Application}\Libraries\StdEnv
 		Compiler
 			NeverMemoryProfile:	False
@@ -891,7 +793,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	True
+			Fusion:	False
 	Module
 		Name:	StdFunc
 		Dir:	{Application}\Libraries\StdEnv
@@ -933,7 +835,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	True
+			Fusion:	False
 	Module
 		Name:	StdList
 		Dir:	{Application}\Libraries\StdEnv
@@ -961,7 +863,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	True
+			Fusion:	False
 	Module
 		Name:	StdOrdList
 		Dir:	{Application}\Libraries\StdEnv
@@ -1003,7 +905,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	True
+			Fusion:	False
 	Module
 		Name:	StdString
 		Dir:	{Application}\Libraries\StdEnv
@@ -1017,7 +919,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	True
+			Fusion:	False
 	Module
 		Name:	StdTuple
 		Dir:	{Application}\Libraries\StdEnv

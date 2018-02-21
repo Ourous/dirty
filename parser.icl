@@ -2,13 +2,13 @@ implementation module parser
 
 import types, converter, StdEnv, Text
 
-parseUTF8 :: String -> State
+parseUTF8 :: String -> Program
 parseUTF8 string 
 	# string
 		= {#i \\ c <- utf8ToUnicode string, i <- ['\0'..] & u <- unicodeCharset | c == u}
 	= parseNative string
 		
-parseNative :: String -> State
+parseNative :: String -> Program
 parseNative string
 	# tokens
 		= map fromString (split "\n" string)
@@ -29,8 +29,7 @@ parseNative string
 		direction = direction,
 		source = tokens,
 		program = commands,
-		wrapping = wrapping,
-		history = if((x, y) == (-1, -1)) '\n' ((tokens !! location.y) !! location.x)
+		wrapping = wrapping
 		}
 where		
 	findStart [[(Control (Start dir)):_]:_]

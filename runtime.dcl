@@ -2,6 +2,8 @@ definition module runtime
 
 import types
 
-execute :: State Memory *(Flags, *World) -> *World
+//construct :: !Program !Flags -> (State, (!State !Memory *World -> *World))
 
-evaluate :: [String] *World -> *(Memory, *World)
+//execute :: !State !Memory *World -> *World
+
+//evaluate :: ![String] *World -> *(Memory, *World)

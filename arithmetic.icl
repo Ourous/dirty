@@ -36,45 +36,77 @@ IS_ZERO numeric
 		(Real 0.0) = True
 		(Real -0.0) = True
 		_ = False
-
+/*
 IS_NAN numeric
 	:== case numeric of
 		(Real val) = not (isFinite val || val <> 0.0)
 		_ = False
-		
+*/
+IS_INF numeric
+	:== case numeric of
+		(Real val) = val <> 0.0
+		_ = True
+/*
 IS_INF numeric
 	:== case numeric of
 		(Real val) = not (isFinite val) && val <> 0.0
 		_ = False
+*/
+IS_FIN numeric // or nan
+	:== case numeric of
+		(Real val) = isFinite val
+		_ = True
 
 // number implementations
 
-handle :: Number -> Number
-handle (Re (Fin val))
-	| IS_ZERO val = Zero
-	| IS_NAN val = NaN
-	| IS_INF val = (Re (Inf (FIN_SIGN val)))
-	= (Re (Fin val))
-handle (Im (Fin val))
-	| IS_ZERO val = Zero
-	| IS_NAN val = NaN
-	| IS_INF val = (Im (Inf (FIN_SIGN val)))
-	= (Im (Fin val))
-handle (Cx (Fin {re, im}))
-	| IS_NAN re || IS_NAN im = NaN
-	| IS_INF re
-		| IS_INF im
-			= (Cx (Inf Directed))
-		= (Re (Inf (FIN_SIGN re)))
-	| IS_INF im
-		= (Im (Inf (FIN_SIGN im)))
-	= case ((IS_ZERO re), (IS_ZERO im)) of
-		(True, True) = Zero
-		(True, False) = (Im (Fin im))
-		(False, True) = (Re (Fin re))
-		(False, False) = (Cx (Fin {re=re, im=im}))
-handle val = val
-
+handle number
+	:== case number of
+		(Re (Fin val)) = handleRe val
+		(Im (Fin val)) = handleIm val
+		(Cx (Fin {re, im})) = handleCx re im
+		val = val
+where
+	handleRe val
+		| IS_FIN val
+			| IS_ZERO val = Zero
+			= (Re (Fin val))
+		| IS_INF val = (Re (Inf (FIN_SIGN val)))
+		= NaN
+	handleIm val
+		| IS_FIN val
+			| IS_ZERO val = Zero
+			= (Im (Fin val))
+		| IS_INF val = (Im (Inf (FIN_SIGN val)))
+		= NaN
+		// TODO : find good tests for complex number performance so I can rewrite it properly
+		/*
+	handleCx re im
+		| IS_FIN re
+			| IS_FIN im
+				| IS_ZERO re
+					| IS_ZERO im = Zero
+					= (Im (Fin im))
+				| IS_ZERO im = (Re (Fin re))
+				= (Cx (Fin {re=re, im=im}))
+			| IS_INF im = (Im (Inf (FIN_SIGN im)))
+			= NaN
+		| IS_INF re
+			| IS_INF im = (Cx (Inf Directed))
+			= (Re (Inf (FIN_SIGN re)))
+		= NaN*/
+	handleCx re im
+		= case (IS_FIN re, IS_ZERO re, IS_INF re, IS_FIN im, IS_ZERO im, IS_INF im) of
+			(False, _, False, _, _, _) = NaN
+			(_, _, _, False, _, False) = NaN
+			(False, _, True, False, _, True) = (Cx (Inf Directed))
+			(_, _, _, False, _, True) = (Im (Inf (FIN_SIGN im)))
+			(False, _, True, _, _, _) = (Re (Inf (FIN_SIGN re)))
+			(True, True, _, True, True, _) = Zero
+			(True, True, _, _, _, _) = (Im (Fin im))
+			(_, _, _, True, True, _) = (Re (Fin re))
+			(True, False, _, True, False, _) = (Cx (Fin {re=re, im=im}))
+		
+		
 instance + Number where
 	(+) NaN _ = NaN
 	(+) _ NaN = NaN

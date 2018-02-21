@@ -5,8 +5,8 @@ Start world
 	# ([_:args], world)
 		= getCommandLine world
 	//# args = ["-utf8", "--n", "--s", "cat_test.txt"]
-	| isEmpty args
-		= abort usage
+	//| isEmpty args
+	//	= abort usage
 	# (flags, [file:args])
 		= span (\e -> e%(0,0) == "-") args
 	# (flags, format)
@@ -23,7 +23,9 @@ Start world
 	//# (memory, world)
 	//	= evaluate args world
 	//# memory = {memory&main=[[[(Re (Fin (Int (2^19))))]]]}
-	= (parser file)
+	//= (parser file)
+	= (foldl (+) Zero) (map (\e -> (Re (Fin (Int e))))([1..2^23]++[0,-1.. ~(2^20)]))
+	//= sum [1..2^30]
 	
 toFlags flags
 	= {debug = False, dump = isMember "--s" flags, nums = isMember "--n" flags}

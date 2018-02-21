@@ -54,14 +54,14 @@ definition module types
 
 :: Number
 	= Zero
-	| Re (Magnitude Sign Numeric)
-	| Im (Magnitude Sign Numeric)
-	| Cx (Magnitude Directed Complex)
+	| Re !(Magnitude Sign Numeric)
+	| Im !(Magnitude Sign Numeric)
+	| Cx !(Magnitude Directed Complex)
 	| NaN
 
 :: Magnitude inf fin
 	= Fin !fin
-	| Inf !inf
+	| Inf inf
 	
 :: Sign 
 	= Positive

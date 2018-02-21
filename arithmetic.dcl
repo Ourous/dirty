@@ -10,7 +10,7 @@ instance zero Number
 instance * Number
 instance / Number
 instance one Number
-//instance ^ Number
+instance ^ Number
 instance abs Number
 instance ~ Number
 instance == Number
@@ -25,16 +25,16 @@ instance toString Number
 instance fromInt Number
 instance fromReal Number
 
-//instance ln Number
-//instance log10 Number
-//instance exp Number
-//instance sqrt Number
-//instance sin Number
-//instance cos Number
-//instance tan Number
-//instance asin Number
-//instance acos Number
-//instance atan Number
+instance ln Number
+instance log10 Number
+instance exp Number
+instance sqrt Number
+instance sin Number
+instance cos Number
+instance tan Number
+instance asin Number
+instance acos Number
+instance atan Number
 
 //bitOR :: Number Number -> Number
 //bitAND :: Number Number -> Number

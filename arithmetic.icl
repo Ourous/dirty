@@ -235,37 +235,23 @@ instance / Number where
 	
 instance one Number where
 	one = (Re (Fin (Int 1)))
-/*
+
 instance ^ Number where
 	(^) NaN _ = NaN
 	(^) _ NaN = NaN
-	//(^) _ Infinity = NaN
+	(^) Zero _ = Zero
 	(^) _ Zero = one
-	//(^) Infinity (Rational rhs)
-	//	= case (sign rhs) of
-	//		1 = Infinity
-	//		0 = /*one*/ abort "tell Ourous you found a bug: Unhandled Zero at Exponential Infinity" // this should never happen
-	//		-1 = Zero
-	//(^) Infinity (Imaginary _) = abort "Cannot raise `Infinity` to an Imaginary power"
-	//(^) Infinity (Complex _ _) = abort "Cannot raise `Infinity` to a Complex power"
-	//(^) Zero (Rational rhs)
-	//	= case (sign rhs) of
-	//		1 = Zero
-	//		0 = /*one*/ abort "tell Ourous you found a bug: Unhandled Zero at Exponential Zero" // this should never happen
-	//		-1 = Infinity
-	(^) Zero (Imaginary _) = abort "Cannot raise `Zero` to an Imaginary power"
-	(^) Zero (Complex _ _) = abort "Cannot raise `Zero` to a Complex power"
-	(^) (Rational lhs) (Rational rhs)
-		= handle (Rational (lhs ^ rhs))
-	(^) (Rational _) (Imaginary _) = abort "Unimplemented Operation: Re^Im"
-	(^) (Imaginary _) (Rational _) = abort "Unimplemented Operation: Im^Re"
-	(^) (Imaginary _) (Imaginary _) = abort "Unimplemented Operation: Im^Im"
-	(^) (Rational _) (Complex _ _) = abort "Unimplemented Operation: Re^Cx"
-	(^) (Imaginary _) (Complex _ _) = abort "Unimplemented Operation: Im^Cx"
-	(^) (Complex _ _) (Rational _) = abort "Unimplemented Operation: Cx^Re"
-	(^) (Complex _ _) (Imaginary _) = abort "Unimplemented Operation: Cx^Im"
-	(^) (Complex _ _) (Complex _ _) = abort "Unimplemented Operation: Cx^Cx"
-*/
+	(^) (Re (Fin lhs)) (Re (Fin rhs))
+		= handle (Re (Fin (lhs ^ rhs)))
+	//(^) (Rational _) (Imaginary _) = abort "Unimplemented Operation: Re^Im"
+	//(^) (Imaginary _) (Rational _) = abort "Unimplemented Operation: Im^Re"
+	//(^) (Imaginary _) (Imaginary _) = abort "Unimplemented Operation: Im^Im"
+	//(^) (Rational _) (Complex _ _) = abort "Unimplemented Operation: Re^Cx"
+	//(^) (Imaginary _) (Complex _ _) = abort "Unimplemented Operation: Im^Cx"
+	//(^) (Complex _ _) (Rational _) = abort "Unimplemented Operation: Cx^Re"
+	//(^) (Complex _ _) (Imaginary _) = abort "Unimplemented Operation: Cx^Im"
+	//(^) (Complex _ _) (Complex _ _) = abort "Unimplemented Operation: Cx^Cx"
+
 instance abs Number where
 	abs NaN = NaN
 	abs Zero = Zero
@@ -399,94 +385,93 @@ instance toString Number where
 	toString (Im (Inf val)) = if(val == Negative) "-ImInf" "ImInf"
 	toString (Im (Fin val)) = toString val +++ "i"
 	toString (Cx (Inf _ )) = "?CxInf"
-	toString (Cx (Fin {re, im}))
-		= toString re +++ (if(sign im == -1) "-" "+") +++ toString (abs im) +++ "i"
+	toString (Cx (Fin {re, im})) = toString re +++ (if(sign im == -1) "-" "+") +++ toString (abs im) +++ "i"
 	
 instance fromInt Number where fromInt val = (Re (Fin (Int val)))
 
 instance fromReal Number where fromReal val = (Re (Fin (Real val)))
 
-/*
+
 instance ln Number where
 	ln NaN = NaN
 	//ln Infinity = Infinity
 	ln Zero = NaN
-	ln (Rational val) = handle (Rational (ln val))
-	ln (Imaginary _) = abort "Unimplemented Operation: ln Im"
-	ln (Complex _ _) = abort "Unimplemented Operation: ln Cx"
+	ln (Re (Fin val)) = handle (Re (Fin (ln val)))
+	//ln (Imaginary _) = abort "Unimplemented Operation: ln Im"
+	//ln (Complex _ _) = abort "Unimplemented Operation: ln Cx"
 	
 instance log10 Number where
 	log10 NaN = NaN
 	//log10 Infinity = Infinity
 	log10 Zero = NaN
-	log10 (Rational val) = handle (Rational (log10 val))
-	log10 (Imaginary _) = abort "Unimplemented Operation: log10 Im"
-	log10 (Complex _ _) = abort "Unimplemented Operation: log10 Cx"
+	log10 (Re (Fin val)) = handle (Re (Fin (log10 val)))
+	//log10 (Imaginary _) = abort "Unimplemented Operation: log10 Im"
+	//log10 (Complex _ _) = abort "Unimplemented Operation: log10 Cx"
 	
 instance exp Number where
 	exp NaN = NaN
 	//exp Infinity = Infinity
 	exp Zero = one
-	exp (Rational val) = handle (Rational (exp val))
-	exp (Imaginary _) = abort "Unimplemented Operation: exp Im"
-	exp (Complex _ _) = abort "Unimplemented Operation: exp Cx"
+	exp (Re (Fin val)) = handle (Re (Fin (exp val)))
+	//exp (Imaginary _) = abort "Unimplemented Operation: exp Im"
+	//exp (Complex _ _) = abort "Unimplemented Operation: exp Cx"
 	
 instance sqrt Number where
 	sqrt NaN = NaN
 	//sqrt Infinity = Infinity
 	sqrt Zero = Zero
-	sqrt (Rational val) = handle (Rational (sqrt val))
-	sqrt (Imaginary _) = abort "Unimplemented Operation: sqrt Im"
-	sqrt (Complex _ _) = abort "Unimplemented Operation: sqrt Cx"
+	sqrt (Re (Fin val)) = handle (Re (Fin (sqrt val)))
+	//sqrt (Imaginary _) = abort "Unimplemented Operation: sqrt Im"
+	//sqrt (Complex _ _) = abort "Unimplemented Operation: sqrt Cx"
 	
 instance sin Number where
 	sin NaN = NaN
 	//sin Infinity = NaN
 	sin Zero = Zero
-	sin (Rational val) = handle (Rational (sin val))
-	sin (Imaginary _) = abort "Unimplemented Operation: sin Im"
-	sin (Complex _ _) = abort "Unimplemented Operation: sin Cx"
+	sin (Re (Fin val)) = handle (Re (Fin (sin val)))
+	//sin (Imaginary _) = abort "Unimplemented Operation: sin Im"
+	//sin (Complex _ _) = abort "Unimplemented Operation: sin Cx"
 	
 instance cos Number where
 	cos NaN = NaN
 	//cos Infinity = NaN
 	cos Zero = one
-	cos (Rational val) = handle (Rational (cos val))
-	cos (Imaginary _) = abort "Unimplemented Operation: cos Im"
-	cos (Complex _ _) = abort "Unimplemented Operation: cos Cx"
+	cos (Re (Fin val)) = handle (Re (Fin (cos val)))
+	//cos (Imaginary _) = abort "Unimplemented Operation: cos Im"
+	//cos (Complex _ _) = abort "Unimplemented Operation: cos Cx"
 	
 instance tan Number where
 	tan NaN = NaN
 	//tan Infinity = NaN
 	tan Zero = Zero
-	tan (Rational val) = handle (Rational (tan val))
-	tan (Imaginary _) = abort "Unimplemented Operation: tan Im"
-	tan (Complex _ _) = abort "Unimplemented Operation: tan Cx"
+	tan (Re (Fin val)) = handle (Re (Fin (tan val)))
+	//tan (Imaginary _) = abort "Unimplemented Operation: tan Im"
+	//tan (Complex _ _) = abort "Unimplemented Operation: tan Cx"
 	
 instance asin Number where
 	asin NaN = NaN
 	//asin Infinity = Infinity
 	asin Zero = Zero
-	asin (Rational val) = handle (Rational (asin val))
-	asin (Imaginary _) = abort "Unimplemented Operation: asin Im"
-	asin (Complex _ _) = abort "Unimplemented Operation: asin Cx"
+	asin (Re (Fin val)) = handle (Re (Fin (asin val)))
+	//asin (Imaginary _) = abort "Unimplemented Operation: asin Im"
+	//asin (Complex _ _) = abort "Unimplemented Operation: asin Cx"
 	
 instance acos Number where
 	acos NaN = NaN
 	//acos Infinity = Infinity
-	acos Zero = (Rational (Real (pi/2.0)))
-	acos (Rational val) = handle (Rational (acos val))
-	acos (Imaginary _) = abort "Unimplemented Operation: acos Im"
-	acos (Complex _ _) = abort "Unimplemented Operation: acos Cx"
+	acos Zero = (Re (Fin (Real (pi/2.0))))
+	acos (Re (Fin val)) = handle (Re (Fin (acos val)))
+	//acos (Imaginary _) = abort "Unimplemented Operation: acos Im"
+	//acos (Complex _ _) = abort "Unimplemented Operation: acos Cx"
 	
 instance atan Number where
 	atan NaN = NaN
 	//atan Infinity = (Rational (Real (pi/2.0)))
 	atan Zero = Zero
-	atan (Rational val) = handle (Rational (atan val))
-	atan (Imaginary _) = abort "Unimplemented Operation: atan Im"
-	atan (Complex _ _) = abort "Unimplemented Operation: atan Cx"
-	
+	atan (Re (Fin val)) = handle (Re (Fin (atan val)))
+	//atan (Imaginary _) = abort "Unimplemented Operation: atan Im"
+	//atan (Complex _ _) = abort "Unimplemented Operation: atan Cx"
+/*
 bitOR :: Number Number -> Number
 bitOR NaN _ = NaN
 bitOR _ NaN = NaN

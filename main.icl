@@ -2,9 +2,9 @@ module main
 import types, atomics, runtime, parser, converter, arithmetic
 import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
-	//# ([_:args], world)
-	//	= getCommandLine world
-	# args = ["-utf8", "--n", "--s", "cat_test.txt"]
+	# ([_:args], world)
+		= getCommandLine world
+	//# args = ["-utf8", "--n", "--s", "cat_test.txt"]
 	| isEmpty args
 		= abort usage
 	# (flags, [file:args])

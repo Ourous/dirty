@@ -2,13 +2,13 @@ implementation module parser
 
 import types, converter, StdEnv, Text
 
-parseUTF8 :: String -> Program
+parseUTF8 :: !String -> Program
 parseUTF8 string 
 	# string
 		= {#i \\ c <- utf8ToUnicode string, i <- ['\0'..] & u <- unicodeCharset | c == u}
 	= parseNative string
 		
-parseNative :: String -> Program
+parseNative :: !String -> Program
 parseNative string
 	# tokens
 		= map fromString (split "\n" string)
@@ -28,7 +28,7 @@ parseNative string
 		location = location,
 		direction = direction,
 		source = {{#el \\ el <- line} \\ line <- tokens},
-		program = {{el \\ el <- line} \\ line <- commands},
+		commands = {{el \\ el <- line} \\ line <- commands},
 		wrapping = wrapping
 		}
 where		

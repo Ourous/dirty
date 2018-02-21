@@ -26,7 +26,7 @@ SAFE_TAIL list
 STACK_TO_STR stack
 	:== "["+join","(map toString stack)+"]"
 
-evaluate :: [String] *World -> *(Memory, *World)
+evaluate :: ![String] *World -> *(Memory, *World)
 evaluate args world
 	| isEmpty args
 		# (Timestamp seed, world)
@@ -42,4 +42,7 @@ where
 	parseInt = 'GenParse'.parseString
 	parseReal :: (String -> (Maybe Real))
 	parseReal = 'GenParse'.parseString
+
+//construct :: !Program !Flags -> (!State !Memory *World -> *World)
+//construct program=:{dimension, source, commands, wrapping} flags
 

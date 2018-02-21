@@ -8,12 +8,12 @@ definition module types
 	
 :: Program
 	= {
-		dimension :: XYPair,
-		source :: {{#Char}},
-		program :: {{Command}},
-		wrapping :: Bool,
-		direction :: Direction,
-		location :: XYPair
+		dimension :: !XYPair,
+		source :: !{{#Char}},
+		commands :: !{{Command}},
+		wrapping :: !Bool,
+		direction :: !Direction,
+		location :: !XYPair
 	}	
 	
 :: *State
@@ -25,8 +25,8 @@ definition module types
 
 :: Memory
 	= {
-		left :: !MonoStack,
-		right :: !MonoStack,
+		left :: MonoStack,
+		right :: MonoStack,
 		main :: !MultiStack,
 		random :: [Int]
 	}
@@ -49,8 +49,8 @@ definition module types
 	}
 
 :: Numeric
-	= Int Int
-	| Real Real
+	= Int !Int
+	| Real !Real
 
 :: Number
 	= Zero
@@ -60,17 +60,17 @@ definition module types
 	| NaN
 
 :: Magnitude inf fin
-	= Fin fin
-	| Inf inf
+	= Fin !fin
+	| Inf !inf
 	
-:: Sign
+:: Sign 
 	= Positive
 	| Negative
 	
 :: Complex
 	= {
-		re :: Numeric,
-		im :: Numeric
+		re :: !Numeric,
+		im :: !Numeric
 	}
 	
 :: Directed

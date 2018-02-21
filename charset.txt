@@ -1,8 +1,8 @@
 ⏻ // power symbol
-⏵ // start, going right
-⏴ // start, going left
-⏶ // start, going up
-⏷ // start, going down
+⇨ // start, going right
+⇦ // start, going left
+⇧ // start, going up
+⇩ // start, going down
 ⭬ // move current baseline up 1
 ⭪ // move current baseline down 1
 🔔 // bell character
@@ -28,8 +28,8 @@
 ⋯ // horizontal dots
 ⋰ // up-right dots
 ⋱ // up-left dots
-‼ // output all of <mid>
-⁇ // get all input, put into <mid>
+⬄ // start random horizontal
+⇳ // start random vertical
   // no-op
 ! // output top of <mid>
 " // literal '
@@ -125,6 +125,8 @@ z // conjugate
 | // reflection around the vertical
 } // loop if <right> is true or empty
 ~ // negate
+‼ // output all of <mid>
+⁇ // get all input, put into <mid>
 ⁈ // output <right>, read into <left>
 ⁉ // output <left>, read into <right>
 ‽ // output and pop <mid>, read into <mid>
@@ -151,9 +153,9 @@ z // conjugate
 ⋖ // vectorized less-than
 ⋗ // vectorized greater-than
 ≐ // vectorized equals
-≤ // less or equals
+⩽ // less or equals
 ⩿ // vectorized less-or-equals
-≥ // greater or equals
+⩾ // greater or equals
 ⪀ // vectorized greater-or-equals
 ≠ // not equals
 ≡ // identical to (stack equals)
@@ -234,15 +236,13 @@ z // conjugate
 𝒫 // power set
 𝒮 // ordered subsets
 ⬈ // bounce NE
-⬀ // conditional bounce NE
 ⬉ // bounce NW
-⬁ // conditional bounce NW
 ⬊ // bounce SE
-⬂ // conditional bounce SE
 ⬋ // bounce SW
-⬃ // conditional bounce SW
 ⬜ // universal reflect
 ⬚ // conditional universal reflect
+○ // jump over next instruction
+◌ // conditional jump over next instruction
 Ḋ // remove duplicates from <main>
 Ḍ // remove duplicates from <baseline>
 ḋ // retain only duplicates from <main>

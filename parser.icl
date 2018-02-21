@@ -29,7 +29,8 @@ parseNative string
 		direction = direction,
 		source = tokens,
 		program = commands,
-		wrapping = wrapping
+		wrapping = wrapping,
+		history = if((x, y) == (-1, -1)) '\n' ((tokens !! location.y) !! location.x)
 		}
 where		
 	findStart [[(Control (Start dir)):_]:_]

@@ -11,13 +11,22 @@ FRAC_MIN :== -4503599627370496.0
 
 IS_INT real :== toReal (entier real) == real
 
-applyUnaryReal :: (Real -> Real) (Int -> Real) Numeric -> Numeric
-applyUnaryReal op conv (Real val) = (Real (op val))
-applyUnaryReal op conv (Int val) = (Real (op (conv val)))
+//applyUnaryReal :: (Real -> Real) (Int -> Real) Numeric -> Numeric
+//applyUnaryReal op conv (Real val) = (Real (op val))
+//applyUnaryReal op conv (Int val) = (Real (op (conv val)))
+applyUnaryReal op conv val
+	:== case val of
+		(Real val) = (Real (op val))
+		(Int val) = (Real (op (conv val)))
 
-applyUnaryInt :: (Int -> Int) (Real -> Int) Numeric -> Numeric
-applyUnaryInt op conv (Real val) = (Int (op (conv val)))
-applyUnaryInt op conv (Int val) = (Int (op val))
+//applyUnaryInt :: (Int -> Int) (Real -> Int) Numeric -> Numeric
+//applyUnaryInt op conv (Real val) = (Int (op (conv val)))
+//applyUnaryInt op conv (Int val) = (Int (op val))
+applyUnaryInt op conv val
+	:== case val of
+		(Real val) = (Int (op (conv val)))
+		(Int val) = (Int (op val))
+		
 
 applyBinaryReal :: (Real Real -> Real) (Int -> Real) Numeric Numeric -> Numeric
 applyBinaryReal op conv (Real lhs) (Real rhs)
@@ -28,6 +37,9 @@ applyBinaryReal op conv (Int lhs) (Real rhs)
 	= (Real (op (conv lhs) rhs))
 applyBinaryReal op conv (Int lhs) (Int rhs)
 	= (Real (op (conv lhs) (conv rhs)))
+
+//applyBinaryReal op conv lhs rhs
+//	:== (Real (op (case lhs of (Int l) = conv l; (Real l) = l) (case rhs of (Int r) = conv r; (Real r) = r)))
 	
 applyBinaryInt :: (Int Int -> Int) (Real -> Int) Numeric Numeric -> Numeric
 applyBinaryInt op conv (Real lhs) (Real rhs)

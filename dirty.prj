@@ -48,7 +48,7 @@ MainModule
 	Name:	main
 	Dir:	{Project}
 	Compiler
-		NeverMemoryProfile:	True
+		NeverMemoryProfile:	False
 		NeverTimeProfile:	True
 		StrictnessAnalysis:	True
 		ListTypes:	StrictExportTypes

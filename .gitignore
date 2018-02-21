@@ -3,4 +3,5 @@ Clean System Files
 *-sapl
 *-www
 *.exe
+*.hcl
 dirty

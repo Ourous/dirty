@@ -2,27 +2,28 @@ definition module types
 
 :: XYPair
 	= {
-		x :: Int,
-		y :: Int
+		x :: !Int,
+		y :: !Int
 	}
 	
 :: State
 	= {
-		dimension :: XYPair,
-		location :: XYPair,
-		direction :: Direction,
+		dimension :: !XYPair,
+		location :: !XYPair,
+		direction :: !Direction,
 		source :: [[Char]],
 		program :: [[Command]],
-		wrapping :: Bool
+		wrapping :: Bool,
+		history :: Char
 	}
 
-:: Memory
+:: *Memory
 	= {
 		left :: [Number],
 		right :: [Number],
 		main :: [[[Number]]],
-		random :: [Int],
-		history :: [Char]
+		random :: [Int]//,
+		//history :: [Char]
 	}
 	
 :: Flags
@@ -83,7 +84,7 @@ definition module types
 :: LiteralCommand
 	= Pi
 	| Quote
-	| Digit Int
+	| Digit Number
 	| Alphabet LetterCase
 	
 :: VariableCommand

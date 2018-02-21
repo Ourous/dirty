@@ -4,7 +4,7 @@ import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
 	# ([_:args], world)
 		= getCommandLine world
-	//# args = ["-utf8", "--n", "--s", "recursion_test.txt"]
+	//# args = ["-utf8", "--n", "--s", "loop_test.txt"]
 	| isEmpty args
 		= abort usage
 	# (flags, [file:args])
@@ -22,6 +22,7 @@ Start world
 			_ = abort "Cannot open the file specified!"
 	# (memory, world)
 		= evaluate args world
+	//# memory = {memory&main=[[[(Re (Fin (Int (2^19))))]]]}
 	= execute (parser file) memory ((toFlags flags), world)
 	
 toFlags flags
@@ -31,6 +32,6 @@ usage =: foldr ((+++)) ""
 	["Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n"
 	,"\t-utf8: use the UTF-8 parser\n"
 	,"\t--n: numeric output\n"
-	,"\t--s: dump stacks\n"
+	,"\t--s: show the stacks stacks\n"
 	//,"\t--g: take args greedily"
 	]

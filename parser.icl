@@ -27,8 +27,8 @@ parseNative string
 		dimension = dimensions,
 		location = location,
 		direction = direction,
-		source = tokens,
-		program = commands,
+		source = {{#el \\ el <- line} \\ line <- tokens},
+		program = {{el \\ el <- line} \\ line <- commands},
 		wrapping = wrapping
 		}
 where		

@@ -9,8 +9,8 @@ definition module types
 :: Program
 	= {
 		dimension :: XYPair,
-		source :: [[Char]],
-		program :: [[Command]],
+		source :: {{#Char}},
+		program :: {{Command}},
 		wrapping :: Bool,
 		direction :: Direction,
 		location :: XYPair
@@ -25,11 +25,21 @@ definition module types
 
 :: Memory
 	= {
-		left :: ![Number],
-		right :: ![Number],
-		main :: ![[Number]],
+		left :: !MonoStack,
+		right :: !MonoStack,
+		main :: !MultiStack,
 		random :: [Int]
 	}
+	
+:: MonoStack
+	:== [Number]
+	
+:: MultiStack
+	:== [MultiStackElement]
+	
+:: MultiStackElement
+	= El MonoStack
+	| Delimiter
 	
 :: Flags
 	= {

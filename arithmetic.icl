@@ -79,7 +79,6 @@ where
 		| IS_INF val = (Im (Inf (FIN_SIGN val)))
 		= NaN
 		// TODO : find good tests for complex number performance so I can rewrite it properly
-		/*
 	handleCx re im
 		| IS_FIN re
 			| IS_FIN im
@@ -93,18 +92,7 @@ where
 		| IS_INF re
 			| IS_INF im = (Cx (Inf Directed))
 			= (Re (Inf (FIN_SIGN re)))
-		= NaN*/
-	handleCx re im
-		= case (IS_FIN re, IS_ZERO re, IS_INF re, IS_FIN im, IS_ZERO im, IS_INF im) of
-			(False, _, False, _, _, _) = NaN
-			(_, _, _, False, _, False) = NaN
-			(False, _, True, False, _, True) = (Cx (Inf Directed))
-			(_, _, _, False, _, True) = (Im (Inf (FIN_SIGN im)))
-			(False, _, True, _, _, _) = (Re (Inf (FIN_SIGN re)))
-			(True, True, _, True, True, _) = Zero
-			(True, True, _, _, _, _) = (Im (Fin im))
-			(_, _, _, True, True, _) = (Re (Fin re))
-			(True, False, _, True, False, _) = (Cx (Fin {re=re, im=im}))
+		= NaN
 		
 		
 instance + Number where

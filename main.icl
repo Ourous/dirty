@@ -24,7 +24,9 @@ Start world
 	//	= evaluate args world
 	//# memory = {memory&main=[[[(Re (Fin (Int (2^19))))]]]}
 	//= (parser file)
-	= (foldl (+) Zero) (map (\e -> (Re (Fin (Int e))))([1..2^23]++[0,-1.. ~(2^20)]))
+	# re = map (\e -> (Re (Fin (Int e)))) [1..2^24]
+	# im = map (\e -> (Im (Fin (Int e)))) [0,-1.. ~(2^24)]
+	= (foldl (+) Zero) (flatten [[r, i] \\ r <- re& i<- im])
 	//= sum [1..2^30]
 	
 toFlags flags

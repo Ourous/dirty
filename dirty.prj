@@ -19,7 +19,7 @@ Global
 		DisableRTSFlags:	False
 		StandardRuntimeEnv:	True
 		Profile
-			Memory:	False
+			Memory:	True
 			MemoryMinimumHeapSize:	0
 			Time:	False
 			Stack:	False
@@ -72,7 +72,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	atomics
 		Dir:	{Project}
@@ -86,7 +86,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	converter
 		Dir:	{Project}

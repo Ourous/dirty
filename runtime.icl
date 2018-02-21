@@ -13,6 +13,16 @@ newWorld = code inline {
 	fillI 65536 0
 }
 
+SAFE_HEAD list
+	:== case list of
+		[] = []
+		[head:_] = [head]
+
+SAFE_TAIL list
+	:== case list of
+		[] = []
+		[_:tail] = tail
+
 UNCURRY_EXEC (stack, memory, flags) :== execute stack memory flags
 
 STACK_TO_STR stack
@@ -343,3 +353,25 @@ where
 		# [[mid:base]:other] = CHECK_MIDDLE main
 		# memory = {memory&main=[[[op arg:mid]:base]:other]}
 		= curryOper memory fw
+	process (Stack (SwapLeftRight)) fw
+		# memory = {memory&left=right,right=left}
+		= curryOper memory fw
+	process (Stack (MoveTop East)) fw
+		# (lhs, left) = (SAFE_HEAD left, SAFE_TAIL left)
+		# memory = {memory&left=left,right=lhs++right}
+		= curryOper memory fw
+	process (Stack (MoveTop West)) fw
+		# (rhs, right) = (SAFE_HEAD right, SAFE_TAIL right)
+		# memory = {memory&right=right,left=rhs++left}
+		= curryOper memory fw
+	process (Stack (MoveTop NorthEast)) fw
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# (top, mid) = (SAFE_HEAD mid, SAFE_TAIL mid)
+		# memory = {memory&right=top++right,main=[[mid:base]:other]}
+		= curryOper memory fw
+	process (Stack (MoveTop NorthWest)) fw
+		# [[mid:base]:other] = CHECK_MIDDLE main
+		# (top, mid) = (SAFE_HEAD mid, SAFE_TAIL mid)
+		# memory = {memory&left=top++left,main=[[mid:base]:other]}
+		= curryOper memory fw
+			

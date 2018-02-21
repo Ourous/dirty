@@ -8,22 +8,22 @@
 🔔 // bell character
 ⭫ // go to next baseline, if none, create new baseline at the end of <main>
 ⭭ // go to last baseline, if none, go to index 0
+\n // newline
 № // elements in <mid>
-// newline
 ⭮ // rotate counterclockwise
 ⭯ // rotate clockwise
-⮕ // solid right arrow
-⇨ // white right arrow
-⬅ // solid left arrow
-⇦ // white left arrow
-⬆ // solid up arrow
-⇧ // white up arrow
-⬇ // solid down arrow
-⇩ // white down arrow
+⮕ // move right arrow
+⬅ // move left arrow
+⬆ // move up arrow
+⬇ // move down arrow
 ⬌ // horizontal dual arrow
-⬄ // white horizontal arrow
 ⬍ // vertical dual arrow
-⇳ // white vertical arrow
+⏜ // loop left top
+⏝ // loop left bottom
+⎴ // loop middle top
+⎵ // loop middle bottom
+⏞ // loop right top
+⏟ // loop right bottom
 ⋮ // vertical dots
 ⋯ // horizontal dots
 ⋰ // up-right dots

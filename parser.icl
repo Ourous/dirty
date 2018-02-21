@@ -25,8 +25,8 @@ parseNative string
 	# direction = dir
 	= {
 		dimension = dimensions,
-		location = location,
-		direction = direction,
+		startpoint = location,
+		//direction = direction,
 		source = {{#el \\ el <- line} \\ line <- tokens},
 		commands = {{el \\ el <- line} \\ line <- commands},
 		wrapping = wrapping

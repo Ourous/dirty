@@ -1,5 +1,7 @@
 definition module types
 
+from StdMaybe import ::Maybe
+
 :: XYPair
 	= {
 		x :: !Int,
@@ -12,15 +14,14 @@ definition module types
 		source :: !{{#Char}},
 		commands :: !{{Command}},
 		wrapping :: !Bool,
-		direction :: !Direction,
-		location :: !XYPair
+		startpoint :: !XYPair
 	}	
 	
-:: *State
+:: State
 	= {
 		direction :: !Direction,
-		location :: !*XYPair,
-		history :: !*Char
+		location :: !XYPair,
+		history :: !Char
 	}
 
 :: Memory
@@ -91,7 +92,7 @@ definition module types
 	| Either Bool Axes
 	| Mirror Bool Axes
 	| Turn Rotation
-	| Loop StackID3 Direction
+	| Loop StackID3 Direction (Maybe XYPair)
 	| String
 	| NOOP
 	| LINE

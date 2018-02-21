@@ -25,6 +25,9 @@ SAFE_TAIL list
 
 STACK_TO_STR stack
 	:== "["+join","(map toString stack)+"]"
+	
+//MEM_TO_STR memory=:{left, right, main}
+//	:==
 
 evaluate :: ![String] *World -> *(Memory, *World)
 evaluate args world
@@ -43,6 +46,21 @@ where
 	parseReal :: (String -> (Maybe Real))
 	parseReal = 'GenParse'.parseString
 
-//construct :: !Program !Flags -> (!State !Memory *World -> *World)
-//construct program=:{dimension, source, commands, wrapping} flags
-
+construct :: !Program !Flags -> (State Memory *World -> *World)
+construct program=:{dimension, source, commands, wrapping} flags = execute
+where
+	terminate :: !Memory *World -> *World
+	terminate memory=:{left, right, main} world
+		= world // TODO: dump based on flags
+	execute :: !State !Memory *World -> *World
+	execute state=:{location, direction, history} memory world
+		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y
+			| wrapping
+				# location = {x=location.x rem dimension.x, y=location.y rem dimension.y}
+				= execute {state&location=location} memory world
+			= terminate memory world
+		= process commands.[location.y].[location.x]state memory world
+	process :: !Command !State !Memory *World -> *World
+	process (Control (Terminate)) _ memory world
+		= terminate memory world
+	

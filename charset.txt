@@ -24,10 +24,10 @@
 ⎵ // loop middle bottom
 ⏞ // loop right top
 ⏟ // loop right bottom
-⋮ // vertical dots
-⋯ // horizontal dots
-⋰ // up-right dots
-⋱ // up-left dots
+⋮ // vertical conditional mirror
+⋯ // horizontal conditional mirror
+⋰ // identity-line conditional mirror
+⋱ // inverse-line conditional mirror
 ⬄ // start random horizontal
 ⇳ // start random vertical
   // no-op

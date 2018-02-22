@@ -58,7 +58,7 @@ where
 			| otherwise
 				= terminate memory world
 		| otherwise
-			= process commands.[location.y].[location.x]state memory world
+			= process commands.[location.y, location.x]state memory world
 	process :: !Command !State !Memory *World -> *World
 	process (Control (Terminate)) _ memory world
 		= terminate memory world

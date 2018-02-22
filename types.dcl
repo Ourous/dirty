@@ -22,25 +22,19 @@ import StdMaybe
 		direction :: !Direction,
 		location :: !XYPair,
 		history :: !Char,
-		terminated :: !Bool
+		terminate :: !Bool
 	}
 
 :: Memory
 	= {
-		left :: MonoStack,
-		right :: MonoStack,
-		main :: !MultiStack,
+		left :: [Number],
+		right :: [Number],
+		main :: [Element],
 		random :: [Int]
 	}
 	
-:: MonoStack
-	:== [Number]
-	
-:: MultiStack
-	:== [MultiStackElement]
-	
-:: MultiStackElement
-	= El MonoStack
+:: Element
+	= El [Number]
 	| Delimiter
 	
 :: Flags
@@ -90,9 +84,9 @@ import StdMaybe
 	| Start Direction
 	| Start_Horizontal
 	| Start_Vertical
-	| Change Bool Direction 
-	| Bounce Bool Direction
-	| Either Bool Axes
+	| Change Direction 
+	| Bounce Direction
+	| Either Axes
 	| Mirror Bool Axes
 	| Skip Bool
 	| Turn Rotation

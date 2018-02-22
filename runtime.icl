@@ -29,6 +29,13 @@ STACK_TO_STR stack
 //MEM_TO_STR memory=:{left, right, main}
 //	:==
 
+TRAVERSE_SOME dist state=:{location, direction}
+	:== case direction of
+		East = {state&location={location&x=location.x+dist}}
+		West = {state&location={location&x=location.x-dist}}
+		North = {state&location={location&y=location.y-dist}}
+		South = {state&location={location&y=location.y+dist}}
+
 evaluate :: ![String] *World -> *(Memory, *World)
 evaluate args world
 	| isEmpty args
@@ -43,23 +50,22 @@ where
 	parseInt :: (String -> (Maybe Int))
 	parseInt = 'GenParse'.parseString
 
-construct :: !Program !Flags -> (State Memory *World -> *World)
+construct :: !Program !Flags -> (*(State, Memory, *World) -> *World)
 construct program=:{dimension, source, commands, wrapping} flags = execute
 where
 	terminate :: !Memory *World -> *World
 	terminate memory=:{left, right, main} world
 		= world // TODO: dump based on flags
-	execute :: !State !Memory *World -> *World
-	execute state=:{location, direction, history} memory world
+	execute :: !*(!State, !Memory, *World) -> *World
+	execute (state=:{terminated=True}, memory, world)
+		= abort "la la"
+	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y
-			| wrapping
-				# location = {x=location.x rem dimension.x, y=location.y rem dimension.y}
-				= execute {state&location=location} memory world
-			| otherwise
-				= terminate memory world
+			# location = {x=location.x rem dimension.x, y=location.y rem dimension.y}
+			= execute ({state&location=location,terminated=wrapping}, memory, world)
 		| otherwise
-			= process commands.[location.y, location.x]state memory world
-	process :: !Command !State !Memory *World -> *World
-	process (Control (Terminate)) _ memory world
-		= terminate memory world
+			= execute (process commands.[location.y, location.x] smw)
+	process :: !Command -> (*(State, Memory, *World) -> *(State, Memory, *World))
+	process (Control (NOOP)) = id
+	
 	

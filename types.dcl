@@ -21,7 +21,8 @@ import StdMaybe
 	= {
 		direction :: !Direction,
 		location :: !XYPair,
-		history :: !Char
+		history :: !Char,
+		terminated :: !Bool
 	}
 
 :: Memory

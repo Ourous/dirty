@@ -84,20 +84,19 @@ where
 	execute :: !*(!State, !Memory, *World) -> *World
 	execute (state=:{terminate=True}, memory, world)
 		| flags.dump
-			# world = execIO (putStrLn (MEM_TO_STR memory)) world
+			= execIO (putStrLn (MEM_TO_STR memory)) world
+		| otherwise
 			= world
-		= world
 	// TODO: pattern match to handle memory config here
 	//execute (state, memory=:{main=[]}
 	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y
-			# location = {x=location.x rem dimension.x, y=location.y rem dimension.y}
-			= execute ({state&location=location,terminate=wrapping}, memory, world)
+			= let wrappedLocation = {x=location.x rem dimension.x, y=location.y rem dimension.y}
+			in execute ({state&location=wrappedLocation,terminate=wrapping}, memory, world)
 		| otherwise
 			# (state, memory, world) = process commands.[location.y, location.x] smw
-			# state = {state&history=source.[location.y, location.x]}
-			= execute (state, memory, world)
-			
+			= execute ({state&history=source.[location.y, location.x]} , memory, world)
+
 	process :: !Command -> (*(State, Memory, *World) -> *(State, Memory, *World))
 	
 	process (Control (Terminate)) = app3 (\state -> {state&terminate=True}, id, id)
@@ -119,12 +118,12 @@ where
 	process (Literal (Digit val)) = MOVE_TO_NEXT o literal
 	where
 		literal (state=:{history}, memory=:{main}, world)
-			| isDigit history
-				= (state, {memory&main=[El [res:mid]:base]}, world)
-			with
+			| isDigit history = let
 				[El [top:mid]:base] = main
 				res = top * (Re (Fin (Int 10))) + val
-			| otherwise
-				# [El mid:base] = main
-				= (state, {memory&main=[El [val:mid]:base]}, world)
+			in (state, {memory&main=[El [res:mid]:base]}, world)
+			| otherwise = let
+				[El mid:base] = main
+			in (state, {memory&main=[El [val:mid]:base]}, world)
+				
 			

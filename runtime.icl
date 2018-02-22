@@ -97,30 +97,34 @@ where
 			# (state, memory, world) = process commands.[location.y, location.x] smw
 			# state = {state&history=source.[location.y, location.x]}
 			= execute (state, memory, world)
+			
 	process :: !Command -> (*(State, Memory, *World) -> *(State, Memory, *World))
-	process (Control (Terminate))
-		= app3 (\state -> {state&terminate=True}, id, id)
-	process (Control (NOOP))
-		= MOVE_TO_NEXT
-	process (Control (Start _))
-		= MOVE_TO_NEXT
-	process (Control (Change dir))
-		= app3(TRAVERSE_ONE o \state -> {state&direction=dir}, id, id)
-	process (Control (Goto dir (Just loc))) = let
+	
+	process (Control (Terminate)) = app3 (\state -> {state&terminate=True}, id, id)
+		
+	process (Control (NOOP)) = MOVE_TO_NEXT
+		
+	process (Control (Start _)) = MOVE_TO_NEXT
+		
+	process (Control (Change dir)) = app3(TRAVERSE_ONE o \state -> {state&direction=dir}, id, id)
+		
+	process (Control (Goto dir (Just loc))) = MOVE_TO_NEXT o goto
+	where
 		goto (state=:{direction}, memory=:{main}, world)
 			| direction == dir && IS_TRUTHY (GET_MIDDLE main)
 				= ({state&location=loc}, memory, world)
 			| otherwise
 				= (state, memory, world)
-	in MOVE_TO_NEXT o goto
-	process (Literal (Digit val)) = let
+				
+	process (Literal (Digit val)) = MOVE_TO_NEXT o literal
+	where
 		literal (state=:{history}, memory=:{main}, world)
 			| isDigit history
-				# [El [top:mid]:base] = main
-				# top = top * (Re (Fin (Int 10))) + val
-				= (state, {memory&main=[El [top:mid]:base]}, world)
+				= (state, {memory&main=[El [res:mid]:base]}, world)
+			with
+				[El [top:mid]:base] = main
+				res = top * (Re (Fin (Int 10))) + val
 			| otherwise
 				# [El mid:base] = main
 				= (state, {memory&main=[El [val:mid]:base]}, world)
-	in MOVE_TO_NEXT o literal
 			

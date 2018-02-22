@@ -1,7 +1,7 @@
 definition module arithmetic
 
 import types
-from StdOverloaded import class +, class -, class *, class /, class ^, class ~, class ==, class <, class zero, class one, class abs, class mod, class gcd, class lcm, class toInt, class toReal, class toString, class fromInt, class fromReal, class ln, class log10, class exp, class sqrt, class sin, class cos, class tan, class asin, class acos, class atan
+from StdOverloaded import class +, class -, class *, class /, class ^, class ~, class ==, class <, class zero, class one, class abs, class mod, class gcd, class lcm, class toInt, class toReal, class toBool, class toString, class fromInt, class fromReal, class fromBool, class ln, class log10, class exp, class sqrt, class sin, class cos, class tan, class asin, class acos, class atan
 
 
 instance + Number
@@ -21,9 +21,12 @@ instance == Number
 
 instance toInt Number
 instance toReal Number
+instance toBool Number
 instance toString Number
+
 instance fromInt Number
 instance fromReal Number
+instance fromBool Number
 
 instance ln Number
 instance log10 Number

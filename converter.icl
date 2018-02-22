@@ -515,7 +515,7 @@ unicodeCharset =:
 	,8719
 	,8721
 	,8707
-	,8708
+	,8704
 	,119979
 	,119982
 	,11016
@@ -779,7 +779,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Math_Product))
 	,(Operator (Math_Sum))
 	,(Operator (Logic_Any))
-	,(Operator (Logic_None))
+	,(Operator (Logic_All))
 	,(Operator (Set_PowerSet))
 	,(Operator (Set_Subsets))
 	,(Control (Bounce NorthEast))

@@ -232,7 +232,7 @@ z // conjugate
 ∏ // product
 ∑ // sum
 ∃ // any
-∄ // none
+∀ // all
 𝒫 // power set
 𝒮 // ordered subsets
 ⬈ // bounce NE

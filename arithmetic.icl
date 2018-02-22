@@ -397,6 +397,11 @@ instance toReal Number where
 	toReal (Cx (Fin {re, im})) = toReal (sqrt (re*re + im*im)) * (toReal (sign re * sign im))
 	toReal _ = 0.0/0.0
 	
+instance toBool Number where
+	toBool Zero = False
+	toBool NaN = False
+	toBool _ = True
+	
 instance toString Number where
 	toString Zero = "0"
 	toString NaN = "NaN"
@@ -411,6 +416,9 @@ instance fromInt Number where fromInt val = (Re (Fin (Int val)))
 
 instance fromReal Number where fromReal val = (Re (Fin (Real val)))
 
+instance fromBool Number where
+	fromBool True = (Re (Fin (Int -1)))
+	fromBool False = Zero
 
 instance ln Number where
 	ln NaN = NaN

@@ -195,7 +195,7 @@ import StdMaybe
 	| Logic_SupersetNotEqual
 	| Logic_NotSupersetNorEqual
 	| Logic_Any
-	| Logic_None
+	| Logic_All
 	| Logic_IsOrdered
 	| Logic_IsLowercase
 	| Logic_IsUppercase

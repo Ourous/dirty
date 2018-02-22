@@ -20,7 +20,7 @@ where
 	conv = fromString
 
 nativeCharset :: [Int]
-nativeCharset =
+nativeCharset =:
 	[0
 	,1
 	,2
@@ -280,7 +280,7 @@ nativeCharset =
 	]
 
 unicodeCharset :: [Int]
-unicodeCharset =
+unicodeCharset =:
 		[9211
 	,8680
 	,8678
@@ -544,7 +544,7 @@ toCommand char
 	= commandMapping !! (toInt char)
 
 commandMapping :: [Command]
-commandMapping = // TODO: make this a function on the above ^
+commandMapping =: // TODO: make this a function on the above ^
 	[(Control (Terminate))
 	,(Control (Start East))
 	,(Control (Start West))

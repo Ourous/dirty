@@ -16,6 +16,10 @@ instance == Direction where
 	(==) SouthEast SouthEast = True
 	(==) _ _ = False
 
+instance toString Element where
+	toString (El val) = STACK_TO_STR val
+	toString Delimiter = "|"
+
 unsafe :: !(*World -> *(.a, !*World)) -> .a
 unsafe fn = fst (fn newWorld)
 
@@ -35,10 +39,10 @@ SAFE_TAIL list
 		[_:tail] = tail
 
 STACK_TO_STR stack
-	:== "["+join","(map toString stack)+"]"
+	:== "["+(join","(map toString stack))+"]"
 	
-//MEM_TO_STR memory=:{left, right, main}
-//	:==
+MEM_TO_STR memory=:{left, right, main}
+	:== "{left="+STACK_TO_STR left+",right="+STACK_TO_STR right+",main="+STACK_TO_STR main+"}"
 
 TRAVERSE_SOME dist state=:{location, direction}
 	:== case direction of
@@ -79,7 +83,10 @@ construct program=:{dimension, source, commands, wrapping} flags = execute
 where
 	execute :: !*(!State, !Memory, *World) -> *World
 	execute (state=:{terminate=True}, memory, world)
-		= abort "la la"
+		| flags.dump
+			# world = execIO (putStrLn (MEM_TO_STR memory)) world
+			= world
+		= world
 	// TODO: pattern match to handle memory config here
 	//execute (state, memory=:{main=[]}
 	execute smw=:(state=:{location, direction, history}, memory, world)
@@ -106,4 +113,14 @@ where
 			| otherwise
 				= (state, memory, world)
 	in MOVE_TO_NEXT o goto
-		
+	process (Literal (Digit val)) = let
+		literal (state=:{history}, memory=:{main}, world)
+			| isDigit history
+				# [El [top:mid]:base] = main
+				# top = top * (Re (Fin (Int 10))) + val
+				= (state, {memory&main=[El [top:mid]:base]}, world)
+			| otherwise
+				# [El mid:base] = main
+				= (state, {memory&main=[El [val:mid]:base]}, world)
+	in MOVE_TO_NEXT o literal
+			

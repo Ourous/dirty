@@ -95,7 +95,9 @@ import StdMaybe
 	| Mirror Bool Axes
 	| Skip Bool
 	| Turn Rotation
-	| Loop StackID3 Direction (Maybe XYPair)
+	| Loop_Left Direction (Maybe XYPair)
+	| Loop_Right Direction (Maybe XYPair)
+	| Goto Direction (Maybe XYPair)
 	| String
 	| NOOP
 	| LINE

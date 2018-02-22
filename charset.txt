@@ -20,8 +20,8 @@
 ⬍ // vertical dual arrow
 ⏜ // loop left top
 ⏝ // loop left bottom
-⎴ // loop middle top
-⎵ // loop middle bottom
+⎴ // goto middle top
+⎵ // goto middle bottom
 ⏞ // loop right top
 ⏟ // loop right bottom
 ⋮ // vertical conditional mirror
@@ -89,9 +89,9 @@ W // wipe the mid stack
 X // to uppercase
 Y // is uppercase
 Z // is a finite number
-[ // loop if <mid> is true
+[ // goto if <mid> is true
 \ // reflection around NW->SE
-] // loop if <mid> is true
+] // goto if <mid> is true
 ^ // exponentiate
 _ // floor
 ` // coefficients of the differential of a polynomial with coefficients of <mid>

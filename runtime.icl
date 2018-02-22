@@ -106,8 +106,8 @@ where
 	process (Control (Start _)) = MOVE_TO_NEXT
 		
 	process (Control (Change dir)) = app3(TRAVERSE_ONE o \state -> {state&direction=dir}, id, id)
-		
-	process (Control (Loop stack dir (Just loc))) = MOVE_TO_NEXT o goto
+	
+	process (Control (Loop Middle dir (Just loc))) = MOVE_TO_NEXT o goto // TODO: change to handle all loops
 	where
 		goto (state=:{direction}, memory=:{main}, world)
 			| direction == dir && IS_TRUTHY (GET_MIDDLE main)
@@ -120,7 +120,7 @@ where
 		literal (state=:{history}, memory=:{main}, world)
 			| isDigit history = let
 				[El [top:mid]:base] = main
-				res = top * (Re (Fin (Int 10))) + val
+				res = top * (fromInt 10) + val
 				in (state, {memory&main=[El [res:mid]:base]}, world)
 			| otherwise = let
 				[El mid:base] = main

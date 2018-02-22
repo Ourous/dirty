@@ -4,29 +4,20 @@ import types, converter, StdEnv, Text
 
 parseUTF8 :: !String -> Program
 parseUTF8 string 
-	# string
-		= {#i \\ c <- utf8ToUnicode string, i <- ['\0'..] & u <- unicodeCharset | c == u}
-	= parseNative string
+	= parseNative {#i \\ c <- utf8ToUnicode string, i <- ['\0'..] & u <- unicodeCharset | c == u}
 		
 parseNative :: !String -> Program
-parseNative string
-	# tokens
-		= map fromString (split "\n" string)
-	# commands
-		= map (map toCommand) tokens
-	# dimensions
-		= {x=last(sort(map length tokens)), y=length tokens}
-	# (dir, x, y)
-		= findStart commands
-	# location
-		= if((x, y) == (-1, -1)) {x=0, y=0} {x=x, y=y}
-	# wrapping
-		= isWrapping commands
-	# direction = dir
-	= {
+parseNative string = let
+	tokens = map fromString (split "\n" string)
+	commands = map (map toCommand) tokens
+	dimensions = {x=last(sort(map length tokens)), y=length tokens}
+	(dir, x, y) = findStart commands
+	location = if((x, y) == (-1, -1)) {x=0, y=0} {x=x, y=y}
+	wrapping = isWrapping commands
+	in {
 		dimension = dimensions,
 		startpoint = location,
-		//direction = direction,
+		startdir = dir,
 		source = {{#el \\ el <- line} \\ line <- tokens},
 		commands = {{el \\ el <- line} \\ line <- commands},
 		wrapping = wrapping

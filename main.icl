@@ -32,7 +32,7 @@ Start world
 toFlags flags
 	= {debug = False, dump = isMember "--s" flags, nums = isMember "--n" flags}
 	
-usage =: foldr ((+++)) ""
+usage :== foldr ((+++)) ""
 	["Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n"
 	,"\t-utf8: use the UTF-8 parser\n"
 	,"\t--n: numeric output\n"

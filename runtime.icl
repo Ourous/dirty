@@ -90,8 +90,8 @@ where
 	// TODO: pattern match to handle memory config here
 	//execute (state, memory=:{main=[]}
 	execute smw=:(state=:{location, direction, history}, memory, world)
-		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y
-			= let wrappedLocation = {x=location.x rem dimension.x, y=location.y rem dimension.y}
+		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y = let
+			wrappedLocation = {x=location.x rem dimension.x, y=location.y rem dimension.y}
 			in execute ({state&location=wrappedLocation,terminate=wrapping}, memory, world)
 		| otherwise
 			# (state, memory, world) = process commands.[location.y, location.x] smw
@@ -121,9 +121,9 @@ where
 			| isDigit history = let
 				[El [top:mid]:base] = main
 				res = top * (Re (Fin (Int 10))) + val
-			in (state, {memory&main=[El [res:mid]:base]}, world)
+				in (state, {memory&main=[El [res:mid]:base]}, world)
 			| otherwise = let
 				[El mid:base] = main
-			in (state, {memory&main=[El [val:mid]:base]}, world)
+				in (state, {memory&main=[El [val:mid]:base]}, world)
 				
 			

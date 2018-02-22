@@ -14,7 +14,8 @@ import StdMaybe
 		source :: !{{#Char}},
 		commands :: !{{Command}},
 		wrapping :: !Bool,
-		startpoint :: !XYPair
+		startpoint :: !XYPair,
+		startdir :: !Direction
 	}	
 	
 :: State

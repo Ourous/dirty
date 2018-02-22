@@ -5,8 +5,8 @@ Start world
 	# ([_:args], world)
 		= getCommandLine world
 	//# args = ["-utf8", "--n", "--s", "cat_test.txt"]
-	//| isEmpty args
-	//	= abort usage
+	| isEmpty args
+		= abort usage
 	# (flags, [file:args])
 		= span (\e -> e%(0,0) == "-") args
 	# (flags, format)
@@ -20,13 +20,13 @@ Start world
 		= case (readFile file world) of
 			(Ok file, world) = (file, world)
 			_ = abort "Cannot open the file specified!"
-	//# (memory, world)
-	//	= evaluate args world
+	# (memory, world)
+		= evaluate args world
 	//# memory = {memory&main=[[[(Re (Fin (Int (2^19))))]]]}
-	//= (parser file)
-	# re = map (\e -> (Re (Fin (Int e)))) [1..2^24]
-	# im = map (\e -> (Im (Fin (Int e)))) [0,-1.. ~(2^24)]
-	= (foldl (+) Zero) (flatten [[r, i] \\ r <- re& i<- im])
+	= (construct (parser file) (toFlags flags))
+	//# re = map (\e -> (Re (Fin (Int e)))) [1..2^24]
+	//# im = map (\e -> (Im (Fin (Int e)))) [0,-1.. ~(2^24)]
+	//= (foldl (+) Zero) (flatten [[r, i] \\ r <- re& i<- im])
 	//= sum [1..2^30]
 	
 toFlags flags

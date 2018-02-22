@@ -32,19 +32,16 @@ STACK_TO_STR stack
 evaluate :: ![String] *World -> *(Memory, *World)
 evaluate args world
 	| isEmpty args
-		# (Timestamp seed, world)
-			= time world
+		# (Timestamp seed, world) = time world
 		= ({left=[],right=[],main=[],random=genRandInt seed}, world)
-	# ((seed, world), args)
-		= case (parseInt (hd args), world) of
+	| otherwise
+		# ((seed, world), args) = case (parseInt (hd args), world) of
 			(Just seed, world) = ((seed, world), tl args)
 			(Nothing, world) = ((\(Timestamp seed, world) -> (seed, world))(time world), args)
-	= ({left=[],right=[],main=[],random=genRandInt seed}, world)
+		= ({left=[],right=[],main=[],random=genRandInt seed}, world)
 where
 	parseInt :: (String -> (Maybe Int))
 	parseInt = 'GenParse'.parseString
-	parseReal :: (String -> (Maybe Real))
-	parseReal = 'GenParse'.parseString
 
 construct :: !Program !Flags -> (State Memory *World -> *World)
 construct program=:{dimension, source, commands, wrapping} flags = execute
@@ -58,8 +55,10 @@ where
 			| wrapping
 				# location = {x=location.x rem dimension.x, y=location.y rem dimension.y}
 				= execute {state&location=location} memory world
-			= terminate memory world
-		= process commands.[location.y].[location.x]state memory world
+			| otherwise
+				= terminate memory world
+		| otherwise
+			= process commands.[location.y].[location.x]state memory world
 	process :: !Command !State !Memory *World -> *World
 	process (Control (Terminate)) _ memory world
 		= terminate memory world

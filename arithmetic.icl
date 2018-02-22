@@ -69,30 +69,30 @@ where
 	handleRe val
 		| IS_FIN val
 			| IS_ZERO val = Zero
-			= (Re (Fin val))
+			| otherwise = (Re (Fin val))
 		| IS_INF val = (Re (Inf (FIN_SIGN val)))
-		= NaN
+		| otherwise = NaN
 	handleIm val
 		| IS_FIN val
 			| IS_ZERO val = Zero
-			= (Im (Fin val))
+			| otherwise = (Im (Fin val))
 		| IS_INF val = (Im (Inf (FIN_SIGN val)))
-		= NaN
+		| otherwise = NaN
 		// TODO : find good tests for complex number performance so I can rewrite it properly
 	handleCx re im
 		| IS_FIN re
 			| IS_FIN im
 				| IS_ZERO re
 					| IS_ZERO im = Zero
-					= (Im (Fin im))
+					| otherwise = (Im (Fin im))
 				| IS_ZERO im = (Re (Fin re))
-				= (Cx (Fin {re=re, im=im}))
+				| otherwise = (Cx (Fin {re=re, im=im}))
 			| IS_INF im = (Im (Inf (FIN_SIGN im)))
-			= NaN
+			| otherwise = NaN
 		| IS_INF re
 			| IS_INF im = (Cx (Inf Directed))
-			= (Re (Inf (FIN_SIGN re)))
-		= NaN
+			| otherwise = (Re (Inf (FIN_SIGN re)))
+		| otherwise = NaN
 		
 		
 instance + Number where
@@ -102,10 +102,10 @@ instance + Number where
 	(+) val Zero = val
 	(+) (Re (Inf lhs)) (Re (Inf rhs))
 		| lhs == rhs = (Re (Inf lhs))
-		= NaN
+		| otherwise = NaN
 	(+) (Im (Inf lhs)) (Im (Inf rhs))
 		| lhs == rhs = (Im (Inf lhs))
-		= NaN
+		| otherwise = NaN
 	(+) (Cx (Inf _)) _ = (Cx (Inf Directed))
 	(+) _ (Cx (Inf _)) = (Cx (Inf Directed))
 	(+) (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
@@ -139,10 +139,10 @@ instance - Number where
 	(-) lhs Zero = lhs
 	(-) (Re (Inf lhs)) (Re (Inf rhs))
 		| lhs <> rhs = (Re (Inf lhs))
-		= NaN
+		| otherwise = NaN
 	(-) (Im (Inf lhs)) (Im (Inf rhs))
 		| lhs <> rhs = (Im (Inf lhs))
-		= NaN
+		| otherwise = NaN
 	(-) (Re (Inf _)) (Im (Inf _)) = (Cx (Inf Directed))
 	(-) (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
 	(-) (Cx (Inf _)) _ = (Cx (Inf Directed))

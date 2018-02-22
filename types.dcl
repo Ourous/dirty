@@ -1,6 +1,6 @@
 definition module types
 
-from StdMaybe import ::Maybe
+import StdMaybe
 
 :: XYPair
 	= {
@@ -87,10 +87,13 @@ from StdMaybe import ::Maybe
 :: ControlCommand
 	= Terminate
 	| Start Direction
+	| Start_Horizontal
+	| Start_Vertical
 	| Change Bool Direction 
 	| Bounce Bool Direction
 	| Either Bool Axes
 	| Mirror Bool Axes
+	| Skip Bool
 	| Turn Rotation
 	| Loop StackID3 Direction (Maybe XYPair)
 	| String

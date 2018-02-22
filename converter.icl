@@ -281,11 +281,11 @@ nativeCharset =:
 
 unicodeCharset :: [Int]
 unicodeCharset =:
-	[9211
-	,9205
-	,9204
-	,9206
-	,9207
+		[9211
+	,8680
+	,8678
+	,8679
+	,8681
 	,11116
 	,11114
 	,128276
@@ -296,23 +296,23 @@ unicodeCharset =:
 	,11118
 	,11119
 	,11157
-	,8680
 	,11013
-	,8678
 	,11014
-	,8679
 	,11015
-	,8681
 	,11020
-	,11012
 	,11021
-	,8691
+	,9180
+	,9181
+	,9140
+	,9141
+	,9182
+	,9183
 	,8942
 	,8943
 	,8944
 	,8945
-	,8252
-	,8263
+	,11012
+	,8691
 	,32
 	,33
 	,34
@@ -408,6 +408,8 @@ unicodeCharset =:
 	,124
 	,125
 	,126
+	,8252
+	,8263
 	,8264
 	,8265
 	,8253
@@ -434,9 +436,9 @@ unicodeCharset =:
 	,8918
 	,8919
 	,8784
-	,8804
+	,10877
 	,10879
-	,8805
+	,10878
 	,10880
 	,8800
 	,8801
@@ -517,15 +519,13 @@ unicodeCharset =:
 	,119979
 	,119982
 	,11016
-	,11008
 	,11017
-	,11009
 	,11018
-	,11010
 	,11019
-	,11011
 	,11036
 	,11034
+	,9675
+	,9676
 	,7690
 	,7692
 	,7691
@@ -575,8 +575,8 @@ commandMapping =:
 	,(Control (Mirror False Horizontal))
 	,(Control (Mirror False Identity))
 	,(Control (Mirror False Inverse))
-	,(Operator (IO_WriteAll))
-	,(Operator (IO_ReadAll))
+	,(Control (Start_Horizontal))
+	,(Control (Start_Vertical))
 	,(Control (NOOP))
 	,(Operator (IO_WriteOnce))
 	,(Literal (Quote))
@@ -672,6 +672,8 @@ commandMapping =:
 	,(Control (Mirror True Vertical))
 	,(Control (Loop Right East Nothing))
 	,(Operator (Unary (~)))//(Operator (Math_Negation))
+	,(Operator (IO_WriteAll))
+	,(Operator (IO_ReadAll))
 	,(Operator (IO_ReadWrite))
 	,(Operator (IO_WriteRead))
 	,(Operator (IO_Interrobang))
@@ -781,15 +783,13 @@ commandMapping =:
 	,(Operator (Set_PowerSet))
 	,(Operator (Set_Subsets))
 	,(Control (Bounce True NorthEast))
-	,(Control (Bounce False NorthEast))
 	,(Control (Bounce True NorthWest))
-	,(Control (Bounce False NorthWest))
 	,(Control (Bounce True SouthEast))
-	,(Control (Bounce False SouthEast))
 	,(Control (Bounce True SouthWest))
-	,(Control (Bounce False SouthWest))
 	,(Control (Mirror True Reflection))
 	,(Control (Mirror False Reflection))
+	,(Control (Skip True))
+	,(Control (Skip False))
 	,(Stack (Uniques_Main))
 	,(Stack (Uniques_Base))
 	,(Stack (Duplicates_Main))

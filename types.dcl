@@ -13,9 +13,7 @@ import StdMaybe
 		dimension :: !XYPair,
 		source :: !{{#Char}},
 		commands :: !{{Command}},
-		wrapping :: !Bool,
-		startpoint :: !XYPair,
-		startdir :: !Direction
+		wrapping :: !Bool
 	}	
 	
 :: State
@@ -82,9 +80,7 @@ import StdMaybe
 	
 :: ControlCommand
 	= Terminate
-	| Start Direction
-	| Start_Horizontal
-	| Start_Vertical
+	| Start Orientation
 	| Change Direction 
 	| Bounce Direction
 	| Either Axes
@@ -97,6 +93,10 @@ import StdMaybe
 	| String
 	| NOOP
 	| LINE
+	
+:: Orientation
+	= Dir Direction
+	| Axis Axes
 	
 :: LiteralCommand
 	= Pi

@@ -9,10 +9,14 @@ parseUTF8 string
 parseNative :: !String -> Program
 parseNative string = let
 	tokens = map fromString (split "\n" string)
-	commands = map (map toCommand) tokens
+	commands = linkLoops (map (map toCommand) tokens)
 	in {
 		dimension = {x=last(sort(map length tokens)), y=length tokens},
 		source = {{#el \\ el <- line} \\ line <- tokens},
 		commands = {{el \\ el <- line} \\ line <- commands},
 		wrapping = 0 < sum[1 \\ (Control Terminate) <- flatten commands]
 		}
+		
+linkLoops :: ![[Command]] -> [[Command]]
+linkLoops commands
+ = abort "todo"

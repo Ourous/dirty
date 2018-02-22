@@ -107,7 +107,7 @@ where
 		
 	process (Control (Change dir)) = app3(TRAVERSE_ONE o \state -> {state&direction=dir}, id, id)
 		
-	process (Control (Goto dir (Just loc))) = MOVE_TO_NEXT o goto
+	process (Control (Loop stack dir (Just loc))) = MOVE_TO_NEXT o goto
 	where
 		goto (state=:{direction}, memory=:{main}, world)
 			| direction == dir && IS_TRUTHY (GET_MIDDLE main)

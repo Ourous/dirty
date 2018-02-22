@@ -87,9 +87,7 @@ import StdMaybe
 	| Mirror Bool Axes
 	| Skip Bool
 	| Turn Rotation
-	| Loop_Left Direction (Maybe XYPair)
-	| Loop_Right Direction (Maybe XYPair)
-	| Goto Direction (Maybe XYPair)
+	| Loop StackID Direction (Maybe XYPair)
 	| String
 	| NOOP
 	| LINE
@@ -281,8 +279,8 @@ import StdMaybe
 	| Uniques_Middle
 	| Uniques_Main
 	| Uniques_Base
-	| Duplicates_Middle
 	| Duplicates_Main
+	| Duplicates_Middle
 	| Duplicates_Base
 	| ShiftBase Direction
 	| JoinFromBase
@@ -292,10 +290,15 @@ import StdMaybe
 	= Clockwise
 	| Anticlockwise
 	
-:: StackID3
+:: StackID
 	= Middle
 	| Left
 	| Right
+	| Both
+	| Primary
+	| Base
+	| Main
+	| All
 	
 :: Axes
 	= Reflection

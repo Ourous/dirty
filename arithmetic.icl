@@ -583,25 +583,36 @@ bitNOT (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int(bitnot(ENTIER re))), im=(I
 bitNOT _ = NaN
 
 
-numFLOOR :: !Number -> Number
-numFLOOR (Re (Fin val)) = handle (Re (Fin (Int (ENTIER val))))
-numFLOOR (Im (Fin val)) = handle (Im (Fin (Int (ENTIER val))))
-numFLOOR (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int (ENTIER re)), im=(Int (ENTIER im))}))
-numFLOOR val = val
+numFloor :: !Number -> Number
+numFloor (Re (Fin val)) = handle (Re (Fin (Int (ENTIER val))))
+numFloor (Im (Fin val)) = handle (Im (Fin (Int (ENTIER val))))
+numFloor (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int (ENTIER re)), im=(Int (ENTIER im))}))
+numFloor val = val
 
-numCEILING :: !Number -> Number
-numCEILING (Re (Fin val)) = handle (Re (Fin (Int (~(ENTIER (~val))))))
-numCEILING (Im (Fin val)) = handle (Im (Fin (Int (~(ENTIER (~val))))))
-numCEILING (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int(~(ENTIER(~re)))), im=(Int(~(ENTIER(~im))))}))
-numCEILING val = val
+numCeiling :: !Number -> Number
+numCeiling (Re (Fin val)) = handle (Re (Fin (Int (~(ENTIER (~val))))))
+numCeiling (Im (Fin val)) = handle (Im (Fin (Int (~(ENTIER (~val))))))
+numCeiling (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int(~(ENTIER(~re)))), im=(Int(~(ENTIER(~im))))}))
+numCeiling val = val
 
-numROUND :: !Number -> Number
-numROUND (Re (Fin val)) = handle (Re (Fin (Int (toInt val))))
-numROUND (Im (Fin val)) = handle (Im (Fin (Int (toInt val))))
-numROUND (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int (toInt re)), im=(Int (toInt im))}))
-numROUND val = val
-/*
-toRadians :: Number -> Number
-toRadians _ = abort "Unimplemented Operation: toRadians"
-toDegrees :: Number -> Number
-toDegrees _ = abort "Unimplemented Operation: toDegrees"*/
+numRound :: !Number -> Number
+numRound (Re (Fin val)) = handle (Re (Fin (Int (toInt val))))
+numRound (Im (Fin val)) = handle (Im (Fin (Int (toInt val))))
+numRound (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int (toInt re)), im=(Int (toInt im))}))
+numRound val = val
+
+DEG_TO_RAD val :== (Real (toRad (deg (toReal val))))
+
+toRadians :: !Number -> Number
+toRadians (Re (Fin val)) = handle (Re (Fin (DEG_TO_RAD val)))
+toRadians (Im (Fin val)) = handle (Im (Fin (DEG_TO_RAD val)))
+toRadians (Cx (Fin {re, im})) = handle (Cx (Fin {re=DEG_TO_RAD re, im=DEG_TO_RAD im}))
+toRadians val = val
+
+RAD_TO_DEG val :== (Real (toDeg (rad (toReal val))))
+
+toDegrees :: !Number -> Number
+toDegrees (Re (Fin val)) = handle (Re (Fin (RAD_TO_DEG val)))
+toDegrees (Im (Fin val)) = handle (Im (Fin (RAD_TO_DEG val)))
+toDegrees (Cx (Fin {re, im})) = handle (Cx (Fin {re=RAD_TO_DEG re, im=RAD_TO_DEG im}))
+toDegrees val = val

@@ -281,7 +281,7 @@ nativeCharset =:
 
 unicodeCharset :: [Int]
 unicodeCharset =:
-		[9211
+	[9211
 	,8680
 	,8678
 	,8679
@@ -289,10 +289,10 @@ unicodeCharset =:
 	,11116
 	,11114
 	,128276
+	,9224
 	,11115
-	,11117
 	,10
-	,8470
+	,11117
 	,11118
 	,11119
 	,11157
@@ -408,6 +408,7 @@ unicodeCharset =:
 	,124
 	,125
 	,126
+	,9249
 	,8252
 	,8263
 	,8264
@@ -418,6 +419,7 @@ unicodeCharset =:
 	,247
 	,8724
 	,8760
+	,11806
 	,8730
 	,8543
 	,8734
@@ -427,13 +429,13 @@ unicodeCharset =:
 	,10833
 	,8891
 	,172
-	,8893
-	,8892
-	,8741
+	,8872
+	,8877
 	,8745
 	,8746
+	,8705
 	,8712
-	,8715
+	,8949
 	,8918
 	,8919
 	,8784
@@ -444,11 +446,8 @@ unicodeCharset =:
 	,8800
 	,8801
 	,8842
-	,8843
 	,8838
-	,8839
 	,8840
-	,8841
 	,229
 	,197
 	,175
@@ -512,6 +511,7 @@ unicodeCharset =:
 	,11153
 	,11154
 	,11155
+	,8470
 	,8719
 	,8721
 	,8707
@@ -536,8 +536,7 @@ unicodeCharset =:
 	,10501
 	,10518
 	,7718
-	,7719
-	]
+	,7719]
 	
 toCommand :: Char -> Command
 toCommand char
@@ -553,10 +552,10 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Stack (ShiftBase East))
 	,(Stack (ShiftBase West))
 	,(Operator (IO_Bell))
+	,(Operator (IO_Backspace))
 	,(Stack (ShiftBase North))
-	,(Stack (ShiftBase South))
 	,(Control (LINE))
-	,(Operator (Set_Length))
+	,(Stack (ShiftBase South))
 	,(Control (Turn Anticlockwise))
 	,(Control (Turn Clockwise))
 	,(Control (Change East))
@@ -672,6 +671,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Control (Mirror True Vertical))
 	,(Control (Loop Right East Nothing))
 	,(Operator (Unary (~)))//(Operator (Math_Negation))
+	,(Operator (IO_ClearConsole))
 	,(Operator (IO_WriteAll))
 	,(Operator (IO_ReadAll))
 	,(Operator (IO_ReadWrite))
@@ -682,6 +682,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Binary (/)))//(Operator (Math_Division))
 	,(Operator (Vector_Addition))
 	,(Operator (Vector_Subtraction))
+	,(Operator (Vector_Negation))
 	,(Operator (Unary (sqrt)))//(Operator (Math_SquareRoot))
 	,(Operator (Math_Reciprocal))
 	,(Operator (Logic_IsInfinite))
@@ -691,11 +692,9 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Vector_And))
 	,(Operator (Bitwise_Xor))
 	,(Operator (Bitwise_Not))
-	,(Operator (Bitwise_Nor))
-	,(Operator (Bitwise_Nand))
-	,(Operator (Bitwise_Xnor))
 	,(Operator (Set_Intersection))
 	,(Operator (Set_Union))
+	,(Operator (Set_Exclusion))
 	,(Operator (Logic_ElementOf))
 	,(Operator (Logic_Contains))
 	,(Operator (Vector_LessThan))
@@ -708,11 +707,8 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Logic_Inequality))
 	,(Operator (Logic_SetEquality))
 	,(Operator (Logic_SubsetNotEqual))
-	,(Operator (Logic_SupersetNotEqual))
 	,(Operator (Logic_SubsetOrEqual))
-	,(Operator (Logic_SupersetOrEqual))
 	,(Operator (Logic_NotSubsetNorEqual))
-	,(Operator (Logic_NotSupersetNorEqual))
 	,(Operator (Math_RadiansToDegrees))
 	,(Operator (Math_DegreesToRadians))
 	,(Operator (Math_Ceiling))
@@ -776,6 +772,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Stack (CycleFull Anticlockwise))
 	,(Stack (CycleTops Clockwise))
 	,(Stack (CycleTops Anticlockwise))
+	,(Operator (Set_Length))
 	,(Operator (Math_Product))
 	,(Operator (Math_Sum))
 	,(Operator (Logic_Any))

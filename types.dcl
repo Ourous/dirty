@@ -122,6 +122,8 @@ import StdMaybe
 	| IO_Bell
 	| IO_Timestamp
 	| IO_Sleep
+	| IO_ClearConsole
+	| IO_Backspace
 	| Binary (Number Number -> Number)
 	| Unary (Number -> Number)
 	| Math_Modulus
@@ -212,6 +214,7 @@ import StdMaybe
 	| Vector_GreaterThan
 	| Vector_LessOrEqual
 	| Vector_GreaterOrEqual
+	| Vector_Negation
 	| Range_FromLeftStepRight
 	| Range_FromMiddleToZero
 	| Range_FromMiddleAvoidZero
@@ -228,6 +231,7 @@ import StdMaybe
 	| Set_Union
 	| Set_Minimum
 	| Set_Maximum
+	| Set_Exclusion
 	| Chars_ToLowercase
 	| Chars_ToUppercase
 	| Chars_JoinWithNewlines

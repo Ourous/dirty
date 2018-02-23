@@ -6,10 +6,10 @@
 ⭬ // move current baseline up 1
 ⭪ // move current baseline down 1
 🔔 // bell character
+␈ // delete the last console char
 ⭫ // go to next baseline, if none, create new baseline at the end of <main>
-⭭ // go to last baseline, if none, go to index 0
 \n // newline
-№ // elements in <mid>
+⭭ // go to last baseline, if none, go to index 0
 ⭮ // rotate counterclockwise
 ⭯ // rotate clockwise
 ⮕ // move right arrow
@@ -125,13 +125,12 @@ z // conjugate
 | // reflection around the vertical
 } // loop if <right> is true or empty
 ~ // negate
+␡ // clear the console
 ‼ // output all of <mid>
 ⁇ // get all input, put into <mid>
 ⁈ // output <right>, read into <left>
 ⁉ // output <left>, read into <right>
 ‽ // output and pop <mid>, read into <mid>
-␈ // delete the last output
-␡ // clear the console
 × // multiply
 ⨰ // vectorized multiplication
 ÷ // divide
@@ -229,6 +228,7 @@ z // conjugate
 ⮑ // rotate stacks counterclockwise
 ⮒ // rotate tops of stacks clockwise
 ⮓ // rotate tops of stacks counterclockwise
+№ // elements in <mid>
 ∏ // product
 ∑ // sum
 ∃ // any

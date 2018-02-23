@@ -14,7 +14,7 @@ instance ^ Number
 instance abs Number
 instance ~ Number
 instance == Number
-//instance < Number
+instance < Number
 //instance mod Number
 //instance gcd Number
 //instance lcm Number
@@ -39,8 +39,8 @@ instance asin Number
 instance acos Number
 instance atan Number
 
-//bitOR :: Number Number -> Number
-//bitAND :: Number Number -> Number
+bitOR :: !Number !Number -> Number
+bitAND :: !Number !Number -> Number
 //bitXOR :: Number Number -> Number
 //bitNOT :: Number Number -> Number
 //bitNOR :: Number Number -> Number

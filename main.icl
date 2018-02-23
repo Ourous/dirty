@@ -26,8 +26,9 @@ Start world
 	= (construct (parser file) (toFlags flags))
 	//# re = map (\e -> (Re (Fin (Int e)))) [1..2^24]
 	//# im = map (\e -> (Im (Fin (Int e)))) [0,-1.. ~(2^24)]
-	//= (foldl (+) Zero) (flatten [[r, i] \\ r <- re& i<- im])
-	//= sum [1..2^30]
+	//= (foldl (-) Zero) (flatten [[r, i] \\ r <- re& i<- im])
+	//# nums = map (\e -> (Int e)) [1..2^24]
+	//= (foldl (-) (Int 0)) nums
 	
 toFlags flags
 	= {debug = False, dump = isMember "--s" flags, nums = isMember "--n" flags}

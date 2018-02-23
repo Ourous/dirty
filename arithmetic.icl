@@ -494,9 +494,10 @@ instance atan Number where
 	//atan (Imaginary _) = abort "Unimplemented Operation: atan Im"
 	//atan (Complex _ _) = abort "Unimplemented Operation: atan Cx"
 	
-INT_OPER op lhs rhs :== (Int (op (takeEntier lhs) (takeEntier rhs)))
-where
-	takeEntier val = case val of
+INT_OPER op lhs rhs :== (Int (op (ENTIER lhs) (ENTIER rhs)))
+
+ENTIER val
+	:== case val of
 		(Int i) = i
 		(Real r) = entier r
 
@@ -552,23 +553,36 @@ bitAND _ _ = NaN
 bitXOR :: !Number !Number -> Number
 bitXOR NaN _ = NaN
 bitXOR _ NaN = NaN
-
-
+bitXOR Zero rhs = rhs
+bitXOR lhs Zero = lhs
+bitXOR (Re (Fin lhs)) (Re (Fin rhs))
+	= handle (Re (Fin (INT_OPER (bitxor) lhs rhs)))
+bitXOR (Re (Fin lhs)) (Im (Fin rhs))
+	= (Cx (Fin {re=lhs, im=rhs}))
+bitXOR (Im (Fin lhs)) (Re (Fin rhs))
+	= (Cx (Fin {re=rhs, im=lhs}))
+bitXOR (Im (Fin lhs)) (Im (Fin rhs))
+	= handle (Im (Fin (INT_OPER (bitxor) lhs rhs)))
+bitXOR (Re (Fin lhs)) (Cx (Fin rhs))
+	= handle (Cx (Fin {rhs&re=INT_OPER (bitxor) lhs rhs.re}))
+bitXOR (Im (Fin lhs)) (Cx (Fin rhs))
+	= handle (Cx (Fin {rhs&im=INT_OPER (bitxor) lhs rhs.im}))
+bitXOR (Cx (Fin lhs)) (Re (Fin rhs))
+	= handle (Cx (Fin {lhs&re=INT_OPER (bitxor) lhs.re rhs}))
+bitXOR (Cx (Fin lhs)) (Im (Fin rhs))
+	= handle (Cx (Fin {lhs&im=INT_OPER (bitxor) lhs.im rhs}))
+bitXOR (Cx (Fin lhs)) (Cx (Fin rhs))
+	= handle (Cx (Fin {re=INT_OPER (bitxor) lhs.re rhs.re, im=INT_OPER (bitxor) lhs.im rhs.im}))
 
 bitNOT :: !Number -> Number
 bitNOT NaN = NaN
 bitNOT Zero = (Re (Fin (Int -1)))
 bitNOT (Re (Fin val)) = handle (Re (Fin (Int (bitnot (toInt val)))))
 bitNOT (Im (Fin val)) = handle (Im (Fin (Int (bitnot (toInt val)))))
-bitNOT (Cx (Fin val)) = handle (Cx (Fin {re=(Int(bitnot(toInt val.re))), im=(Int(bitnot(toInt val.im)))}))
+bitNOT (Cx (Fin val)) = handle (Cx (Fin {re=(Int(bitnot(ENTIER val.re))), im=(Int(bitnot(ENTIER val.im)))}))
+bitNOT _ = NaN
 
 /*
-bitNOR :: Number Number -> Number
-bitNOR _ _ = abort "Unimplemented Operation: bitNOR"
-bitNAND :: Number Number -> Number
-bitNAND _ _ = abort "Unimplemented Operation: bitNAND"
-bitXNOR :: Number Number -> Number
-bitXNOR _ _ = abort "Unimplemented Operation: bitXNOR"
 numFLOOR :: Number -> Number
 numFLOOR _ = abort "Unimplemented Operation: numFLOOR"
 numCEILING :: Number -> Number

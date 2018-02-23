@@ -36,22 +36,12 @@ IS_ZERO numeric
 		(Real 0.0) = True
 		(Real -0.0) = True
 		_ = False
-/*
-IS_NAN numeric
-	:== case numeric of
-		(Real val) = not (isFinite val || val <> 0.0)
-		_ = False
-*/
+
 IS_INF numeric
 	:== case numeric of
 		(Real val) = val <> 0.0
-		_ = True
-/*
-IS_INF numeric
-	:== case numeric of
-		(Real val) = not (isFinite val) && val <> 0.0
-		_ = False
-*/
+//		_ = True
+
 IS_FIN numeric // or nan
 	:== case numeric of
 		(Real val) = isFinite val
@@ -448,7 +438,11 @@ instance sqrt Number where
 	sqrt NaN = NaN
 	//sqrt Infinity = Infinity
 	sqrt Zero = Zero
-	sqrt (Re (Fin val)) = handle (Re (Fin (sqrt val)))
+	sqrt (Re (Fin val))
+		| FIN_SIGN val <> Negative
+			= handle (Re (Fin (sqrt val)))
+		| otherwise
+			= handle (Im (Fin (sqrt (abs val))))
 	//sqrt (Imaginary _) = abort "Unimplemented Operation: sqrt Im"
 	//sqrt (Complex _ _) = abort "Unimplemented Operation: sqrt Cx"
 	
@@ -500,13 +494,19 @@ instance atan Number where
 	//atan (Imaginary _) = abort "Unimplemented Operation: atan Im"
 	//atan (Complex _ _) = abort "Unimplemented Operation: atan Cx"
 	
-INT_OPER op lhs rhs :== (Int (op (toInt lhs) (toInt rhs)))
+INT_OPER op lhs rhs :== (Int (op (takeEntier lhs) (takeEntier rhs)))
+where
+	takeEntier val = case val of
+		(Int i) = i
+		(Real r) = entier r
 
 bitOR :: !Number !Number -> Number
 bitOR NaN _ = NaN
 bitOR _ NaN = NaN
 bitOR Zero rhs = rhs
 bitOR lhs Zero = lhs
+bitOR (Re (Inf _)) (Im (Inf _)) = (Cx (Inf Directed))
+bitOR (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
 bitOR (Re (Fin lhs)) (Re (Fin rhs))
 	= handle (Re (Fin (INT_OPER (bitor) lhs rhs)))
 bitOR (Re (Fin lhs)) (Im (Fin rhs))
@@ -533,8 +533,6 @@ bitAND Zero _ = Zero
 bitAND _ Zero = Zero
 bitAND (Re _) (Im _) = Zero
 bitAND (Im _) (Re _) = Zero
-bitAND (Cx (Inf _)) rhs = rhs
-bitAND lhs (Cx (Inf _)) = lhs
 bitAND (Re (Fin lhs)) (Re (Fin rhs))
 	= handle (Re (Fin (INT_OPER (bitand) lhs rhs)))
 bitAND (Im (Fin lhs)) (Im (Fin rhs))
@@ -549,6 +547,7 @@ bitAND (Cx (Fin lhs)) (Im (Fin rhs))
 	= handle (Im (Fin (INT_OPER (bitand) lhs.im rhs)))
 bitAND (Cx (Fin lhs)) (Cx (Fin rhs))
 	= handle (Cx (Fin {re=INT_OPER (bitand) lhs.re rhs.re, im=INT_OPER (bitand) lhs.im rhs.im}))
+bitAND _ _ = NaN
 
 bitXOR :: !Number !Number -> Number
 bitXOR NaN _ = NaN

@@ -130,6 +130,8 @@ z // conjugate
 ⁈ // output <right>, read into <left>
 ⁉ // output <left>, read into <right>
 ‽ // output and pop <mid>, read into <mid>
+␈ // delete the last output
+␡ // clear the console
 × // multiply
 ⨰ // vectorized multiplication
 ÷ // divide
@@ -145,23 +147,25 @@ z // conjugate
 ⩑ // vectorized and
 ⊻ // xor
 ¬ // not
+⊨ // coalesce to truthy/falsey
+⊭ // logical negation
 ∩ // intersection
 ∪ // union
+∁ // exclusion
 ∈ // element of
 ⋵ // vectorized element-of
 ⋖ // vectorized less-than
+⋗ // vectorized greater-than
 ≐ // vectorized equals
 ⩽ // less or equals
+⩿ // vectorized less-or-equals
 ⩾ // greater or equals
 ⪀ // vectorized greater-or-equals
 ≠ // not equals
 ≡ // identical to (stack equals)
 ⊊ // subset but not equal
-⊋ // superset but not equal
 ⊆ // subset or equal
-⊇ // superset or equal
 ⊈ // not subset nor equal
-⊉ // not superset nor equal
 å // radians to angle
 Å // angle to radians
 ¯ // ceiling

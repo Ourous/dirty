@@ -577,18 +577,30 @@ bitXOR (Cx (Fin lhs)) (Cx (Fin rhs))
 bitNOT :: !Number -> Number
 bitNOT NaN = NaN
 bitNOT Zero = (Re (Fin (Int -1)))
-bitNOT (Re (Fin val)) = handle (Re (Fin (Int (bitnot (toInt val)))))
-bitNOT (Im (Fin val)) = handle (Im (Fin (Int (bitnot (toInt val)))))
-bitNOT (Cx (Fin val)) = handle (Cx (Fin {re=(Int(bitnot(ENTIER val.re))), im=(Int(bitnot(ENTIER val.im)))}))
+bitNOT (Re (Fin val)) = handle (Re (Fin (Int (bitnot (ENTIER val)))))
+bitNOT (Im (Fin val)) = handle (Im (Fin (Int (bitnot (ENTIER val)))))
+bitNOT (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int(bitnot(ENTIER re))), im=(Int(bitnot(ENTIER im)))}))
 bitNOT _ = NaN
 
+
+numFLOOR :: !Number -> Number
+numFLOOR (Re (Fin val)) = handle (Re (Fin (Int (ENTIER val))))
+numFLOOR (Im (Fin val)) = handle (Im (Fin (Int (ENTIER val))))
+numFLOOR (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int (ENTIER re)), im=(Int (ENTIER im))}))
+numFLOOR val = val
+
+numCEILING :: !Number -> Number
+numCEILING (Re (Fin val)) = handle (Re (Fin (Int (~(ENTIER (~val))))))
+numCEILING (Im (Fin val)) = handle (Im (Fin (Int (~(ENTIER (~val))))))
+numCEILING (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int(~(ENTIER(~re)))), im=(Int(~(ENTIER(~im))))}))
+numCEILING val = val
+
+numROUND :: !Number -> Number
+numROUND (Re (Fin val)) = handle (Re (Fin (Int (toInt val))))
+numROUND (Im (Fin val)) = handle (Im (Fin (Int (toInt val))))
+numROUND (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int (toInt re)), im=(Int (toInt im))}))
+numROUND val = val
 /*
-numFLOOR :: Number -> Number
-numFLOOR _ = abort "Unimplemented Operation: numFLOOR"
-numCEILING :: Number -> Number
-numCEILING _ = abort "Unimplemented Operation: numCEILING"
-numROUND :: Number -> Number
-numROUND _ = abort "Unimplemented Operation: numROUND"
 toRadians :: Number -> Number
 toRadians _ = abort "Unimplemented Operation: toRadians"
 toDegrees :: Number -> Number

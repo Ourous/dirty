@@ -44,9 +44,9 @@ bitAND :: !Number !Number -> Number
 bitXOR :: !Number !Number -> Number
 bitNOT :: !Number -> Number
 
-//numFLOOR :: Number -> Number
-//numCEILING :: Number -> Number
-//numROUND :: Number -> Number
+numFLOOR :: !Number -> Number
+numCEILING :: !Number -> Number
+numROUND :: !Number -> Number
 
 //toRadians :: Number -> Number
 //toDegrees :: Number -> Number

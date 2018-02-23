@@ -40,7 +40,7 @@ IS_STACK_TRUE stack
 		[] = False
 		[value:_] = IS_VALUE_TRUE value
 
-// :: [Number] -> Bool
+// :: Number -> Bool
 IS_VALUE_TRUE value
 	:== case value of
 		NaN = False

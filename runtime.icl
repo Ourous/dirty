@@ -77,6 +77,10 @@ evaluate args world
 where
 	parseInt :: (String -> (Maybe Int))
 	parseInt = 'GenParse'.parseString
+	
+initialize :: !Program *World -> *(State, *World)
+initialize program world
+	= ({location={x=0,y=0},direction=East,history='\n',terminate=False}, world)
 
 construct :: !Program !Flags -> (*(State, Memory, *World) -> *World)
 construct program=:{dimension, source, commands, wrapping} flags = execute

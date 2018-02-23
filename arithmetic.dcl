@@ -41,8 +41,8 @@ instance atan Number
 
 bitOR :: !Number !Number -> Number
 bitAND :: !Number !Number -> Number
-//bitXOR :: Number Number -> Number
-//bitNOT :: Number Number -> Number
+bitXOR :: !Number Number -> Number
+bitNOT :: !Number -> Number
 //bitNOR :: Number Number -> Number
 //bitNAND :: Number Number -> Number
 //bitXNOR :: Number Number -> Number

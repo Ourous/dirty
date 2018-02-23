@@ -550,11 +550,20 @@ bitAND (Cx (Fin lhs)) (Im (Fin rhs))
 bitAND (Cx (Fin lhs)) (Cx (Fin rhs))
 	= handle (Cx (Fin {re=INT_OPER (bitand) lhs.re rhs.re, im=INT_OPER (bitand) lhs.im rhs.im}))
 
+bitXOR :: !Number !Number -> Number
+bitXOR NaN _ = NaN
+bitXOR _ NaN = NaN
+
+
+
+bitNOT :: !Number -> Number
+bitNOT NaN = NaN
+bitNOT Zero = (Re (Fin (Int -1)))
+bitNOT (Re (Fin val)) = handle (Re (Fin (Int (bitnot (toInt val)))))
+bitNOT (Im (Fin val)) = handle (Im (Fin (Int (bitnot (toInt val)))))
+bitNOT (Cx (Fin val)) = handle (Cx (Fin {re=(Int(bitnot(toInt val.re))), im=(Int(bitnot(toInt val.im)))}))
+
 /*
-bitXOR :: Number Number -> Number
-bitXOR _ _ = abort "Unimplemented Operation: bitXOR"
-bitNOT :: Number Number -> Number
-bitNOT _ _ = abort "Unimplemented Operation: bitNOT"
 bitNOR :: Number Number -> Number
 bitNOR _ _ = abort "Unimplemented Operation: bitNOR"
 bitNAND :: Number Number -> Number

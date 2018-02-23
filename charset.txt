@@ -135,6 +135,7 @@ z // conjugate
 ÷ // divide
 ∔ // vectorized plus
 ∸ // vectorized subtraction
+⸞ // vectorized negation
 √ // square root
 ⅟ // reciprocal
 ∞ // is a non-finite number, and not NaN
@@ -144,18 +145,13 @@ z // conjugate
 ⩑ // vectorized and
 ⊻ // xor
 ¬ // not
-⊽ // nor
-⊼ // nand
-∥ // xnor
 ∩ // intersection
 ∪ // union
 ∈ // element of
-∋ // contains as member
+⋵ // vectorized element-of
 ⋖ // vectorized less-than
-⋗ // vectorized greater-than
 ≐ // vectorized equals
 ⩽ // less or equals
-⩿ // vectorized less-or-equals
 ⩾ // greater or equals
 ⪀ // vectorized greater-or-equals
 ≠ // not equals

@@ -1,6 +1,6 @@
 implementation module parser
 
-import types, converter, StdEnv, StdLib, Text
+import types, utilities, converter, StdEnv, StdLib, Text
 
 parseUTF8 :: !String -> Program
 parseUTF8 string 
@@ -18,23 +18,59 @@ parseNative string = let
 		}
 		
 linkLoops :: ![[Command]] -> [[Command]]
-linkLoops commands = (linkLoop Left o linkLoop Right o linkGoto Middle) commands
+linkLoops commands = map (map fst) (linkLoops` annotated)
+where
 
+	annotated = [[(command, {x=x, y=y}) \\ x <- [0..] & command <- line] \\ y <- [0..] & line <- commands]
+	
+	linkLoops` = linkLoop Left o linkLoop Right o linkGoto
+	
 linkLoop _ val = val // TODO
 
-linkGoto type commands
-	= (map (linkGoto` East West) o transpose o map (linkGoto` North South) o transpose) commands
+linkGoto commands
+	= (map (linkEast o linkWest) o transpose o map (linkNorth o linkSouth) o transpose) commands
 where
-	linkGoto` lhs rhs
-		= abort "That's a TODO!"
+
+	linkEast list
+		= [(matchWest item (rotate i list), pos) \\ (item, pos) <- list & i <- [0..]]
+	where
+	
+		matchWest (Control (Goto East Nothing)) list
+			= let (Just (_, loc)) = find (\(e, _) -> case e of (Control (Goto West _)) = True; _ = False) (reverse list)
+			in (Control (Goto East (Just loc)))
+
+		matchWest val _ = val
 		
+	linkWest list
+		# list = reverse list
+		= reverse [(matchEast item (rotate i list), pos) \\ (item, pos) <- list & i <- [0..]]
+	where
+	
+		matchEast (Control (Goto West Nothing)) list
+			= let (Just (_, loc)) = find (\(e, _) -> case e of (Control (Goto East _)) = True; _ = False) (reverse list)
+			in (Control (Goto West (Just loc)))
+			
+		matchEast val _ = val
 		
-rotate _ [] = []
-rotate n list
-	| n > zero
-		= rotate (dec n) ((tl list) ++ [hd list])
-	| n < zero
-		= rotate (inc n) [last list:init list]
-	| otherwise
-		= list
+	linkNorth list
+		= [(matchSouth item (rotate i list), pos) \\ (item, pos) <- list & i <- [0..]]
+	where
+	
+		matchSouth (Control (Goto North Nothing)) list
+			= let (Just (_, loc)) = find (\(e, _) -> case e of (Control (Goto South _)) = True; _ = False) (reverse list)
+			in (Control (Goto North (Just loc)))
+
+		matchSouth val _ = val
+		
+	linkSouth list
+		# list = reverse list
+		= reverse [(matchNorth item (rotate i list), pos) \\ (item, pos) <- list & i <- [0..]]
+	where
+	
+		matchNorth (Control (Goto South Nothing)) list
+			= let (Just (_, loc)) = find (\(e, _) -> case e of (Control (Goto North _)) = True; _ = False) (reverse list)
+			in (Control (Goto South (Just loc)))
+
+		matchNorth val _ = val
+		
 		

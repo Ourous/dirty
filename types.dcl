@@ -88,6 +88,7 @@ import StdMaybe
 	| Skip Bool
 	| Turn Rotation
 	| Loop StackID Direction (Maybe XYPair)
+	| Goto Direction (Maybe XYPair)
 	| String
 	| NOOP
 	| LINE

@@ -1,10 +1,10 @@
 module main
-import types, atomics, runtime, parser, converter, arithmetic
+import types, atomics, utilities, runtime, parser, converter, arithmetic
 import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
 	# ([_:args], world)
 		= getCommandLine world
-	//# args = ["-utf8", "--n", "--s", "cat_test.txt"]
+	//# args = ["-utf8", "--n", "--s", "loop_test.txt"]
 	| isEmpty args
 		= abort usage
 	# (flags, [file:args])
@@ -23,7 +23,8 @@ Start world
 	# (memory, world)
 		= evaluate args world
 	//# memory = {memory&main=[[[(Re (Fin (Int (2^19))))]]]}
-	= (construct (parser file) (toFlags flags))
+	= (parser file).commands
+	//(construct (parser file) (toFlags flags))
 	//# re = map (\e -> (Re (Fin (Int e)))) [1..2^24]
 	//# im = map (\e -> (Im (Fin (Int e)))) [0,-1.. ~(2^24)]
 	//= (foldl (bitOR) Zero) (flatten [[r, i] \\ r <- re& i<- im])

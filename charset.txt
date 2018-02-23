@@ -134,6 +134,7 @@ z // conjugate
 ⨰ // vectorized multiplication
 ÷ // divide
 ∔ // vectorized plus
+∸ // vectorized subtraction
 √ // square root
 ⅟ // reciprocal
 ∞ // is a non-finite number, and not NaN
@@ -159,7 +160,6 @@ z // conjugate
 ⪀ // vectorized greater-or-equals
 ≠ // not equals
 ≡ // identical to (stack equals)
-≢ // not identical to (stack not equals)
 ⊊ // subset but not equal
 ⊋ // superset but not equal
 ⊆ // subset or equal

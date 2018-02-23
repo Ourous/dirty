@@ -185,7 +185,6 @@ import StdMaybe
 	| Logic_LessOrEqual
 	| Logic_GreaterOrEqual
 	| Logic_SetEquality
-	| Logic_SetInequality
 	| Logic_ElementOf
 	| Logic_Contains
 	| Logic_SubsetOrEqual
@@ -207,6 +206,7 @@ import StdMaybe
 	| Vector_Or
 	| Vector_Multiplication
 	| Vector_Addition
+	| Vector_Subtraction
 	| Vector_Equality
 	| Vector_LessThan
 	| Vector_GreaterThan

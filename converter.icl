@@ -417,6 +417,7 @@ unicodeCharset =:
 	,10800
 	,247
 	,8724
+	,8760
 	,8730
 	,8543
 	,8734
@@ -442,7 +443,6 @@ unicodeCharset =:
 	,10880
 	,8800
 	,8801
-	,8802
 	,8842
 	,8843
 	,8838
@@ -681,6 +681,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Vector_Multiplication))
 	,(Operator (Binary (/)))//(Operator (Math_Division))
 	,(Operator (Vector_Addition))
+	,(Operator (Vector_Subtraction))
 	,(Operator (Unary (sqrt)))//(Operator (Math_SquareRoot))
 	,(Operator (Math_Reciprocal))
 	,(Operator (Logic_IsInfinite))
@@ -706,7 +707,6 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Vector_GreaterOrEqual))
 	,(Operator (Logic_Inequality))
 	,(Operator (Logic_SetEquality))
-	,(Operator (Logic_SetInequality))
 	,(Operator (Logic_SubsetNotEqual))
 	,(Operator (Logic_SupersetNotEqual))
 	,(Operator (Logic_SubsetOrEqual))

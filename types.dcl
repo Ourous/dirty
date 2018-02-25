@@ -139,7 +139,6 @@ import StdMaybe
 	| Unary_S_S ([Number] -> [Number])
 	| Math_Logarithm
 	| Math_Modulus
-	| Math_Exponent
 	| Math_DotProduct
 	| Math_Sum
 	| Math_Product
@@ -148,18 +147,7 @@ import StdMaybe
 	| Math_ImaginaryPart
 	| Math_ImaginaryUnit
 	| Math_ComplexSplit
-	| Math_Abs
-	| Math_Ceiling
-	| Math_Round
-	| Math_Sine
-	| Math_CoSine
-	| Math_Tangent
-	| Math_ArcSine
-	| Math_ArcCoSine
-	| Math_ArcTangent
 	| Math_Reciprocal
-	| Math_RadiansToDegrees
-	| Math_DegreesToRadians
 	| Math_Minimum
 	| Math_Maximum
 	| Math_Permutations
@@ -167,21 +155,11 @@ import StdMaybe
 	| Math_PrimeFactors
 	| Math_GreatestCommonDivisor
 	| Math_LeastCommonMultiple
-	| Math_NaturalExponent
-	| Math_NaturalLogarithm
-	| Math_Base10Logarithm
 	| Math_ConvertToBase
 	| Math_ConvertFromBase
 	| Math_Integral
 	| Math_Differential
 	| Math_Average
-	| Bitwise_And
-	| Bitwise_Or
-	| Bitwise_Xor
-	| Bitwise_Xnor
-	| Bitwise_Nor
-	| Bitwise_Not
-	| Bitwise_Nand
 	| Bitwise_LeftShift
 	| Bitwise_RightShift
 	| Logic_Equality

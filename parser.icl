@@ -28,7 +28,7 @@ where
 linkLoop type commands
 	:== (map linkHorizontal o transpose o map linkVertical o transpose) commands
 where
-	
+
 	equalsBracket side
 		= \(e, _) -> case e of
 			(Control (Loop type dir Nothing)) = dir == side
@@ -45,20 +45,29 @@ where
 	where
 		isMatched` n _ _ [] = n == 0
 		isMatched` n lhs rhs [head:tail]
-			| lhs head
+			| (equalsBracket lhs) head
 				= n >= 0 && isMatched` (inc n) lhs rhs tail
-			| rhs head
+			| (equalsBracket rhs) head
 				= n >= 0 && isMatched` (dec n) lhs rhs tail
 			| otherwise
 				= isMatched` n lhs rhs tail
+				
+	findNearPairs lhs rhs list = let
+		(Just rhsIndex) = findIndex (equalsBracket rhs) list
+		lhsIndex = last(filter((>)rhsIndex)(findIndices (equalsBracket lhs)list))
+		(_, rhsPos) = list !! rhsIndex
+		(_, lhsPos) = list !! lhsIndex
+		updateLhs = updateAt lhsIndex ((Control (Loop type lhs (Just rhsPos))), lhsPos)
+		updateRhs = updateAt rhsIndex ((Control (Loop type rhs (Just lhsPos))), rhsPos)
+	in (updateLhs o updateRhs) list
 	
 	linkHorizontal list = let
-		(n, rotated) = rotateUntilMatched (equalsBracket West) (equalsBracket East)
-		// TODO: match near-brackets
-	in list
+		(n, rotated) = rotateUntilMatched West East list
+	in rotateList (~n) (findNearPairs West East rotated)
 		
-	linkVertical list
-		= list
+	linkVertical list = let
+		(n, rotated) = rotateUntilMatched North South list
+	in rotateList (~n) (findNearPairs North South rotated)
 		
 linkGoto commands
 	= (map (linkEast o linkWest) o transpose o map (linkNorth o linkSouth) o transpose) commands

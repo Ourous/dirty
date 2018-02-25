@@ -137,6 +137,15 @@ where
 		
 	process (Control (Change dir)) = app3(\state -> {state&direction=dir}, id, id)
 	
+	process (Control (Either axes)) = either
+	where
+	
+		either (state, memory=:{random=[rng:random]}, world) = let
+			newDirection = case axes of
+				Horizontal = if(isEven rng) East West
+				Vertical = if(isEven rng) North South
+		in ({state&direction=newDirection}, {memory&random=random}, world)
+	
 	process (Control (Goto dir (Just loc))) = goto
 	where
 	
@@ -169,6 +178,10 @@ where
 			
 			content :: [Char]
 			content = (takeWhile ((<>)'\'') o drop delta) wrappedLine
+			
+	process (Literal (Pi)) = app3 (id, \memory=:{main=[El mid:other]} -> {memory&main=[El[fromReal pi:mid]:other]}, id)
+
+	process (Literal (Quote)) = app3 (id, \memory=:{main=[El mid:other]} -> {memory&main=[El[fromInt(toInt'\''):mid]:other]}, id)
 
 	process (Literal (Digit val)) = literal
 	where
@@ -183,6 +196,14 @@ where
 			| otherwise = let
 				[El mid:base] = main
 				in (state, {memory&main=[El [val:mid]:base]}, world)
+				
+	process (Literal (Alphabet lettercase)) = app3 (id, \memory -> {memory&main=[El literal,Delimiter:memory.main]}, id)
+	where
+	
+		literal :: [Number]
+		literal = case lettercase of
+			Lowercase = [fromInt (toInt c) \\ c <-: "abcdefghijklmnopqrstuvwxyz"]
+			Uppercase = [fromInt (toInt c) \\ c <-: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
 				
 	process (Operator (IO_WriteAll)) = writeAll
 	where
@@ -239,6 +260,8 @@ where
 			{main=[El [arg:mid]:other]} = {memory&main=[El [op arg:mid]:other]}
 			_ = memory
 				
+	// TODO: move stack operations into the tokens as well			
+	
 	process (Stack (MoveTop dir)) = app3 (id, moveTop dir, id)
 	where
 		

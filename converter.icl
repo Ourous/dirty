@@ -692,6 +692,8 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Vector_And))
 	,(Operator (Bitwise_Xor))
 	,(Operator (Bitwise_Not))
+	,(Operator (Logic_Coalesce))
+	,(Operator (Logic_Negation))
 	,(Operator (Set_Intersection))
 	,(Operator (Set_Union))
 	,(Operator (Set_Exclusion))

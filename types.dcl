@@ -205,6 +205,8 @@ import StdMaybe
 	| Logic_IsReal
 	| Logic_IsFinite
 	| Logic_IsInfinite
+	| Logic_Negation
+	| Logic_Coalesce
 	| Vector_And
 	| Vector_Or
 	| Vector_Multiplication

@@ -88,7 +88,7 @@ initialize program=:{commands} args world
 		= annotated !! (randpos rem (length annotated))
 	# dir = case orn of
 		(Axis Vertical) = if(isEven randdir) North South
-		(Axis Vertical) = if(isEven randdir) East West
+		(Axis Horizontal) = if(isEven randdir) East West
 		(Dir dir) = dir
 	| otherwise
 		= ({direction=dir, location=loc, history='\n', terminate=False}, {memory&random=random}, world)
@@ -127,6 +127,7 @@ where
 	
 	process (Control (Goto dir (Just loc))) = MOVE_TO_NEXT o goto // TODO: change to handle all loops
 	where
+	
 		goto (state=:{direction}, memory=:{main}, world)
 			| direction == dir && IS_TRUTHY (GET_MIDDLE main)
 				= ({state&location=loc}, memory, world)
@@ -135,6 +136,7 @@ where
 				
 	process (Literal (Digit val)) = MOVE_TO_NEXT o literal
 	where
+	
 		literal (state=:{history}, memory=:{main}, world)
 			| isDigit history = let
 				[El [top:mid]:base] = main
@@ -144,4 +146,41 @@ where
 				[El mid:base] = main
 				in (state, {memory&main=[El [val:mid]:base]}, world)
 				
+	process (Operator (Binary op)) = MOVE_TO_NEXT o app3 (id, binary, id)
+	where
+		
+		binary :: !Memory -> Memory
+		
+		binary memory = case memory of
+			{left=[lhs:left], main=[El mid:other], right=[rhs:right]}
+				= {memory&left=left,right=right,main=[El[op lhs rhs:mid]:other]}
+			{left=[lhs:left], main=[El [rhs:mid]:other], right=[]}
+				= {memory&left=left,main=[El[op lhs rhs:mid]:other]}
+			{left=[], main=[El [lhs:mid]:other], right=[rhs:right]}
+				= {memory&right=right,main=[El[op lhs rhs:mid]:other]}
+			{left=[lhs,rhs:left], main=[El []:other], right=[]}
+				= {memory&left=left,main=[El[op lhs rhs]:other]}
+			{left=[], main=[El []:other], right=[rhs,lhs:right]}
+				= {memory&right=right,main=[El[op lhs rhs]:other]}
+			_ = memory
+				
+	process (Stack (MoveTop dir)) = MOVE_TO_NEXT o app3 (id, moveTop dir, id)
+	where
+		
+		moveTop :: !Direction !Memory -> Memory
+		
+		moveTop East memory = case memory of
+			{left=[head:tail]} = {memory&left=tail,right=[head:memory.right]}
+			_ = memory
+		
+		moveTop West memory = case memory of
+			{right=[head:tail]} = {memory&left=[head:memory.left],right=tail}
+			_ = memory
 			
+		moveTop NorthEast memory = case memory of
+			{main=[El [head:tail]:other]} = {memory&main=[El tail:other],right=[head:memory.right]}
+			_ = memory
+			
+		moveTop NorthWest memory = case memory of
+			{main=[El [head:tail]:other]} = {memory&left=[head:memory.left],main=[El tail:other]}
+			_ = memory

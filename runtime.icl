@@ -99,14 +99,20 @@ where
 construct :: !Program !Flags -> (*(!State, !Memory, !*World) -> *World)
 construct program=:{dimension, source, commands, wrapping} flags = execute
 where
+
 	execute :: !*(!State, !Memory, !*World) -> *World
+	
 	execute (state=:{terminate=True}, memory, world)
 		| flags.dump
 			= execIO (putStrLn (MEM_TO_STR memory)) world
 		| otherwise
 			= world
-	// TODO: pattern match to handle memory sanity here
-	//execute (state, memory=:{main=[]}
+	
+	execute (state, memory=:{main=[]}, world)
+		= execute (state, {memory&main=[El[]]}, world)
+	execute (state, memory=:{main=[Delimiter:other]}, world)
+		= execute (state, {memory&main=other}, world)
+	
 	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y = let
 			wrappedLocation = {x=location.x rem dimension.x, y=location.y rem dimension.y}
@@ -114,6 +120,14 @@ where
 		| otherwise
 			# (state, memory, world) = process commands.[location.y, location.x] smw
 			= execute ({state&history=source.[location.y, location.x]} , memory, world)
+			
+	writeLine :: ![Number] -> (IO ())
+	
+	writeLine stack = putStrLn (if(flags.nums) (STACK_TO_STR stack)  (unicodeToUTF8 (map toInt stack)))
+	
+	writeChar :: !Number -> (IO ())
+	
+	writeChar char = putStr (if(flags.nums) (toString char) (unicodeToUTF8 [toInt char]))
 
 	process :: !Command -> (*(!State, !Memory, !*World) -> *(State, Memory, *World))
 	
@@ -125,7 +139,7 @@ where
 		
 	process (Control (Change dir)) = app3(TRAVERSE_ONE o \state -> {state&direction=dir}, id, id)
 	
-	process (Control (Goto dir (Just loc))) = MOVE_TO_NEXT o goto // TODO: change to handle all loops
+	process (Control (Goto dir (Just loc))) = MOVE_TO_NEXT o goto
 	where
 	
 		goto (state=:{direction}, memory=:{main}, world)
@@ -134,6 +148,30 @@ where
 			| otherwise
 				= (state, memory, world)
 				
+	process (Control (String)) = makeString
+	where
+		
+		makeString (state=:{direction, location}, memory=:{main}, world)
+			= (TRAVERSE_SOME (length content + 2) state, {memory&main=[El(map fromInt(utf8ToUnicode(toString content))),Delimiter:main]}, world)
+		where
+			
+			delta = case direction of
+				East = location.x+1
+				West = dimension.x-location.x
+				North = dimension.y-location.y
+				South = location.y+1
+				
+			wrappedLine = let
+				line = case direction of
+					East = [c \\ c <-: source.[location.y]]
+					West = reverse [c \\ c <-: source.[location.y]]
+					North = reverse [src.[location.x] \\ src <-: source]
+					South = [src.[location.x] \\ src <-: source]
+			in line ++ ['\n'] ++ line
+			
+			content :: [Char]
+			content = (takeWhile ((<>)'\'') o drop delta) wrappedLine
+
 	process (Literal (Digit val)) = MOVE_TO_NEXT o literal
 	where
 		literal :: !*(!State, !Memory, *World) -> *(State, Memory, *World)
@@ -146,6 +184,16 @@ where
 				[El mid:base] = main
 				in (state, {memory&main=[El [val:mid]:base]}, world)
 				
+	process (Operator (IO_WriteAll)) = MOVE_TO_NEXT o writeAll
+	where
+		
+		writeAll (stack, memory=:{main=[El[]:other]}, world)
+			= (stack, {memory&main=other}, world)
+		
+		writeAll (stack, memory=:{main=[El mid:other]}, world)
+			# world = execIO (writeLine mid) world
+			= (stack, {memory&main=other}, world)	
+			
 	process (Operator (Binary op)) = MOVE_TO_NEXT o app3 (id, binary, id)
 	where
 		

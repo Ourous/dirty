@@ -19,14 +19,14 @@ Global
 		DisableRTSFlags:	False
 		StandardRuntimeEnv:	True
 		Profile
-			Memory:	True
+			Memory:	False
 			MemoryMinimumHeapSize:	0
 			Time:	False
 			Stack:	False
 			Dynamics:	True
 			DescExL:	False
 		Output
-			Output:	ShowConstructors
+			Output:	NoReturnType
 			Font:	Monaco
 			FontSize:	9
 			WriteStdErr:	False

@@ -1,20 +1,9 @@
 implementation module runtime
 
-import types, converter, atomics, arithmetic, builtins
+import types, converter, atomics, arithmetic, builtins, utilities
 import StdEnv, StdLib, System.IO, System.Time, Math.Random, Text
 from Math.Geometry import pi
 import qualified Data.Generics.GenParse as GenParse
-
-instance == Direction where
-	(==) East East = True
-	(==) West West = True
-	(==) North North = True
-	(==) South South = True
-	(==) NorthEast NorthEast = True
-	(==) NorthWest NorthWest = True
-	(==) SouthWest SouthWest = True
-	(==) SouthEast SouthEast = True
-	(==) _ _ = False
 
 instance toString Element where
 	toString (El val) = STACK_TO_STR val
@@ -147,7 +136,6 @@ where
 				= (TRAVERSE_ONE state, memory, world)
 			| otherwise
 				= (state, memory, world)
-		
 	
 	process (Control (Goto dir (Just loc))) = goto
 	where

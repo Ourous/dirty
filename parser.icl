@@ -23,10 +23,43 @@ where
 
 	annotated = [[(command, {x=x, y=y}) \\ x <- [0..] & command <- line] \\ y <- [0..] & line <- commands]
 	
-	linkLoops` = linkLoop Left o linkLoop Right o linkGoto
+	linkLoops` = (linkLoop Left) o (linkLoop Right) o linkGoto
 	
-linkLoop _ val = val // TODO
-
+linkLoop type commands
+	:== (map linkHorizontal o transpose o map linkVertical o transpose) commands
+where
+	
+	equalsBracket side
+		= \(e, _) -> case e of
+			(Control (Loop type dir Nothing)) = dir == side
+			_ = False
+	
+	rotateUntilMatched lhs rhs list
+		| isMatched lhs rhs list
+			= (0, list)
+		| otherwise
+			= let (n, rotated) = rotateUntilMatched lhs rhs (rotateList 1 list)
+			in (n+1, rotated)
+	
+	isMatched = isMatched` 0
+	where
+		isMatched` n _ _ [] = n == 0
+		isMatched` n lhs rhs [head:tail]
+			| lhs head
+				= n >= 0 && isMatched` (inc n) lhs rhs tail
+			| rhs head
+				= n >= 0 && isMatched` (dec n) lhs rhs tail
+			| otherwise
+				= isMatched` n lhs rhs tail
+	
+	linkHorizontal list = let
+		(n, rotated) = rotateUntilMatched (equalsBracket West) (equalsBracket East)
+		// TODO: match near-brackets
+	in list
+		
+	linkVertical list
+		= list
+		
 linkGoto commands
 	= (map (linkEast o linkWest) o transpose o map (linkNorth o linkSouth) o transpose) commands
 where

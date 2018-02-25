@@ -1,6 +1,17 @@
 implementation module utilities
 
-import StdEnv, StdLib
+import types, StdEnv, StdLib
+
+instance == Direction where
+	(==) East East = True
+	(==) West West = True
+	(==) North North = True
+	(==) South South = True
+	(==) NorthEast NorthEast = True
+	(==) NorthWest NorthWest = True
+	(==) SouthWest SouthWest = True
+	(==) SouthEast SouthEast = True
+	(==) _ _ = False
 
 rotateList :: a u:[b] -> v:[b] | Enum a, [u <= v]
 rotateList _ [] = []

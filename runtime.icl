@@ -53,8 +53,6 @@ TRAVERSE_SOME dist state=:{location, direction}
 
 TRAVERSE_ONE :== TRAVERSE_SOME 1
 
-MOVE_TO_NEXT :== app3 (TRAVERSE_ONE, id, id)
-
 IS_TRUTHY stack
 	:== case stack of
 		[] = False
@@ -118,8 +116,8 @@ where
 			wrappedLocation = {x=location.x rem dimension.x, y=location.y rem dimension.y}
 			in execute ({state&location=wrappedLocation,terminate=not wrapping}, memory, world)
 		| otherwise
-			# (state, memory, world) = (MOVE_TO_NEXT o process commands.[location.y, location.x]) smw
-			= execute ({state&history=source.[location.y, location.x]} , memory, world)
+			# (state, memory, world) = process commands.[location.y, location.x] smw
+			= execute (TRAVERSE_ONE {state&history=source.[location.y, location.x]} , memory, world)
 			
 	writeLine :: ![Number] -> (IO ())
 	

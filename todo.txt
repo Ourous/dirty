@@ -2,4 +2,4 @@
 - Make it compile to Clean and call the compiler Janitor.
 - Insert the operation-implementing functions into the algebraic token types to reduce clutter in the runtime.
 - Put some actual effort into the token converter so it doesn't break whenever I re-order the character set.
-- Update the token converter to be current with the builtins and charset.
+- Add actually descriptive error messages for when files can't be parsed or runtime errors occur.

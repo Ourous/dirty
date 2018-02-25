@@ -118,7 +118,7 @@ where
 			wrappedLocation = {x=location.x rem dimension.x, y=location.y rem dimension.y}
 			in execute ({state&location=wrappedLocation,terminate=not wrapping}, memory, world)
 		| otherwise
-			# (state, memory, world) = process commands.[location.y, location.x] smw
+			# (state, memory, world) = (MOVE_TO_NEXT o process commands.[location.y, location.x]) smw
 			= execute ({state&history=source.[location.y, location.x]} , memory, world)
 			
 	writeLine :: ![Number] -> (IO ())
@@ -133,13 +133,13 @@ where
 	
 	process (Control (Terminate)) = app3 (\state -> {state&terminate=True}, id, id)
 		
-	process (Control (NOOP)) = MOVE_TO_NEXT
+	process (Control (NOOP)) = id
 		
-	process (Control (Start _)) = MOVE_TO_NEXT
+	process (Control (Start _)) = id
 		
-	process (Control (Change dir)) = app3(TRAVERSE_ONE o \state -> {state&direction=dir}, id, id)
+	process (Control (Change dir)) = app3(\state -> {state&direction=dir}, id, id)
 	
-	process (Control (Goto dir (Just loc))) = MOVE_TO_NEXT o goto
+	process (Control (Goto dir (Just loc))) = goto
 	where
 	
 		goto (state=:{direction}, memory=:{main}, world)
@@ -152,7 +152,7 @@ where
 	where
 		
 		makeString (state=:{direction, location}, memory=:{main}, world)
-			= (TRAVERSE_SOME (length content + 2) state, {memory&main=[El(map fromInt(utf8ToUnicode(toString content))),Delimiter:main]}, world)
+			= (TRAVERSE_SOME (length content + 1) state, {memory&main=[El(map fromInt(utf8ToUnicode(toString content))),Delimiter:main]}, world)
 		where
 			
 			delta = case direction of
@@ -172,7 +172,7 @@ where
 			content :: [Char]
 			content = (takeWhile ((<>)'\'') o drop delta) wrappedLine
 
-	process (Literal (Digit val)) = MOVE_TO_NEXT o literal
+	process (Literal (Digit val)) = literal
 	where
 	
 		literal :: !*(!State, !Memory, *World) -> *(State, Memory, *World)
@@ -186,7 +186,7 @@ where
 				[El mid:base] = main
 				in (state, {memory&main=[El [val:mid]:base]}, world)
 				
-	process (Operator (IO_WriteAll)) = MOVE_TO_NEXT o writeAll
+	process (Operator (IO_WriteAll)) = writeAll
 	where
 		
 		writeAll (stack, memory=:{main=[El[]:other]}, world)
@@ -196,7 +196,7 @@ where
 			# world = execIO (writeLine mid) world
 			= (stack, {memory&main=other}, world)	
 			
-	process (Operator (Binary_NN_N op)) = MOVE_TO_NEXT o app3 (id, binary, id)
+	process (Operator (Binary_NN_N op)) = app3 (id, binary, id)
 	where
 		
 		binary :: !Memory -> Memory
@@ -214,7 +214,7 @@ where
 				= {memory&main=[El[op lhs rhs]:other]}
 			_ = memory
 			
-	process (Operator (Binary_NN_S op)) = MOVE_TO_NEXT o app3 (id, binary, id)
+	process (Operator (Binary_NN_S op)) = app3 (id, binary, id)
 	where
 		
 		binary :: !Memory -> Memory
@@ -232,7 +232,7 @@ where
 				= {memory&main=[El(op lhs rhs),Delimiter,El[]:other]}
 			_ = memory
 			
-	process (Operator (Unary_N_N op)) = MOVE_TO_NEXT o app3 (id, unary, id)
+	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where
 		
 		unary :: !Memory -> Memory
@@ -241,7 +241,7 @@ where
 			{main=[El [arg:mid]:other]} = {memory&main=[El [op arg:mid]:other]}
 			_ = memory
 				
-	process (Stack (MoveTop dir)) = MOVE_TO_NEXT o app3 (id, moveTop dir, id)
+	process (Stack (MoveTop dir)) = app3 (id, moveTop dir, id)
 	where
 		
 		moveTop :: !Direction !Memory -> Memory

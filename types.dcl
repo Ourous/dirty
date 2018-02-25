@@ -137,24 +137,17 @@ import StdMaybe
 	| Unary_N_S (Number -> [Number])
 	| Unary_S_N ([Number] -> Number)
 	| Unary_S_S ([Number] -> [Number])
-	| Math_Modulus
-	| Math_Addition
-	| Math_Multiplication
-	| Math_Subtraction
-	| Math_Division
 	| Math_Logarithm
+	| Math_Modulus
 	| Math_Exponent
 	| Math_DotProduct
 	| Math_Sum
 	| Math_Product
-	| Math_SquareRoot
-	| Math_Negation
 	| Math_Conjugate
 	| Math_RealPart
 	| Math_ImaginaryPart
 	| Math_ImaginaryUnit
 	| Math_ComplexSplit
-	| Math_Floor
 	| Math_Abs
 	| Math_Ceiling
 	| Math_Round

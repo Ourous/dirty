@@ -108,6 +108,33 @@ where
 	writeChar :: !Number -> (IO ())
 	
 	writeChar char = putStr (if(flags.nums) (toString char) (unicodeToUTF8 [toInt char]))
+	
+	readLine :: (*World -> ([Number], *World))
+	readLine => app2 (map fromInt o utf8ToUnicode, id) o evalIO getLine
+	
+	readChar :: (*World -> (Number, *World))
+	readChar => app2 (hd o map fromInt o utf8ToUnicode, id) o getUTF8 o evalIO getChar
+	where 
+		
+		getUTF8 :: !(!Char, !*World) -> (String, *World)
+		getUTF8 (chr, world)
+			| chr < '\302'
+				= ({#chr}, world)
+			# (str, world)
+				= getMore ({#chr}, world)
+			| chr < '\340'
+				= (str, world)
+			# (str, world)
+				= getMore (str, world)
+			| chr < '\360'
+				= (str, world)
+			| otherwise
+				= getMore (str, world)
+				
+		getMore :: !(!String, !*World) -> (String, *World)
+		getMore (str, world)
+			# (chr, world) = evalIO getChar world
+			= (str <+ chr, world)
 
 	process :: !Command -> (*(!State, !Memory, !*World) -> *(State, Memory, *World))
 	
@@ -287,6 +314,30 @@ where
 		writeAll (stack, memory=:{main=[El mid:other]}, world)
 			# world = execIO (writeLine mid) world
 			= (stack, {memory&main=other}, world)
+			
+	process (Operator (IO_ReadAll)) = readAll
+	where
+		
+		readAll (stack, memory=:{main}, world)
+			# (str, world) = readLine world
+			= (stack, {memory&main=[El str,Delimiter:main]}, world)
+			
+	process (Operator (IO_WriteOnce)) = writeOnce
+	where
+	
+		writeOnce (stack, memory=:{main=[El[]:_]}, world)
+			= (stack, memory, world)
+			
+		writeOnce (stack, memory=:{main=[El[top:mid]:other]}, world)
+			# world = execIO (writeChar top) world
+			= (stack, {memory&main=[El mid:other]}, world)
+			
+	process (Operator (IO_ReadOnce)) = readOnce
+	where
+	
+		readOnce (stack, memory=:{main=[El mid:other]}, world)
+			# (chr, world) = readChar world
+			= (stack, {memory&main=[El[chr:mid]:other]}, world)
 			
 	process (Operator (Binary_NN_N op)) = app3 (id, binary, id)
 	where

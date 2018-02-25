@@ -1,9 +1,10 @@
 implementation module converter
 
-import StdBool, StdInt
-import types, arithmetic, Text, Text.Unicode.Encodings.UTF8, Text.Unicode, Text.Unicode.UChar
+import StdBool, StdInt, Text, Text.Unicode.Encodings.UTF8, Text.Unicode, Text.Unicode.UChar
+import types, arithmetic, builtins
 from StdFunc import o
 from StdList import map, !!
+from StdOrdList import sort
 	
 unicodeToUTF8 :: [Int] -> String
 unicodeToUTF8 string
@@ -604,9 +605,9 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Literal (Digit (Re (Fin (Int 9)))))
 	,(Operator (Range_FromMiddleAvoidZero))
 	,(Operator (Range_FromLeftTimesRight))
-	,(Operator (Logic_LessThan))
-	,(Operator (Logic_Equality))
-	,(Operator (Logic_GreaterThan))
+	,(Operator (Binary_NN_N (isLessThan)))//(Operator (Logic_LessThan))
+	,(Operator (Binary_NN_N (isEqualTo)))//(Operator (Logic_Equality))
+	,(Operator (Binary_NN_N (isGreaterThan)))//(Operator (Logic_GreaterThan))
 	,(Operator (IO_ReadOnce))
 	,(Stack (AdjustOffset))
 	,(Literal (Alphabet Uppercase))
@@ -655,7 +656,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Unary_N_N (log10)))//(Operator (Math_Base10Logarithm))
 	,(Operator (Math_Combinations))
 	,(Operator (Chars_SplitOnNewlines))
-	,(Operator (Set_MakeOrdered))
+	,(Operator (Unary_S_S (sort)))//(Operator (Set_MakeOrdered))
 	,(Operator (Math_PrimeFactors))
 	,(Variable (History))
 	,(Operator (Unary_N_N (numRound)))//(Operator (Math_Round))
@@ -698,16 +699,16 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Set_Union))
 	,(Operator (Set_Exclusion))
 	,(Operator (Logic_ElementOf))
-	,(Operator (Logic_Contains))
+	,(Operator (Vector_ElementOf))
 	,(Operator (Vector_LessThan))
 	,(Operator (Vector_GreaterThan))
 	,(Operator (Vector_Equality))
-	,(Operator (Logic_LessOrEqual))
+	,(Operator (Binary_NN_N (isLessOrEqual)))//(Operator (Logic_LessOrEqual))
 	,(Operator (Vector_LessOrEqual))
-	,(Operator (Logic_GreaterOrEqual))
+	,(Operator (Binary_NN_N (isGreaterOrEqual)))//(Operator (Logic_GreaterOrEqual))
 	,(Operator (Vector_GreaterOrEqual))
-	,(Operator (Logic_Inequality))
-	,(Operator (Logic_SetEquality))
+	,(Operator (Binary_NN_N (isNotEqual)))//(Operator (Logic_Inequality))
+	,(Operator (Binary_SS_N (isIdentical)))//(Operator (Logic_SetEquality))
 	,(Operator (Logic_SubsetNotEqual))
 	,(Operator (Logic_SubsetOrEqual))
 	,(Operator (Logic_NotSubsetNorEqual))

@@ -2,7 +2,7 @@ definition module builtins
 
 import types
 
-/*
+
 // "boolean" functions, returning -1 for True and 0 for False
 isLessThan :: Number Number -> Number
 isGreaterThan :: Number Number -> Number
@@ -11,13 +11,10 @@ isLessOrEqual :: Number Number -> Number
 isGreaterOrEqual :: Number Number -> Number
 isNotEqual :: Number Number -> Number
 isIdentical :: [Number] [Number] -> Number
-isNotIdentical :: [Number] [Number] -> Number
+/*
 isImproperSubsetOf :: [Number] [Number] -> Number
-isImproperSupersetOf :: [Number] [Number] -> Number
 isProperSubsetOf :: [Number] [Number] -> Number
-isProperSupersetOf :: [Number] [Number] -> Number
 isNotSubsetOf :: [Number] [Number] -> Number
-isNotSupersetOf :: [Number] [Number] -> Number
 
 isUppercase :: Number -> Number
 isLoweracse :: Number -> Number

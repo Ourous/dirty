@@ -138,7 +138,6 @@ import StdMaybe
 	| Unary_S_N ([Number] -> Number)
 	| Unary_S_S ([Number] -> [Number])
 	| Math_Logarithm
-	| Math_Modulus
 	| Math_DotProduct
 	| Math_Sum
 	| Math_Product
@@ -170,13 +169,9 @@ import StdMaybe
 	| Logic_GreaterOrEqual
 	| Logic_SetEquality
 	| Logic_ElementOf
-	| Logic_Contains
 	| Logic_SubsetOrEqual
 	| Logic_SubsetNotEqual
 	| Logic_NotSubsetNorEqual
-	| Logic_SupersetOrEqual
-	| Logic_SupersetNotEqual
-	| Logic_NotSupersetNorEqual
 	| Logic_Any
 	| Logic_All
 	| Logic_IsOrdered
@@ -199,6 +194,7 @@ import StdMaybe
 	| Vector_LessOrEqual
 	| Vector_GreaterOrEqual
 	| Vector_Negation
+	| Vector_ElementOf
 	| Range_FromLeftStepRight
 	| Range_FromMiddleToZero
 	| Range_FromMiddleAvoidZero

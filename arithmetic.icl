@@ -37,12 +37,12 @@ IS_ZERO numeric
 		(Real -0.0) = True
 		_ = False
 
-IS_INF numeric // Don't use outside of `handle`
+IS_NOT_NAN numeric // Don't use outside of `handle`
 	:== case numeric of
 		(Real val) = val <> 0.0
 //		_ = True
 
-IS_FIN numeric // Don't use outside of `handle`
+IS_FINITE numeric // Don't use outside of `handle`
 	:== case numeric of
 		(Real val) = isFinite val
 		_ = True
@@ -57,30 +57,30 @@ handle number
 		val = val
 where
 	handleRe val
-		| IS_FIN val
+		| IS_FINITE val
 			| IS_ZERO val = Zero
 			| otherwise = (Re (Fin val))
-		| IS_INF val = (Re (Inf (FIN_SIGN val)))
+		| IS_NOT_NAN val = (Re (Inf (FIN_SIGN val)))
 		| otherwise = NaN
 	handleIm val
-		| IS_FIN val
+		| IS_FINITE val
 			| IS_ZERO val = Zero
 			| otherwise = (Im (Fin val))
-		| IS_INF val = (Im (Inf (FIN_SIGN val)))
+		| IS_NOT_NAN val = (Im (Inf (FIN_SIGN val)))
 		| otherwise = NaN
 		// TODO : find good tests for complex number performance so I can rewrite it properly
 	handleCx re im
-		| IS_FIN re
-			| IS_FIN im
+		| IS_FINITE re
+			| IS_FINITE im
 				| IS_ZERO re
 					| IS_ZERO im = Zero
 					| otherwise = (Im (Fin im))
 				| IS_ZERO im = (Re (Fin re))
 				| otherwise = (Cx (Fin {re=re, im=im}))
-			| IS_INF im = (Im (Inf (FIN_SIGN im)))
+			| IS_NOT_NAN im = (Im (Inf (FIN_SIGN im)))
 			| otherwise = NaN
-		| IS_INF re
-			| IS_INF im = (Cx (Inf Directed))
+		| IS_NOT_NAN re
+			| IS_NOT_NAN im = (Cx (Inf Directed))
 			| otherwise = (Re (Inf (FIN_SIGN re)))
 		| otherwise = NaN
 		

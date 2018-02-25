@@ -52,14 +52,18 @@ where
 			| otherwise
 				= isMatched` n lhs rhs tail
 				
-	findNearPairs lhs rhs list = let
-		(Just rhsIndex) = findIndex (equalsBracket rhs) list
-		lhsIndex = last(filter((>)rhsIndex)(findIndices (equalsBracket lhs)list))
-		(_, rhsPos) = list !! rhsIndex
-		(_, lhsPos) = list !! lhsIndex
-		updateLhs = updateAt lhsIndex ((Control (Loop type lhs (Just rhsPos))), lhsPos)
-		updateRhs = updateAt rhsIndex ((Control (Loop type rhs (Just lhsPos))), rhsPos)
-	in (updateLhs o updateRhs) list
+	findNearPairs lhs rhs list
+		# rhsIndex = findIndex (equalsBracket rhs) list
+		| isNothing rhsIndex
+			= list
+		# (Just rhsIndex) = rhsIndex
+		| otherwise = let
+			lhsIndex = last(filter((>)rhsIndex)(findIndices (equalsBracket lhs)list))
+			(_, rhsPos) = list !! rhsIndex
+			(_, lhsPos) = list !! lhsIndex
+			updateLhs = updateAt lhsIndex ((Control (Loop type lhs (Just rhsPos))), lhsPos)
+			updateRhs = updateAt rhsIndex ((Control (Loop type rhs (Just lhsPos))), rhsPos)
+		in (updateLhs o updateRhs) list
 	
 	linkHorizontal list = let
 		(n, rotated) = rotateUntilMatched West East list

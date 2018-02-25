@@ -63,7 +63,7 @@ where
 			(_, lhsPos) = list !! lhsIndex
 			updateLhs = updateAt lhsIndex ((Control (Loop type lhs (Just rhsPos))), lhsPos)
 			updateRhs = updateAt rhsIndex ((Control (Loop type rhs (Just lhsPos))), rhsPos)
-		in (updateLhs o updateRhs) list
+		in (findNearPairs lhs rhs o updateLhs o updateRhs) list
 	
 	linkHorizontal list = let
 		(n, rotated) = rotateUntilMatched West East list

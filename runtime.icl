@@ -174,7 +174,9 @@ where
 
 	process (Literal (Digit val)) = MOVE_TO_NEXT o literal
 	where
+	
 		literal :: !*(!State, !Memory, *World) -> *(State, Memory, *World)
+		
 		literal (state=:{history}, memory=:{main}, world)
 			| isDigit history = let
 				[El [top:mid]:base] = main
@@ -194,22 +196,49 @@ where
 			# world = execIO (writeLine mid) world
 			= (stack, {memory&main=other}, world)	
 			
-	process (Operator (Binary op)) = MOVE_TO_NEXT o app3 (id, binary, id)
+	process (Operator (Binary_NN_N op)) = MOVE_TO_NEXT o app3 (id, binary, id)
 	where
 		
 		binary :: !Memory -> Memory
 		
 		binary memory = case memory of
-			{left=[lhs:left], main=[El mid:other], right=[rhs:right]}
-				= {memory&left=left,right=right,main=[El[op lhs rhs:mid]:other]}
-			{left=[lhs:left], main=[El [rhs:mid]:other], right=[]}
-				= {memory&left=left,main=[El[op lhs rhs:mid]:other]}
-			{left=[], main=[El [lhs:mid]:other], right=[rhs:right]}
-				= {memory&right=right,main=[El[op lhs rhs:mid]:other]}
-			{left=[lhs,rhs:left], main=[El []:other], right=[]}
-				= {memory&left=left,main=[El[op lhs rhs]:other]}
-			{left=[], main=[El []:other], right=[rhs,lhs:right]}
-				= {memory&right=right,main=[El[op lhs rhs]:other]}
+			{left=[lhs:_], main=[El mid:other], right=[rhs:_]}
+				= {memory&main=[El[op lhs rhs:mid]:other]}
+			{left=[lhs:_], main=[El [rhs:mid]:other], right=[]}
+				= {memory&main=[El[op lhs rhs:mid]:other]}
+			{left=[], main=[El [lhs:mid]:other], right=[rhs:_]}
+				= {memory&main=[El[op lhs rhs:mid]:other]}
+			{left=[lhs,rhs:_], main=[El []:other], right=[]}
+				= {memory&main=[El[op lhs rhs]:other]}
+			{left=[], main=[El []:other], right=[rhs,lhs:_]}
+				= {memory&main=[El[op lhs rhs]:other]}
+			_ = memory
+			
+	process (Operator (Binary_NN_S op)) = MOVE_TO_NEXT o app3 (id, binary, id)
+	where
+		
+		binary :: !Memory -> Memory
+		
+		binary memory = case memory of
+			{left=[lhs:_], right=[rhs:_]}
+				= {memory&main=[El(op lhs rhs),Delimiter:memory.main]}
+			{left=[lhs:_], main=[El [rhs:mid]:other], right=[]}
+				= {memory&main=[El(op lhs rhs),Delimiter,El mid:other]}
+			{left=[], main=[El [lhs:mid]:other], right=[rhs:_]}
+				= {memory&main=[El(op lhs rhs),Delimiter,El mid:other]}
+			{left=[lhs,rhs:_], main=[El []:other], right=[]}
+				= {memory&main=[El(op lhs rhs),Delimiter,El[]:other]}
+			{left=[], main=[El []:other], right=[rhs,lhs:_]}
+				= {memory&main=[El(op lhs rhs),Delimiter,El[]:other]}
+			_ = memory
+			
+	process (Operator (Unary_N_N op)) = MOVE_TO_NEXT o app3 (id, unary, id)
+	where
+		
+		unary :: !Memory -> Memory
+		
+		unary memory = case memory of
+			{main=[El [arg:mid]:other]} = {memory&main=[El [op arg:mid]:other]}
 			_ = memory
 				
 	process (Stack (MoveTop dir)) = MOVE_TO_NEXT o app3 (id, moveTop dir, id)

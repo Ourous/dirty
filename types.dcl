@@ -125,8 +125,18 @@ import StdMaybe
 	| IO_Sleep
 	| IO_ClearConsole
 	| IO_Backspace
-	| Binary (Number Number -> Number)
-	| Unary (Number -> Number)
+	| Binary_NN_N (Number Number -> Number)
+	| Binary_NN_S (Number Number -> [Number])
+	| Binary_SN_N ([Number] Number -> Number)
+	| Binary_SN_S ([Number] Number -> [Number])
+	| Binary_NS_N (Number [Number] -> Number)
+	| Binary_NS_S (Number [Number] -> [Number])
+	| Binary_SS_N ([Number] [Number] -> Number)
+	| Binary_SS_S ([Number] [Number] -> [Number])
+	| Unary_N_N (Number -> Number)
+	| Unary_N_S (Number -> [Number])
+	| Unary_S_N ([Number] -> Number)
+	| Unary_S_S ([Number] -> [Number])
 	| Math_Modulus
 	| Math_Addition
 	| Math_Multiplication

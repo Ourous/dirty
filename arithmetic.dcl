@@ -22,9 +22,9 @@ instance abs Number
 instance ~ Number
 instance == Number
 instance < Number
-//instance mod Number
-//instance gcd Number
-//instance lcm Number
+instance mod Number
+instance gcd Number
+instance lcm Number
 
 instance toInt Number
 instance toReal Number

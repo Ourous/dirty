@@ -35,14 +35,9 @@ areAllTrue :: [Number] -> Number
 // exported macros with effective type signature
 
 // :: [Number] -> Bool
-IS_STACK_TRUE stack
+TO_BOOL stack
 	:== case stack of
 		[] = False
-		[value:_] = IS_VALUE_TRUE value
-
-// :: Number -> Bool
-IS_VALUE_TRUE value
-	:== case value of
-		NaN = False
-		Zero = False
+		[Zero:_] = False
+		[NaN:_] = False
 		_ = True

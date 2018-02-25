@@ -1,6 +1,6 @@
 implementation module runtime
 
-import types, converter, atomics, arithmetic
+import types, converter, atomics, arithmetic, builtins
 import StdEnv, StdLib, System.IO, System.Time, Math.Random, Text
 from Math.Geometry import pi
 import qualified Data.Generics.GenParse as GenParse
@@ -52,13 +52,6 @@ TRAVERSE_SOME dist state=:{location, direction}
 		South = {state&location={location&y=location.y+dist}}
 
 TRAVERSE_ONE :== TRAVERSE_SOME 1
-
-IS_TRUTHY stack
-	:== case stack of
-		[] = False
-		[Zero:_] = False
-		[NaN:_] = False
-		_ = True
 		
 GET_MIDDLE :== \[El stack:_] -> stack
 
@@ -145,12 +138,22 @@ where
 				Horizontal = if(isEven rng) East West
 				Vertical = if(isEven rng) North South
 		in ({state&direction=newDirection}, {memory&random=random}, world)
+		
+	process (Control (Skip cond)) = skip
+	where
+		
+		skip (state, memory=:{main=[El mid:other]}, world)
+			| cond || TO_BOOL mid
+				= (TRAVERSE_ONE state, memory, world)
+			| otherwise
+				= (state, memory, world)
+		
 	
 	process (Control (Goto dir (Just loc))) = goto
 	where
 	
-		goto (state=:{direction}, memory=:{main}, world)
-			| direction == dir && IS_TRUTHY (GET_MIDDLE main)
+		goto (state=:{direction}, memory=:{main=[El mid:other]}, world)
+			| direction == dir && TO_BOOL mid
 				= ({state&location=loc}, memory, world)
 			| otherwise
 				= (state, memory, world)

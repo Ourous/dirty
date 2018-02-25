@@ -300,7 +300,7 @@ instance < Number where
 	(<) (Re (Fin lhs)) (Re (Fin rhs)) = lhs < rhs
 	(<) (Im (Fin lhs)) (Im (Fin rhs)) = lhs < rhs
 	(<) (Cx (Fin lhs)) (Cx (Fin rhs)) = lhs.re < rhs.re && lhs.im < rhs.im
-/*
+
 instance mod Number where
 	(mod) NaN _ = NaN
 	(mod) _ NaN = NaN
@@ -308,70 +308,49 @@ instance mod Number where
 	(mod) Zero _ = Zero
 	//(mod) Infinity _ = NaN
 	//(mod) val Infinity = val
-	(mod) (Rational lhs) (Rational rhs)
-		= handle (Rational (lhs mod rhs))
-	(mod) (Rational lhs) (Imaginary rhs)
-		= handle (Imaginary (~(lhs mod rhs)))
-	(mod) (Imaginary lhs) (Rational rhs)
-		= handle (Imaginary (lhs mod rhs))
-	(mod) (Imaginary lhs) (Imaginary rhs)
-		= handle (Rational (lhs mod rhs))
-	(mod) (Rational lhs) (Complex rhsRe rhsIm)
-		# denominator = rhsRe * rhsRe + rhsIm * rhsIm
-		= handle (Complex ((lhs * rhsRe) mod denominator) (~((lhs * rhsIm) mod denominator)))
-	(mod) (Imaginary lhs) (Complex rhsRe rhsIm)
-		# denominator = rhsRe * rhsRe + rhsIm * rhsIm
-		= handle (Complex ((lhs * rhsIm) mod denominator) ((lhs * rhsRe) mod denominator))
-	(mod) (Complex lhsRe lhsIm) (Rational rhs)
-		= handle (Complex (lhsRe mod rhs) (lhsIm mod rhs))
-	(mod) (Complex lhsRe lhsIm) (Imaginary rhs)
-		= handle (Complex (lhsIm mod rhs) (~(lhsRe mod rhs)))
-	(mod) (Complex lhsRe lhsIm) (Complex rhsRe rhsIm)
-		# denominator = rhsRe * rhsRe + rhsIm * rhsIm
-		= handle (Complex ((lhsRe * rhsRe + lhsIm * rhsIm) mod denominator) ((lhsIm * rhsRe - lhsRe * rhsIm) mod denominator))
-	
+	(mod) (Re (Fin lhs)) (Re (Fin rhs))
+		= handle (Re (Fin (lhs mod rhs)))
+	(mod) (Re (Fin lhs)) (Im (Fin rhs))
+		= handle (Im (Fin (~(lhs mod rhs))))
+	(mod) (Im (Fin lhs)) (Re (Fin rhs))
+		= handle (Im (Fin (lhs mod rhs)))
+	(mod) (Im (Fin lhs)) (Im (Fin rhs))
+		= handle (Re (Fin (lhs mod rhs)))
+	(mod) (Re (Fin lhs)) (Cx (Fin rhs))
+		# denominator = rhs.re * rhs.re + rhs.im * rhs.im
+		= handle (Cx (Fin {re=((lhs * rhs.re) mod denominator), im=(~((lhs * rhs.im) mod denominator))}))
+	(mod) (Im (Fin lhs)) (Cx (Fin rhs))
+		# denominator = rhs.re * rhs.re + rhs.im * rhs.im
+		= handle (Cx (Fin {re=((lhs * rhs.im) mod denominator), im=((lhs * rhs.re) mod denominator)}))
+	(mod) (Cx (Fin lhs)) (Re (Fin rhs))
+		= handle (Cx (Fin {re=(lhs.re mod rhs), im=(lhs.im mod rhs)}))
+	(mod) (Cx (Fin lhs)) (Im (Fin rhs))
+		= handle (Cx (Fin {re=(lhs.im mod rhs), im=(~(lhs.re mod rhs))}))
+	(mod) (Cx (Fin lhs)) (Cx (Fin rhs))
+		# denominator = rhs.re * rhs.re + rhs.im * rhs.im
+		= handle (Cx (Fin {re=((lhs.re * rhs.re + lhs.im * rhs.im) mod denominator), im=((lhs.im * rhs.re - lhs.re * rhs.im) mod denominator)}))
+	(mod) _ _ = NaN
+
 instance gcd Number where
 	gcd NaN _ = NaN
 	gcd _ NaN = NaN
-	//gcd Infinity _ = NaN
-	//gcd _ Infinity = NaN
 	gcd Zero _ = NaN
 	gcd _ Zero = NaN
-	gcd (Rational lhs) (Rational rhs)
-		= handle (Rational (gcd lhs rhs))
-	gcd (Rational lhs) (Imaginary rhs)
-		= handle (Rational (gcd lhs rhs))
-	gcd (Imaginary lhs) (Rational rhs)
-		= handle (Rational (gcd lhs rhs))
-	gcd (Imaginary lhs) (Imaginary rhs)
-		= handle (Imaginary (gcd lhs rhs))
-	gcd (Rational _) (Complex _ _) = abort "Unimplemented Operation: gcd Re Cx"
-	gcd (Imaginary _) (Complex _ _) = abort "Unimplemented Operation: gcd Im Cx"
-	gcd (Complex _ _) (Rational _) = abort "Unimplemented Operation: gcd Cx Re"
-	gcd (Complex _ _) (Imaginary _) = abort "Unimplemented Operation: gcd Cx Im"
-	gcd (Complex _ _) (Complex _ _) = abort "Unimplemented Operation: gcd Cx Cx"
+	gcd (Re (Fin lhs)) (Re (Fin rhs))
+		= handle (Re (Fin (gcd lhs rhs)))
+	gcd (Im (Fin lhs)) (Im (Fin rhs))
+		= handle (Im (Fin (gcd lhs rhs)))
+	gcd (Cx (Fin _)) (Cx (Fin _))
+		= abort "GCD of Complex not yet implemented!"
 	
 instance lcm Number where
 	lcm NaN _ = NaN
 	lcm _ NaN = NaN
-	//lcm Infinity _ = NaN
-	//lcm _ Infinity = NaN
-	lcm Zero _ = NaN
-	lcm _ Zero = NaN
-	lcm (Rational lhs) (Rational rhs)
-		= handle (Rational (lcm lhs rhs))
-	lcm (Rational lhs) (Imaginary rhs)
-		= handle (Imaginary (lcm lhs rhs))
-	lcm (Imaginary lhs) (Rational rhs)
-		= handle (Imaginary (lcm lhs rhs))
-	lcm (Imaginary lhs) (Imaginary rhs)
-		= handle (Rational (lcm lhs rhs))
-	lcm (Rational _) (Complex _ _) = abort "Unimplemented Operation: lcm Re Cx"
-	lcm (Imaginary _) (Complex _ _) = abort "Unimplemented Operation: lcm Im Cx"
-	lcm (Complex _ _) (Rational _) = abort "Unimplemented Operation: lcm Cx Re"
-	lcm (Complex _ _) (Imaginary _) = abort "Unimplemented Operation: lcm Cx Im"
-	lcm (Complex _ _) (Complex _ _) = abort "Unimplemented Operation: lcm Cx Cx"
-*/
+	lcm Zero _ = Zero
+	lcm _ Zero = Zero
+	lcm (Re (Fin lhs)) (Re (Fin rhs))
+		= handle (Re (Fin (lcm lhs rhs)))
+
 instance toInt Number where
 	toInt Zero = 0
 	toInt (Re (Fin val)) = toInt val

@@ -5,7 +5,7 @@ Global
 	Exec:	{Project}\dirty
 	CodeGen
 		CheckStacks:	False
-		CheckIndexes:	False
+		CheckIndexes:	True
 	Application
 		HeapSize:	262144000
 		StackSize:	52428800

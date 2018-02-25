@@ -37,12 +37,12 @@ IS_ZERO numeric
 		(Real -0.0) = True
 		_ = False
 
-IS_INF numeric
+IS_INF numeric // Don't use outside of `handle`
 	:== case numeric of
 		(Real val) = val <> 0.0
 //		_ = True
 
-IS_FIN numeric // or nan
+IS_FIN numeric // Don't use outside of `handle`
 	:== case numeric of
 		(Real val) = isFinite val
 		_ = True

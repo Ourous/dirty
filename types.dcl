@@ -26,14 +26,14 @@ import StdMaybe
 
 :: Memory
 	= {
-		left :: ![Number],
-		right :: ![Number],
-		main :: ![Element],
-		random :: [Int]
+		left :: [Number],
+		right :: [Number],
+		main :: [Element],
+		random :: ![Int]
 	}
 	
 :: Element
-	= El ![Number]
+	= El [Number]
 	| Delimiter
 	
 :: Flags
@@ -56,7 +56,7 @@ import StdMaybe
 
 :: Magnitude inf fin
 	= Fin !fin
-	| Inf !inf
+	| Inf inf
 	
 :: Sign 
 	= Positive

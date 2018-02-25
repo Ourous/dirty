@@ -20,10 +20,12 @@ Start world
 		= case (readFile file world) of
 			(Ok file, world) = (file, world)
 			_ = abort "Cannot open the file specified!"
-	# (memory, world)
-		= evaluate args world
+	# program
+		= parser file
+	# init
+		= initialize program args world
 	//# memory = {memory&main=[[[(Re (Fin (Int (2^19))))]]]}
-	= (parser file).commands
+	= (construct program (toFlags flags)) init
 	//(construct (parser file) (toFlags flags))
 	//# re = map (\e -> (Re (Fin (Int e)))) [1..2^24]
 	//# im = map (\e -> (Im (Fin (Int e)))) [0,-1.. ~(2^24)]

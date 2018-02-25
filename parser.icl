@@ -32,7 +32,7 @@ linkGoto commands
 where
 
 	linkEast list
-		= [(matchWest item (rotate i list), pos) \\ (item, pos) <- list & i <- [0..]]
+		= [(matchWest item (rotateList i list), pos) \\ (item, pos) <- list & i <- [0..]]
 	where
 	
 		matchWest (Control (Goto East Nothing)) list
@@ -43,7 +43,7 @@ where
 		
 	linkWest list
 		# list = reverse list
-		= reverse [(matchEast item (rotate i list), pos) \\ (item, pos) <- list & i <- [0..]]
+		= reverse [(matchEast item (rotateList i list), pos) \\ (item, pos) <- list & i <- [0..]]
 	where
 	
 		matchEast (Control (Goto West Nothing)) list
@@ -53,7 +53,7 @@ where
 		matchEast val _ = val
 		
 	linkNorth list
-		= [(matchSouth item (rotate i list), pos) \\ (item, pos) <- list & i <- [0..]]
+		= [(matchSouth item (rotateList i list), pos) \\ (item, pos) <- list & i <- [0..]]
 	where
 	
 		matchSouth (Control (Goto North Nothing)) list
@@ -64,7 +64,7 @@ where
 		
 	linkSouth list
 		# list = reverse list
-		= reverse [(matchNorth item (rotate i list), pos) \\ (item, pos) <- list & i <- [0..]]
+		= reverse [(matchNorth item (rotateList i list), pos) \\ (item, pos) <- list & i <- [0..]]
 	where
 	
 		matchNorth (Control (Goto South Nothing)) list

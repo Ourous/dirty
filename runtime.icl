@@ -77,10 +77,24 @@ evaluate args world
 where
 	parseInt :: (String -> (Maybe Int))
 	parseInt = 'GenParse'.parseString
-	
-initialize :: !Program *World -> *(State, *World)
-initialize program world
-	= ({location={x=0,y=0},direction=East,history='\n',terminate=False}, world)
+
+initialize :: !Program ![String] *World -> *(State, Memory, *World)
+initialize program=:{commands} args world
+	# (memory=:{random=[randpos,randdir:random]}, world)
+		= evaluate args world
+	| isEmpty annotated
+		= ({direction=East, location={x=0,y=0}, history='\n', terminate=False}, {memory&random=random}, world)
+	# (orn, loc)
+		= annotated !! (randpos rem (length annotated))
+	# dir = case orn of
+		(Axis Vertical) = if(isEven randdir) North South
+		(Axis Vertical) = if(isEven randdir) East West
+		(Dir dir) = dir
+	| otherwise
+		= ({direction=dir, location=loc, history='\n', terminate=False}, {memory&random=random}, world)
+where
+	annotated = [(orn, {x=x, y=y}) \\ y <- [0..] & line <-: commands, x <- [0..] & (Control (Start orn)) <-: line]
+
 
 construct :: !Program !Flags -> (*(State, Memory, *World) -> *World)
 construct program=:{dimension, source, commands, wrapping} flags = execute
@@ -91,7 +105,7 @@ where
 			= execIO (putStrLn (MEM_TO_STR memory)) world
 		| otherwise
 			= world
-	// TODO: pattern match to handle memory config here
+	// TODO: pattern match to handle memory sanity here
 	//execute (state, memory=:{main=[]}
 	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y = let
@@ -111,7 +125,7 @@ where
 		
 	process (Control (Change dir)) = app3(TRAVERSE_ONE o \state -> {state&direction=dir}, id, id)
 	
-	process (Control (Loop Middle dir (Just loc))) = MOVE_TO_NEXT o goto // TODO: change to handle all loops
+	process (Control (Goto dir (Just loc))) = MOVE_TO_NEXT o goto // TODO: change to handle all loops
 	where
 		goto (state=:{direction}, memory=:{main}, world)
 			| direction == dir && IS_TRUTHY (GET_MIDDLE main)

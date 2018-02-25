@@ -2,12 +2,12 @@ implementation module utilities
 
 import StdEnv, StdLib
 
-rotate :: a u:[b] -> v:[b] | Enum a, [u <= v]
-rotate _ [] = []
-rotate n list
+rotateList :: a u:[b] -> v:[b] | Enum a, [u <= v]
+rotateList _ [] = []
+rotateList n list
 	| n > zero
-		= rotate (dec n) ((tl list) ++ [hd list])
+		= rotateList (dec n) ((tl list) ++ [hd list])
 	| n < zero
-		= rotate (inc n) [last list:init list]
+		= rotateList (inc n) [last list:init list]
 	| otherwise
 		= list

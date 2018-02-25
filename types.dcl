@@ -1,61 +1,71 @@
 definition module types
 
+import StdMaybe
+
 :: XYPair
 	= {
 		x :: !Int,
 		y :: !Int
 	}
 	
-:: State
+:: Program
 	= {
 		dimension :: !XYPair,
-		location :: !XYPair,
+		source :: !{{#Char}},
+		commands :: !{{Command}},
+		wrapping :: !Bool
+	}	
+	
+:: State	
+	= {
 		direction :: !Direction,
-		source :: [[Char]],
-		program :: [[Command]],
-		wrapping :: Bool,
-		history :: Char
+		location :: !XYPair,
+		history :: !Char,
+		terminate :: !Bool
 	}
 
-:: *Memory
+:: Memory
 	= {
-		left :: [Number],
-		right :: [Number],
-		main :: [[[Number]]],
-		random :: [Int]//,
-		//history :: [Char]
+		left :: ![Number],
+		right :: ![Number],
+		main :: ![Element],
+		random :: [Int]
 	}
+	
+:: Element
+	= El ![Number]
+	| Delimiter
 	
 :: Flags
 	= {
-		debug :: Bool,
-		dump :: Bool,
-		nums :: Bool
+		debug :: !Bool,
+		dump :: !Bool,
+		nums :: !Bool
 	}
 
 :: Numeric
-	= Int Int
-	| Real Real
+	= Int !Int
+	| Real !Real
 
 :: Number
 	= Zero
-	| Re (Magnitude Sign Numeric)
-	| Im (Magnitude Sign Numeric)
-	| Cx (Magnitude Directed Complex)
+	| Re !(Magnitude Sign Numeric)
+	| Im !(Magnitude Sign Numeric)
+	| Cx !(Magnitude Directed Complex)
 	| NaN
 
 :: Magnitude inf fin
-	= Fin fin
-	| Inf inf
+	= Fin !fin
+	| Inf !inf
 	
-:: Sign
+:: Sign 
 	= Positive
 	| Negative
 	
 :: Complex
 	= {
-		re :: Numeric,
-		im :: Numeric
+		re :: !Numeric,
+		im :: !Numeric
 	}
 	
 :: Directed
@@ -70,16 +80,22 @@ definition module types
 	
 :: ControlCommand
 	= Terminate
-	| Start Direction
-	| Change Bool Direction 
-	| Bounce Bool Direction
-	| Either Bool Axes
+	| Start Orientation
+	| Change Direction 
+	| Bounce Direction
+	| Either Axes
 	| Mirror Bool Axes
+	| Skip Bool
 	| Turn Rotation
-	| Loop StackID3 Direction
+	| Loop StackID Direction (Maybe XYPair)
+	| Goto Direction (Maybe XYPair)
 	| String
 	| NOOP
 	| LINE
+	
+:: Orientation
+	= Dir Direction
+	| Axis Axes
 	
 :: LiteralCommand
 	= Pi
@@ -107,6 +123,8 @@ definition module types
 	| IO_Bell
 	| IO_Timestamp
 	| IO_Sleep
+	| IO_ClearConsole
+	| IO_Backspace
 	| Binary (Number Number -> Number)
 	| Unary (Number -> Number)
 	| Math_Modulus
@@ -170,7 +188,6 @@ definition module types
 	| Logic_LessOrEqual
 	| Logic_GreaterOrEqual
 	| Logic_SetEquality
-	| Logic_SetInequality
 	| Logic_ElementOf
 	| Logic_Contains
 	| Logic_SubsetOrEqual
@@ -180,7 +197,7 @@ definition module types
 	| Logic_SupersetNotEqual
 	| Logic_NotSupersetNorEqual
 	| Logic_Any
-	| Logic_None
+	| Logic_All
 	| Logic_IsOrdered
 	| Logic_IsLowercase
 	| Logic_IsUppercase
@@ -188,15 +205,19 @@ definition module types
 	| Logic_IsReal
 	| Logic_IsFinite
 	| Logic_IsInfinite
+	| Logic_Negation
+	| Logic_Coalesce
 	| Vector_And
 	| Vector_Or
 	| Vector_Multiplication
 	| Vector_Addition
+	| Vector_Subtraction
 	| Vector_Equality
 	| Vector_LessThan
 	| Vector_GreaterThan
 	| Vector_LessOrEqual
 	| Vector_GreaterOrEqual
+	| Vector_Negation
 	| Range_FromLeftStepRight
 	| Range_FromMiddleToZero
 	| Range_FromMiddleAvoidZero
@@ -213,6 +234,7 @@ definition module types
 	| Set_Union
 	| Set_Minimum
 	| Set_Maximum
+	| Set_Exclusion
 	| Chars_ToLowercase
 	| Chars_ToUppercase
 	| Chars_JoinWithNewlines
@@ -264,8 +286,8 @@ definition module types
 	| Uniques_Middle
 	| Uniques_Main
 	| Uniques_Base
-	| Duplicates_Middle
 	| Duplicates_Main
+	| Duplicates_Middle
 	| Duplicates_Base
 	| ShiftBase Direction
 	| JoinFromBase
@@ -275,10 +297,15 @@ definition module types
 	= Clockwise
 	| Anticlockwise
 	
-:: StackID3
+:: StackID
 	= Middle
 	| Left
 	| Right
+	| Both
+	| Primary
+	| Base
+	| Main
+	| All
 	
 :: Axes
 	= Reflection

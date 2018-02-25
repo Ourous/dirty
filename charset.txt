@@ -1,35 +1,35 @@
 ⏻ // power symbol
-⏵ // start, going right
-⏴ // start, going left
-⏶ // start, going up
-⏷ // start, going down
+⇨ // start, going right
+⇦ // start, going left
+⇧ // start, going up
+⇩ // start, going down
 ⭬ // move current baseline up 1
 ⭪ // move current baseline down 1
 🔔 // bell character
+␈ // delete the last console char
 ⭫ // go to next baseline, if none, create new baseline at the end of <main>
+\n // newline
 ⭭ // go to last baseline, if none, go to index 0
-№ // elements in <mid>
-// newline
 ⭮ // rotate counterclockwise
 ⭯ // rotate clockwise
-⮕ // solid right arrow
-⇨ // white right arrow
-⬅ // solid left arrow
-⇦ // white left arrow
-⬆ // solid up arrow
-⇧ // white up arrow
-⬇ // solid down arrow
-⇩ // white down arrow
+⮕ // move right arrow
+⬅ // move left arrow
+⬆ // move up arrow
+⬇ // move down arrow
 ⬌ // horizontal dual arrow
-⬄ // white horizontal arrow
 ⬍ // vertical dual arrow
-⇳ // white vertical arrow
-⋮ // vertical dots
-⋯ // horizontal dots
-⋰ // up-right dots
-⋱ // up-left dots
-‼ // output all of <mid>
-⁇ // get all input, put into <mid>
+⏜ // loop left top
+⏝ // loop left bottom
+⎴ // goto middle top
+⎵ // goto middle bottom
+⏞ // loop right top
+⏟ // loop right bottom
+⋮ // vertical conditional mirror
+⋯ // horizontal conditional mirror
+⋰ // identity-line conditional mirror
+⋱ // inverse-line conditional mirror
+⬄ // start random horizontal
+⇳ // start random vertical
   // no-op
 ! // output top of <mid>
 " // literal '
@@ -89,9 +89,9 @@ W // wipe the mid stack
 X // to uppercase
 Y // is uppercase
 Z // is a finite number
-[ // loop if <mid> is true
+[ // goto if <mid> is true
 \ // reflection around NW->SE
-] // loop if <mid> is true
+] // goto if <mid> is true
 ^ // exponentiate
 _ // floor
 ` // coefficients of the differential of a polynomial with coefficients of <mid>
@@ -125,6 +125,9 @@ z // conjugate
 | // reflection around the vertical
 } // loop if <right> is true or empty
 ~ // negate
+␡ // clear the console
+‼ // output all of <mid>
+⁇ // get all input, put into <mid>
 ⁈ // output <right>, read into <left>
 ⁉ // output <left>, read into <right>
 ‽ // output and pop <mid>, read into <mid>
@@ -132,6 +135,8 @@ z // conjugate
 ⨰ // vectorized multiplication
 ÷ // divide
 ∔ // vectorized plus
+∸ // vectorized subtraction
+⸞ // vectorized negation
 √ // square root
 ⅟ // reciprocal
 ∞ // is a non-finite number, and not NaN
@@ -141,29 +146,25 @@ z // conjugate
 ⩑ // vectorized and
 ⊻ // xor
 ¬ // not
-⊽ // nor
-⊼ // nand
-∥ // xnor
+⊨ // coalesce to truthy/falsey
+⊭ // logical negation
 ∩ // intersection
 ∪ // union
+∁ // exclusion
 ∈ // element of
-∋ // contains as member
+⋵ // vectorized element-of
 ⋖ // vectorized less-than
 ⋗ // vectorized greater-than
 ≐ // vectorized equals
-≤ // less or equals
+⩽ // less or equals
 ⩿ // vectorized less-or-equals
-≥ // greater or equals
+⩾ // greater or equals
 ⪀ // vectorized greater-or-equals
 ≠ // not equals
 ≡ // identical to (stack equals)
-≢ // not identical to (stack not equals)
 ⊊ // subset but not equal
-⊋ // superset but not equal
 ⊆ // subset or equal
-⊇ // superset or equal
 ⊈ // not subset nor equal
-⊉ // not superset nor equal
 å // radians to angle
 Å // angle to radians
 ¯ // ceiling
@@ -227,22 +228,21 @@ z // conjugate
 ⮑ // rotate stacks counterclockwise
 ⮒ // rotate tops of stacks clockwise
 ⮓ // rotate tops of stacks counterclockwise
+№ // elements in <mid>
 ∏ // product
 ∑ // sum
 ∃ // any
-∄ // none
+∀ // all
 𝒫 // power set
 𝒮 // ordered subsets
 ⬈ // bounce NE
-⬀ // conditional bounce NE
 ⬉ // bounce NW
-⬁ // conditional bounce NW
 ⬊ // bounce SE
-⬂ // conditional bounce SE
 ⬋ // bounce SW
-⬃ // conditional bounce SW
 ⬜ // universal reflect
 ⬚ // conditional universal reflect
+○ // jump over next instruction
+◌ // conditional jump over next instruction
 Ḋ // remove duplicates from <main>
 Ḍ // remove duplicates from <baseline>
 ḋ // retain only duplicates from <main>

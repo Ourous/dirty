@@ -1,10 +1,10 @@
 module main
-import types, atomics, runtime, parser, converter, arithmetic
+import types, atomics, utilities, runtime, parser, converter, arithmetic
 import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
 	# ([_:args], world)
 		= getCommandLine world
-	//# args = ["-utf8", "--n", "--s", "loop_test.txt"]
+	//# args = ["-utf8", "--n", "--s", "helloworld.txt"]
 	| isEmpty args
 		= abort usage
 	# (flags, [file:args])
@@ -20,15 +20,13 @@ Start world
 		= case (readFile file world) of
 			(Ok file, world) = (file, world)
 			_ = abort "Cannot open the file specified!"
-	# (memory, world)
-		= evaluate args world
-	//# memory = {memory&main=[[[(Re (Fin (Int (2^19))))]]]}
-	= execute (parser file) memory ((toFlags flags), world)
+	= let program = parser file
+	in (construct program (toFlags flags)) (initialize program args world)
 	
 toFlags flags
 	= {debug = False, dump = isMember "--s" flags, nums = isMember "--n" flags}
 	
-usage =: foldr ((+++)) ""
+usage :== foldr ((+++)) ""
 	["Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n"
 	,"\t-utf8: use the UTF-8 parser\n"
 	,"\t--n: numeric output\n"

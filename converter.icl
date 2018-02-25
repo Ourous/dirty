@@ -282,37 +282,37 @@ nativeCharset =:
 unicodeCharset :: [Int]
 unicodeCharset =:
 	[9211
-	,9205
-	,9204
-	,9206
-	,9207
+	,8680
+	,8678
+	,8679
+	,8681
 	,11116
 	,11114
 	,128276
+	,9224
 	,11115
-	,11117
 	,10
-	,8470
+	,11117
 	,11118
 	,11119
 	,11157
-	,8680
 	,11013
-	,8678
 	,11014
-	,8679
 	,11015
-	,8681
 	,11020
-	,11012
 	,11021
-	,8691
+	,9180
+	,9181
+	,9140
+	,9141
+	,9182
+	,9183
 	,8942
 	,8943
 	,8944
 	,8945
-	,8252
-	,8263
+	,11012
+	,8691
 	,32
 	,33
 	,34
@@ -408,6 +408,9 @@ unicodeCharset =:
 	,124
 	,125
 	,126
+	,9249
+	,8252
+	,8263
 	,8264
 	,8265
 	,8253
@@ -415,6 +418,8 @@ unicodeCharset =:
 	,10800
 	,247
 	,8724
+	,8760
+	,11806
 	,8730
 	,8543
 	,8734
@@ -424,29 +429,25 @@ unicodeCharset =:
 	,10833
 	,8891
 	,172
-	,8893
-	,8892
-	,8741
+	,8872
+	,8877
 	,8745
 	,8746
+	,8705
 	,8712
-	,8715
+	,8949
 	,8918
 	,8919
 	,8784
-	,8804
+	,10877
 	,10879
-	,8805
+	,10878
 	,10880
 	,8800
 	,8801
-	,8802
 	,8842
-	,8843
 	,8838
-	,8839
 	,8840
-	,8841
 	,229
 	,197
 	,175
@@ -510,22 +511,21 @@ unicodeCharset =:
 	,11153
 	,11154
 	,11155
+	,8470
 	,8719
 	,8721
 	,8707
-	,8708
+	,8704
 	,119979
 	,119982
 	,11016
-	,11008
 	,11017
-	,11009
 	,11018
-	,11010
 	,11019
-	,11011
 	,11036
 	,11034
+	,9675
+	,9676
 	,7690
 	,7692
 	,7691
@@ -536,47 +536,46 @@ unicodeCharset =:
 	,10501
 	,10518
 	,7718
-	,7719
-	]
+	,7719]
 	
 toCommand :: Char -> Command
 toCommand char
 	= commandMapping !! (toInt char)
 
 commandMapping :: [Command]
-commandMapping =:
+commandMapping =: // TODO: make this a function in the above ^
 	[(Control (Terminate))
-	,(Control (Start East))
-	,(Control (Start West))
-	,(Control (Start North))
-	,(Control (Start South))
+	,(Control (Start (Dir East)))
+	,(Control (Start (Dir West)))
+	,(Control (Start (Dir North)))
+	,(Control (Start (Dir South)))
 	,(Stack (ShiftBase East))
 	,(Stack (ShiftBase West))
 	,(Operator (IO_Bell))
+	,(Operator (IO_Backspace))
 	,(Stack (ShiftBase North))
-	,(Stack (ShiftBase South))
 	,(Control (LINE))
-	,(Operator (Set_Length))
+	,(Stack (ShiftBase South))
 	,(Control (Turn Anticlockwise))
 	,(Control (Turn Clockwise))
-	,(Control (Change True East))
-	,(Control (Change False East))
-	,(Control (Change True West))
-	,(Control (Change False West))
-	,(Control (Change True North))
-	,(Control (Change False North))
-	,(Control (Change True South))
-	,(Control (Change False South))
-	,(Control (Either True Horizontal))
-	,(Control (Either False Horizontal))
-	,(Control (Either True Vertical))
-	,(Control (Either False Vertical))
+	,(Control (Change East))
+	,(Control (Change West))
+	,(Control (Change North))
+	,(Control (Change South))
+	,(Control (Either Horizontal))
+	,(Control (Either Vertical))
+	,(Control (Loop Left North Nothing))
+	,(Control (Loop Left South Nothing))
+	,(Control (Goto North Nothing))
+	,(Control (Goto South Nothing))
+	,(Control (Loop Right North Nothing))
+	,(Control (Loop Right South Nothing))
 	,(Control (Mirror False Vertical))
 	,(Control (Mirror False Horizontal))
 	,(Control (Mirror False Identity))
 	,(Control (Mirror False Inverse))
-	,(Operator (IO_WriteAll))
-	,(Operator (IO_ReadAll))
+	,(Control (Start (Axis Horizontal)))
+	,(Control (Start (Axis Vertical)))
 	,(Control (NOOP))
 	,(Operator (IO_WriteOnce))
 	,(Literal (Quote))
@@ -585,8 +584,8 @@ commandMapping =:
 	,(Operator (Math_Modulus))
 	,(Stack (JoinFromBase))
 	,(Control (String))
-	,(Control (Loop Left West))
-	,(Control (Loop Left East))
+	,(Control (Loop Left West Nothing))
+	,(Control (Loop Left East Nothing))
 	,(Operator (Math_DotProduct))
 	,(Operator (Binary (+)))//(Operator (Math_Addition))
 	,(Operator (Range_FromLeftStepRight))
@@ -636,9 +635,9 @@ commandMapping =:
 	,(Operator (Chars_ToUppercase))
 	,(Operator (Logic_IsUppercase))
 	,(Operator (Logic_IsFinite))
-	,(Control (Loop Middle West))
+	,(Control (Goto West Nothing))
 	,(Control (Mirror True Inverse))
-	,(Control (Loop Middle East))
+	,(Control (Goto East Nothing))
 	,(Operator (Binary (^)))//(Operator (Math_Exponent))
 	,(Operator (Math_Floor))
 	,(Operator (Math_Differential))
@@ -668,10 +667,13 @@ commandMapping =:
 	,(Operator (Logic_IsLowercase))
 	,(Operator (Chars_ToLowercase))
 	,(Operator (Math_Conjugate))
-	,(Control (Loop Right West))
+	,(Control (Loop Right West Nothing))
 	,(Control (Mirror True Vertical))
-	,(Control (Loop Right East))
+	,(Control (Loop Right East Nothing))
 	,(Operator (Unary (~)))//(Operator (Math_Negation))
+	,(Operator (IO_ClearConsole))
+	,(Operator (IO_WriteAll))
+	,(Operator (IO_ReadAll))
 	,(Operator (IO_ReadWrite))
 	,(Operator (IO_WriteRead))
 	,(Operator (IO_Interrobang))
@@ -679,6 +681,8 @@ commandMapping =:
 	,(Operator (Vector_Multiplication))
 	,(Operator (Binary (/)))//(Operator (Math_Division))
 	,(Operator (Vector_Addition))
+	,(Operator (Vector_Subtraction))
+	,(Operator (Vector_Negation))
 	,(Operator (Unary (sqrt)))//(Operator (Math_SquareRoot))
 	,(Operator (Math_Reciprocal))
 	,(Operator (Logic_IsInfinite))
@@ -688,11 +692,11 @@ commandMapping =:
 	,(Operator (Vector_And))
 	,(Operator (Bitwise_Xor))
 	,(Operator (Bitwise_Not))
-	,(Operator (Bitwise_Nor))
-	,(Operator (Bitwise_Nand))
-	,(Operator (Bitwise_Xnor))
+	,(Operator (Logic_Coalesce))
+	,(Operator (Logic_Negation))
 	,(Operator (Set_Intersection))
 	,(Operator (Set_Union))
+	,(Operator (Set_Exclusion))
 	,(Operator (Logic_ElementOf))
 	,(Operator (Logic_Contains))
 	,(Operator (Vector_LessThan))
@@ -704,13 +708,9 @@ commandMapping =:
 	,(Operator (Vector_GreaterOrEqual))
 	,(Operator (Logic_Inequality))
 	,(Operator (Logic_SetEquality))
-	,(Operator (Logic_SetInequality))
 	,(Operator (Logic_SubsetNotEqual))
-	,(Operator (Logic_SupersetNotEqual))
 	,(Operator (Logic_SubsetOrEqual))
-	,(Operator (Logic_SupersetOrEqual))
 	,(Operator (Logic_NotSubsetNorEqual))
-	,(Operator (Logic_NotSupersetNorEqual))
 	,(Operator (Math_RadiansToDegrees))
 	,(Operator (Math_DegreesToRadians))
 	,(Operator (Math_Ceiling))
@@ -774,22 +774,21 @@ commandMapping =:
 	,(Stack (CycleFull Anticlockwise))
 	,(Stack (CycleTops Clockwise))
 	,(Stack (CycleTops Anticlockwise))
+	,(Operator (Set_Length))
 	,(Operator (Math_Product))
 	,(Operator (Math_Sum))
 	,(Operator (Logic_Any))
-	,(Operator (Logic_None))
+	,(Operator (Logic_All))
 	,(Operator (Set_PowerSet))
 	,(Operator (Set_Subsets))
-	,(Control (Bounce True NorthEast))
-	,(Control (Bounce False NorthEast))
-	,(Control (Bounce True NorthWest))
-	,(Control (Bounce False NorthWest))
-	,(Control (Bounce True SouthEast))
-	,(Control (Bounce False SouthEast))
-	,(Control (Bounce True SouthWest))
-	,(Control (Bounce False SouthWest))
+	,(Control (Bounce NorthEast))
+	,(Control (Bounce NorthWest))
+	,(Control (Bounce SouthEast))
+	,(Control (Bounce SouthWest))
 	,(Control (Mirror True Reflection))
 	,(Control (Mirror False Reflection))
+	,(Control (Skip True))
+	,(Control (Skip False))
 	,(Stack (Uniques_Main))
 	,(Stack (Uniques_Base))
 	,(Stack (Duplicates_Main))

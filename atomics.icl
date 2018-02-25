@@ -15,20 +15,21 @@ IS_INT real :== toReal (entier real) == real
 //applyUnaryReal op conv (Real val) = (Real (op val))
 //applyUnaryReal op conv (Int val) = (Real (op (conv val)))
 applyUnaryReal op conv val
-	:== case val of
-		(Real val) = (Real (op val))
-		(Int val) = (Real (op (conv val)))
+	:== (Real (case val of
+			(Real val) = op val
+			(Int val) = op (conv val)
+		))
 
 //applyUnaryInt :: (Int -> Int) (Real -> Int) Numeric -> Numeric
 //applyUnaryInt op conv (Real val) = (Int (op (conv val)))
 //applyUnaryInt op conv (Int val) = (Int (op val))
 applyUnaryInt op conv val
-	:== case val of
-		(Real val) = (Int (op (conv val)))
-		(Int val) = (Int (op val))
-		
-
-applyBinaryReal :: (Real Real -> Real) (Int -> Real) Numeric Numeric -> Numeric
+	:== (Int (case val of
+			(Int val) = op val
+			(Real val) = op (conv val)
+		))
+	
+applyBinaryReal :: (Real Real -> Real) (Int -> Real) !Numeric !Numeric -> Numeric
 applyBinaryReal op conv (Real lhs) (Real rhs)
 	= (Real (op lhs rhs))
 applyBinaryReal op conv (Real lhs) (Int rhs)
@@ -37,23 +38,22 @@ applyBinaryReal op conv (Int lhs) (Real rhs)
 	= (Real (op (conv lhs) rhs))
 applyBinaryReal op conv (Int lhs) (Int rhs)
 	= (Real (op (conv lhs) (conv rhs)))
-
-//applyBinaryReal op conv lhs rhs
-//	:== (Real (op (case lhs of (Int l) = conv l; (Real l) = l) (case rhs of (Int r) = conv r; (Real r) = r)))
-	
-applyBinaryInt :: (Int Int -> Int) (Real -> Int) Numeric Numeric -> Numeric
-applyBinaryInt op conv (Real lhs) (Real rhs)
-	= (Int (op (conv lhs) (conv rhs)))
+		
+applyBinaryInt :: (Int Int -> Int) (Real -> Int) !Numeric !Numeric -> Numeric
+applyBinaryInt op conv (Int lhs) (Int rhs)
+	= (Int (op lhs rhs))
 applyBinaryInt op conv (Real lhs) (Int rhs)
 	= (Int (op (conv lhs) rhs))
 applyBinaryInt op conv (Int lhs) (Real rhs)
 	= (Int (op lhs (conv rhs)))
-applyBinaryInt op conv (Int lhs) (Int rhs)
-	= (Int (op lhs rhs))
+applyBinaryInt op conv (Real lhs) (Real rhs)
+	= (Int (op (conv lhs) (conv rhs)))
 
 // numeric implementations
 
-instance + Numeric where
+instance + Numeric where (+) lhs rhs = applyBinaryReal (+) (toReal) lhs rhs
+	/*
+	(+) :: !Numeric !Numeric -> Numeric
 	(+) (Int lhs) (Int rhs)
 		= IF_INT_64_OR_32
 			(Int (lhs + rhs))
@@ -64,8 +64,10 @@ instance + Numeric where
 		= (Real (lhs + toReal rhs))
 	(+) (Real lhs) (Real rhs)
 		= (Real (lhs + rhs))
+	*/
 		
-instance - Numeric where
+instance - Numeric where (-) lhs rhs = applyBinaryReal (-) (toReal) lhs rhs
+/*
 	(-) (Int lhs) (Int rhs)
 		= IF_INT_64_OR_32
 			 (Int (lhs - rhs))
@@ -76,8 +78,9 @@ instance - Numeric where
 		= (Real (lhs - toReal rhs))
 	(-) (Real lhs) (Real rhs)
 		= (Real (lhs - rhs))
-
-instance * Numeric where
+*/
+instance * Numeric where (*) lhs rhs = applyBinaryReal (*) (toReal) lhs rhs
+/*
 	(*) (Int lhs) (Int rhs)
 		= (Real (toReal lhs * toReal rhs))
 	(*) (Int lhs) (Real rhs)
@@ -86,8 +89,9 @@ instance * Numeric where
 		= (Real (lhs * toReal rhs))
 	(*) (Real lhs) (Real rhs)
 		= (Real (lhs * rhs))
-
-instance / Numeric where
+*/
+instance / Numeric where (/) lhs rhs = applyBinaryReal (/) (toReal) lhs rhs
+/*
 	(/) (Int lhs) (Int rhs)
 		= if(lhs rem rhs == 0) (Int (lhs / rhs)) (Real (toReal lhs / toReal rhs))
 	(/) (Int lhs) (Real rhs)
@@ -96,8 +100,9 @@ instance / Numeric where
 		= (Real (lhs / toReal rhs))
 	(/) (Real lhs) (Real rhs)
 		= (Real (lhs / rhs))
-
-instance ^ Numeric where
+*/
+instance ^ Numeric where (^) lhs rhs = applyBinaryReal (^) (toReal) lhs rhs
+/*
 	(^) (Int lhs) (Int rhs)
 		= (Real (toReal lhs ^ toReal rhs))
 	(^) (Int lhs) (Real rhs)
@@ -106,7 +111,7 @@ instance ^ Numeric where
 		= (Real (lhs ^ toReal rhs))
 	(^) (Real lhs) (Real rhs)
 		= (Real (lhs ^ rhs))
-
+*/
 instance abs Numeric where
 	abs (Int val)
 		= (Int (abs val))

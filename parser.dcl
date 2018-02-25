@@ -2,6 +2,6 @@ definition module parser
 
 import types, converter
 
-parseUTF8 :: String -> State
+parseUTF8 :: !String -> Program
 
-parseNative :: String -> State
+parseNative :: !String -> Program

@@ -37,44 +37,54 @@ IS_ZERO numeric
 		(Real -0.0) = True
 		_ = False
 
-IS_NAN numeric
-	:== case numeric of
-		(Real val) = not (isFinite val || val <> 0.0)
-		_ = False
-		
 IS_INF numeric
 	:== case numeric of
-		(Real val) = not (isFinite val) && val <> 0.0
-		_ = False
+		(Real val) = val <> 0.0
+//		_ = True
+
+IS_FIN numeric // or nan
+	:== case numeric of
+		(Real val) = isFinite val
+		_ = True
 
 // number implementations
 
-handle :: Number -> Number
-handle (Re (Fin val))
-	| IS_ZERO val = Zero
-	| IS_NAN val = NaN
-	| IS_INF val = (Re (Inf (FIN_SIGN val)))
-	= (Re (Fin val))
-handle (Im (Fin val))
-	| IS_ZERO val = Zero
-	| IS_NAN val = NaN
-	| IS_INF val = (Im (Inf (FIN_SIGN val)))
-	= (Im (Fin val))
-handle (Cx (Fin {re, im}))
-	| IS_NAN re || IS_NAN im = NaN
-	| IS_INF re
-		| IS_INF im
-			= (Cx (Inf Directed))
-		= (Re (Inf (FIN_SIGN re)))
-	| IS_INF im
-		= (Im (Inf (FIN_SIGN im)))
-	= case ((IS_ZERO re), (IS_ZERO im)) of
-		(True, True) = Zero
-		(True, False) = (Im (Fin im))
-		(False, True) = (Re (Fin re))
-		(False, False) = (Cx (Fin {re=re, im=im}))
-handle val = val
-
+handle number
+	:== case number of
+		(Re (Fin val)) = handleRe val
+		(Im (Fin val)) = handleIm val
+		(Cx (Fin {re, im})) = handleCx re im
+		val = val
+where
+	handleRe val
+		| IS_FIN val
+			| IS_ZERO val = Zero
+			| otherwise = (Re (Fin val))
+		| IS_INF val = (Re (Inf (FIN_SIGN val)))
+		| otherwise = NaN
+	handleIm val
+		| IS_FIN val
+			| IS_ZERO val = Zero
+			| otherwise = (Im (Fin val))
+		| IS_INF val = (Im (Inf (FIN_SIGN val)))
+		| otherwise = NaN
+		// TODO : find good tests for complex number performance so I can rewrite it properly
+	handleCx re im
+		| IS_FIN re
+			| IS_FIN im
+				| IS_ZERO re
+					| IS_ZERO im = Zero
+					| otherwise = (Im (Fin im))
+				| IS_ZERO im = (Re (Fin re))
+				| otherwise = (Cx (Fin {re=re, im=im}))
+			| IS_INF im = (Im (Inf (FIN_SIGN im)))
+			| otherwise = NaN
+		| IS_INF re
+			| IS_INF im = (Cx (Inf Directed))
+			| otherwise = (Re (Inf (FIN_SIGN re)))
+		| otherwise = NaN
+		
+		
 instance + Number where
 	(+) NaN _ = NaN
 	(+) _ NaN = NaN
@@ -82,10 +92,10 @@ instance + Number where
 	(+) val Zero = val
 	(+) (Re (Inf lhs)) (Re (Inf rhs))
 		| lhs == rhs = (Re (Inf lhs))
-		= NaN
+		| otherwise = NaN
 	(+) (Im (Inf lhs)) (Im (Inf rhs))
 		| lhs == rhs = (Im (Inf lhs))
-		= NaN
+		| otherwise = NaN
 	(+) (Cx (Inf _)) _ = (Cx (Inf Directed))
 	(+) _ (Cx (Inf _)) = (Cx (Inf Directed))
 	(+) (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
@@ -97,9 +107,9 @@ instance + Number where
 	(+) (Re (Fin lhs)) (Re (Fin rhs))
 		= handle (Re (Fin (lhs + rhs)))
 	(+) (Re (Fin lhs)) (Im (Fin rhs))
-		= handle (Cx (Fin {re=lhs, im=rhs}))
+		= (Cx (Fin {re=lhs, im=rhs}))
 	(+) (Im (Fin lhs)) (Re (Fin rhs))
-		= handle (Cx (Fin {re=rhs, im=lhs}))
+		= (Cx (Fin {re=rhs, im=lhs}))
 	(+) (Im (Fin lhs)) (Im (Fin rhs))
 		= handle (Im (Fin (lhs + rhs)))
 	(+) (Re (Fin lhs)) (Cx (Fin rhs))
@@ -119,10 +129,10 @@ instance - Number where
 	(-) lhs Zero = lhs
 	(-) (Re (Inf lhs)) (Re (Inf rhs))
 		| lhs <> rhs = (Re (Inf lhs))
-		= NaN
+		| otherwise = NaN
 	(-) (Im (Inf lhs)) (Im (Inf rhs))
 		| lhs <> rhs = (Im (Inf lhs))
-		= NaN
+		| otherwise = NaN
 	(-) (Re (Inf _)) (Im (Inf _)) = (Cx (Inf Directed))
 	(-) (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
 	(-) (Cx (Inf _)) _ = (Cx (Inf Directed))
@@ -135,9 +145,9 @@ instance - Number where
 	(-) (Re (Fin lhs)) (Re (Fin rhs))
 		= handle (Re (Fin (lhs - rhs)))
 	(-) (Re (Fin lhs)) (Im (Fin rhs))
-		= handle (Cx (Fin {re=lhs, im=(~rhs)}))
+		= (Cx (Fin {re=lhs, im=(~rhs)}))
 	(-) (Im (Fin lhs)) (Re (Fin rhs))
-		= handle (Cx (Fin {re=(~rhs), im=lhs}))
+		= (Cx (Fin {re=(~rhs), im=lhs}))
 	(-) (Im (Fin lhs)) (Im (Fin rhs))
 		= handle (Im (Fin (lhs - rhs)))
 	(-) (Re (Fin lhs)) (Cx (Fin rhs))
@@ -276,21 +286,21 @@ instance == Number where
 	(==) (Im (Fin lhs)) (Im (Fin rhs)) = lhs == rhs
 	(==) (Cx (Fin lhs)) (Cx (Fin rhs)) = lhs.re == rhs.re && lhs.im == rhs.im
 	(==) _ _ = False
-/*
+
 instance < Number where
 	(<) NaN _ = False
 	(<) _ NaN = False
 	//(<) Infinity _ = True
 	//(<) _ Infinity = True
 	(<) Zero Zero = False
-	(<) Zero (Rational rhs) = sign rhs == 1
-	(<) (Rational lhs) Zero = sign lhs == -1
-	(<) Zero (Imaginary rhs) = sign rhs == 1
-	(<) (Imaginary lhs) Zero = sign lhs == -1
-	(<) (Rational lhs) (Rational rhs) = lhs < rhs
-	(<) (Imaginary lhs) (Imaginary rhs) = lhs < rhs
-	(<) (Complex lhsRe lhsIm) (Complex rhsRe rhsIm) = lhsRe < rhsRe && lhsIm < rhsIm
-
+	(<) Zero (Re rhs) = VAL_SIGN rhs == Positive
+	(<) (Re lhs) Zero = VAL_SIGN lhs == Negative
+	(<) Zero (Im rhs) = VAL_SIGN rhs == Positive
+	(<) (Im lhs) Zero = VAL_SIGN lhs == Negative
+	(<) (Re (Fin lhs)) (Re (Fin rhs)) = lhs < rhs
+	(<) (Im (Fin lhs)) (Im (Fin rhs)) = lhs < rhs
+	(<) (Cx (Fin lhs)) (Cx (Fin rhs)) = lhs.re < rhs.re && lhs.im < rhs.im
+/*
 instance mod Number where
 	(mod) NaN _ = NaN
 	(mod) _ NaN = NaN
@@ -377,6 +387,11 @@ instance toReal Number where
 	toReal (Cx (Fin {re, im})) = toReal (sqrt (re*re + im*im)) * (toReal (sign re * sign im))
 	toReal _ = 0.0/0.0
 	
+instance toBool Number where
+	toBool Zero = False
+	toBool NaN = False
+	toBool _ = True
+	
 instance toString Number where
 	toString Zero = "0"
 	toString NaN = "NaN"
@@ -391,6 +406,9 @@ instance fromInt Number where fromInt val = (Re (Fin (Int val)))
 
 instance fromReal Number where fromReal val = (Re (Fin (Real val)))
 
+instance fromBool Number where
+	fromBool True = (Re (Fin (Int -1)))
+	fromBool False = Zero
 
 instance ln Number where
 	ln NaN = NaN
@@ -420,7 +438,11 @@ instance sqrt Number where
 	sqrt NaN = NaN
 	//sqrt Infinity = Infinity
 	sqrt Zero = Zero
-	sqrt (Re (Fin val)) = handle (Re (Fin (sqrt val)))
+	sqrt (Re (Fin val))
+		| FIN_SIGN val <> Negative
+			= handle (Re (Fin (sqrt val)))
+		| otherwise
+			= handle (Im (Fin (sqrt (abs val))))
 	//sqrt (Imaginary _) = abort "Unimplemented Operation: sqrt Im"
 	//sqrt (Complex _ _) = abort "Unimplemented Operation: sqrt Cx"
 	
@@ -471,34 +493,126 @@ instance atan Number where
 	atan (Re (Fin val)) = handle (Re (Fin (atan val)))
 	//atan (Imaginary _) = abort "Unimplemented Operation: atan Im"
 	//atan (Complex _ _) = abort "Unimplemented Operation: atan Cx"
-/*
-bitOR :: Number Number -> Number
+	
+INT_OPER op lhs rhs :== (Int (op (ENTIER lhs) (ENTIER rhs)))
+
+ENTIER val
+	:== case val of
+		(Int i) = i
+		(Real r) = entier r
+
+bitOR :: !Number !Number -> Number
 bitOR NaN _ = NaN
 bitOR _ NaN = NaN
-//bitOR Infinity _ = Infinity
-//bitOR _ Infinity = Infinity
 bitOR Zero rhs = rhs
 bitOR lhs Zero = lhs
-bitOR _ _ = abort "Unimplemented Operation: bitOR"
-bitAND :: Number Number -> Number
-bitAND _ _ = abort "Unimplemented Operation: bitAND"
-bitXOR :: Number Number -> Number
-bitXOR _ _ = abort "Unimplemented Operation: bitXOR"
-bitNOT :: Number Number -> Number
-bitNOT _ _ = abort "Unimplemented Operation: bitNOT"
-bitNOR :: Number Number -> Number
-bitNOR _ _ = abort "Unimplemented Operation: bitNOR"
-bitNAND :: Number Number -> Number
-bitNAND _ _ = abort "Unimplemented Operation: bitNAND"
-bitXNOR :: Number Number -> Number
-bitXNOR _ _ = abort "Unimplemented Operation: bitXNOR"
-numFLOOR :: Number -> Number
-numFLOOR _ = abort "Unimplemented Operation: numFLOOR"
-numCEILING :: Number -> Number
-numCEILING _ = abort "Unimplemented Operation: numCEILING"
-numROUND :: Number -> Number
-numROUND _ = abort "Unimplemented Operation: numROUND"
-toRadians :: Number -> Number
-toRadians _ = abort "Unimplemented Operation: toRadians"
-toDegrees :: Number -> Number
-toDegrees _ = abort "Unimplemented Operation: toDegrees"*/
+bitOR (Re (Inf _)) (Im (Inf _)) = (Cx (Inf Directed))
+bitOR (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
+bitOR (Re (Fin lhs)) (Re (Fin rhs))
+	= handle (Re (Fin (INT_OPER (bitor) lhs rhs)))
+bitOR (Re (Fin lhs)) (Im (Fin rhs))
+	= (Cx (Fin {re=lhs, im=rhs}))
+bitOR (Im (Fin lhs)) (Re (Fin rhs))
+	= (Cx (Fin {re=rhs, im=lhs}))	
+bitOR (Im (Fin lhs)) (Im (Fin rhs))
+	= handle (Im (Fin (INT_OPER (bitor) lhs rhs)))
+bitOR (Re (Fin lhs)) (Cx (Fin rhs))
+	= handle (Cx (Fin {rhs&re=INT_OPER (bitor) lhs rhs.re}))
+bitOR (Im (Fin lhs)) (Cx (Fin rhs))
+	= handle (Cx (Fin {rhs&im=INT_OPER (bitor) lhs rhs.im}))
+bitOR (Cx (Fin lhs)) (Re (Fin rhs))
+	= handle (Cx (Fin {lhs&re=INT_OPER (bitor) lhs.re rhs}))
+bitOR (Cx (Fin lhs)) (Im (Fin rhs))
+	= handle (Cx (Fin {lhs&im=INT_OPER (bitor) lhs.im rhs}))
+bitOR (Cx (Fin lhs)) (Cx (Fin rhs))
+	= handle (Cx (Fin {re=INT_OPER (bitor) lhs.re rhs.re, im=INT_OPER (bitor) lhs.im rhs.im}))
+
+bitAND :: !Number !Number -> Number
+bitAND NaN _ = NaN
+bitAND _ NaN = NaN
+bitAND Zero _ = Zero
+bitAND _ Zero = Zero
+bitAND (Re _) (Im _) = Zero
+bitAND (Im _) (Re _) = Zero
+bitAND (Re (Fin lhs)) (Re (Fin rhs))
+	= handle (Re (Fin (INT_OPER (bitand) lhs rhs)))
+bitAND (Im (Fin lhs)) (Im (Fin rhs))
+	= handle (Im (Fin (INT_OPER (bitand) lhs rhs)))
+bitAND (Re (Fin lhs)) (Cx (Fin rhs))
+	= handle (Re (Fin (INT_OPER (bitand) lhs rhs.re)))
+bitAND (Im (Fin lhs)) (Cx (Fin rhs))
+	= handle (Im (Fin (INT_OPER (bitand) lhs rhs.im)))
+bitAND (Cx (Fin lhs)) (Re (Fin rhs))
+	= handle (Re (Fin (INT_OPER (bitand) lhs.re rhs)))
+bitAND (Cx (Fin lhs)) (Im (Fin rhs))
+	= handle (Im (Fin (INT_OPER (bitand) lhs.im rhs)))
+bitAND (Cx (Fin lhs)) (Cx (Fin rhs))
+	= handle (Cx (Fin {re=INT_OPER (bitand) lhs.re rhs.re, im=INT_OPER (bitand) lhs.im rhs.im}))
+bitAND _ _ = NaN
+
+bitXOR :: !Number !Number -> Number
+bitXOR NaN _ = NaN
+bitXOR _ NaN = NaN
+bitXOR Zero rhs = rhs
+bitXOR lhs Zero = lhs
+bitXOR (Re (Fin lhs)) (Re (Fin rhs))
+	= handle (Re (Fin (INT_OPER (bitxor) lhs rhs)))
+bitXOR (Re (Fin lhs)) (Im (Fin rhs))
+	= (Cx (Fin {re=lhs, im=rhs}))
+bitXOR (Im (Fin lhs)) (Re (Fin rhs))
+	= (Cx (Fin {re=rhs, im=lhs}))
+bitXOR (Im (Fin lhs)) (Im (Fin rhs))
+	= handle (Im (Fin (INT_OPER (bitxor) lhs rhs)))
+bitXOR (Re (Fin lhs)) (Cx (Fin rhs))
+	= handle (Cx (Fin {rhs&re=INT_OPER (bitxor) lhs rhs.re}))
+bitXOR (Im (Fin lhs)) (Cx (Fin rhs))
+	= handle (Cx (Fin {rhs&im=INT_OPER (bitxor) lhs rhs.im}))
+bitXOR (Cx (Fin lhs)) (Re (Fin rhs))
+	= handle (Cx (Fin {lhs&re=INT_OPER (bitxor) lhs.re rhs}))
+bitXOR (Cx (Fin lhs)) (Im (Fin rhs))
+	= handle (Cx (Fin {lhs&im=INT_OPER (bitxor) lhs.im rhs}))
+bitXOR (Cx (Fin lhs)) (Cx (Fin rhs))
+	= handle (Cx (Fin {re=INT_OPER (bitxor) lhs.re rhs.re, im=INT_OPER (bitxor) lhs.im rhs.im}))
+
+bitNOT :: !Number -> Number
+bitNOT NaN = NaN
+bitNOT Zero = (Re (Fin (Int -1)))
+bitNOT (Re (Fin val)) = handle (Re (Fin (Int (bitnot (ENTIER val)))))
+bitNOT (Im (Fin val)) = handle (Im (Fin (Int (bitnot (ENTIER val)))))
+bitNOT (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int(bitnot(ENTIER re))), im=(Int(bitnot(ENTIER im)))}))
+bitNOT _ = NaN
+
+
+numFloor :: !Number -> Number
+numFloor (Re (Fin val)) = handle (Re (Fin (Int (ENTIER val))))
+numFloor (Im (Fin val)) = handle (Im (Fin (Int (ENTIER val))))
+numFloor (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int (ENTIER re)), im=(Int (ENTIER im))}))
+numFloor val = val
+
+numCeiling :: !Number -> Number
+numCeiling (Re (Fin val)) = handle (Re (Fin (Int (~(ENTIER (~val))))))
+numCeiling (Im (Fin val)) = handle (Im (Fin (Int (~(ENTIER (~val))))))
+numCeiling (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int(~(ENTIER(~re)))), im=(Int(~(ENTIER(~im))))}))
+numCeiling val = val
+
+numRound :: !Number -> Number
+numRound (Re (Fin val)) = handle (Re (Fin (Int (toInt val))))
+numRound (Im (Fin val)) = handle (Im (Fin (Int (toInt val))))
+numRound (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int (toInt re)), im=(Int (toInt im))}))
+numRound val = val
+
+DEG_TO_RAD val :== (Real (toRad (deg (toReal val))))
+
+toRadians :: !Number -> Number
+toRadians (Re (Fin val)) = handle (Re (Fin (DEG_TO_RAD val)))
+toRadians (Im (Fin val)) = handle (Im (Fin (DEG_TO_RAD val)))
+toRadians (Cx (Fin {re, im})) = handle (Cx (Fin {re=DEG_TO_RAD re, im=DEG_TO_RAD im}))
+toRadians val = val
+
+RAD_TO_DEG val :== (Real (toDeg (rad (toReal val))))
+
+toDegrees :: !Number -> Number
+toDegrees (Re (Fin val)) = handle (Re (Fin (RAD_TO_DEG val)))
+toDegrees (Im (Fin val)) = handle (Im (Fin (RAD_TO_DEG val)))
+toDegrees (Cx (Fin {re, im})) = handle (Cx (Fin {re=RAD_TO_DEG re, im=RAD_TO_DEG im}))
+toDegrees val = val

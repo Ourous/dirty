@@ -119,6 +119,20 @@ where
 		
 	process (Control (Change dir)) = app3(\state -> {state&direction=dir}, id, id)
 	
+	process (Control (Bounce dir)) = app3(bounce, id, id)
+	where
+	
+		bounce state=:{direction, location={x, y}}
+			= case (dir, direction) of
+				(NorthEast, West) = {state&direction=North,location={x=x+1,y=y}}
+				(NorthEast, South) = {state&direction=East,location={x=x,y=y-1}}
+				(SouthEast, West) = {state&direction=South,location={x=x+1,y=y}}
+				(SouthEast, North) = {state&direction=East,location={x=x,y=y+1}}
+				(SouthWest, East) = {state&direction=South,location={x=x-1,y=y}}
+				(SouthWest, North) = {state&direction=West,location={x=x,y=y+1}}
+				(NorthWest, East) = {state&direction=North,location={x=x-1,y=y}}
+				(NorthWest, South) = {state&direction=West,location={x=x,y=y-1}}
+	
 	process (Control (Either axes)) = either
 	where
 	
@@ -128,6 +142,41 @@ where
 				Vertical = if(isEven rng) North South
 		in ({state&direction=newDirection}, {memory&random=random}, world)
 		
+	process (Control (Mirror cond axes)) = mirror
+	where
+		
+		mirror (state=:{direction}, memory=:{main=[El mid:other]}, world)
+			| axesCollide direction && (cond || TO_BOOL mid) = let
+					reflector = case axes of
+						Inverse = reflectInverse
+						Identity = reflectIdentity
+						_ = reflectComplete
+				in ({state&direction=reflector direction}, memory, world)
+			| otherwise
+				= (state, memory, world)
+			
+		reflectIdentity East = North
+		reflectIdentity North = East
+		reflectIdentity West = South
+		reflectIdentity South = West
+		
+		reflectInverse East = South
+		reflectInverse South = East
+		reflectInverse West = North
+		reflectInverse North = West
+			
+		reflectComplete East = West
+		reflectComplete West = East
+		reflectComplete South = North
+		reflectComplete North = South
+			
+		axesCollide dir = case (axes, dir) of
+			(Horizontal, East) = False
+			(Horizontal, West) = False
+			(Vertical, North) = False
+			(Vertical, South) = False
+			_ = True
+		
 	process (Control (Skip cond)) = skip
 	where
 		
@@ -136,6 +185,21 @@ where
 				= (TRAVERSE_ONE state, memory, world)
 			| otherwise
 				= (state, memory, world)
+				
+	process (Control (Turn rot)) = app3 (turn, id, id)
+	where
+		
+		turn state=:{direction} = let
+			dir = case (direction, rot) of
+				(East, Clockwise) = South
+				(East, Anticlockwise) = North
+				(West, Clockwise) = North
+				(West, Anticlockwise) = South
+				(North, Clockwise) = East
+				(North, Anticlockwise) = West
+				(South, Clockwise) = West
+				(South, Anticlockwise) = East
+		in {state&direction=dir}
 	
 	process (Control (Loop Left dir (Just loc))) = loop
 	where
@@ -222,7 +286,7 @@ where
 		
 		writeAll (stack, memory=:{main=[El mid:other]}, world)
 			# world = execIO (writeLine mid) world
-			= (stack, {memory&main=other}, world)	
+			= (stack, {memory&main=other}, world)
 			
 	process (Operator (Binary_NN_N op)) = app3 (id, binary, id)
 	where

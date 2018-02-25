@@ -68,12 +68,12 @@ evaluate :: ![String] *World -> *(Memory, *World)
 evaluate args world
 	| isEmpty args
 		# (Timestamp seed, world) = time world
-		= ({left=[],right=[],main=[],random=genRandInt seed}, world)
+		= ({left=[],right=[],main=[El []],random=genRandInt seed}, world)
 	| otherwise
 		# ((seed, world), args) = case (parseInt (hd args), world) of
 			(Just seed, world) = ((seed, world), tl args)
 			(Nothing, world) = ((\(Timestamp seed, world) -> (seed, world))(time world), args)
-		= ({left=[],right=[],main=[],random=genRandInt seed}, world)
+		= ({left=[],right=[],main=[El []],random=genRandInt seed}, world)
 where
 	parseInt :: (String -> (Maybe Int))
 	parseInt = 'GenParse'.parseString
@@ -96,10 +96,10 @@ where
 	annotated = [(orn, {x=x, y=y}) \\ y <- [0..] & line <-: commands, x <- [0..] & (Control (Start orn)) <-: line]
 
 
-construct :: !Program !Flags -> (*(State, Memory, *World) -> *World)
+construct :: !Program !Flags -> (*(!State, !Memory, !*World) -> *World)
 construct program=:{dimension, source, commands, wrapping} flags = execute
 where
-	execute :: !*(!State, !Memory, *World) -> *World
+	execute :: !*(!State, !Memory, !*World) -> *World
 	execute (state=:{terminate=True}, memory, world)
 		| flags.dump
 			= execIO (putStrLn (MEM_TO_STR memory)) world
@@ -110,12 +110,12 @@ where
 	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y = let
 			wrappedLocation = {x=location.x rem dimension.x, y=location.y rem dimension.y}
-			in execute ({state&location=wrappedLocation,terminate=wrapping}, memory, world)
+			in execute ({state&location=wrappedLocation,terminate=not wrapping}, memory, world)
 		| otherwise
 			# (state, memory, world) = process commands.[location.y, location.x] smw
 			= execute ({state&history=source.[location.y, location.x]} , memory, world)
 
-	process :: !Command -> (*(State, Memory, *World) -> *(State, Memory, *World))
+	process :: !Command -> (*(!State, !Memory, !*World) -> *(State, Memory, *World))
 	
 	process (Control (Terminate)) = app3 (\state -> {state&terminate=True}, id, id)
 		
@@ -136,7 +136,7 @@ where
 				
 	process (Literal (Digit val)) = MOVE_TO_NEXT o literal
 	where
-	
+		literal :: !*(!State, !Memory, *World) -> *(State, Memory, *World)
 		literal (state=:{history}, memory=:{main}, world)
 			| isDigit history = let
 				[El [top:mid]:base] = main

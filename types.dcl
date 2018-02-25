@@ -16,7 +16,7 @@ import StdMaybe
 		wrapping :: !Bool
 	}	
 	
-:: State
+:: State	
 	= {
 		direction :: !Direction,
 		location :: !XYPair,
@@ -26,21 +26,21 @@ import StdMaybe
 
 :: Memory
 	= {
-		left :: [Number],
-		right :: [Number],
-		main :: [Element],
+		left :: ![Number],
+		right :: ![Number],
+		main :: ![Element],
 		random :: [Int]
 	}
 	
 :: Element
-	= El [Number]
+	= El ![Number]
 	| Delimiter
 	
 :: Flags
 	= {
-		debug :: Bool,
-		dump :: Bool,
-		nums :: Bool
+		debug :: !Bool,
+		dump :: !Bool,
+		nums :: !Bool
 	}
 
 :: Numeric
@@ -56,7 +56,7 @@ import StdMaybe
 
 :: Magnitude inf fin
 	= Fin !fin
-	| Inf inf
+	| Inf !inf
 	
 :: Sign 
 	= Positive

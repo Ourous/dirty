@@ -7,8 +7,8 @@ Global
 		CheckStacks:	True
 		CheckIndexes:	True
 	Application
-		HeapSize:	1048576000
-		StackSize:	104857600
+		HeapSize:	262144000
+		StackSize:	52428800
 		ExtraMemory:	8192
 		IntialHeapSize:	256000
 		HeapSizeMultiplier:	2560

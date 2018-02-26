@@ -29,12 +29,10 @@ areAnyTrue :: [Number] -> Number
 areAllTrue :: [Number] -> Number
 */
 
-// exported macros with effective type signature
-
-// :: [Number] -> Bool
-TO_BOOL stack
-	:== case stack of
-		[] = False
-		[Zero:_] = False
-		[NaN:_] = False
-		_ = True
+// stack manipulations
+stackReverse :: StackID Memory -> Memory
+//stackRotate :: StackID Memory -> Memory
+//stackDelete :: StackID Memory -> Memory
+//stackDrop :: StackID Memory -> Memory
+//cycleTops :: Rotation Memory -> Memory
+//cycleStacks :: Rotation Memory -> Memory

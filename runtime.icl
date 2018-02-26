@@ -45,7 +45,7 @@ TRAVERSE_ONE :== TRAVERSE_SOME 1
 GET_MIDDLE :== \[El stack:_] -> stack
 
 evaluate :: ![String] *World -> *(Memory, *World)
-/*evaluate args world // TODO re-think how the random seed is provided
+evaluate args world
 	| isEmpty args
 		# (Timestamp seed, world) = time world
 		= ({left=[],right=[],main=[El []],random=genRandInt seed}, world)
@@ -54,10 +54,6 @@ evaluate :: ![String] *World -> *(Memory, *World)
 			(Just seed, world) = ((seed, world), tl args)
 			(Nothing, world) = ((\(Timestamp seed, world) -> (seed, world))(time world), args)
 		= ({left=[],right=[],main=parseArgs args,random=genRandInt seed}, world)
-*/
-evaluate args world
-	# (Timestamp seed, world) = time world
-	= ({left=[],right=[],main=parseArgs args,random=genRandInt seed}, world)
 where
 
 	parseArgs :: [String] -> [Element]

@@ -145,7 +145,7 @@ instance - Number where
 	(-) (Cx (Inf _)) _ = (Cx (Inf Directed))
 	(-) (Re (Inf _)) (Cx (Inf _)) = NaN
 	(-) (Im (Inf _)) (Cx (Inf _)) = NaN
-	(-) _ (Cx (Inf _)) = (Cx (Inf Directed)
+	(-) _ (Cx (Inf _)) = (Cx (Inf Directed))
 	(-) (Re (Inf _)) (Im (Inf _)) = (Cx (Inf Directed))
 	(-) (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
 	(-) (Im (Inf lhs)) _ = (Im (Inf lhs))

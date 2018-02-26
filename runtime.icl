@@ -45,7 +45,7 @@ TRAVERSE_ONE :== TRAVERSE_SOME 1
 GET_MIDDLE :== \[El stack:_] -> stack
 
 evaluate :: ![String] *World -> *(Memory, *World)
-evaluate args world
+/*evaluate args world // TODO re-think how the random seed is provided
 	| isEmpty args
 		# (Timestamp seed, world) = time world
 		= ({left=[],right=[],main=[El []],random=genRandInt seed}, world)
@@ -53,10 +53,45 @@ evaluate args world
 		# ((seed, world), args) = case (parseInt (hd args), world) of
 			(Just seed, world) = ((seed, world), tl args)
 			(Nothing, world) = ((\(Timestamp seed, world) -> (seed, world))(time world), args)
-		= ({left=[],right=[],main=[El []],random=genRandInt seed}, world)
+		= ({left=[],right=[],main=parseArgs args,random=genRandInt seed}, world)
+*/
+evaluate args world
+	# (Timestamp seed, world) = time world
+	= ({left=[],right=[],main=parseArgs args,random=genRandInt seed}, world)
 where
+
+	parseArgs :: [String] -> [Element]
+	parseArgs [] = []
+	parseArgs [head:tail] = [parseArg head:parseArgs tail]
+	where
+		parseArg "Delimiter" = Delimiter
+		parseArg arg
+			# try = parseString arg
+			| isJust try
+				# (Just try) = try
+				= (El (map fromInt (utf8ToUnicode try)))
+			# try = parseInts arg
+			| isJust try
+				# (Just try) = try
+				= (El (map fromInt try))
+			# try = parseReals arg
+			| isJust try
+				# (Just try) = try
+				= (El (map fromReal try))
+			| otherwise
+				= abort "Invalid memory arguments!"
+
 	parseInt :: (String -> (Maybe Int))
 	parseInt = 'GenParse'.parseString
+	
+	parseString :: (String -> (Maybe String))
+	parseString = 'GenParse'.parseString
+	
+	parseInts :: (String -> (Maybe [Int]))
+	parseInts = 'GenParse'.parseString
+	
+	parseReals :: (String -> (Maybe [Real]))
+	parseReals = 'GenParse'.parseString
 
 initialize :: !Program ![String] *World -> *(State, Memory, *World)
 initialize program=:{commands} args world

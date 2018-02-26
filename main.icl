@@ -4,7 +4,7 @@ import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
 	# ([_:args], world)
 		= getCommandLine world
-	//# args = ["-utf8", "--numeric-output", "--dump-stacks", "tests/cat_test.txt"]
+	//# args = ["-utf8", "--numeric-output", "--dump-stacks", "helloworld.txt"]
 	| isEmpty args
 		= abort usage
 	# (flags, [file:args])
@@ -27,7 +27,7 @@ toFlags flags
 	= {debug = False, dump = isMember "--dump-stacks" flags, nums = isMember "--numeric-output" flags}
 	
 usage :== foldr ((+++)) ""
-	["Usage: dirty [<config>] [-format] [--flags] <file> [<seed> [<stack>]]\n"
+	["Usage: dirty [<config>] [-format] [--flags] <file> [<stack>]\n"
 	,"\t-utf8: use the UTF-8 parser\n"
 	,"\t--numeric-output: numeric output for write commands\n"
 	,"\t--dump-stacks: show the stacks on termination\n"

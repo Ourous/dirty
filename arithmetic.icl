@@ -80,8 +80,9 @@ where
 			| IS_NOT_NAN im = (Im (Inf (FIN_SIGN im)))
 			| otherwise = NaN
 		| IS_NOT_NAN re
+			| IS_FINITE im = (Re (Inf (FIN_SIGN re)))
 			| IS_NOT_NAN im = (Cx (Inf Directed))
-			| otherwise = (Re (Inf (FIN_SIGN re)))
+			| otherwise = NaN
 		| otherwise = NaN
 		
 		
@@ -96,7 +97,12 @@ instance + Number where
 	(+) (Im (Inf lhs)) (Im (Inf rhs))
 		| lhs == rhs = (Im (Inf lhs))
 		| otherwise = NaN
+	(+) (Cx (Inf _)) (Cx (Inf _)) = NaN
+	(+) (Cx (Inf _)) (Re (Inf _)) = NaN
+	(+) (Cx (Inf _)) (Im (Inf _)) = NaN
 	(+) (Cx (Inf _)) _ = (Cx (Inf Directed))
+	(+) (Re (Inf _)) (Cx (Inf _)) = NaN
+	(+) (Im (Inf _)) (Cx (Inf _)) = NaN
 	(+) _ (Cx (Inf _)) = (Cx (Inf Directed))
 	(+) (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
 	(+) (Re (Inf _)) (Im (Inf _)) = (Cx (Inf Directed))
@@ -133,10 +139,15 @@ instance - Number where
 	(-) (Im (Inf lhs)) (Im (Inf rhs))
 		| lhs <> rhs = (Im (Inf lhs))
 		| otherwise = NaN
+	(-) (Cx (Inf _)) (Cx (Inf _)) = NaN
+	(-) (Cx (Inf _)) (Re (Inf _)) = NaN
+	(-) (Cx (Inf _)) (Im (Inf _)) = NaN
+	(-) (Cx (Inf _)) _ = (Cx (Inf Directed))
+	(-) (Re (Inf _)) (Cx (Inf _)) = NaN
+	(-) (Im (Inf _)) (Cx (Inf _)) = NaN
+	(-) _ (Cx (Inf _)) = (Cx (Inf Directed))
 	(-) (Re (Inf _)) (Im (Inf _)) = (Cx (Inf Directed))
 	(-) (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
-	(-) (Cx (Inf _)) _ = (Cx (Inf Directed))
-	(-) _ (Cx (Inf _)) = (Cx (Inf Directed))
 	(-) (Im (Inf lhs)) _ = (Im (Inf lhs))
 	(-) _ (Im (Inf rhs)) = (Im (Inf (~rhs)))
 	(-) (Re (Inf lhs)) _ = (Re (Inf lhs))
@@ -167,7 +178,13 @@ instance zero Number where
 instance * Number where
 	(*) NaN _ = NaN
 	(*) _ NaN = NaN
+	(*) Zero (Cx (Inf _)) = NaN
+	(*) Zero (Re (Inf _)) = NaN
+	(*) Zero (Im (Inf _)) = NaN
 	(*) Zero _ = Zero
+	(*) (Cx (Inf _)) Zero = NaN
+	(*) (Re (Inf _)) Zero = NaN
+	(*) (Im (Inf _)) Zero = NaN
 	(*) _ Zero = Zero
 	(*) (Cx (Inf _)) _ = (Cx (Inf Directed))
 	(*) _ (Cx (Inf _)) = (Cx (Inf Directed))
@@ -179,10 +196,10 @@ instance * Number where
 		= handle (Im (Fin (lhs * rhs)))
 	(*) (Im (Fin lhs)) (Im (Fin rhs))
 		= handle (Re (Fin (~(lhs * rhs))))
-	(*) (Re lhs) (Re rhs) = (Re (Inf (VAL_SIGN lhs * VAL_SIGN rhs)))
-	(*) (Re lhs) (Im rhs) = (Im (Inf (VAL_SIGN lhs * VAL_SIGN rhs)))
-	(*) (Im lhs) (Re rhs) = (Im (Inf (VAL_SIGN lhs * VAL_SIGN rhs)))
-	(*) (Im lhs) (Im rhs) = (Im (Inf (~(VAL_SIGN lhs * VAL_SIGN rhs))))
+	(*) (Re (Inf lhs)) (Re (Inf rhs)) = (Re (Inf (lhs * rhs)))
+	(*) (Re (Inf lhs)) (Im (Inf rhs)) = (Im (Inf (lhs * rhs)))
+	(*) (Im (Inf lhs)) (Re (Inf rhs)) = (Im (Inf (lhs * rhs)))
+	(*) (Im (Inf lhs)) (Im (Inf rhs)) = (Im (Inf (~(lhs * rhs))))
 	(*) (Re (Fin lhs)) (Cx (Fin rhs))
 		= handle (Cx (Fin {re=lhs*rhs.re, im=lhs*rhs.im}))
 	(*) (Im (Fin lhs)) (Cx (Fin rhs))
@@ -249,8 +266,8 @@ instance one Number where
 instance ^ Number where
 	(^) NaN _ = NaN
 	(^) _ NaN = NaN
-	(^) Zero _ = Zero
 	(^) _ Zero = one
+	(^) Zero _ = Zero
 	(^) (Re (Fin lhs)) (Re (Fin rhs))
 		= handle (Re (Fin (lhs ^ rhs)))
 	//(^) (Rational _) (Imaginary _) = abort "Unimplemented Operation: Re^Im"

@@ -34,7 +34,7 @@ import StdMaybe
 	
 :: Element
 	= El [Number]
-	| Delim Bool
+	| Delim Bool // "is active"
 	
 :: Flags
 	= {

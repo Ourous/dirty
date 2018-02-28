@@ -32,10 +32,10 @@ stackReverse Primary memory=:{left, main=[El mid:other], right}
 	= {memory&left=reverse left, main=[El (reverse mid):other], right=reverse right}
 stackReverse Base memory=:{main}
 	= let
-		(base, other) = span (not o IS_DELIM) main
+		(base, other) = span (not o ACTIVE_CURSOR) main
 	in {memory&main=reverse base ++ other}
-stackReverse All memory=:{left, main, right}
-	= {memory&left=reverse left, main=reverseEach main, right=reverse right}
+stackReverse All memory=:{main}
+	= {memory&main=reverseEach main}
 where
 	reverseEach [] = []
 	reverseEach [El head:tail]

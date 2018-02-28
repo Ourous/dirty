@@ -27,6 +27,12 @@ IS_DELIM element
 	:== case element of
 		(Delim _) = True
 		_ = False
+		
+// :: Element -> Bool
+ACTIVE_CURSOR element
+	:== case element of
+		(Delim cur) = cur
+		_ = False
 
 // :: [Element] -> Bool
 IS_LAST_DELIM :== isLastDelim

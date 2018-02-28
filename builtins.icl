@@ -18,6 +18,15 @@ isNotEqual lhs rhs = fromBool (lhs <> rhs)
 isIdentical :: [Number] [Number] -> Number
 isIdentical lhs rhs = fromBool (lhs == rhs)
 
+isElementOf :: Number [Number] -> Number
+isElementOf lhs rhs = fromBool (isMember lhs rhs)
+isImproperSubsetOf :: [Number] [Number] -> Number
+isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
+isProperSubsetOf :: [Number] [Number] -> Number
+isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
+isNotSubsetOf :: [Number] [Number] -> Number
+isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
+
 // stack manipulations
 stackReverse :: StackID Memory -> Memory
 stackReverse Left memory=:{left}

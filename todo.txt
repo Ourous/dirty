@@ -4,3 +4,4 @@
 - Put some actual effort into the token converter so it doesn't break whenever I re-order the character set.
 - Add actually descriptive error messages for when files can't be parsed or runtime errors occur.
 - Find the bug in wrap-around loop parsing.
+- Take another look at operations directly on the main stack, some should be removed?

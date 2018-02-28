@@ -11,11 +11,13 @@ isLessOrEqual :: Number Number -> Number
 isGreaterOrEqual :: Number Number -> Number
 isNotEqual :: Number Number -> Number
 isIdentical :: [Number] [Number] -> Number
-/*
+
+isElementOf :: Number [Number] -> Number
+
 isImproperSubsetOf :: [Number] [Number] -> Number
 isProperSubsetOf :: [Number] [Number] -> Number
 isNotSubsetOf :: [Number] [Number] -> Number
-
+/*
 isUppercase :: Number -> Number
 isLoweracse :: Number -> Number
 

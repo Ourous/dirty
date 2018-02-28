@@ -1,5 +1,4 @@
-definition module converter
-
+definition module tokeniser
 import types
 
 //nativeToUTF8 :: String -> String

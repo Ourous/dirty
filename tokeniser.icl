@@ -1,10 +1,6 @@
-implementation module converter
+implementation module tokeniser
 
-import StdBool, StdInt, Text, Text.Unicode.Encodings.UTF8, Text.Unicode, Text.Unicode.UChar
-import types, arithmetic, builtins, unicode
-from StdFunc import o
-from StdList import map, !!
-from StdOrdList import sort
+import types, arithmetic, builtins, unicode, StdEnv
 	
 
 nativeCharset :: [Int]

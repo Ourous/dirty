@@ -56,12 +56,11 @@ isSorted arg = fromBool (isSorted` arg)
 where
 	isSorted` [h1:tail=:[h2:_]] = h1 <= h2 && isSorted` tail
 	isSorted` _ = True
-
+	
 areAnyTrue :: [Number] -> Number
 areAnyTrue arg = fromBool (any toBool arg)
 areAllTrue :: [Number] -> Number
 areAllTrue arg = fromBool (all toBool arg)
-
 
 // stack manipulations
 stackReverse :: StackID Memory -> Memory
@@ -76,8 +75,7 @@ stackReverse Both memory=:{left, right}
 stackReverse Primary memory=:{left, main=[El mid:other], right}
 	= {memory&left=reverse left, main=[El (reverse mid):other], right=reverse right}
 stackReverse Base memory=:{main}
-	= let
-		(base, other) = span (not o ACTIVE_CURSOR) main
+	= let (base, other) = span (not o ACTIVE_CURSOR) main
 	in {memory&main=reverse base ++ other}
 stackReverse All memory=:{main}
 	= {memory&main=reverseEach main}

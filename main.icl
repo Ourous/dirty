@@ -1,5 +1,5 @@
 module main
-import types, atomics, utilities, runtime, parser, converter, arithmetic
+import types, atomics, utilities, runtime, parser, arithmetic
 import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
 	# ([_:args], world)

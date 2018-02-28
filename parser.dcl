@@ -1,6 +1,6 @@
 definition module parser
 
-import types, converter
+import types
 
 parseUTF8 :: !String -> Program
 

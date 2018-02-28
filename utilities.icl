@@ -33,3 +33,7 @@ rotateList n list
 		= rotateList (inc n) [last list:init list]
 	| otherwise
 		= list
+		
+isLastDelim :: [Element] -> Bool
+isLastDelim [Delim cur:_] = cur
+isLastDelim [_:tail] = isLastDelim tail

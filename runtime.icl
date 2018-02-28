@@ -7,7 +7,7 @@ import qualified Data.Generics.GenParse as GenParse
 
 instance toString Element where
 	toString (El val) = STACK_TO_STR val
-	toString Delimiter = "|"
+	toString (Delim cur) = if(cur) "!" "|"
 
 unsafe :: !(*World -> *(.a, !*World)) -> .a
 unsafe fn = fst (fn newWorld)
@@ -48,19 +48,18 @@ evaluate :: ![String] *World -> *(Memory, *World)
 evaluate args world
 	| isEmpty args
 		# (Timestamp seed, world) = time world
-		= ({left=[],right=[],main=[El []],random=genRandInt seed}, world)
+		= ({left=[],right=[],main=[El [],Delim True],random=genRandInt seed}, world)
 	| otherwise
 		# ((seed, world), args) = case (parseInt (hd args), world) of
 			(Just seed, world) = ((seed, world), tl args)
 			(Nothing, world) = ((\(Timestamp seed, world) -> (seed, world))(time world), args)
-		= ({left=[],right=[],main=parseArgs args,random=genRandInt seed}, world)
+		= ({left=[],right=[],main=parseArgs args++[Delim True],random=genRandInt seed}, world)
 where
 
 	parseArgs :: [String] -> [Element]
 	parseArgs [] = []
 	parseArgs [head:tail] = [parseArg head:parseArgs tail]
 	where
-		parseArg "Delimiter" = Delimiter
 		parseArg arg
 			# try = parseString arg
 			| isJust try
@@ -120,9 +119,13 @@ where
 			= world
 	
 	execute (state, memory=:{main=[]}, world)
-		= execute (state, {memory&main=[El[]]}, world)
-	execute (state, memory=:{main=[Delimiter:other]}, world)
-		= execute (state, {memory&main=other}, world)
+		= execute (state, {memory&main=[El[],Delim True]}, world)
+	execute (state, memory=:{main=[El mid]}, world)
+		= execute (state, {memory&main=[El mid,Delim True]}, world)
+	execute (state, memory=:{main=[Delim _]}, world)
+		= execute (state, {memory&main=[El[],Delim True]}, world)
+	execute (state, memory=:{main=[Delim cur,head:tail]}, world)
+		= execute (state, {memory&main=[head,Delim cur:tail]}, world)
 	
 	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y = let
@@ -290,7 +293,7 @@ where
 	where
 		
 		makeString (state=:{direction, location}, memory=:{main}, world)
-			= (TRAVERSE_SOME (length content + 1) state, {memory&main=[El(map fromInt(utf8ToUnicode(toString content))),Delimiter:main]}, world)
+			= (TRAVERSE_SOME (length content + 1) state, {memory&main=[El(map fromInt(utf8ToUnicode(toString content))):NEW_WHEN_LAST main]}, world)
 		where
 			
 			delta = case direction of
@@ -328,7 +331,7 @@ where
 				[El mid:base] = main
 				in (state, {memory&main=[El [val:mid]:base]}, world)
 				
-	process (Literal (Alphabet lettercase)) = app3 (id, \memory -> {memory&main=[El literal,Delimiter:memory.main]}, id)
+	process (Literal (Alphabet lettercase)) = app3 (id, \memory -> {memory&main=[El literal:NEW_WHEN_LAST memory.main]}, id)
 	where
 	
 		literal :: [Number]
@@ -351,7 +354,7 @@ where
 		
 		readAll (stack, memory=:{main}, world)
 			# (str, world) = readLine world
-			= (stack, {memory&main=[El str,Delimiter:main]}, world)
+			= (stack, {memory&main=[El str:NEW_WHEN_LAST main]}, world)
 			
 	process (Operator (IO_WriteOnce)) = writeOnce
 	where
@@ -395,15 +398,15 @@ where
 		
 		binary memory = case memory of
 			{left=[lhs:_], right=[rhs:_]}
-				= {memory&main=[El(op lhs rhs),Delimiter:memory.main]}
+				= {memory&main=[El(op lhs rhs):NEW_WHEN_LAST memory.main]}
 			{left=[lhs:_], main=[El [rhs:mid]:other], right=[]}
-				= {memory&main=[El(op lhs rhs),Delimiter,El mid:other]}
+				= {memory&main=[El(op lhs rhs):NEW_WHEN_LAST[El mid:other]]}
 			{left=[], main=[El [lhs:mid]:other], right=[rhs:_]}
-				= {memory&main=[El(op lhs rhs),Delimiter,El mid:other]}
-			{left=[lhs,rhs:_], main=[El []:other], right=[]}
-				= {memory&main=[El(op lhs rhs),Delimiter,El[]:other]}
-			{left=[], main=[El []:other], right=[rhs,lhs:_]}
-				= {memory&main=[El(op lhs rhs),Delimiter,El[]:other]}
+				= {memory&main=[El(op lhs rhs):NEW_WHEN_LAST[El mid:other]]}
+			{left=[lhs,rhs:_], main=[El []:_], right=[]}
+				= {memory&main=[El(op lhs rhs):NEW_WHEN_LAST memory.main]}
+			{left=[], main=[El []:_], right=[rhs,lhs:_]}
+				= {memory&main=[El(op lhs rhs):NEW_WHEN_LAST memory.main]}
 			_ = memory
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)

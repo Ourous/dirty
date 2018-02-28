@@ -40,8 +40,8 @@ where
 	reverseEach [] = []
 	reverseEach [El head:tail]
 		= [El (reverse head):reverseEach tail]
-	reverseEach [Delimiter:tail]
-		= [Delimiter:reverseEach tail]
+	reverseEach [head:tail]
+		= [head:reverseEach tail]
 //stackRotate :: StackID Memory -> Memory
 //stackDelete :: StackID Memory -> Memory
 //stackDrop :: StackID Memory -> Memory

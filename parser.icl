@@ -26,12 +26,12 @@ where
 	linkLoops` = (linkLoop Left) o (linkLoop Right) o linkGoto
 	
 linkLoop type commands
-	:== (map linkHorizontal o transpose o map linkVertical o transpose) commands
+	= (map linkHorizontal o transpose o map linkVertical o transpose) commands
 where
 
 	equalsBracket side
 		= \(e, _) -> case e of
-			(Control (Loop type dir Nothing)) = dir == side
+			(Control (Loop stack dir Nothing)) = stack == type && dir == side
 			_ = False
 	
 	rotateUntilMatched lhs rhs list

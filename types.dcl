@@ -34,7 +34,7 @@ import StdMaybe
 	
 :: Element
 	= El [Number]
-	| Delimiter
+	| Delim Bool
 	
 :: Flags
 	= {

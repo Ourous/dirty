@@ -1,6 +1,6 @@
 implementation module builtins
 
-import types, arithmetic, utilities, StdEnv, StdLib
+import types, arithmetic, utilities, StdEnv, StdLib, unicode
 
 // "boolean" functions
 isLessThan :: Number Number -> Number
@@ -26,6 +26,42 @@ isProperSubsetOf :: [Number] [Number] -> Number
 isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
 isNotSubsetOf :: [Number] [Number] -> Number
 isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
+
+isUppercase :: Number -> Number
+isUppercase arg = fromBool (isUpperUChar (toInt arg))
+isLowercase :: Number -> Number
+isLowercase arg = (fromBool o isLowerUChar o toInt) arg
+
+isFiniteReal :: Number -> Number
+isFiniteReal arg = fromBool case arg of
+	Zero = True
+	(Re (Fin _)) = True
+	_ = False
+isFiniteNumber :: Number -> Number
+isFiniteNumber arg = fromBool case arg of
+	Zero = True
+	(Re (Fin _)) = True
+	(Im (Fin _)) = True
+	(Cx (Fin _)) = True
+	_ = False
+isInfinity :: Number -> Number
+isInfinity arg = fromBool case arg of
+	(Re (Inf _)) = True
+	(Im (Inf _)) = True
+	(Cx (Inf _)) = True
+	_ = False
+
+isSorted :: [Number] -> Number
+isSorted arg = fromBool (isSorted` arg)
+where
+	isSorted` [h1:tail=:[h2:_]] = h1 <= h2 && isSorted` tail
+	isSorted` _ = True
+
+areAnyTrue :: [Number] -> Number
+areAnyTrue arg = fromBool (any toBool arg)
+areAllTrue :: [Number] -> Number
+areAllTrue arg = fromBool (all toBool arg)
+
 
 // stack manipulations
 stackReverse :: StackID Memory -> Memory

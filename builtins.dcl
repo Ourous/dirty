@@ -17,9 +17,9 @@ isElementOf :: Number [Number] -> Number
 isImproperSubsetOf :: [Number] [Number] -> Number
 isProperSubsetOf :: [Number] [Number] -> Number
 isNotSubsetOf :: [Number] [Number] -> Number
-/*
+
 isUppercase :: Number -> Number
-isLoweracse :: Number -> Number
+isLowercase :: Number -> Number
 
 isFiniteReal :: Number -> Number
 isFiniteNumber :: Number -> Number
@@ -29,7 +29,7 @@ isSorted :: [Number] -> Number
 
 areAnyTrue :: [Number] -> Number
 areAllTrue :: [Number] -> Number
-*/
+
 
 // stack manipulations
 stackReverse :: StackID Memory -> Memory

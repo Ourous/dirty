@@ -1,6 +1,8 @@
 definition module utilities
 
-import types, StdClass
+import types, StdOverloaded
+
+from StdClass import class Enum, class IncDec
 
 instance == Direction
 

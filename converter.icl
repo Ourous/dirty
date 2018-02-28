@@ -1,24 +1,11 @@
 implementation module converter
 
 import StdBool, StdInt, Text, Text.Unicode.Encodings.UTF8, Text.Unicode, Text.Unicode.UChar
-import types, arithmetic, builtins
+import types, arithmetic, builtins, unicode
 from StdFunc import o
 from StdList import map, !!
 from StdOrdList import sort
 	
-unicodeToUTF8 :: [Int] -> String
-unicodeToUTF8 string
-	= conv (fromUnicode (map fromInt string))
-where
-	conv :: (UTF8 -> String)
-	conv = toString
-	
-utf8ToUnicode :: String -> [Int]
-utf8ToUnicode string
-	= map toInt (toUnicode (conv string))
-where
-	conv :: (String -> UTF8)
-	conv = fromString
 
 nativeCharset :: [Int]
 nativeCharset =:

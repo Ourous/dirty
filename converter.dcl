@@ -7,8 +7,8 @@ import types
 //nativeToUTF8 string :== unicodeToUTF8 (nativeToUnicode string)
 //utf8ToNative string :== unicodeToNative (utf8ToUnicode string)
 
-unicodeToUTF8 :: [Int] -> String
-utf8ToUnicode :: String -> [Int]
+//unicodeToUTF8 :: [Int] -> String
+//utf8ToUnicode :: String -> [Int]
 //unicodeToNative :: [Int] -> String
 
 unicodeCharset :: [Int]

@@ -79,19 +79,55 @@ stackReverse Middle memory=:{main=[El mid:other]}
 	= {memory&main=[El (reverse mid):other]}
 stackReverse Both memory=:{left, right}
 	= {memory&left=reverse left, right=reverse right}
-stackReverse Primary memory=:{left, main=[El mid:other], right}
-	= {memory&left=reverse left, main=[El (reverse mid):other], right=reverse right}
-stackReverse Base memory=:{main}
+stackReverse Primary memory=:{main}
 	= let (base, other) = span (not o ACTIVE_CURSOR) main
-	in {memory&main=reverse base ++ other}
-stackReverse All memory=:{main}
-	= {memory&main=reverseEach main}
+	in {memory&main=reverseEach base ++ other}
 where
 	reverseEach [] = []
 	reverseEach [El head:tail]
 		= [El (reverse head):reverseEach tail]
 	reverseEach [head:tail]
 		= [head:reverseEach tail]
-//stackRotate :: StackID Memory -> Memory
-//stackDelete :: StackID Memory -> Memory
+stackReverse Base memory=:{main}
+	= let (base, other) = span (not o ACTIVE_CURSOR) main
+	in {memory&main=reverse base ++ other}
+stackReverse All memory=:{left, right, main}
+	= {memory&left=reverse left,right=reverse right,main=reverseEach main}
+where
+	reverseEach [] = []
+	reverseEach [El head:tail]
+		= [El (reverse head):reverseEach tail]
+	reverseEach [head:tail]
+		= [head:reverseEach tail]
+		
+stackRotate :: StackID Memory -> Memory
+stackRotate _ memory=:{main=[El []:_]} = memory
+stackRotate Left memory=:{left, main=[El [top:mid]:other]}
+	= {memory&left=rotateList(toInt top)left,main=[El mid:other]}
+stackRotate Right memory=:{right, main=[El [top:mid]:other]}
+	= {memory&right=rotateList(toInt top)right,main=[El mid:other]}
+stackRotate Both memory=:{left, right, main=[El [top:mid]:other]}
+	= let rotate = rotateList (toInt top)
+	in {memory&left=rotate left,right=rotate right,main=[El mid:other]}
+stackRotate Primary memory=:{main=[El [top:mid]:other]}
+	= let rotate = rotateList (toInt top)
+	in {memory&main=[El(rotate mid):map(APPLY_IF_ELEM rotate)other]}
+stackRotate Base memory=:{main=[El [top:mid]:other]} = let
+		rotate = rotateList (toInt top)
+		(base, other) = span (not o ACTIVE_CURSOR) [El mid:other]
+	in {memory&main=rotate base ++ other}
+stackRotate All memory=:{left, right, main=[El [top:mid]:other]}
+	= let rotate = rotateList (toInt top)
+	in {memory&left=rotate left,right=rotate right,main=[El(rotate mid):map(APPLY_IF_ELEM rotate)other]}
+
+stackDelete :: StackID Memory -> Memory
+stackDelete Left memory = {memory&left=[]}
+stackDelete Right memory = {memory&right=[]}
+stackDelete Both memory = {memory&left=[],right=[]}
+stackDelete Base memory=:{main}
+	= let (base, other) = span (not o ACTIVE_CURSOR) main
+	in {memory&main=SET_FIRST_DELIM (SAFE_TAIL other)}
+stackDelete Main memory = {memory&main=[]}
+stackDelete All memory = {memory&left=[],right=[],main=[]}
+
 //stackDrop :: StackID Memory -> Memory

@@ -34,7 +34,7 @@
 ! // output top of <mid>
 " // literal '
 # // random
-$ // integral of polynomial with coefficients on the stack
+$ // get environment variable with name of <mid>
 % // modulo
 & // join from <baseline>
 ' // start and end a string
@@ -94,7 +94,7 @@ Z // is a finite number
 ] // goto if <mid> is true
 ^ // exponentiate
 _ // floor
-` // coefficients of the differential of a polynomial with coefficients of <mid>
+` // restart the program. If the start was random, choose another start accordingly.
 a // lowercase alphabet
 b // convert <left> stack to an integer, assuming it's in the base of <right>
 c // cosine

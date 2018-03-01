@@ -90,6 +90,7 @@ import StdMaybe
 	| Loop StackID Direction (Maybe XYPair)
 	| Goto Direction (Maybe XYPair)
 	| String
+	| Restart
 	| NOOP
 	| LINE
 	
@@ -125,6 +126,7 @@ import StdMaybe
 	| IO_Sleep
 	| IO_ClearConsole
 	| IO_Backspace
+	| IO_Environment
 	| Binary_NN_N (Number Number -> Number)
 	| Binary_NN_S (Number Number -> [Number])
 	| Binary_SN_N ([Number] Number -> Number)
@@ -137,6 +139,7 @@ import StdMaybe
 	| Unary_N_S (Number -> [Number])
 	| Unary_S_N ([Number] -> Number)
 	| Unary_S_S ([Number] -> [Number])
+	| Unary_M_M (Memory -> Memory)
 	| Math_Logarithm
 	| Math_DotProduct
 	| Math_Sum
@@ -156,8 +159,6 @@ import StdMaybe
 	| Math_LeastCommonMultiple
 	| Math_ConvertToBase
 	| Math_ConvertFromBase
-	| Math_Integral
-	| Math_Differential
 	| Math_Average
 	| Bitwise_LeftShift
 	| Bitwise_RightShift

@@ -16,6 +16,16 @@ rotateList :: a u:[b] -> v:[b] | Enum a, [u <= v]
 
 //setWhenLast :: [Element] -> [Element]
 
+SAFE_HEAD list
+	:== case list of
+		[] = []
+		[head:_] = [head]
+
+SAFE_TAIL list
+	:== case list of
+		[] = []
+		[_:tail] = tail
+
 // :: [Number] -> Bool
 TO_BOOL stack
 	:== case stack of
@@ -29,6 +39,12 @@ IS_DELIM element
 	:== case element of
 		(Delim _) = True
 		_ = False
+		
+// :: ([Number] -> [Number]) -> (Element -> Element)
+APPLY_IF_ELEM func
+	:== \elem -> case elem of
+		(El arg) = (El (func arg))
+		else = else
 		
 // :: Element -> Bool
 ACTIVE_CURSOR element
@@ -50,12 +66,18 @@ where
 	setAllFalse [head:tail] = [head:setAllFalse tail]
 	
 // :: [Element] -> [Element]
-NEW_WHEN_LAST :== newWhenLast
+SET_NEW_DELIM :== setNewDelim
 where
-	newWhenLast elements = let
+	setNewDelim elements = let
 			(cur, tail) = setLastFalse elements
 		in [(Delim cur):tail]
 	setLastFalse [Delim cur:tail] = (cur, [Delim False:tail])
 	setLastFalse [head:tail] = let
 			(cur, otherLast) = setLastFalse tail
 		in (cur, [head:otherLast])
+		
+SET_FIRST_DELIM :== setNewDelim
+where
+	setNewDelim [] = []
+	setNewDelim [Delim _:tail] = [Delim True:SET_ALL_FALSE tail]
+	setNewDelim [head:tail] = [head:setNewDelim tail]

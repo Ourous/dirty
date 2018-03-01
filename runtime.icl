@@ -17,16 +17,6 @@ newWorld = code inline {
 	fillI 65536 0
 }
 
-SAFE_HEAD list
-	:== case list of
-		[] = []
-		[head:_] = [head]
-
-SAFE_TAIL list
-	:== case list of
-		[] = []
-		[_:tail] = tail
-
 STACK_TO_STR stack
 	:== "["+(join","(map toString stack))+"]"
 	
@@ -293,7 +283,7 @@ where
 	where
 		
 		makeString (state=:{direction, location}, memory=:{main}, world)
-			= (TRAVERSE_SOME (length content + 1) state, {memory&main=[El(map fromInt(utf8ToUnicode(toString content))):NEW_WHEN_LAST main]}, world)
+			= (TRAVERSE_SOME (length content + 1) state, {memory&main=[El(map fromInt(utf8ToUnicode(toString content))):SET_NEW_DELIM main]}, world)
 		where
 			
 			delta = case direction of
@@ -331,7 +321,7 @@ where
 				[El mid:base] = main
 				in (state, {memory&main=[El [val:mid]:base]}, world)
 				
-	process (Literal (Alphabet lettercase)) = app3 (id, \memory -> {memory&main=[El literal:NEW_WHEN_LAST memory.main]}, id)
+	process (Literal (Alphabet lettercase)) = app3 (id, \memory -> {memory&main=[El literal:SET_NEW_DELIM memory.main]}, id)
 	where
 	
 		literal :: [Number]
@@ -354,7 +344,7 @@ where
 		
 		readAll (stack, memory=:{main}, world)
 			# (str, world) = readLine world
-			= (stack, {memory&main=[El str:NEW_WHEN_LAST main]}, world)
+			= (stack, {memory&main=[El str:SET_NEW_DELIM main]}, world)
 			
 	process (Operator (IO_WriteOnce)) = writeOnce
 	where
@@ -398,15 +388,15 @@ where
 		
 		binary memory = case memory of
 			{left=[lhs:_], right=[rhs:_]}
-				= {memory&main=[El(op lhs rhs):NEW_WHEN_LAST memory.main]}
+				= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
 			{left=[lhs:_], main=[El [rhs:mid]:other], right=[]}
-				= {memory&main=[El(op lhs rhs):NEW_WHEN_LAST[El mid:other]]}
+				= {memory&main=[El(op lhs rhs):SET_NEW_DELIM[El mid:other]]}
 			{left=[], main=[El [lhs:mid]:other], right=[rhs:_]}
-				= {memory&main=[El(op lhs rhs):NEW_WHEN_LAST[El mid:other]]}
+				= {memory&main=[El(op lhs rhs):SET_NEW_DELIM[El mid:other]]}
 			{left=[lhs,rhs:_], main=[El []:_], right=[]}
-				= {memory&main=[El(op lhs rhs):NEW_WHEN_LAST memory.main]}
+				= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
 			{left=[], main=[El []:_], right=[rhs,lhs:_]}
-				= {memory&main=[El(op lhs rhs):NEW_WHEN_LAST memory.main]}
+				= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
 			_ = memory
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
@@ -418,6 +408,8 @@ where
 			{main=[El [arg:mid]:other]} = {memory&main=[El [op arg:mid]:other]}
 			_ = memory
 				
+	process (Operator (Unary_M_M op)) = app3 (id, op, id)	
+			
 	// TODO: move stack operations into the tokens as well			
 	
 	process (Stack (MoveTop dir)) = app3 (id, moveTop dir, id)

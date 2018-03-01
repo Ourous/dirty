@@ -1,15 +1,14 @@
-⏻ // power symbol
 ⇨ // start, going right
 ⇦ // start, going left
 ⇧ // start, going up
 ⇩ // start, going down
 ⭬ // move current baseline up 1
 ⭪ // move current baseline down 1
+⭫ // go to next baseline, if none, create new baseline at the end of <main>
 🔔 // bell character
 ␈ // delete the last console char
-⭫ // go to next baseline, if none, create new baseline at the end of <main>
-\n // newline
 ⭭ // go to last baseline, if none, go to index 0
+\n // newline
 ⭮ // rotate counterclockwise
 ⭯ // rotate clockwise
 ⮕ // move right arrow
@@ -26,6 +25,7 @@
 ⏟ // loop right bottom
 ⋮ // vertical conditional mirror
 ⋯ // horizontal conditional mirror
+␛ // exit the program (escape)
 ⋰ // identity-line conditional mirror
 ⋱ // inverse-line conditional mirror
 ⬄ // start random horizontal

@@ -1,7 +1,6 @@
 implementation module unicode
 import Text.Unicode, Text.Unicode.UChar, Text.Unicode.Encodings.UTF8
 from StdEnv import map
-
 isLowerUChar :: Int -> Bool
 isLowerUChar char = isLower (fromInt char)
 

@@ -44,12 +44,19 @@ isFiniteNumber arg = fromBool case arg of
 	(Im (Fin _)) = True
 	(Cx (Fin _)) = True
 	_ = False
-isInfinity :: Number -> Number
-isInfinity arg = fromBool case arg of
+isInfinite :: Number -> Number
+isInfinite arg = fromBool case arg of
 	(Re (Inf _)) = True
 	(Im (Inf _)) = True
 	(Cx (Inf _)) = True
 	_ = False
+
+isPrime :: Number -> Number
+isPrime arg
+	| numCeiling arg <> numFloor arg
+		= fromBool False
+	| otherwise
+		= fromBool (all (\e -> arg mod e <> Zero) [one + one..arg - one])
 
 isSorted :: [Number] -> Number
 isSorted arg = fromBool (isSorted` arg)

@@ -1,10 +1,10 @@
 implementation module parser
 
 import types, utilities, tokeniser, StdEnv, StdLib, Text, unicode
+	
 
 parseUTF8 :: !String -> Program
-parseUTF8 string 
-	= parseNative {#i \\ c <- utf8ToUnicode string, i <- ['\0'..] & u <- unicodeCharset | c == u}
+parseUTF8 string = parseNative {# unicodeToNative char \\ char <- utf8ToUnicode string}
 		
 parseNative :: !String -> Program
 parseNative string = let

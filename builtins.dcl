@@ -23,7 +23,9 @@ isLowercase :: Number -> Number
 
 isFiniteReal :: Number -> Number
 isFiniteNumber :: Number -> Number
-isInfinity :: Number -> Number
+isInfinite :: Number -> Number
+
+isPrime :: Number -> Number
 
 isSorted :: [Number] -> Number
 

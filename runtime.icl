@@ -404,6 +404,13 @@ where
 		binary memory=:{left, main=[El [top:mid]:other], right=[]}
 			= {memory&main=[El [op left top:mid]:other]}
 		binary memory = memory
+		
+	process (Operator (Binary_SS_N op)) = app3 (id, binary, id)
+	where
+	
+		binary :: !Memory -> Memory
+		binary memory=:{left, main=[El mid:other], right}
+			= {memory&main=[El [op left right:mid]:other]}
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where

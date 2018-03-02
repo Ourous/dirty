@@ -130,4 +130,12 @@ stackDelete Base memory=:{main}
 stackDelete Main memory = {memory&main=[]}
 stackDelete All memory = {memory&left=[],right=[],main=[]}
 
-//stackDrop :: StackID Memory -> Memory
+stackDrop :: !StackID !Memory -> Memory
+stackDrop _ memory=:{main=[El []:_]} = memory
+stackDrop Left memory=:{left, main=[El [top:mid]:other]}
+	= let val = toInt top
+	in {memory&left=if(val<0) (take(~val)) (drop val) left,main=[El mid:other]}
+stackDrop Right memory=:{right, main=[El [top:mid]:other]}
+	= let val = toInt top
+	in {memory&right=if(val<0) (take(~val)) (drop val) right,main=[El mid:other]}
+	

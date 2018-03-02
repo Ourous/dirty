@@ -37,6 +37,6 @@ areAllTrue :: [Number] -> Number
 stackReverse :: !StackID !Memory -> Memory
 stackRotate :: !StackID !Memory -> Memory
 stackDelete :: !StackID !Memory -> Memory
-//stackDrop :: StackID Memory -> Memory
+stackDrop :: !StackID !Memory -> Memory
 //cycleTops :: Rotation Memory -> Memory
 //cycleStacks :: Rotation Memory -> Memory

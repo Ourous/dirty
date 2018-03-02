@@ -68,6 +68,8 @@ where
 // :: [Element] -> [Element]
 SET_NEW_DELIM :== setNewDelim
 where
+	setNewDelim [Delim _:tail]
+		= [Delim True:SET_ALL_FALSE tail]
 	setNewDelim elements = let
 			(cur, tail) = setLastFalse elements
 		in [(Delim cur):tail]

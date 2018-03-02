@@ -367,37 +367,43 @@ where
 	where
 		
 		binary :: !Memory -> Memory
-		
-		binary memory = case memory of
-			{left=[lhs:_], main=[El mid:other], right=[rhs:_]}
-				= {memory&main=[El[op lhs rhs:mid]:other]}
-			{left=[lhs:_], main=[El [rhs:mid]:other], right=[]}
-				= {memory&main=[El[op lhs rhs:mid]:other]}
-			{left=[], main=[El [lhs:mid]:other], right=[rhs:_]}
-				= {memory&main=[El[op lhs rhs:mid]:other]}
-			{left=[lhs,rhs:_], main=[El []:other], right=[]}
-				= {memory&main=[El[op lhs rhs]:other]}
-			{left=[], main=[El []:other], right=[rhs,lhs:_]}
-				= {memory&main=[El[op lhs rhs]:other]}
-			_ = memory
+		binary memory=:{left=[lhs:_], main=[El mid:other], right=[rhs:_]}
+			= {memory&main=[El[op lhs rhs:mid]:other]}
+		binary memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
+			= {memory&main=[El[op lhs top:mid]:other]}
+		binary memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
+			= {memory&main=[El[op top rhs:mid]:other]}
+		binary memory=:{left=[], main=[El []:other], right=[rhs,lhs:_]}
+			= {memory&main=[El[op lhs rhs]:other]}
+		binary memory=:{left=[lhs,rhs:_], main=[El []:other], right=[]}
+			= {memory&main=[El[op lhs rhs]:other]}
+		binary memory = memory
 			
 	process (Operator (Binary_NN_S op)) = app3 (id, binary, id)
 	where
 		
 		binary :: !Memory -> Memory
-		
-		binary memory = case memory of
-			{left=[lhs:_], right=[rhs:_]}
-				= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-			{left=[lhs:_], main=[El [rhs:mid]:other], right=[]}
-				= {memory&main=[El(op lhs rhs):SET_NEW_DELIM[El mid:other]]}
-			{left=[], main=[El [lhs:mid]:other], right=[rhs:_]}
-				= {memory&main=[El(op lhs rhs):SET_NEW_DELIM[El mid:other]]}
-			{left=[lhs,rhs:_], main=[El []:_], right=[]}
-				= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-			{left=[], main=[El []:_], right=[rhs,lhs:_]}
-				= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-			_ = memory
+		binary memory=:{left=[lhs:_], right=[rhs:_]}
+			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
+		binary memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
+			= {memory&main=[El(op lhs top):SET_NEW_DELIM[El mid:other]]}
+		binary memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
+			= {memory&main=[El(op top rhs):SET_NEW_DELIM[El mid:other]]}
+		binary memory=:{left=[lhs,rhs:_], main=[El []:_], right=[]}
+			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
+		binary memory=:{left=[], main=[El []:_], right=[rhs,lhs:_]}
+			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
+		binary memory = memory
+			
+	process (Operator (Binary_SN_N op)) = app3 (id, binary, id)
+	where
+	
+		binary :: !Memory -> Memory
+		binary memory=:{left, main=[El mid:other], right=[rhs:_]}
+			= {memory&main=[El [op left rhs:mid]:other]}
+		binary memory=:{left, main=[El [top:mid]:other], right=[]}
+			= {memory&main=[El [op left top:mid]:other]}
+		binary memory = memory
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where

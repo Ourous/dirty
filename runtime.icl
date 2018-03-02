@@ -380,11 +380,15 @@ where
 		binary memory = memory
 			
 	process (Operator (Binary_NN_S op)) = app3 (id, binary, id)
-	where
+	where // productive
 		
 		binary :: !Memory -> Memory
 		binary memory=:{left=[lhs:_], right=[rhs:_]}
 			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
+		binary memory=:{left=[lhs:_], main=[El [top]:other], right=[]}
+			= {memory&main=[El(op lhs top):SET_NEW_DELIM other]}
+		binary memory=:{left=[], main=[El [top]:other], right=[rhs:_]}
+			= {memory&main=[El(op top rhs):SET_NEW_DELIM other]}
 		binary memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
 			= {memory&main=[El(op lhs top):SET_NEW_DELIM[El mid:other]]}
 		binary memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
@@ -396,7 +400,7 @@ where
 		binary memory = memory
 			
 	process (Operator (Binary_SN_N op)) = app3 (id, binary, id)
-	where
+	where // TODO: adjust, add allocation for empty left
 	
 		binary :: !Memory -> Memory
 		binary memory=:{left, main=[El mid:other], right=[rhs:_]}
@@ -406,22 +410,56 @@ where
 		binary memory = memory
 		
 	process (Operator (Binary_SS_N op)) = app3 (id, binary, id)
-	where
+	where // TODO: adjust, add allocation for empty stacks
 	
 		binary :: !Memory -> Memory
 		binary memory=:{left, main=[El mid:other], right}
 			= {memory&main=[El [op left right:mid]:other]}
+		binary memory = memory
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where
 		
 		unary :: !Memory -> Memory
+		unary memory=:{main=[El [arg:mid]:other]}
+			= {memory&main=[El [op arg:mid]:other]}
+		unary memory = memory
 		
-		unary memory = case memory of
-			{main=[El [arg:mid]:other]} = {memory&main=[El [op arg:mid]:other]}
-			_ = memory
+	process (Operator (Unary_N_S op)) = app3 (id, unary, id)
+	where
+		
+		unary :: !Memory -> Memory
+		unary memory=:{main=[El [arg]:other]}
+			= {memory&main=[El (op arg):SET_NEW_DELIM other]}
+		unary memory=:{main=[El [arg:mid]:other]}
+			= {memory&main=[El (op arg):SET_NEW_DELIM [El mid:other]]}
+		unary memory = memory
+		
+	process (Operator (Unary_S_N op)) = app3 (id, unary, id)
+	where
+	
+		unary :: !Memory -> Memory
+		unary memory=:{main=[El mid:other]}
+			= {memory&main=[El [op mid]:other]}
+		//unary memory = memory
+		
+	process (Operator (Unary_S_S op)) = app3 (id, unary, id)
+	where
+		
+		unary :: !Memory -> Memory
+		unary memory=:{main=[El mid:other]}
+			= {memory&main=[El (op mid):other]}
+		//unary memory = memory
+	
+	process (Operator (Unary_S_T op)) = app3 (id, unary, id)
+	where
+		
+		unary :: !Memory -> Memory
+		unary memory=:{main=[El mid:other]}
+			= {memory&main=(map (\e -> (El e)) (op mid)) ++ SET_NEW_DELIM other}
+		
 				
-	process (Operator (Unary_M_M op)) = app3 (id, op, id)	
+	process (Operator (Unary_M_M op)) = app3 (id, op, id)
 			
 	// TODO: move stack operations into the tokens as well			
 	

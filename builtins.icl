@@ -112,6 +112,8 @@ numPermute :: !Number !Number -> Number
 numPermute lhs rhs = prod [numFloor(lhs - rhs)..lhs]
 numCombin :: !Number !Number -> Number
 numCombin lhs rhs = (numPermute lhs rhs) / prod [one..rhs]
+logarithm :: !Number !Number -> Number
+logarithm lhs rhs = (ln rhs) / (ln lhs)
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

@@ -46,6 +46,7 @@ imagUnit :: !Number -> Number
 dotProduct :: [Number] [Number] -> Number
 numPermute :: !Number !Number -> Number
 numCombin :: !Number !Number -> Number
+logarithm :: !Number !Number -> Number
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

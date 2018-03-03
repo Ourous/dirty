@@ -363,41 +363,48 @@ where
 			# (chr, world) = readChar world
 			= (stack, {memory&main=[El[chr:mid]:other]}, world)
 			
-	process (Operator (Binary_NN_N op)) = app3 (id, binary, id)
+	process (Operator (Binary_NN_N inv op)) = app3 (id, binary (inv && not flags.strict), id)
 	where
 		
-		binary :: !Memory -> Memory
-		binary memory=:{left=[lhs:_], main=[El mid:other], right=[rhs:_]}
+		binary :: !Bool !Memory -> Memory
+		binary _ memory=:{left=[lhs:_], main=[El mid:other], right=[rhs:_]}
 			= {memory&main=[El[op lhs rhs:mid]:other]}
-		binary memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
+		binary _ memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
 			= {memory&main=[El[op lhs top:mid]:other]}
-		binary memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
+		binary _ memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
 			= {memory&main=[El[op top rhs:mid]:other]}
-		binary memory=:{left=[], main=[El []:other], right=[rhs,lhs:_]}
+		binary _ memory=:{left=[], main=[El []:other], right=[rhs,lhs:_]}
 			= {memory&main=[El[op lhs rhs]:other]}
-		binary memory=:{left=[lhs,rhs:_], main=[El []:other], right=[]}
+		binary _ memory=:{left=[lhs,rhs:_], main=[El []:other], right=[]}
 			= {memory&main=[El[op lhs rhs]:other]}
-		binary memory = memory
+		binary True memory=:{left=[], main=[El [arg1,arg2:mid]:other], right=[]}
+			= {memory&main=[El[op arg1 arg2:mid]:other]}
+		binary _ memory = memory
+		
 			
-	process (Operator (Binary_NN_S op)) = app3 (id, binary, id)
+	process (Operator (Binary_NN_S inv op)) = app3 (id, binary (inv && not flags.strict), id)
 	where // productive
 		
-		binary :: !Memory -> Memory
-		binary memory=:{left=[lhs:_], right=[rhs:_]}
+		binary :: !Bool !Memory -> Memory
+		binary _ memory=:{left=[lhs:_], right=[rhs:_]}
 			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-		binary memory=:{left=[lhs:_], main=[El [top]:other], right=[]}
+		binary _ memory=:{left=[lhs:_], main=[El [top]:other], right=[]}
 			= {memory&main=[El(op lhs top):SET_NEW_DELIM other]}
-		binary memory=:{left=[], main=[El [top]:other], right=[rhs:_]}
+		binary _ memory=:{left=[], main=[El [top]:other], right=[rhs:_]}
 			= {memory&main=[El(op top rhs):SET_NEW_DELIM other]}
-		binary memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
+		binary _ memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
 			= {memory&main=[El(op lhs top):SET_NEW_DELIM[El mid:other]]}
-		binary memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
+		binary _ memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
 			= {memory&main=[El(op top rhs):SET_NEW_DELIM[El mid:other]]}
-		binary memory=:{left=[lhs,rhs:_], main=[El []:_], right=[]}
+		binary _ memory=:{left=[lhs,rhs:_], main=[El []:_], right=[]}
 			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-		binary memory=:{left=[], main=[El []:_], right=[rhs,lhs:_]}
+		binary _ memory=:{left=[], main=[El []:_], right=[rhs,lhs:_]}
 			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-		binary memory = memory
+		binary True memory=:{left=[], main=[El [arg1,arg2]:other], right=[]}
+			= {memory&main=[El(op arg1 arg2):SET_NEW_DELIM other]}
+		binary True memory=:{left=[], main=[El [arg1,arg2:mid]:other], right=[]}
+			= {memory&main=[El(op arg1 arg2):SET_NEW_DELIM[El mid:other]]}
+		binary _ memory = memory
 			
 	process (Operator (Binary_SN_N op)) = app3 (id, binary, id)
 	where
@@ -409,13 +416,13 @@ where
 			= {memory&main=[El [op left top:mid]:other]}
 		binary memory = memory
 		
-	process (Operator (Binary_SS_N op)) = app3 (id, binary, id)
+	process (Operator (Binary_SS_N inv op)) = app3 (id, binary (inv && not flags.strict), id)
 	where
 	
-		binary :: !Memory -> Memory
-		binary memory=:{left, main=[El mid:other], right}
+		binary :: !Bool !Memory -> Memory
+		binary _ memory=:{left, main=[El mid:other], right}
 			= {memory&main=[El [op left right:mid]:other]}
-		binary memory = memory
+		binary _ memory = memory
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where

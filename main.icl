@@ -24,7 +24,7 @@ Start world
 	in (construct program (toFlags flags)) (initialize program args world)
 	
 toFlags flags
-	= {debug = False, dump = isMember "--dump-stacks" flags, nums = isMember "--numeric-output" flags}
+	= {debug = False, dump = isMember "--dump-stacks" flags, nums = isMember "--numeric-output" flags, strict = isMember "--strict-args" flags}
 	
 usage :== foldr ((+++)) ""
 	["Usage: dirty [<config>] [-format] [--flags] <file> [<stack>]\n"

@@ -40,7 +40,8 @@ import StdMaybe
 	= {
 		debug :: !Bool,
 		dump :: !Bool,
-		nums :: !Bool
+		nums :: !Bool,
+		strict :: !Bool
 	}
 
 :: Numeric
@@ -127,19 +128,20 @@ import StdMaybe
 	| IO_ClearConsole
 	| IO_Backspace
 	| IO_Environment
-	| Binary_NN_N (Number Number -> Number)
-	| Binary_NN_S (Number Number -> [Number])
+	| Binary_NN_N Bool (Number Number -> Number)
+	| Binary_NN_S Bool (Number Number -> [Number])
 	| Binary_SN_N ([Number] Number -> Number)
 	| Binary_SN_S ([Number] Number -> [Number])
 	| Binary_NS_N (Number [Number] -> Number)
 	| Binary_NS_S (Number [Number] -> [Number])
-	| Binary_SS_N ([Number] [Number] -> Number)
-	| Binary_SS_S ([Number] [Number] -> [Number])
+	| Binary_SS_N Bool ([Number] [Number] -> Number)
+	| Binary_SS_S Bool ([Number] [Number] -> [Number])
 	| Unary_N_N (Number -> Number)
 	| Unary_N_S (Number -> [Number])
 	| Unary_S_N ([Number] -> Number)
 	| Unary_S_S ([Number] -> [Number])
 	| Unary_S_T ([Number] -> [[Number]])
+	| Unary_T_S ([[Number]] -> [Number])
 	| Unary_M_M (Memory -> Memory)
 	| Math_Logarithm
 	| Math_DotProduct

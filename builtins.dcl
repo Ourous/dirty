@@ -54,6 +54,7 @@ vectorTimes :: [Number] [Number] -> [Number]
 vectorNegate :: [Number] -> [Number]
 vectorAND :: [Number] [Number] -> [Number]
 vectorOR :: [Number] [Number] -> [Number]
+vectorIsEqual :: [Number] [Number] -> [Number]
 vectorElementOf :: [Number] [Number] -> [Number]
 vectorLessThan :: [Number] [Number] -> [Number]
 vectorGreaterThan :: [Number] [Number] -> [Number]
@@ -82,7 +83,6 @@ transposeFromCursor :: !Memory -> Memory
 stackJoin :: !Memory -> Memory
 stackUnjoin :: !Memory -> Memory
 removeDupBase :: !Memory -> Memory
-
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

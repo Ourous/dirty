@@ -129,6 +129,8 @@ vectorAND :: [Number] [Number] -> [Number]
 vectorAND lhs rhs = zipWith bitAND lhs rhs
 vectorOR :: [Number] [Number] -> [Number]
 vectorOR lhs rhs = zipWith bitOR lhs rhs
+vectorIsEqual :: [Number] [Number] -> [Number]
+vectorIsEqual lhs rhs = zipWith isEqualTo lhs rhs
 vectorElementOf :: [Number] [Number] -> [Number]
 vectorElementOf lhs rhs = map (\e -> isElementOf e rhs) lhs
 vectorLessThan :: [Number] [Number] -> [Number]
@@ -206,7 +208,6 @@ removeDupBase memory=:{main} = let
 		safeBase = [el \\ (El el) <- base]
 		deduped = [El el \\ el <- removeDup safeBase]
 	in {memory&main=deduped ++ other}
-
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

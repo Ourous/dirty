@@ -135,8 +135,6 @@ vectorLessThan :: [Number] [Number] -> [Number]
 vectorLessThan lhs rhs = zipWith isLessThan lhs rhs
 vectorGreaterThan :: [Number] [Number] -> [Number]
 vectorGreaterThan lhs rhs = zipWith isGreaterThan lhs rhs
-vectorIsEqual :: [Number] [Number] -> [Number]
-vectorIsEqual lhs rhs = zipWith isEqualTo lhs rhs
 vectorLessOrEqual :: [Number] [Number] -> [Number]
 vectorLessOrEqual lhs rhs = zipWith isLessOrEqual lhs rhs
 vectorGreaterOrEqual :: [Number] [Number] -> [Number]
@@ -167,6 +165,8 @@ setFilter :: [Number] [Number] -> [Number]
 setFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | toBool cond]
 antiFilter :: [Number] [Number] -> [Number]
 antiFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | (not o toBool) cond]
+groupMiddle :: [Number] -> [[Number]]
+groupMiddle arg = group arg
 
 // special cases
 matrixProduct :: !Memory -> Memory

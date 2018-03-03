@@ -57,7 +57,6 @@ vectorOR :: [Number] [Number] -> [Number]
 vectorElementOf :: [Number] [Number] -> [Number]
 vectorLessThan :: [Number] [Number] -> [Number]
 vectorGreaterThan :: [Number] [Number] -> [Number]
-vectorIsEqual :: [Number] [Number] -> [Number]
 vectorLessOrEqual :: [Number] [Number] -> [Number]
 vectorGreaterOrEqual :: [Number] [Number] -> [Number]
 
@@ -72,6 +71,7 @@ setMinimum :: [Number] -> Number
 setMaximum :: [Number] -> Number
 setFilter :: [Number] [Number] -> [Number]
 antiFilter :: [Number] [Number] -> [Number]
+groupMiddle :: [Number] -> [[Number]]
 //powerset :: [Number] -> [[Number]]
 
 // special cases
@@ -82,6 +82,7 @@ transposeFromCursor :: !Memory -> Memory
 stackJoin :: !Memory -> Memory
 stackUnjoin :: !Memory -> Memory
 removeDupBase :: !Memory -> Memory
+
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

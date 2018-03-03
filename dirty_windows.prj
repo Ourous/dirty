@@ -63,7 +63,7 @@ MainModule
 		Verbose:	True
 		ReadableABC:	False
 		ReuseUniqueNodes:	True
-		Fusion:	True
+		Fusion:	False
 OtherModules
 	Module
 		Name:	arithmetic

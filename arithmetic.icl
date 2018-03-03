@@ -23,8 +23,7 @@ instance sign Sign where
 	sign Negative = -1
 	
 INT_MAX :== IF_INT_64_OR_32 9223372036854775807 2147483647
-	
-INT_MIN :== bitnot INT_MAX
+INT_MIN :== IF_INT_64_OR_32 -9223372036854775808 -2147483648
 	
 VAL_SIGN val
 	:== case val of

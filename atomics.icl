@@ -162,6 +162,8 @@ instance toReal Numeric where
 instance toString Numeric where
 	toString (Int val) = toString val
 	toString (Real val) = toString val
+	
+instance one Numeric where one = (Int 1)
 		
 instance mod Numeric where (mod) lhs rhs = applyBinaryInt (rem) (toInt) lhs rhs
 		

@@ -32,6 +32,20 @@ isSorted :: [Number] -> Number
 areAnyTrue :: [Number] -> Number
 areAllTrue :: [Number] -> Number
 
+// coalescing operators
+logicEquiv :: !Number -> Number
+logicNegate :: !Number -> Number
+
+// remaining math ops
+primeFactors :: !Number -> [Number]
+conjugate :: !Number -> Number
+justReal :: !Number -> Number
+justImag :: !Number -> Number
+reciprocal :: !Number -> Number
+imagUnit :: !Number -> Number
+dotProduct :: [Number] [Number] -> Number
+numPermute :: !Number !Number -> Number
+numCombin :: !Number !Number -> Number
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

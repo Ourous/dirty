@@ -13,6 +13,7 @@ instance sign Numeric
 instance ~ Numeric
 instance == Numeric
 instance < Numeric
+instance one Numeric
 
 instance toInt Numeric
 instance toReal Numeric

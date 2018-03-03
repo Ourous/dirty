@@ -1,6 +1,6 @@
 implementation module builtins
 
-import types, arithmetic, utilities, StdEnv, StdLib, unicode
+import types, atomics, arithmetic, utilities, StdEnv, StdLib, unicode
 
 // "boolean" functions
 isLessThan :: !Number !Number -> Number
@@ -68,6 +68,50 @@ areAnyTrue :: [Number] -> Number
 areAnyTrue arg = fromBool (any toBool arg)
 areAllTrue :: [Number] -> Number
 areAllTrue arg = fromBool (all toBool arg)
+
+// coalescing operators
+logicEquiv :: !Number -> Number
+logicEquiv arg = fromBool (toBool arg)
+logicNegate :: !Number -> Number
+logicNegate arg = fromBool (not (toBool arg))
+
+// remaining math ops
+primeFactors :: !Number -> [Number]
+primeFactors NaN = []
+primeFactors arg
+	| abs arg < one + one || numCeiling arg <> numFloor arg
+		= []
+	| otherwise
+		# factors = [n \\ n <- [one+one..abs arg-one] | arg mod n == Zero && (toBool o isPrime) n]
+		= factors ++ (primeFactors (arg/(prod factors)))
+conjugate :: !Number -> Number
+conjugate (Im (Fin val)) = (Im (Fin (~val)))
+conjugate (Cx (Fin val=:{im})) = (Cx (Fin {val&im=(~im)}))
+conjugate (Im (Inf Positive)) = (Im (Inf Negative))
+conjugate (Im (Inf Negative)) = (Im (Inf Positive))
+conjugate arg = arg
+justReal :: !Number -> Number
+justReal (Im _) = Zero
+justReal (Cx (Fin {re})) = (Re (Fin re))
+justReal (Cx (Inf Directed)) = NaN
+justReal NaN = NaN
+justReal arg = arg
+justImag :: !Number -> Number
+justImag (Re _) = Zero
+justImag (Cx (Fin {im})) = (Im (Fin im))
+justImag (Cx (Inf Directed)) = NaN
+justImag NaN = NaN
+justImag arg = arg
+reciprocal :: !Number -> Number
+reciprocal arg = one / arg
+imagUnit :: !Number -> Number
+imagUnit arg = arg * (Im (Fin one))
+dotProduct :: [Number] [Number] -> Number
+dotProduct lhs rhs = foldl (+) Zero (zipWith (*) lhs rhs)
+numPermute :: !Number !Number -> Number
+numPermute lhs rhs = prod [numFloor(lhs - rhs)..lhs]
+numCombin :: !Number !Number -> Number
+numCombin lhs rhs = (numPermute lhs rhs) / prod [one..rhs]
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

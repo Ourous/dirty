@@ -104,6 +104,7 @@ import StdMaybe
 	| Quote
 	| Digit Number
 	| Alphabet LetterCase
+	| EmptySet
 	
 :: VariableCommand
 	= Random
@@ -263,10 +264,9 @@ import StdMaybe
 	| Replicate_AllOfMiddle
 	| Repeat_TopOfMiddle
 	| Repeat_AllOfMiddle
+	| Group_Base
 	| Uniques_Middle
-	| Uniques_Main
 	| Uniques_Base
-	| Duplicates_Main
 	| Duplicates_Middle
 	| Duplicates_Base
 	| ShiftBase Direction

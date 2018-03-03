@@ -257,9 +257,9 @@ unicodeCharset =
 	,[11034]
 	,[9675]
 	,[9676]
-	,[7690]
+	,[10854]
+	,[8709]
 	,[7692]
-	,[7691]
 	,[7693]
 	,[10516]
 	,[8614]
@@ -521,9 +521,9 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Control (Mirror False Reflection))
 	,(Control (Skip True))
 	,(Control (Skip False))
-	,(Stack (Uniques_Main))
+	,(Stack (Group_Base))
+	,(Literal (EmptySet))
 	,(Operator (Unary_M_M (removeDupBase)))//(Stack (Uniques_Base))
-	,(Stack (Duplicates_Main))
 	,(Stack (Duplicates_Base))
 	,(Stack (Replicate_Base))
 	,(Stack (Replicate_TopOfMiddle))

@@ -243,9 +243,9 @@ z // conjugate
 ⬚ // conditional universal reflect
 ○ // jump over next instruction
 ◌ // conditional jump over next instruction
-Ḋ // remove duplicates from <main>
+⩦ // group baseline
+∅ // the empty set
 Ḍ // remove duplicates from <baseline>
-ḋ // retain only duplicates from <main>
 ḍ // retain only duplicates from <baseline>
 ⤔ // copy from <baseline> onto end of <main>
 ↦ // duplicate top element of <mid> into a new stack

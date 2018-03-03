@@ -157,6 +157,27 @@ splitOnNewlines arg
 		= [head:splitOnNewlines (tl tail)]
 
 // "set" operators
+fromLeftStepRight :: !Number !Number -> [Number]
+fromLeftStepRight lhs rhs = [lhs, lhs + rhs..]
+fromZeroToMiddle :: !Number -> [Number]
+fromZeroToMiddle arg
+	| arg < Zero
+		= [Zero, ~one..arg]
+	| arg > Zero
+		= [Zero, one..arg]
+	| otherwise
+		= [arg]
+fromMiddleAvoidZero :: !Number -> [Number]
+fromMiddleAvoidZero arg
+	| arg < Zero	
+		= [arg, dec arg..]
+	| arg > Zero
+		= [arg, inc arg..]
+	| otherwise
+		= [arg]
+fromLeftTimesRight :: !Number !Number -> [Number]
+fromLeftTimesRight lhs rhs = yieldTimesRight lhs
+where yieldTimesRight arg = [arg:yieldTimesRight(arg*rhs)]
 setMinimum :: [Number] -> Number
 setMinimum [] = NaN
 setMinimum [head:tail] = foldl (min) head tail

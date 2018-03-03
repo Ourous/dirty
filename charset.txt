@@ -44,7 +44,7 @@ $ // get environment variable with name of <mid>
 + // plus
 , // from <left>, in steps of <right>
 - // minus
-. // from <mid> to zero, in steps of 1
+. // from zero to <mid>, in steps of 1
 / // reflection around SW->NE
 0 // multiply <mid> by 10
 1 // multiply <mid> by 10, add 1

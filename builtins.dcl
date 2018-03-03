@@ -68,6 +68,10 @@ splitOnNewlines :: [Number] -> [[Number]]
 //MORE TO COME
 
 // "set" operators
+fromLeftStepRight :: !Number !Number -> [Number]
+fromZeroToMiddle :: !Number -> [Number]
+fromMiddleAvoidZero :: !Number -> [Number]
+fromLeftTimesRight :: !Number !Number -> [Number]
 setMinimum :: [Number] -> Number
 setMaximum :: [Number] -> Number
 setFilter :: [Number] [Number] -> [Number]

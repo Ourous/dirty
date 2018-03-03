@@ -243,7 +243,7 @@ z // conjugate
 ⬚ // conditional universal reflect
 ○ // jump over next instruction
 ◌ // conditional jump over next instruction
-⩦ // group baseline
+⩸ // group by equality
 ∅ // the empty set
 Ḍ // remove duplicates from <baseline>
 ḍ // retain only duplicates from <baseline>

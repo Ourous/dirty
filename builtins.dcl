@@ -81,6 +81,7 @@ stacksFromCursor :: !Memory -> Memory
 transposeFromCursor :: !Memory -> Memory
 stackJoin :: !Memory -> Memory
 stackUnjoin :: !Memory -> Memory
+removeDupBase :: !Memory -> Memory
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

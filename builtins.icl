@@ -107,7 +107,7 @@ reciprocal arg = one / arg
 imagUnit :: !Number -> Number
 imagUnit arg = arg * (Im (Fin one))
 numPermute :: !Number !Number -> Number
-numPermute lhs rhs = prod [numFloor(lhs - rhs)..lhs]
+numPermute lhs rhs = prod [lhs-rhs..lhs]
 numCombin :: !Number !Number -> Number
 numCombin lhs rhs = (numPermute lhs rhs) / prod [one..rhs]
 logarithm :: !Number !Number -> Number
@@ -197,6 +197,13 @@ stackUnjoin :: !Memory -> Memory
 stackUnjoin memory=:{main=[El mid:other]} = let
 		singles = [El [el] \\ el <- mid]
 	in {memory&main=singles ++ SET_NEW_DELIM other}
+removeDupBase :: !Memory -> Memory
+removeDupBase memory=:{main} = let
+		(base, other) = span (not o ACTIVE_CURSOR) main
+		safeBase = [el \\ (El el) <- base]
+		deduped = [El el \\ el <- removeDup safeBase]
+	in {memory&main=deduped ++ other}
+
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

@@ -528,8 +528,8 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Stack (Replicate_Base))
 	,(Stack (Replicate_TopOfMiddle))
 	,(Stack (Replicate_AllOfMiddle))
-	,(Stack (Repeat_TopOfMiddle))
-	,(Stack (Repeat_AllOfMiddle))
+	,(Operator (Unary_M_M (repeatTopMiddle)))//(Stack (Repeat_TopOfMiddle))
+	,(Operator (Unary_M_M (repeatFullMiddle)))//(Stack (Repeat_AllOfMiddle))
 	,(Operator (Binary_NN_N True (max)))//(Operator (Math_Maximum))
 	,(Operator (Binary_NN_N True (min)))//(Operator (Math_Minimum))
 	]

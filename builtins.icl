@@ -208,6 +208,13 @@ removeDupBase memory=:{main} = let
 		safeBase = [el \\ (El el) <- base]
 		deduped = [El el \\ el <- removeDup safeBase]
 	in {memory&main=deduped ++ other}
+repeatTopMiddle :: !Memory -> Memory
+repeatTopMiddle memory=:{main=[El []:_]} = memory
+repeatTopMiddle memory=:{main=[El [top:mid]:other]}
+	= {memory&main=[El(repeat top),El mid:other]}
+repeatFullMiddle :: !Memory -> Memory
+repeatFullMiddle memory=:{main=[El mid:other]}
+	= {memory&main=[El(flatten(repeat mid)):other]}
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

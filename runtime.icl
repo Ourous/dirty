@@ -328,6 +328,8 @@ where
 		literal = case lettercase of
 			Lowercase = [fromInt (toInt c) \\ c <-: "abcdefghijklmnopqrstuvwxyz"]
 			Uppercase = [fromInt (toInt c) \\ c <-: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
+			
+	process (Literal (EmptySet)) = app3 (id, \memory -> {memory&main=[El []:memory.main]}, id)
 				
 	process (Variable (Random)) = app3 (id, rand, id)
 	where

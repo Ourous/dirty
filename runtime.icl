@@ -468,25 +468,3 @@ where
 				
 	process (Operator (Unary_M_M op)) = app3 (id, op, id)
 			
-	// TODO: move stack operations into the tokens as well			
-	
-	process (Stack (MoveTop dir)) = app3 (id, moveTop dir, id)
-	where
-		
-		moveTop :: !Direction !Memory -> Memory
-		
-		moveTop East memory = case memory of
-			{left=[head:tail]} = {memory&left=tail,right=[head:memory.right]}
-			_ = memory
-		
-		moveTop West memory = case memory of
-			{right=[head:tail]} = {memory&left=[head:memory.left],right=tail}
-			_ = memory
-			
-		moveTop NorthEast memory = case memory of
-			{main=[El [head:tail]:other]} = {memory&main=[El tail:other],right=[head:memory.right]}
-			_ = memory
-			
-		moveTop NorthWest memory = case memory of
-			{main=[El [head:tail]:other]} = {memory&left=[head:memory.left],main=[El tail:other]}
-			_ = memory

@@ -74,3 +74,6 @@ unpackRightLeft :: !Memory -> Memory
 swapLeftRight :: !Memory -> Memory
 swapTop :: !Axes !Memory -> Memory
 moveTop :: !Direction !Memory -> Memory
+copyTop :: !Direction !Memory -> Memory
+copyBoth :: !Axes !Memory -> Memory
+moveAll :: !Direction !Memory -> Memory

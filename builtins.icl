@@ -290,3 +290,34 @@ moveTop SouthWest memory=:{right=[top:right], main=[El mid:other]}
 moveTop SouthEast memory=:{left=[top:left], main=[El mid:other]}
 	= {memory&left=left,main=[El[top:mid]:other]}
 	
+copyTop :: !Direction !Memory -> Memory
+copyTop East memory=:{left, right=[top:_]}
+	= {memory&left=[top:left]}
+copyTop West memory=:{left=[top:_], right}
+	= {memory&right=[top:right]}
+copyTop North memory=:{main=[El [top:mid]:other]}
+	= {memory&main=[El [top,top:mid]:other]}
+copyTop NorthWest memory=:{left, main=[El [top:_]:_]}
+	= {memory&left=[top:left]}
+copyTop NorthEast memory=:{right, main=[El [top:_]:_]}
+	= {memory&right=[top:right]}
+copyTop SouthWest memory=:{right=[top:_], main=[El mid:other]}
+	= {memory&main=[El[top:mid]:other]}
+copyTop SouthEast memory=:{left=[top:_], main=[El mid:other]}
+	= {memory&main=[El[top:mid]:other]}
+	
+copyBoth :: !Axes !Memory -> Memory
+copyBoth Horizontal memory=:{left=[lhs:_], right=[rhs:_]}
+	= {memory&left=[rhs:memory.left],right=[lhs:memory.right]}
+copyBoth Vertical memory=:{main=[El (mid=:[_:_]):other]}
+	= {memory&main=[El([last mid:mid]++[hd mid]):other]}
+	
+moveAll :: !Direction !Memory -> Memory
+moveAll NorthWest memory=:{left, main=[El mid:other]}
+	= {memory&left=mid++left,main=other}
+moveAll NorthEast memory=:{right, main=[El mid:other]}
+	= {memory&right=mid++right,main=other}
+moveAll SouthWest memory=:{right, main}
+	= {memory&right=[],main=[El right:SET_NEW_DELIM main]}
+moveAll SouthEast memory=:{left, main}
+	= {memory&left=[],main=[El left:SET_NEW_DELIM main]}

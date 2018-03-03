@@ -187,6 +187,16 @@ transposeFromCursor memory=:{main} = let
 		safeBase = [el \\ (El el) <- base]
 		transposed = [(El el) \\ el <- transpose safeBase]
 	in {memory&main=transposed ++ other}
+stackJoin :: !Memory -> Memory
+stackJoin memory=:{main} = let
+		(base, other) = span (not o ACTIVE_CURSOR) main
+		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) base
+		flattened = [El (flatten [el \\ (El el) <- part]) \\ part <- grouped | case part of [Delim _] = False; _ = True]
+	in {memory&main=flattened ++ other}
+stackUnjoin :: !Memory -> Memory
+stackUnjoin memory=:{main=[El mid:other]} = let
+		singles = [El [el] \\ el <- mid]
+	in {memory&main=singles ++ SET_NEW_DELIM other}
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

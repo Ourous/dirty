@@ -79,7 +79,8 @@ matrixProduct :: !Memory -> Memory
 joinWithNewlines :: !Memory -> Memory
 stacksFromCursor :: !Memory -> Memory
 transposeFromCursor :: !Memory -> Memory
-
+stackJoin :: !Memory -> Memory
+stackUnjoin :: !Memory -> Memory
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

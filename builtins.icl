@@ -173,6 +173,9 @@ stackRotate Right memory=:{right, main=[El [top:mid]:other]}
 stackRotate Both memory=:{left, right, main=[El [top:mid]:other]}
 	= let rotate = rotateList (toInt top)
 	in {memory&left=rotate left,right=rotate right,main=[El mid:other]}
+stackRotate Middle memory=:{main=[El [top:mid]:other]}
+	= let rotate = rotateList (toInt top)
+	in {memory&main=[El(rotate mid):other]}
 stackRotate Primary memory=:{main=[El [top:mid]:other]}
 	= let rotate = rotateList (toInt top)
 	in {memory&main=[El(rotate mid):map(APPLY_IF_ELEM rotate)other]}
@@ -187,6 +190,8 @@ stackRotate All memory=:{left, right, main=[El [top:mid]:other]}
 stackDelete :: !StackID !Memory -> Memory
 stackDelete Left memory = {memory&left=[]}
 stackDelete Right memory = {memory&right=[]}
+stackDelete Middle memory=:{main=[El mid:other]}
+	= {memory&main=other}
 stackDelete Both memory = {memory&left=[],right=[]}
 stackDelete Base memory=:{main}
 	= let (base, other) = span (not o ACTIVE_CURSOR) main
@@ -204,6 +209,10 @@ stackDrop Right memory=:{right, main=[El [top:mid]:other]} = let
 		val = toInt top
 		fn = if(val<=0) (take(~val)) (drop val)
 	in {memory&right=fn right,main=[El mid:other]}
+stackDrop Middle memory=:{main=[El [top:mid]:other]} = let
+		val = toInt top
+		fn = if(val<=0) (take(~val)) (drop val)
+	in {memory&main=[El(fn mid):other]}
 stackDrop Both memory=:{left, right, main=[El [top:mid]:other]} = let
 		val = toInt top
 		fn = if(val<=0) (take(~val)) (drop val)

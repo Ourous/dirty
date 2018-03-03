@@ -21,11 +21,14 @@ isIdentical lhs rhs = fromBool (lhs == rhs)
 isElementOf :: !Number [Number] -> Number
 isElementOf lhs rhs = fromBool (isMember lhs rhs)
 isImproperSubsetOf :: [Number] [Number] -> Number
-isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
+isImproperSubsetOf lhs rhs = fromBool (any (isPrefixOf lhs) (tails rhs))
+//isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
 isProperSubsetOf :: [Number] [Number] -> Number
-isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
+isProperSubsetOf lhs rhs = fromBool (lhs <> rhs && lhs > [] && (any (isPrefixOf lhs) (tails rhs)))
+//isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
 isNotSubsetOf :: [Number] [Number] -> Number
-isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
+isNotSubsetOf lhs rhs = (fromBool o not o any (isPrefixOf lhs)) (tails rhs)
+//isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
 
 isUppercase :: !Number -> Number
 isUppercase arg = fromBool (isUpperUChar (toInt arg))

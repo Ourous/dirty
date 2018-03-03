@@ -246,7 +246,7 @@ import StdMaybe
 	| Drop_Middle
 	| Drop_Both
 	| Drop_Base
-	| Drop_Main
+	| Unjoin
 	| CycleTops Rotation
 	| CycleFull Rotation
 	| Unpack_LeftRight

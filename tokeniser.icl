@@ -214,7 +214,7 @@ unicodeCharset =
 	,[7811]
 	,[7813]
 	,[7817]
-	,[7815]
+	,[8523]
 	,[10545]
 	,[10546]
 	,[10529]
@@ -363,7 +363,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Unary_N_N (atan)))//(Operator (Math_ArcTangent))
 	,(Operator (Unary_M_M (stackReverse Middle)))//(Stack (Reverse_Middle))
 	,(Operator (Math_Average))
-	,(Stack (Delete_Middle))
+	,(Operator (Unary_M_M (stackDelete Middle)))//(Stack (Delete_Middle))
 	,(Operator (Chars_ToUppercase))
 	,(Operator (Unary_N_N (isUppercase)))//(Operator (Logic_IsUppercase))
 	,(Operator (Unary_N_N (isFiniteNumber)))//(Operator (Logic_IsFinite))
@@ -474,11 +474,11 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Unary_M_M (stackDelete Base)))//(Stack (Delete_Base))
 	,(Operator (Unary_M_M (stackDelete Main)))//(Stack (Delete_Main))
 	,(Operator (Unary_M_M (stackDelete All)))//(Stack (Delete_All))
-	,(Stack (Drop_Left))
-	,(Stack (Drop_Right))
-	,(Stack (Drop_Both))
-	,(Stack (Drop_Base))
-	,(Stack (Drop_Main))
+	,(Operator (Unary_M_M (stackDrop Left)))//(Stack (Drop_Left))
+	,(Operator (Unary_M_M (stackDrop Right)))//(Stack (Drop_Right))
+	,(Operator (Unary_M_M (stackDrop Both)))//(Stack (Drop_Both))
+	,(Operator (Unary_M_M (stackDrop Base)))//(Stack (Drop_Base))
+	,(Stack (Unjoin))
 	,(Stack (Unpack_RightLeft))
 	,(Stack (Unpack_LeftRight))
 	,(Stack (SwapTop Inverse))
@@ -507,8 +507,8 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Stack (CycleTops Clockwise))
 	,(Stack (CycleTops Anticlockwise))
 	,(Operator (Set_Length))
-	,(Operator (Math_Product))
-	,(Operator (Math_Sum))
+	,(Operator (Unary_S_N (prod)))//(Operator (Math_Product))
+	,(Operator (Unary_S_N (sum)))//(Operator (Math_Sum))
 	,(Operator (Unary_S_N (areAnyTrue)))//(Operator (Logic_Any))
 	,(Operator (Unary_S_N (areAllTrue)))//(Operator (Logic_All))
 	,(Operator (Set_PowerSet))

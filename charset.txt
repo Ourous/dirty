@@ -181,13 +181,13 @@ z // conjugate
 Ù // upend the left stack
 Ú // upend the right stack
 Ü // upend the left and right stacks
-Ū // upend the left, right, and mid stacks
+Ū // upend the primary stack
 Ụ // upend from baseline
 Û // upend every substack
 ù // rotate left stack by <mid>
 ú // rotate right stack by <mid>
 ü // rotate left and right stacks by <mid>
-ū // rotate left, right, and mid stacks by <mid>
+ū // rotate primary stack
 ụ // rotate from baseline by <mid>
 û // rotate every substack
 Ẁ // wipe the left stack
@@ -200,7 +200,7 @@ z // conjugate
 ẃ // remove the <mid-th> elements from the right stack
 ẅ // remove the <mid-th> elements from the left and right stacks
 ẉ // remove the <mid-th> elements from baseline stack
-ẇ // remove the <mid-th> elements from main stack
+⅋ // un-join the middle stack
 ⤱ // mid -> right, mid -> left
 ⤲ // mid -> left, mid -> right
 ⤡ // swap top of left and mid

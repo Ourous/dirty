@@ -132,10 +132,21 @@ stackDelete All memory = {memory&left=[],right=[],main=[]}
 
 stackDrop :: !StackID !Memory -> Memory
 stackDrop _ memory=:{main=[El []:_]} = memory
-stackDrop Left memory=:{left, main=[El [top:mid]:other]}
-	= let val = toInt top
-	in {memory&left=if(val>0) (take(~val)) (drop val) left,main=[El mid:other]}
-stackDrop Right memory=:{right, main=[El [top:mid]:other]}
-	= let val = toInt top
-	in {memory&right=if(val>0) (take(~val)) (drop val) right,main=[El mid:other]}
+stackDrop Left memory=:{left, main=[El [top:mid]:other]} = let
+		val = toInt top
+		fn = if(val<=0) (take(~val)) (drop val)
+	in {memory&left=fn left,main=[El mid:other]}
+stackDrop Right memory=:{right, main=[El [top:mid]:other]} = let
+		val = toInt top
+		fn = if(val<=0) (take(~val)) (drop val)
+	in {memory&right=fn right,main=[El mid:other]}
+stackDrop Both memory=:{left, right, main=[El [top:mid]:other]} = let
+		val = toInt top
+		fn = if(val<=0) (take(~val)) (drop val)
+	in {memory&left=fn left,right=fn right,main=[El mid:other]}
+stackDrop Base memory=:{main=[El [top:mid]:other]} = let
+		val = toInt top
+		fn = if(val<=0) (take(~val)) (drop val)
+		(base, other) = span (not o ACTIVE_CURSOR) [El mid:other]
+	in {memory&main=fn base ++ other}
 	

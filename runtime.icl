@@ -400,7 +400,7 @@ where
 		binary memory = memory
 			
 	process (Operator (Binary_SN_N op)) = app3 (id, binary, id)
-	where // TODO: adjust, add allocation for empty left
+	where
 	
 		binary :: !Memory -> Memory
 		binary memory=:{left, main=[El mid:other], right=[rhs:_]}
@@ -410,7 +410,7 @@ where
 		binary memory = memory
 		
 	process (Operator (Binary_SS_N op)) = app3 (id, binary, id)
-	where // TODO: adjust, add allocation for empty stacks
+	where
 	
 		binary :: !Memory -> Memory
 		binary memory=:{left, main=[El mid:other], right}

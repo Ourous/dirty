@@ -22,6 +22,10 @@ instance sign Sign where
 	sign Positive = 1
 	sign Negative = -1
 	
+INT_MAX :== IF_INT_64_OR_32 9223372036854775807 2147483647
+	
+INT_MIN :== bitnot INT_MAX
+	
 VAL_SIGN val
 	:== case val of
 		(Inf val) = val
@@ -369,7 +373,13 @@ instance lcm Number where
 		= handle (Re (Fin (lcm lhs rhs)))
 
 instance toInt Number where
+	toInt NaN = 0
 	toInt Zero = 0
+	toInt (Cx (Inf Directed)) = 0
+	toInt (Re (Inf Positive)) = INT_MAX
+	toInt (Re (Inf Negative)) = INT_MIN
+	toInt (Im (Inf Positive)) = INT_MAX
+	toInt (Im (Inf Negative)) = INT_MIN
 	toInt (Re (Fin val)) = toInt val
 	toInt (Im (Fin val)) = toInt val
 	toInt (Cx (Fin {re, im})) = toInt (sqrt (re*re + im*im)) * sign re * sign im
@@ -577,7 +587,6 @@ bitNOT (Re (Fin val)) = handle (Re (Fin (Int (bitnot (ENTIER val)))))
 bitNOT (Im (Fin val)) = handle (Im (Fin (Int (bitnot (ENTIER val)))))
 bitNOT (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int(bitnot(ENTIER re))), im=(Int(bitnot(ENTIER im)))}))
 bitNOT _ = NaN
-
 
 numFloor :: !Number -> Number
 numFloor (Re (Fin val)) = handle (Re (Fin (Int (ENTIER val))))

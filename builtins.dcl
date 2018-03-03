@@ -48,6 +48,18 @@ numPermute :: !Number !Number -> Number
 numCombin :: !Number !Number -> Number
 logarithm :: !Number !Number -> Number
 
+// miscelaneous operators
+toUppercase :: !Number -> Number
+toLowercase :: !Number -> Number
+//MORE TO COME
+
+// "set" operators
+setLength :: [Number] -> Number
+setMinimum :: [Number] -> Number
+setMaximum :: [Number] -> Number
+setFilter :: [Number] [Number] -> [Number]
+
+
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory
 stackRotate :: !StackID !Memory -> Memory

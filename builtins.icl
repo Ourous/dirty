@@ -115,6 +115,24 @@ numCombin lhs rhs = (numPermute lhs rhs) / prod [one..rhs]
 logarithm :: !Number !Number -> Number
 logarithm lhs rhs = (ln rhs) / (ln lhs)
 
+// miscelaneous operators
+toUppercase :: !Number -> Number
+toUppercase arg = fromInt (toUpperUChar (toInt arg))
+toLowercase :: !Number -> Number
+toLowercase arg = fromInt (toLowerUChar (toInt arg))
+
+// "set" operators
+setLength :: [Number] -> Number
+setLength arg = fromInt (length arg)
+setMinimum :: [Number] -> Number
+setMinimum [] = NaN
+setMinimum [head:tail] = foldl (min) head tail
+setMaximum :: [Number] -> Number
+setMaximum [] = NaN
+setMaximum [head:tail] = foldl (max) head tail
+setFilter :: [Number] [Number] -> [Number]
+setFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | toBool cond]
+
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory
 stackReverse Left memory=:{left}

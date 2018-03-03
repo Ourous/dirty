@@ -329,40 +329,57 @@ where
 			Lowercase = [fromInt (toInt c) \\ c <-: "abcdefghijklmnopqrstuvwxyz"]
 			Uppercase = [fromInt (toInt c) \\ c <-: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
 				
+	process (Variable (Random)) = app3 (id, rand, id)
+	where
+	
+		rand memory=:{main=[El mid:other], random=[rng:random]}
+			= {memory&main=[El[fromInt rng:mid]:other],random=random}
+				
 	process (Operator (IO_WriteAll)) = writeAll
 	where
 		
-		writeAll (stack, memory=:{main=[El[]:other]}, world)
-			= (stack, {memory&main=other}, world)
+		writeAll (state, memory=:{main=[El[]:other]}, world)
+			= (state, {memory&main=other}, world)
 		
-		writeAll (stack, memory=:{main=[El mid:other]}, world)
+		writeAll (state, memory=:{main=[El mid:other]}, world)
 			# world = execIO (writeLine mid) world
-			= (stack, {memory&main=other}, world)
+			= (state, {memory&main=other}, world)
 			
 	process (Operator (IO_ReadAll)) = readAll
 	where
 		
-		readAll (stack, memory=:{main}, world)
+		readAll (state, memory=:{main}, world)
 			# (str, world) = readLine world
-			= (stack, {memory&main=[El str:SET_NEW_DELIM main]}, world)
+			= (state, {memory&main=[El str:SET_NEW_DELIM main]}, world)
 			
 	process (Operator (IO_WriteOnce)) = writeOnce
 	where
 	
-		writeOnce (stack, memory=:{main=[El[]:_]}, world)
-			= (stack, memory, world)
+		writeOnce (state, memory=:{main=[El[]:_]}, world)
+			= (state, memory, world)
 			
-		writeOnce (stack, memory=:{main=[El[top:mid]:other]}, world)
+		writeOnce (state, memory=:{main=[El[top:mid]:other]}, world)
 			# world = execIO (writeChar top) world
-			= (stack, {memory&main=[El mid:other]}, world)
+			= (state, {memory&main=[El mid:other]}, world)
 			
 	process (Operator (IO_ReadOnce)) = readOnce
 	where
 	
-		readOnce (stack, memory=:{main=[El mid:other]}, world)
+		readOnce (state, memory=:{main=[El mid:other]}, world)
 			# (chr, world) = readChar world
-			= (stack, {memory&main=[El[chr:mid]:other]}, world)
+			= (state, {memory&main=[El[chr:mid]:other]}, world)
 			
+	process (Operator (IO_Interrobang)) = interrobang
+	where
+	
+		interrobang (state, memory=:{main=[El []:other]}, world)
+			# (chr, world) = readChar world
+			= (state, {memory&main=[El[chr]:other]}, world)
+		interrobang (state, memory=:{main=[El [top:mid]:other]}, world)
+			# world = execIO (writeChar top) world
+			# (chr, world) = readChar world
+			= (state, {memory&main=[El[chr:mid]:other]}, world)
+
 	process (Operator (Binary_NN_N inv op)) = app3 (id, binary (inv && not flags.strict), id)
 	where
 		

@@ -31,5 +31,6 @@ usage :== foldr ((+++)) ""
 	,"\t-utf8: use the UTF-8 parser\n"
 	,"\t--numeric-output: numeric output for write commands\n"
 	,"\t--dump-stacks: show the stacks on termination\n"
+	,"\t--strict-args: never take two arguments from the middle stack\n"
 	//,"\t--g: take args greedily"
 	]

@@ -62,7 +62,7 @@ $ // get environment variable with name of <mid>
 = // top-equals
 > // greater-than
 ? // get single char of input, store in <mid>
-@ // select the mid stack offset (from main stack) by the top of the mid stack
+@ // move the <mid>th stack from the cursor to the top
 A // uppercase alphabet
 B // convert <left> to a bunch of digits, in the base of <right>
 C // arc-cosine
@@ -209,8 +209,7 @@ z // conjugate
 ⭥ // swap top and bottom of mid
 ⭢ // move top of left to right
 ⭠ // move top of right to left
-⭡ // move bottom of mid to top
-⭣ // move top of mid to bottom
+⭣ // move top of mid down one (swap top two)
 ⭦ // move top of mid to left
 ⭧ // move top of mid to right
 ⭨ // move top of left to mid
@@ -228,7 +227,8 @@ z // conjugate
 ⮑ // rotate stacks counterclockwise
 ⮒ // rotate tops of stacks clockwise
 ⮓ // rotate tops of stacks counterclockwise
-№ // elements in <mid>
+№ // number of stacks from the cursor upwards
+Ⱦ // transpose from cursor upwards
 ∏ // product
 ∑ // sum
 ∃ // any

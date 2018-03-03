@@ -223,7 +223,6 @@ unicodeCharset =
 	,[11109]
 	,[11106]
 	,[11104]
-	,[11105]
 	,[11107]
 	,[11110]
 	,[11111]
@@ -243,6 +242,7 @@ unicodeCharset =
 	,[11154]
 	,[11155]
 	,[8470]
+	,[574]
 	,[8719]
 	,[8721]
 	,[8707]
@@ -451,7 +451,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (IO_Sleep))
 	,(Operator (IO_Timestamp))
 	,(Literal (Pi))
-	,(Stack (SwapLeftRight))
+	,(Operator (Unary_M_M (swapLeftRight)))//(Stack (SwapLeftRight))
 	,(Stack (MoveAll NorthWest))
 	,(Stack (MoveAll NorthEast))
 	,(Stack (MoveAll SouthEast))
@@ -479,20 +479,19 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Unary_M_M (stackDrop Both)))//(Stack (Drop_Both))
 	,(Operator (Unary_M_M (stackDrop Base)))//(Stack (Drop_Base))
 	,(Stack (Unjoin))
-	,(Stack (Unpack_RightLeft))
-	,(Stack (Unpack_LeftRight))
-	,(Stack (SwapTop Inverse))
-	,(Stack (SwapTop Identity))
-	,(Stack (SwapTop Horizontal))
-	,(Stack (SwapTop Vertical))
-	,(Stack (MoveTop East))
-	,(Stack (MoveTop West))
-	,(Stack (MoveTop North))
-	,(Stack (MoveTop South))
-	,(Stack (MoveTop NorthWest))
-	,(Stack (MoveTop NorthEast))
-	,(Stack (MoveTop SouthEast))
-	,(Stack (MoveTop SouthWest))
+	,(Operator (Unary_M_M (unpackRightLeft)))//(Stack (Unpack_RightLeft))
+	,(Operator (Unary_M_M (unpackLeftRight)))//(Stack (Unpack_LeftRight))
+	,(Operator (Unary_M_M (swapTop Inverse)))//(Stack (SwapTop Inverse))
+	,(Operator (Unary_M_M (swapTop Identity)))//(Stack (SwapTop Identity))
+	,(Operator (Unary_M_M (swapTop Horizontal)))//(Stack (SwapTop Horizontal))
+	,(Operator (Unary_M_M (swapTop Vertical)))//(Stack (SwapTop Vertical))
+	,(Operator (Unary_M_M (moveTop East)))//(Stack (MoveTop East))
+	,(Operator (Unary_M_M (moveTop West)))//(Stack (MoveTop West))
+	,(Operator (Unary_M_M (moveTop South)))//(Stack (MoveTop South))
+	,(Operator (Unary_M_M (moveTop NorthWest)))//(Stack (MoveTop NorthWest))
+	,(Operator (Unary_M_M (moveTop NorthEast)))//(Stack (MoveTop NorthEast))
+	,(Operator (Unary_M_M (moveTop SouthEast)))//(Stack (MoveTop SouthEast))
+	,(Operator (Unary_M_M (moveTop SouthWest)))//(Stack (MoveTop SouthWest))
 	,(Stack (CopyTop East))
 	,(Stack (CopyTop West))
 	,(Stack (CopyTop North))
@@ -502,11 +501,12 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Stack (CopyTop SouthWest))
 	,(Stack (CopyBoth Horizontal))
 	,(Stack (CopyBoth Vertical))
-	,(Stack (CycleFull Clockwise))
-	,(Stack (CycleFull Anticlockwise))
-	,(Stack (CycleTops Clockwise))
-	,(Stack (CycleTops Anticlockwise))
-	,(Operator (Unary_S_N (setLength)))//(Operator (Set_Length))
+	,(Operator (Unary_M_M (cycleStacks Clockwise)))//(Stack (CycleFull Clockwise))
+	,(Operator (Unary_M_M (cycleStacks Anticlockwise)))//(Stack (CycleFull Anticlockwise))
+	,(Operator (Unary_M_M (cycleTops Clockwise)))//(Stack (CycleTops Clockwise))
+	,(Operator (Unary_M_M (cycleTops Anticlockwise)))//(Stack (CycleTops Anticlockwise))
+	,(Operator (Unary_M_M (stacksFromCursor)))//(Operator (Set_Length))
+	,(Operator (Unary_M_M (transposeFromCursor)))
 	,(Operator (Unary_S_N (prod)))//(Operator (Math_Product))
 	,(Operator (Unary_S_N (sum)))//(Operator (Math_Sum))
 	,(Operator (Unary_S_N (areAnyTrue)))//(Operator (Logic_Any))

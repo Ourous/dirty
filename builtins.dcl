@@ -54,16 +54,23 @@ toLowercase :: !Number -> Number
 //MORE TO COME
 
 // "set" operators
-setLength :: [Number] -> Number
 setMinimum :: [Number] -> Number
 setMaximum :: [Number] -> Number
 setFilter :: [Number] [Number] -> [Number]
 
+// special cases
+stacksFromCursor :: !Memory -> Memory
+transposeFromCursor :: !Memory -> Memory
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory
 stackRotate :: !StackID !Memory -> Memory
 stackDelete :: !StackID !Memory -> Memory
 stackDrop :: !StackID !Memory -> Memory
-//cycleTops :: Rotation Memory -> Memory
-//cycleStacks :: Rotation Memory -> Memory
+cycleTops :: !Rotation !Memory -> Memory
+cycleStacks :: !Rotation !Memory -> Memory
+unpackLeftRight :: !Memory -> Memory
+unpackRightLeft :: !Memory -> Memory
+swapLeftRight :: !Memory -> Memory
+swapTop :: !Axes !Memory -> Memory
+moveTop :: !Direction !Memory -> Memory

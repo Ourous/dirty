@@ -43,24 +43,43 @@ justReal :: !Number -> Number
 justImag :: !Number -> Number
 reciprocal :: !Number -> Number
 imagUnit :: !Number -> Number
-dotProduct :: [Number] [Number] -> Number
 numPermute :: !Number !Number -> Number
 numCombin :: !Number !Number -> Number
 logarithm :: !Number !Number -> Number
 
+// vectorized ops
+vectorPlus :: [Number] [Number] -> [Number]
+vectorMinus :: [Number] [Number] -> [Number]
+vectorTimes :: [Number] [Number] -> [Number]
+vectorNegate :: [Number] -> [Number]
+vectorAND :: [Number] [Number] -> [Number]
+vectorOR :: [Number] [Number] -> [Number]
+vectorElementOf :: [Number] [Number] -> [Number]
+vectorLessThan :: [Number] [Number] -> [Number]
+vectorGreaterThan :: [Number] [Number] -> [Number]
+vectorIsEqual :: [Number] [Number] -> [Number]
+vectorLessOrEqual :: [Number] [Number] -> [Number]
+vectorGreaterOrEqual :: [Number] [Number] -> [Number]
+
 // miscelaneous operators
 toUppercase :: !Number -> Number
 toLowercase :: !Number -> Number
+splitOnNewlines :: [Number] -> [[Number]]
 //MORE TO COME
 
 // "set" operators
 setMinimum :: [Number] -> Number
 setMaximum :: [Number] -> Number
 setFilter :: [Number] [Number] -> [Number]
+antiFilter :: [Number] [Number] -> [Number]
+//powerset :: [Number] -> [[Number]]
 
 // special cases
+matrixProduct :: !Memory -> Memory
+joinWithNewlines :: !Memory -> Memory
 stacksFromCursor :: !Memory -> Memory
 transposeFromCursor :: !Memory -> Memory
+
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

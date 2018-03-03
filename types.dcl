@@ -141,7 +141,6 @@ import StdMaybe
 	| Unary_S_N ([Number] -> Number)
 	| Unary_S_S ([Number] -> [Number])
 	| Unary_S_T ([Number] -> [[Number]])
-	| Unary_T_S ([[Number]] -> [Number])
 	| Unary_M_M (Memory -> Memory)
 	| Math_Logarithm
 	| Math_DotProduct

@@ -106,8 +106,6 @@ reciprocal :: !Number -> Number
 reciprocal arg = one / arg
 imagUnit :: !Number -> Number
 imagUnit arg = arg * (Im (Fin one))
-dotProduct :: [Number] [Number] -> Number
-dotProduct lhs rhs = foldl (+) Zero (zipWith (*) lhs rhs)
 numPermute :: !Number !Number -> Number
 numPermute lhs rhs = prod [numFloor(lhs - rhs)..lhs]
 numCombin :: !Number !Number -> Number
@@ -115,11 +113,45 @@ numCombin lhs rhs = (numPermute lhs rhs) / prod [one..rhs]
 logarithm :: !Number !Number -> Number
 logarithm lhs rhs = (ln rhs) / (ln lhs)
 
+// vectorized ops
+vectorPlus :: [Number] [Number] -> [Number]
+vectorPlus lhs rhs = zipWith (+) lhs rhs
+vectorMinus :: [Number] [Number] -> [Number]
+vectorMinus lhs rhs = zipWith (-) lhs rhs
+vectorTimes :: [Number] [Number] -> [Number]
+vectorTimes lhs rhs = zipWith (*) lhs rhs
+vectorNegate :: [Number] -> [Number]
+vectorNegate arg = map (~) arg
+vectorAND :: [Number] [Number] -> [Number]
+vectorAND lhs rhs = zipWith bitAND lhs rhs
+vectorOR :: [Number] [Number] -> [Number]
+vectorOR lhs rhs = zipWith bitOR lhs rhs
+vectorElementOf :: [Number] [Number] -> [Number]
+vectorElementOf lhs rhs = map (\e -> isElementOf e rhs) lhs
+vectorLessThan :: [Number] [Number] -> [Number]
+vectorLessThan lhs rhs = zipWith isLessThan lhs rhs
+vectorGreaterThan :: [Number] [Number] -> [Number]
+vectorGreaterThan lhs rhs = zipWith isGreaterThan lhs rhs
+vectorIsEqual :: [Number] [Number] -> [Number]
+vectorIsEqual lhs rhs = zipWith isEqualTo lhs rhs
+vectorLessOrEqual :: [Number] [Number] -> [Number]
+vectorLessOrEqual lhs rhs = zipWith isLessOrEqual lhs rhs
+vectorGreaterOrEqual :: [Number] [Number] -> [Number]
+vectorGreaterOrEqual lhs rhs = zipWith isGreaterOrEqual lhs rhs
+
 // miscelaneous operators
 toUppercase :: !Number -> Number
 toUppercase arg = fromInt (toUpperUChar (toInt arg))
 toLowercase :: !Number -> Number
 toLowercase arg = fromInt (toLowerUChar (toInt arg))
+splitOnNewlines :: [Number] -> [[Number]]
+splitOnNewlines [] = []
+splitOnNewlines arg
+	# (head, tail) = span (\e -> toInt e <> 10) arg
+	| isEmpty tail
+		= [head]
+	| otherwise
+		= [head:splitOnNewlines (tl tail)]
 
 // "set" operators
 setMinimum :: [Number] -> Number
@@ -130,8 +162,20 @@ setMaximum [] = NaN
 setMaximum [head:tail] = foldl (max) head tail
 setFilter :: [Number] [Number] -> [Number]
 setFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | toBool cond]
+antiFilter :: [Number] [Number] -> [Number]
+antiFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | (not o toBool) cond]
 
 // special cases
+matrixProduct :: !Memory -> Memory
+matrixProduct memory=:{left, right} = let
+		matrix = [El [lhs * rhs \\ rhs <- right] \\ lhs <- left]
+	in {memory&main=matrix++SET_NEW_DELIM memory.main}
+joinWithNewlines :: !Memory -> Memory
+joinWithNewlines memory=:{main} = let
+		(base, other) = span (not o ACTIVE_CURSOR) main
+		safeBase = [el \\ (El el) <- base]
+		joined = foldl (\a b -> a ++ [fromInt 10] ++ b) [] safeBase
+	in {memory&main=[El joined:other]}
 stacksFromCursor :: !Memory -> Memory
 stacksFromCursor memory=:{main=[El mid:other]} = let
 		base = takeWhile (not o ACTIVE_CURSOR) memory.main

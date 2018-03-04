@@ -8,7 +8,8 @@ parseUTF8 string = parseNative {# unicodeToNative char \\ char <- utf8ToUnicode 
 		
 parseNative :: !String -> Program
 parseNative string = let
-	tokens = map fromString (split "\n" string)
+	lines = split "\n" string
+	tokens = map (ljustify (foldl(max)0(map size lines)) o fromString) lines
 	commands = linkLoops (map (map toCommand) tokens)
 	in {
 		dimension = {x=last(sort(map length tokens)), y=length tokens},

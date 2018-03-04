@@ -149,7 +149,6 @@ unicodeCharset =
 	,[10800]
 	,[247]
 	,[8724]
-	,[8760]
 	,[11806]
 	,[8730]
 	,[8543]
@@ -413,7 +412,6 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Binary_SS_S True (vectorTimes)))//(Operator (Vector_Multiplication))
 	,(Operator (Binary_NN_N False (/)))//(Operator (Math_Division))
 	,(Operator (Binary_SS_S True (vectorPlus)))//(Operator (Vector_Addition))
-	,(Operator (Binary_SS_S False (vectorMinus)))//(Operator (Vector_Subtraction))
 	,(Operator (Unary_S_S (vectorNegate)))//(Operator (Vector_Negation))
 	,(Operator (Unary_N_N (sqrt)))//(Operator (Math_SquareRoot))
 	,(Operator (Unary_N_N (reciprocal)))//(Operator (Math_Reciprocal))
@@ -505,6 +503,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Unary_M_M (cycleStacks Anticlockwise)))//(Stack (CycleFull Anticlockwise))
 	,(Operator (Unary_M_M (cycleTops Clockwise)))//(Stack (CycleTops Clockwise))
 	,(Operator (Unary_M_M (cycleTops Anticlockwise)))//(Stack (CycleTops Anticlockwise))
+	,(Operator (Unary_M_M (sortBaseline)))
 	,(Operator (Unary_M_M (stacksFromCursor)))//(Operator (Set_Length))
 	,(Operator (Unary_M_M (transposeFromCursor)))
 	,(Operator (Unary_S_N (prod)))//(Operator (Math_Product))

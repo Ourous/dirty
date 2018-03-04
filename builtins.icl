@@ -119,8 +119,6 @@ logarithm lhs rhs = (ln rhs) / (ln lhs)
 // vectorized ops
 vectorPlus :: [Number] [Number] -> [Number]
 vectorPlus lhs rhs = zipWith (+) lhs rhs
-vectorMinus :: [Number] [Number] -> [Number]
-vectorMinus lhs rhs = zipWith (-) lhs rhs
 vectorTimes :: [Number] [Number] -> [Number]
 vectorTimes lhs rhs = zipWith (*) lhs rhs
 vectorNegate :: [Number] -> [Number]
@@ -242,7 +240,13 @@ repeatTopMiddle memory=:{main=[El [top:mid]:other]}
 repeatFullMiddle :: !Memory -> Memory
 repeatFullMiddle memory=:{main=[El mid:other]}
 	= {memory&main=[El(flatten(repeat mid)):other]}
-
+sortBaseline :: !Memory -> Memory
+sortBaseline memory=:{main} = let
+		(base, other) = span (not o ACTIVE_CURSOR) main
+		safeBase = [el \\ (El el) <- base]
+		sorted = [El el \\ el <- sort safeBase]
+	in {memory&main=sorted ++ other}
+	
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory
 stackReverse Left memory=:{left}

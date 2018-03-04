@@ -135,7 +135,6 @@ z // conjugate
 ⨰ // vectorized multiplication
 ÷ // divide
 ∔ // vectorized plus
-∸ // vectorized subtraction
 ⸞ // vectorized negation
 √ // square root
 ⅟ // reciprocal
@@ -227,6 +226,7 @@ z // conjugate
 ⮑ // rotate stacks counterclockwise
 ⮒ // rotate tops of stacks clockwise
 ⮓ // rotate tops of stacks counterclockwise
+ọ // sort the baseline
 № // number of stacks from the cursor upwards
 Ⱦ // transpose from cursor upwards
 ∏ // product

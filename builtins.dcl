@@ -49,7 +49,6 @@ logarithm :: !Number !Number -> Number
 
 // vectorized ops
 vectorPlus :: [Number] [Number] -> [Number]
-vectorMinus :: [Number] [Number] -> [Number]
 vectorTimes :: [Number] [Number] -> [Number]
 vectorNegate :: [Number] -> [Number]
 vectorAND :: [Number] [Number] -> [Number]
@@ -91,6 +90,7 @@ stackUnjoin :: !Memory -> Memory
 removeDupBase :: !Memory -> Memory
 repeatTopMiddle :: !Memory -> Memory
 repeatFullMiddle :: !Memory -> Memory
+sortBaseline :: !Memory -> Memory
 
 // stack manipulations
 stackReverse :: !StackID !Memory -> Memory

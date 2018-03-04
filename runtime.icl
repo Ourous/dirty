@@ -1,6 +1,6 @@
 implementation module runtime
 
-import types, atomics, arithmetic, builtins, utilities, unicode
+import types, atomics, arithmetic, builtins, utilities, unicode, environment
 import StdEnv, StdLib, System.IO, System.Time, Math.Random, Text
 from Math.Geometry import pi
 import qualified Data.Generics.GenParse as GenParse
@@ -336,6 +336,13 @@ where
 	
 		rand memory=:{main=[El mid:other], random=[rng:random]}
 			= {memory&main=[El[fromInt rng:mid]:other],random=random}
+			
+	process (Environment env) = environment
+	where
+	
+		environment (state, memory, world)
+			# (memory, world) = env (memory, world)
+			= (state, memory, world)
 				
 	process (Operator (IO_WriteAll)) = writeAll
 	where

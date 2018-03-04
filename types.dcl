@@ -78,6 +78,7 @@ import StdMaybe
 	| Variable VariableCommand
 	| Operator OperatorCommand
 	| Stack StackCommand
+	| Environment (*(Memory, *World) -> *(Memory, *World))
 	
 :: ControlCommand
 	= Terminate

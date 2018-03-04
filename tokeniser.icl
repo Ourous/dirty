@@ -1,6 +1,6 @@
 implementation module tokeniser
 
-import types, arithmetic, builtins, unicode, StdEnv, StdLib
+import types, arithmetic, builtins, unicode, StdEnv, StdLib, environment
 
 unicodeToNative :: Int -> Char
 unicodeToNative char
@@ -311,7 +311,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (IO_WriteOnce))
 	,(Literal (Quote))
 	,(Variable (Random))
-	,(Operator (IO_Environment))
+	,(Environment (getEnvVariable))//(Operator (IO_Environment))
 	,(Operator (Binary_NN_N False (mod)))//(Operator (Math_Modulus))
 	,(Operator (Unary_M_M (stackJoin)))//(Stack (JoinFromBase))
 	,(Control (String))
@@ -446,7 +446,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Unary_N_N (numCeiling)))//(Operator (Math_Ceiling))
 	,(Operator (Bitwise_LeftShift))
 	,(Operator (Bitwise_RightShift))
-	,(Operator (IO_Sleep))
+	,(Environment (sleepFor))//(Operator (IO_Sleep))
 	,(Operator (IO_Timestamp))
 	,(Literal (Pi))
 	,(Operator (Unary_M_M (swapLeftRight)))//(Stack (SwapLeftRight))

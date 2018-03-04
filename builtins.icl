@@ -59,7 +59,7 @@ isPrime arg
 	| numCeiling arg <> numFloor arg
 		= fromBool False
 	| otherwise
-		= fromBool (all (\e -> arg mod e <> Zero) [one + one..arg - one])
+		= fromBool (all (\e -> arg mod e <> Zero) [inc one..dec arg])
 
 isSorted :: [Number] -> Number
 isSorted arg = fromBool (isSorted` arg)
@@ -82,10 +82,10 @@ logicNegate arg = fromBool (not (toBool arg))
 primeFactors :: !Number -> [Number]
 primeFactors NaN = []
 primeFactors arg
-	| abs arg < one + one || numCeiling arg <> numFloor arg
+	| abs arg < inc one || numCeiling arg <> numFloor arg
 		= []
 	| otherwise
-		# factors = [n \\ n <- [one+one..abs arg-one] | arg mod n == Zero && (toBool o isPrime) n]
+		# factors = [n \\ n <- [inc one..arg] | arg mod n == Zero && (toBool o isPrime) n]
 		= factors ++ (primeFactors (arg/(prod factors)))
 conjugate :: !Number -> Number
 conjugate (Im (Fin val)) = (Im (Fin (~val)))

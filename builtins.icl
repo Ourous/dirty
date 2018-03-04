@@ -372,7 +372,8 @@ swapTop Identity memory=:{main=[El mid:other], right}
 	= {memory&right=SAFE_HEAD mid++SAFE_TAIL right,main=[El(SAFE_HEAD right++SAFE_TAIL mid):other]}
 swapTop Inverse memory=:{left, main=[El mid:other]}
 	= {memory&left=SAFE_HEAD mid++SAFE_TAIL left,main=[El(SAFE_HEAD left++SAFE_TAIL mid):other]}
-	
+swapTop _ memory = memory	
+
 moveTop :: !Direction !Memory -> Memory
 moveTop East memory=:{left, right=[top:right]}
 	= {memory&left=[top:left],right=right}
@@ -388,6 +389,7 @@ moveTop SouthWest memory=:{right=[top:right], main=[El mid:other]}
 	= {memory&right=right,main=[El[top:mid]:other]}
 moveTop SouthEast memory=:{left=[top:left], main=[El mid:other]}
 	= {memory&left=left,main=[El[top:mid]:other]}
+moveTop _ memory = memory
 	
 copyTop :: !Direction !Memory -> Memory
 copyTop East memory=:{left, right=[top:_]}
@@ -404,12 +406,14 @@ copyTop SouthWest memory=:{right=[top:_], main=[El mid:other]}
 	= {memory&main=[El[top:mid]:other]}
 copyTop SouthEast memory=:{left=[top:_], main=[El mid:other]}
 	= {memory&main=[El[top:mid]:other]}
+copyTop _ memory = memory
 	
 copyBoth :: !Axes !Memory -> Memory
 copyBoth Horizontal memory=:{left=[lhs:_], right=[rhs:_]}
 	= {memory&left=[rhs:memory.left],right=[lhs:memory.right]}
 copyBoth Vertical memory=:{main=[El (mid=:[_:_]):other]}
 	= {memory&main=[El([last mid:mid]++[hd mid]):other]}
+copyBoth _ memory = memory
 	
 moveAll :: !Direction !Memory -> Memory
 moveAll NorthWest memory=:{left, main=[El mid:other]}
@@ -448,3 +452,35 @@ shiftCursorDownwards memory=:{main}
 		= memory
 	| otherwise
 		= {memory&main=base ++ [Delim False:SET_FIRST_DELIM other]}
+		
+shiftCursorUpwards :: !Memory -> Memory
+shiftCursorUpwards memory=:{main}
+	# (base, [cur:other]) = span (not o ACTIVE_CURSOR) main
+	| any IS_DELIM base
+		= {memory&main=setLastDelim base ++ [Delim False:other]}
+	| otherwise
+		= memory
+where
+	setLastDelim [] = []
+	setLastDelim [Delim False:tail]
+		| any IS_DELIM tail
+			= [Delim False:setLastDelim tail]
+		| otherwise
+			= [Delim True:tail]
+	setLastDelim [head:tail] = [head:setLastDelim tail]
+	
+moveCursorForwards :: !Memory -> Memory
+moveCursorForwards memory=:{main}
+	# (base, [cur:other]) = span (not o ACTIVE_CURSOR) main
+	| isEmpty other
+		= memory
+	| otherwise
+		= {memory&main=MERGE_DELIMS(init base ++ [Delim True, last base:other])}
+	
+moveCursorBackwards :: !Memory -> Memory
+moveCursorBackwards memory=:{main}
+	# (base, [cur:other]) = span (not o ACTIVE_CURSOR) main
+	| isEmpty other
+		= memory
+	| otherwise
+		= {memory&main=MERGE_DELIMS(base ++ [hd other, Delim True:tl other])}

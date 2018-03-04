@@ -112,3 +112,6 @@ replicateMiddle :: !Memory -> Memory
 replicateTop :: !Memory -> Memory
 dupesBase :: !Memory -> Memory
 shiftCursorDownwards :: !Memory -> Memory
+shiftCursorUpwards :: !Memory -> Memory
+moveCursorForwards :: !Memory -> Memory
+moveCursorBackwards :: !Memory -> Memory

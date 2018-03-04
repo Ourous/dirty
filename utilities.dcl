@@ -51,9 +51,30 @@ ACTIVE_CURSOR element
 	:== case element of
 		(Delim cur) = cur
 		_ = False
+		
+MERGE_DELIMS :== mergeDelims
+where
+	mergeDelims [] = []
+	mergeDelims [Delim False, Delim False:tail] = mergeDelims [Delim False:tail]
+	mergeDelims [Delim _, Delim _:tail] = mergeDelims [Delim True:tail]
+	mergeDelims [head:tail] = [head:mergeDelims tail]
+	
+ENSURE_ACTIVE :== ensureActive
+where
+	ensureActive main
+		| areAnyActive main
+			= ensureOneActive main
+		| otherwise
+			= SET_FIRST_DELIM main
+	areAnyActive [] = False
+	areAnyActive [Delim True:_] = True
+	areAnyActive [_:tail] = areAnyActive tail
+	ensureOneActive [] = []
+	ensureOneActive [Delim True:tail] = SET_ALL_FALSE tail
+	ensureOneActive [head:tail] = [head:ensureOneActive tail]
 
 // :: [Element] -> Bool
-IS_LAST_DELIM :== isLastDelim
+IS_FIRST_DELIM :== isLastDelim
 where
 	isLastDelim [Delim cur:_] = cur
 	isLastDelim [_:tail] = isLastDelim tail
@@ -65,6 +86,7 @@ where
 	setAllFalse [Delim _:tail] = [Delim False:setAllFalse tail]
 	setAllFalse [head:tail] = [head:setAllFalse tail]
 	
+// checks if the delimiter should move forward
 // :: [Element] -> [Element]
 SET_NEW_DELIM :== setNewDelim
 where
@@ -78,8 +100,10 @@ where
 			(cur, otherLast) = setLastFalse tail
 		in (cur, [head:otherLast])
 		
-SET_FIRST_DELIM :== setNewDelim
+SET_FIRST_DELIM :== setFirstDelim
 where
-	setNewDelim [] = []
-	setNewDelim [Delim _:tail] = [Delim True:SET_ALL_FALSE tail]
-	setNewDelim [head:tail] = [head:setNewDelim tail]
+	setFirstDelim [] = []
+	setFirstDelim [Delim _:tail] = [Delim True:SET_ALL_FALSE tail]
+	setFirstDelim [head:tail] = [head:setFirstDelim tail]
+	
+NEW_FIRST_DELIM :== (\e -> SET_FIRST_DELIM (SET_NEW_DELIM e))

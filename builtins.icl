@@ -190,8 +190,14 @@ antiFilter :: [Number] [Number] -> [Number]
 antiFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | (not o toBool) cond]
 groupMiddle :: [Number] -> [[Number]]
 groupMiddle arg = group arg
+dupesMiddle :: [Number] -> [Number]
+dupesMiddle arg = [el \\ el <- arg | sum [1 \\ e <- arg | e == el] > 1]
 
 // special cases
+complexSplit :: !Memory -> Memory
+complexSplit memory=:{left, right, main=[El [top:mid]:other]}
+	= {memory&left=[justReal top:left],right=[justImag top:left],main=[El mid:other]}
+complexSplit memory = memory
 matrixProduct :: !Memory -> Memory
 matrixProduct memory=:{left, right} = let
 		matrix = [El [lhs * rhs \\ rhs <- right] \\ lhs <- left]
@@ -414,3 +420,31 @@ moveAll SouthWest memory=:{right, main}
 	= {memory&right=[],main=[El right:SET_NEW_DELIM main]}
 moveAll SouthEast memory=:{left, main}
 	= {memory&left=[],main=[El left:SET_NEW_DELIM main]}
+	
+replicateBase :: !Memory -> Memory
+replicateBase memory=:{main} = let
+		(base, other) = span (not o ACTIVE_CURSOR) main
+	in {memory&main=base++NEW_FIRST_DELIM main}
+	
+replicateMiddle :: !Memory -> Memory
+replicateMiddle memory=:{main=[El mid:other]}
+	= {memory&main=[El mid:SET_NEW_DELIM[El mid:other]]}
+	
+replicateTop :: !Memory -> Memory
+replicateTop memory=:{main=[El mid:other]}
+	= {memory&main=[El(SAFE_HEAD mid):SET_NEW_DELIM[El mid:other]]}
+	
+dupesBase :: !Memory -> Memory
+dupesBase memory=:{main} = let
+		(base, other) = span (not o ACTIVE_CURSOR) main
+		safeBase = [el \\ (El el) <- base]
+		deduplicated = [El el \\ el <- safeBase | sum [1 \\ e <- safeBase | e == el] > 1]
+	in {memory&main=deduplicated ++ other}
+	
+shiftCursorDownwards :: !Memory -> Memory
+shiftCursorDownwards memory=:{main}
+	# (base, [cur:other]) = span (not o ACTIVE_CURSOR) main
+	| isEmpty other
+		= memory
+	| otherwise
+		= {memory&main=base ++ [Delim False:SET_FIRST_DELIM other]}

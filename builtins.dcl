@@ -77,9 +77,11 @@ setMaximum :: [Number] -> Number
 setFilter :: [Number] [Number] -> [Number]
 antiFilter :: [Number] [Number] -> [Number]
 groupMiddle :: [Number] -> [[Number]]
+dupesMiddle :: [Number] -> [Number]
 //powerset :: [Number] -> [[Number]]
 
 // special cases
+complexSplit :: !Memory -> Memory
 matrixProduct :: !Memory -> Memory
 joinWithNewlines :: !Memory -> Memory
 stacksFromCursor :: !Memory -> Memory
@@ -105,3 +107,8 @@ moveTop :: !Direction !Memory -> Memory
 copyTop :: !Direction !Memory -> Memory
 copyBoth :: !Axes !Memory -> Memory
 moveAll :: !Direction !Memory -> Memory
+replicateBase :: !Memory -> Memory
+replicateMiddle :: !Memory -> Memory
+replicateTop :: !Memory -> Memory
+dupesBase :: !Memory -> Memory
+shiftCursorDownwards :: !Memory -> Memory

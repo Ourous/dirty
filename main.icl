@@ -1,10 +1,10 @@
 module main
-import types, atomics, utilities, runtime, parser, arithmetic
+import types, runtime, parser
 import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
 	# ([_:args], world)
 		= getCommandLine world
-	//# args = ["-utf8", "--numeric-output", "--dump-stacks", "helloworld.txt"]
+	//# args = ["-utf8", "--numeric-output", "--dump-stacks", "tests/sum_test.txt"]
 	| isEmpty args
 		= abort usage
 	# (flags, [file:args])

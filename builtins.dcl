@@ -46,6 +46,8 @@ imagUnit :: !Number -> Number
 numPermute :: !Number !Number -> Number
 numCombin :: !Number !Number -> Number
 logarithm :: !Number !Number -> Number
+numProduct :: [Number] -> Number
+numSum :: [Number] -> Number
 
 // vectorized ops
 vectorPlus :: [Number] [Number] -> [Number]

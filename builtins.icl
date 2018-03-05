@@ -115,6 +115,10 @@ numCombin :: !Number !Number -> Number
 numCombin lhs rhs = (numPermute lhs rhs) / prod [one..rhs]
 logarithm :: !Number !Number -> Number
 logarithm lhs rhs = (ln rhs) / (ln lhs)
+numProduct :: [Number] -> Number
+numProduct arg = foldl (*) one arg
+numSum :: [Number] -> Number
+numSum arg = foldl (+) Zero arg
 
 // vectorized ops
 vectorPlus :: [Number] [Number] -> [Number]

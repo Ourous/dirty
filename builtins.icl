@@ -414,9 +414,9 @@ copyBoth _ memory = memory
 	
 moveAll :: !Direction !Memory -> Memory
 moveAll NorthWest memory=:{left, main=[El mid:other]}
-	= {memory&left=mid++left,main=other}
+	= {memory&left=mid++left,main=(ENSURE_ACTIVE o DROP_IF_DELIM) other}
 moveAll NorthEast memory=:{right, main=[El mid:other]}
-	= {memory&right=mid++right,main=other}
+	= {memory&right=mid++right,main=(ENSURE_ACTIVE o DROP_IF_DELIM) other}
 moveAll SouthWest memory=:{right, main}
 	= {memory&right=[],main=[El right:SET_NEW_DELIM main]}
 moveAll SouthEast memory=:{left, main}

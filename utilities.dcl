@@ -52,6 +52,10 @@ ACTIVE_CURSOR element
 		(Delim cur) = cur
 		_ = False
 		
+DROP_IF_DELIM stack :== case stack of
+	[Delim _:tail] = tail
+	_ = stack
+		
 MERGE_DELIMS :== mergeDelims
 where
 	mergeDelims [] = []

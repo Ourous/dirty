@@ -115,7 +115,7 @@ where
 	execute (state, memory=:{main=[Delim _]}, world)
 		= execute (state, {memory&main=[El[],Delim True]}, world)
 	execute (state, memory=:{main=[Delim cur,head:tail]}, world)
-		= execute (state, {memory&main=MERGE_DELIMS[head,Delim cur:tail]}, world)
+		= execute (state, {memory&main=ENSURE_ACTIVE[head:tail]}, world)
 	
 	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y = let

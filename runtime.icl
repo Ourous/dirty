@@ -38,12 +38,12 @@ evaluate :: ![String] *World -> *(Memory, *World)
 evaluate args world
 	| isEmpty args
 		# (Timestamp seed, world) = time world
-		= ({left=[],right=[],main=[El [],Delim True],random=genRandInt seed}, world)
+		= ({left=[],right=[],main=[El [],Delim True],random=genRandInt seed,note=NaN}, world)
 	| otherwise
 		# ((seed, world), args) = case (parseInt (hd args), world) of
 			(Just seed, world) = ((seed, world), tl args)
 			(Nothing, world) = ((\(Timestamp seed, world) -> (seed, world))(time world), args)
-		= ({left=[],right=[],main=parseArgs args++[Delim True],random=genRandInt seed}, world)
+		= ({left=[],right=[],main=parseArgs args++[Delim True],random=genRandInt seed,note=NaN}, world)
 where
 
 	parseArgs :: [String] -> [Element]

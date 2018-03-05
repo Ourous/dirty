@@ -236,10 +236,10 @@ removeDupBase memory=:{main} = let
 repeatTopMiddle :: !Memory -> Memory
 repeatTopMiddle memory=:{main=[El []:_]} = memory
 repeatTopMiddle memory=:{main=[El [top:mid]:other]}
-	= {memory&main=[El(repeat top),El mid:other]}
+	= {memory&main=[El(repeat top):SET_NEW_DELIM[El mid:other]]}
 repeatFullMiddle :: !Memory -> Memory
 repeatFullMiddle memory=:{main=[El mid:other]}
-	= {memory&main=[El(flatten(repeat mid)):other]}
+	= {memory&main=(repeat (El mid))++SET_NEW_DELIM other}
 sortBaseline :: !Memory -> Memory
 sortBaseline memory=:{main} = let
 		(base, other) = span (not o ACTIVE_CURSOR) main
@@ -269,14 +269,6 @@ where
 stackReverse Base memory=:{main}
 	= let (base, other) = span (not o ACTIVE_CURSOR) main
 	in {memory&main=reverse base ++ other}
-stackReverse All memory=:{left, right, main}
-	= {memory&left=reverse left,right=reverse right,main=reverseEach main}
-where
-	reverseEach [] = []
-	reverseEach [El head:tail]
-		= [El (reverse head):reverseEach tail]
-	reverseEach [head:tail]
-		= [head:reverseEach tail]
 		
 stackRotate :: !StackID !Memory -> Memory
 stackRotate _ memory=:{main=[El []:_]} = memory
@@ -296,10 +288,7 @@ stackRotate Primary memory=:{main=[El [top:mid]:other]}
 stackRotate Base memory=:{main=[El [top:mid]:other]} = let
 		rotate = rotateList (toInt top)
 		(base, other) = span (not o ACTIVE_CURSOR) [El mid:other]
-	in {memory&main=rotate base ++ other}
-stackRotate All memory=:{left, right, main=[El [top:mid]:other]}
-	= let rotate = rotateList (toInt top)
-	in {memory&left=rotate left,right=rotate right,main=[El(rotate mid):map(APPLY_IF_ELEM rotate)other]}
+	in {memory&main=MERGE_DELIMS(rotate base ++ other)}
 
 stackDelete :: !StackID !Memory -> Memory
 stackDelete Left memory = {memory&left=[]}
@@ -335,7 +324,7 @@ stackDrop Base memory=:{main=[El [top:mid]:other]} = let
 		val = toInt top
 		fn = if(val<=0) (take(~val)) (drop val)
 		(base, other) = span (not o ACTIVE_CURSOR) [El mid:other]
-	in {memory&main=fn base ++ other}
+	in {memory&main=MERGE_DELIMS(fn base ++ other)}
 	
 cycleTops :: !Rotation !Memory -> Memory
 cycleTops Clockwise memory=:{left, main=[El mid:other], right}
@@ -463,7 +452,7 @@ shiftCursorUpwards memory=:{main}
 	| any IS_DELIM base
 		= {memory&main=setLastDelim base ++ [Delim False:other]}
 	| otherwise
-		= memory
+		= {memory&main=[hd base:SET_NEW_DELIM(tl base)]++[Delim False:other]}
 where
 	setLastDelim [] = []
 	setLastDelim [Delim False:tail]
@@ -485,6 +474,14 @@ moveCursorBackwards :: !Memory -> Memory
 moveCursorBackwards memory=:{main}
 	# (base, [cur:other]) = span (not o ACTIVE_CURSOR) main
 	| isEmpty other
-		= memory
+		= {memory&main=MERGE_DELIMS(init base ++ [Delim True, last base, Delim False])}
 	| otherwise
 		= {memory&main=MERGE_DELIMS(base ++ [hd other, Delim True:tl other])}
+		
+remember :: !Memory -> Memory
+remember memory=:{main=[El [top:mid]:other]}
+	= {memory&main=[El mid:other],note=top}
+
+recall :: !Memory -> Memory
+recall memory=:{main=[El mid:other], note}
+	= {memory&main=[El[note:mid]:other]}

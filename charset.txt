@@ -182,13 +182,13 @@ z // conjugate
 Ü // upend the left and right stacks
 Ū // upend the primary stack
 Ụ // upend from baseline
-Û // upend every substack
 ù // rotate left stack by <mid>
 ú // rotate right stack by <mid>
 ü // rotate left and right stacks by <mid>
 ū // rotate primary stack
 ụ // rotate from baseline by <mid>
-û // rotate every substack
+¡ // remember <mid> for later
+¿ // recall from memory
 Ẁ // wipe the left stack
 Ẃ // wipe the right stack
 Ẅ // wipe the left and right stacks

@@ -29,6 +29,7 @@ import StdMaybe
 		left :: [Number],
 		right :: [Number],
 		main :: [Element],
+		note :: !Number,
 		random :: ![Int]
 	}
 	

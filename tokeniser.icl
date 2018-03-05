@@ -196,13 +196,13 @@ unicodeCharset =
 	,[220]
 	,[362]
 	,[7908]
-	,[219]
 	,[249]
 	,[250]
 	,[252]
 	,[363]
 	,[7909]
-	,[251]
+	,[161]
+	,[191]
 	,[7808]
 	,[7810]
 	,[7812]
@@ -279,8 +279,8 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Control (Start (Dir West)))
 	,(Control (Start (Dir North)))
 	,(Control (Start (Dir South)))
-	,(Operator (Unary_M_M (moveCursorForwards)))//(Stack (ShiftBase East))
-	,(Operator (Unary_M_M (moveCursorBackwards)))//(Stack (ShiftBase West))
+	,(Operator (Unary_M_M (moveCursorBackwards)))//(Stack (ShiftBase East))
+	,(Operator (Unary_M_M (moveCursorForwards)))//(Stack (ShiftBase West))
 	,(Operator (Unary_M_M (shiftCursorUpwards)))//(Stack (ShiftBase North))
 	,(Operator (IO_Bell))
 	,(Operator (IO_Backspace))
@@ -459,13 +459,13 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Unary_M_M (stackReverse Both)))//(Stack (Reverse_Both))
 	,(Operator (Unary_M_M (stackReverse Primary)))//(Stack (Reverse_Primary))
 	,(Operator (Unary_M_M (stackReverse Base)))//(Stack (Reverse_Base))
-	,(Operator (Unary_M_M (stackReverse All)))//(Stack (Reverse_All))
 	,(Operator (Unary_M_M (stackRotate Left)))//(Stack (Rotate_Left))
 	,(Operator (Unary_M_M (stackRotate Right)))//(Stack (Rotate_Right))
 	,(Operator (Unary_M_M (stackRotate Both)))//(Stack (Rotate_Both))
 	,(Operator (Unary_M_M (stackRotate Primary)))//(Stack (Rotate_Primary))
 	,(Operator (Unary_M_M (stackRotate Base)))//(Stack (Rotate_Base))
-	,(Operator (Unary_M_M (stackRotate All)))//(Stack (Rotate_All))
+	,(Operator (Unary_M_M (remember)))
+	,(Operator (Unary_M_M (recall)))
 	,(Operator (Unary_M_M (stackDelete Left)))//(Stack (Delete_Left))
 	,(Operator (Unary_M_M (stackDelete Right)))//(Stack (Delete_Right))
 	,(Operator (Unary_M_M (stackDelete Both)))//(Stack (Delete_Both))

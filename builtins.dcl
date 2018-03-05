@@ -115,3 +115,7 @@ shiftCursorDownwards :: !Memory -> Memory
 shiftCursorUpwards :: !Memory -> Memory
 moveCursorForwards :: !Memory -> Memory
 moveCursorBackwards :: !Memory -> Memory
+
+// note modifiers
+remember :: !Memory -> Memory
+recall :: !Memory -> Memory

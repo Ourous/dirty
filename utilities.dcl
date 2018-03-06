@@ -99,6 +99,7 @@ where
 	setNewDelim elements = let
 			(cur, tail) = setLastFalse elements
 		in [(Delim cur):tail]
+	setLastFalse [] = (True, [])
 	setLastFalse [Delim cur:tail] = (cur, [Delim False:tail])
 	setLastFalse [head:tail] = let
 			(cur, otherLast) = setLastFalse tail

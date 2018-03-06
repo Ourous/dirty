@@ -397,105 +397,105 @@ where
 			# (chr, world) = readChar world
 			= (state, {memory&main=[El[chr:mid]:other]}, world)
 
-	process (Operator (Binary_NN_N inv op)) = app3 (id, binary (inv && not flags.strict), id)
+	process (Operator (Binary_NN_N inv op)) = app3 (id, binary flags.strict inv, id)
 	where
 		
-		binary :: !Bool !Memory -> Memory
-		binary _ memory=:{left=[lhs:_], main=[El mid:other], right=[rhs:_]}
+		binary :: !Bool !Bool !Memory -> Memory
+		binary _ _ memory=:{left=[lhs:_], main=[El mid:other], right=[rhs:_]}
 			= {memory&main=[El[op lhs rhs:mid]:other]}
-		binary _ memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
+		binary False _ memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
 			= {memory&main=[El[op lhs top:mid]:other]}
-		binary _ memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
+		binary False _ memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
 			= {memory&main=[El[op top rhs:mid]:other]}
-		binary _ memory=:{left=[], main=[El []:other], right=[rhs,lhs:_]}
+		binary False _ memory=:{left=[], main=[El []:other], right=[rhs,lhs:_]}
 			= {memory&main=[El[op lhs rhs]:other]}
-		binary _ memory=:{left=[lhs,rhs:_], main=[El []:other], right=[]}
+		binary False _ memory=:{left=[lhs,rhs:_], main=[El []:other], right=[]}
 			= {memory&main=[El[op lhs rhs]:other]}
-		binary True memory=:{left=[], main=[El [arg1,arg2:mid]:other], right=[]}
+		binary False True memory=:{left=[], main=[El [arg1,arg2:mid]:other], right=[]}
 			= {memory&main=[El[op arg1 arg2:mid]:other]}
-		binary _ memory = memory
+		binary _ _ memory = memory
 		
 			
-	process (Operator (Binary_NN_S inv op)) = app3 (id, binary (inv && not flags.strict), id)
+	process (Operator (Binary_NN_S inv op)) = app3 (id, binary flags.strict inv, id)
 	where // productive
 		
-		binary :: !Bool !Memory -> Memory
-		binary _ memory=:{left=[lhs:_], right=[rhs:_]}
+		binary :: !Bool !Bool !Memory -> Memory
+		binary _ _ memory=:{left=[lhs:_], right=[rhs:_]}
 			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-		binary _ memory=:{left=[lhs:_], main=[El [top]:other], right=[]}
+		binary False _ memory=:{left=[lhs:_], main=[El [top]:other], right=[]}
 			= {memory&main=[El(op lhs top):SET_NEW_DELIM other]}
-		binary _ memory=:{left=[], main=[El [top]:other], right=[rhs:_]}
+		binary False _ memory=:{left=[], main=[El [top]:other], right=[rhs:_]}
 			= {memory&main=[El(op top rhs):SET_NEW_DELIM other]}
-		binary _ memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
+		binary False _ memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
 			= {memory&main=[El(op lhs top):SET_NEW_DELIM[El mid:other]]}
-		binary _ memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
+		binary False _ memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
 			= {memory&main=[El(op top rhs):SET_NEW_DELIM[El mid:other]]}
-		binary _ memory=:{left=[lhs,rhs:_], main=[El []:_], right=[]}
+		binary False _ memory=:{left=[lhs,rhs:_], main=[El []:_], right=[]}
 			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-		binary _ memory=:{left=[], main=[El []:_], right=[rhs,lhs:_]}
+		binary False _ memory=:{left=[], main=[El []:_], right=[rhs,lhs:_]}
 			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-		binary True memory=:{left=[], main=[El [arg1,arg2]:other], right=[]}
+		binary False True memory=:{left=[], main=[El [arg1,arg2]:other], right=[]}
 			= {memory&main=[El(op arg1 arg2):SET_NEW_DELIM other]}
-		binary True memory=:{left=[], main=[El [arg1,arg2:mid]:other], right=[]}
+		binary False True memory=:{left=[], main=[El [arg1,arg2:mid]:other], right=[]}
 			= {memory&main=[El(op arg1 arg2):SET_NEW_DELIM[El mid:other]]}
-		binary _ memory = memory
+		binary _ _ memory = memory
 			
-	process (Operator (Binary_SN_N op)) = app3 (id, binary, id)
-	where
-	
-		binary :: !Memory -> Memory
-		binary memory=:{left=[], main=[El mid=:[_:_]:other], right=[rhs:_]}
-			= {memory&main=[El [op mid rhs]:other]}
-		binary memory=:{left, main=[El mid:other], right=[rhs:_]}
-			= {memory&main=[El [op left rhs:mid]:other]}
-		binary memory=:{left, main=[El [top:mid]:other], right=[]}
-			= {memory&main=[El [op left top:mid]:other]}
-		binary memory = memory
-		
-	process (Operator (Binary_NS_N op)) = app3 (id, binary, id)
-	where
-	
-		binary :: !Memory -> Memory
-		binary memory=:{left=[lhs:_], main=[El mid=:[_:_]:other], right=[]}
-			= {memory&main=[El [op lhs mid]:other]}
-		binary memory=:{left=[lhs:_], main=[El mid:other], right}
-			= {memory&main=[El [op lhs right:mid]:other]}
-		binary memory=:{left=[], main=[El [top:mid]:other], right}
-			= {memory&main=[El [op top right:mid]:other]}
-		binary memory = memory
-		
-	process (Operator (Binary_SS_N inv op)) = app3 (id, binary (inv && not flags.strict), id)
+	process (Operator (Binary_SN_N op)) = app3 (id, binary flags.strict, id)
 	where
 	
 		binary :: !Bool !Memory -> Memory
-		binary True memory=:{left=[], main=[El mid=:[_:_],El oth=:[_:_]:other],right=[]}
+		binary False memory=:{left=[], main=[El mid=:[_:_]:other], right=[rhs:_]}
+			= {memory&main=[El [op mid rhs]:other]}
+		binary _ memory=:{left, main=[El mid:other], right=[rhs:_]}
+			= {memory&main=[El [op left rhs:mid]:other]}
+		binary False memory=:{left, main=[El [top:mid]:other], right=[]}
+			= {memory&main=[El [op left top:mid]:other]}
+		binary _ memory = memory
+		
+	process (Operator (Binary_NS_N op)) = app3 (id, binary flags.strict, id)
+	where
+	
+		binary :: !Bool !Memory -> Memory
+		binary False memory=:{left=[lhs:_], main=[El mid=:[_:_]:other], right=[]}
+			= {memory&main=[El [op lhs mid]:other]}
+		binary _ memory=:{left=[lhs:_], main=[El mid:other], right}
+			= {memory&main=[El [op lhs right:mid]:other]}
+		binary False memory=:{left=[], main=[El [top:mid]:other], right}
+			= {memory&main=[El [op top right:mid]:other]}
+		binary _ memory = memory
+		
+	process (Operator (Binary_SS_N inv op)) = app3 (id, binary flags.strict inv, id)
+	where
+	
+		binary :: !Bool !Bool !Memory -> Memory
+		binary False True memory=:{left=[], main=[El mid=:[_:_],El oth=:[_:_]:other],right=[]}
 			= {memory&main=[El [op mid oth]:other]}
-		binary True memory=:{left=[], main=[El mid=:[_:_]:other], right=[]}
+		binary False True memory=:{left=[], main=[El mid=:[_:_]:other], right=[]}
 			= {memory&main=[El [op mid []]:other]}
-		binary _ memory=:{left=[], main=[El []:other], right=[]}
+		binary False _ memory=:{left=[], main=[El []:other], right=[]}
 			= {memory&main=[El [op [] []]:other]}
-		binary _ memory=:{left=[], main=[El mid=:[_:_]:other], right}
+		binary False _ memory=:{left=[], main=[El mid=:[_:_]:other], right}
 			= {memory&main=[El [op mid right]:other]}
-		binary _ memory=:{left, main=[El mid=:[_:_]:other], right=[]}
+		binary False _ memory=:{left, main=[El mid=:[_:_]:other], right=[]}
 			= {memory&main=[El [op left mid]:other]}
-		binary _ memory=:{left, main=[El mid:other], right}
+		binary _ _ memory=:{left, main=[El mid:other], right}
 			= {memory&main=[El [op left right:mid]:other]}
 		
-	process (Operator (Binary_SS_S inv op)) = app3 (id, binary (inv && not flags.strict), id)
+	process (Operator (Binary_SS_S inv op)) = app3 (id, binary flags.strict inv, id)
 	where
 	
-		binary :: !Bool !Memory -> Memory
-		binary True memory=:{left=[], main=[El mid=:[_:_],El oth=:[_:_]:other],right=[]}
+		binary :: !Bool !Bool !Memory -> Memory
+		binary False True memory=:{left=[], main=[El mid=:[_:_],El oth=:[_:_]:other],right=[]}
 			= {memory&main=[El (op mid oth):other]}
-		binary True memory=:{left=[], main=[El mid=:[_:_]:other], right=[]}
+		binary False True memory=:{left=[], main=[El mid=:[_:_]:other], right=[]}
 			= {memory&main=[El (op mid []):other]}
-		binary _ memory=:{left=[], main=[El []:_], right=[]}
+		binary False _ memory=:{left=[], main=[El []:_], right=[]}
 			= {memory&main=[El (op [] []):SET_NEW_DELIM memory.main]}
-		binary _ memory=:{left=[], main=[El mid=:[_:_]:other], right}
+		binary False _ memory=:{left=[], main=[El mid=:[_:_]:other], right}
 			= {memory&main=[El (op mid right):other]}
-		binary _ memory=:{left, main=[El mid=:[_:_]:other], right=[]}
+		binary False _ memory=:{left, main=[El mid=:[_:_]:other], right=[]}
 			= {memory&main=[El (op left mid):other]}
-		binary _ memory=:{left, main, right}
+		binary _ _ memory=:{left, main, right}
 			= {memory&main=[El (op left right):SET_NEW_DELIM main]}
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)

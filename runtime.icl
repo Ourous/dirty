@@ -20,8 +20,8 @@ newWorld = code inline {
 STACK_TO_STR stack
 	:== "["+(join","(map toString stack))+"]"
 	
-MEM_TO_STR memory=:{left, right, main}
-	:== "{left="+STACK_TO_STR left+",right="+STACK_TO_STR right+",main="+STACK_TO_STR main+"}"
+MEM_TO_STR memory=:{note, left, right, main}
+	:== "{note="<+note<+"left="+STACK_TO_STR left+",right="+STACK_TO_STR right+",main="+STACK_TO_STR main+"}"
 
 TRAVERSE_SOME dist state=:{location, direction}
 	:== case direction of

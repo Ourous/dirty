@@ -4,7 +4,7 @@ Global
 	Target:	iTasks
 	Exec:	{Project}\dirty.exe
 	CodeGen
-		CheckStacks:	True
+		CheckStacks:	False
 		CheckIndexes:	True
 	Application
 		HeapSize:	288358400

@@ -449,6 +449,13 @@ where
 		binary _ memory=:{left, main=[El mid:other], right}
 			= {memory&main=[El [op left right:mid]:other]}
 		binary _ memory = memory
+		
+	process (Operator (Binary_SS_S inv op)) = app3 (id, binary (inv && not flags.strict), id)
+	where
+	
+		binary :: !Bool !Memory -> Memory
+		binary _ memory=:{left, main, right}
+			= {memory&main=[El (op left right):SET_NEW_DELIM main]}
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where

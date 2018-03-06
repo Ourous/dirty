@@ -248,9 +248,9 @@ z // conjugate
 Ḍ // remove duplicates from <baseline>
 ḍ // retain only duplicates from <baseline>
 ⤔ // copy from <baseline> onto end of <main>
-↦ // duplicate top element of <mid> into a new stack
-↣ // duplciate <mid>
-⤅ // repeat top element of <mid> forever
-⤖ // repeat <mid> forever
+↣ // duplicate top element of <mid> into a new stack
+⤖ // duplciate <mid>
+↦ // repeat top element of <mid> forever
+⤅ // repeat <mid> forever
 Ḧ // maximum of tops of <left> and <right>
 ḧ // minimum of tops of <left> and <right>

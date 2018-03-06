@@ -4,7 +4,7 @@ import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
 	# ([_:args], world)
 		= getCommandLine world
-	//# args = ["-utf8", "--numeric-output", "--dump-stacks", "tests/sum_test.txt"]
+	//# args = ["-utf8", "--numeric-output", "--dump-stacks", "tests/speed_test.txt"]
 	| isEmpty args
 		= abort usage
 	# (flags, [file:args])
@@ -20,6 +20,7 @@ Start world
 		= case (readFile file world) of
 			(Ok file, world) = (file, world)
 			_ = abort "Cannot open the file specified!"
+	//= parser file
 	= let program = parser file
 	in (construct program (toFlags flags)) (initialize program args world)
 	

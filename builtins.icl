@@ -238,7 +238,7 @@ stackJoin memory=:{main}
 stackUnjoin :: !Memory -> Memory
 stackUnjoin memory=:{main=[El mid:other]} = let
 		singles = [El [el] \\ el <- mid]
-	in {memory&main=singles ++ SET_NEW_DELIM other}
+	in {memory&main=(if(isEmpty singles) [El []] singles) ++ SET_NEW_DELIM other}
 removeDupBase :: !Memory -> Memory
 removeDupBase memory=:{main}
 	# (base, other) = span (not o ACTIVE_CURSOR) main

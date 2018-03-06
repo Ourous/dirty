@@ -209,8 +209,9 @@ matrixProduct memory=:{left, right} = let
 		matrix = [El [lhs * rhs \\ rhs <- right] \\ lhs <- left]
 	in {memory&main=matrix++SET_NEW_DELIM memory.main}
 joinWithNewlines :: !Memory -> Memory
-joinWithNewlines memory=:{main} = let
-		(base, other) = span (not o ACTIVE_CURSOR) main
+joinWithNewlines memory=:{main}
+	# (base, other) = span (not o ACTIVE_CURSOR) main
+	= let
 		safeBase = [el \\ (El el) <- base]
 		joined = foldl (\a b -> a ++ [fromInt 10] ++ b) [] safeBase
 	in {memory&main=[El joined:other]}
@@ -220,14 +221,16 @@ stacksFromCursor memory=:{main=[El mid:other]} = let
 		stacks = sum [1 \\ (El _) <- base]
 	in {memory&main=[El[fromInt stacks:mid]:other]}
 transposeFromCursor :: !Memory -> Memory
-transposeFromCursor memory=:{main} = let
-		(base, other) = span (not o ACTIVE_CURSOR) main
+transposeFromCursor memory=:{main}
+	# (base, other) = span (not o ACTIVE_CURSOR) main
+	= let
 		safeBase = [el \\ (El el) <- base]
 		transposed = [(El el) \\ el <- transpose safeBase]
 	in {memory&main=transposed ++ other}
 stackJoin :: !Memory -> Memory
-stackJoin memory=:{main} = let
-		(base, other) = span (not o ACTIVE_CURSOR) main
+stackJoin memory=:{main}
+	# (base, other) = span (not o ACTIVE_CURSOR) main
+	= let
 		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) base
 		flattened = [El (flatten [el \\ (El el) <- part]) \\ part <- grouped | case part of [Delim _] = False; _ = True]
 	in {memory&main=flattened ++ other}
@@ -236,8 +239,9 @@ stackUnjoin memory=:{main=[El mid:other]} = let
 		singles = [El [el] \\ el <- mid]
 	in {memory&main=singles ++ SET_NEW_DELIM other}
 removeDupBase :: !Memory -> Memory
-removeDupBase memory=:{main} = let
-		(base, other) = span (not o ACTIVE_CURSOR) main
+removeDupBase memory=:{main}
+	# (base, other) = span (not o ACTIVE_CURSOR) main
+	= let 
 		safeBase = [el \\ (El el) <- base]
 		deduped = [El el \\ el <- removeDup safeBase]
 	in {memory&main=deduped ++ other}
@@ -249,8 +253,9 @@ repeatFullMiddle :: !Memory -> Memory
 repeatFullMiddle memory=:{main=[El mid:other]}
 	= {memory&main=(repeat (El mid))++SET_NEW_DELIM other}
 sortBaseline :: !Memory -> Memory
-sortBaseline memory=:{main} = let
-		(base, other) = span (not o ACTIVE_CURSOR) main
+sortBaseline memory=:{main}
+	# (base, other) = span (not o ACTIVE_CURSOR) main
+	= let
 		safeBase = [el \\ (El el) <- base]
 		sorted = [El el \\ el <- sort safeBase]
 	in {memory&main=sorted ++ other}
@@ -266,8 +271,8 @@ stackReverse Middle memory=:{main=[El mid:other]}
 stackReverse Both memory=:{left, right}
 	= {memory&left=reverse left, right=reverse right}
 stackReverse Primary memory=:{main}
-	= let (base, other) = span (not o ACTIVE_CURSOR) main
-	in {memory&main=reverseEach base ++ other}
+	# (base, other) = span (not o ACTIVE_CURSOR) main
+	= {memory&main=reverseEach base ++ other}
 where
 	reverseEach [] = []
 	reverseEach [El head:tail]
@@ -275,8 +280,8 @@ where
 	reverseEach [head:tail]
 		= [head:reverseEach tail]
 stackReverse Base memory=:{main}
-	= let (base, other) = span (not o ACTIVE_CURSOR) main
-	in {memory&main=reverse base ++ other}
+	# (base, other) = span (not o ACTIVE_CURSOR) main
+	= {memory&main=reverse base ++ other}
 		
 stackRotate :: !StackID !Memory -> Memory
 stackRotate _ memory=:{main=[El []:_]} = memory
@@ -293,9 +298,9 @@ stackRotate Middle memory=:{main=[El [top:mid]:other]}
 stackRotate Primary memory=:{main=[El [top:mid]:other]}
 	= let rotate = rotateList (toInt top)
 	in {memory&main=[El(rotate mid):map(APPLY_IF_ELEM rotate)other]}
-stackRotate Base memory=:{main=[El [top:mid]:other]} = let
-		rotate = rotateList (toInt top)
-		(base, other) = span (not o ACTIVE_CURSOR) [El mid:other]
+stackRotate Base memory=:{main=[El [top:mid]:other]}
+	# (base, other) = span (not o ACTIVE_CURSOR) [El mid:other]
+	= let rotate = rotateList (toInt top)
 	in {memory&main=MERGE_DELIMS(rotate base ++ other)}
 
 stackDelete :: !StackID !Memory -> Memory
@@ -305,8 +310,8 @@ stackDelete Middle memory=:{main=[El mid:other]}
 	= {memory&main=other}
 stackDelete Both memory = {memory&left=[],right=[]}
 stackDelete Base memory=:{main}
-	= let (base, other) = span (not o ACTIVE_CURSOR) main
-	in {memory&main=SET_FIRST_DELIM (SAFE_TAIL other)}
+	# (base, other) = span (not o ACTIVE_CURSOR) main
+	= {memory&main=SET_FIRST_DELIM (SAFE_TAIL other)}
 stackDelete Main memory = {memory&main=[]}
 stackDelete All memory = {memory&left=[],right=[],main=[]}
 
@@ -328,10 +333,11 @@ stackDrop Both memory=:{left, right, main=[El [top:mid]:other]} = let
 		val = toInt top
 		fn = if(val<=0) (take(~val)) (drop val)
 	in {memory&left=fn left,right=fn right,main=[El mid:other]}
-stackDrop Base memory=:{main=[El [top:mid]:other]} = let
+stackDrop Base memory=:{main=[El [top:mid]:other]}
+	# (base, other) = span (not o ACTIVE_CURSOR) [El mid:other]
+	= let
 		val = toInt top
 		fn = if(val<=0) (take(~val)) (drop val)
-		(base, other) = span (not o ACTIVE_CURSOR) [El mid:other]
 	in {memory&main=MERGE_DELIMS(fn base ++ other)}
 	
 cycleTops :: !Rotation !Memory -> Memory
@@ -427,9 +433,9 @@ moveAll SouthEast memory=:{left, main}
 	= {memory&left=[],main=[El left:SET_NEW_DELIM main]}
 	
 replicateBase :: !Memory -> Memory
-replicateBase memory=:{main} = let
-		(base, other) = span (not o ACTIVE_CURSOR) main
-	in {memory&main=base++NEW_FIRST_DELIM main}
+replicateBase memory=:{main}
+	# (base, other) = span (not o ACTIVE_CURSOR) main
+	= {memory&main=base++NEW_FIRST_DELIM main}
 	
 replicateMiddle :: !Memory -> Memory
 replicateMiddle memory=:{main=[El mid:other]}
@@ -440,8 +446,9 @@ replicateTop memory=:{main=[El mid:other]}
 	= {memory&main=[El(SAFE_HEAD mid):SET_NEW_DELIM[El mid:other]]}
 	
 dupesBase :: !Memory -> Memory
-dupesBase memory=:{main} = let
-		(base, other) = span (not o ACTIVE_CURSOR) main
+dupesBase memory=:{main}
+	# (base, other) = span (not o ACTIVE_CURSOR) main
+	= let
 		safeBase = [el \\ (El el) <- base]
 		deduplicated = [El el \\ el <- safeBase | sum [1 \\ e <- safeBase | e == el] > 1]
 	in {memory&main=deduplicated ++ other}

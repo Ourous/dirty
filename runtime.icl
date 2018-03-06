@@ -448,6 +448,20 @@ where
 			= {memory&main=[El [op left rhs:mid]:other]}
 		binary memory=:{left, main=[El [top:mid]:other], right=[]}
 			= {memory&main=[El [op left top:mid]:other]}
+		binary memory=:{left=[], main=[El mid=:[_:_]:other], right=[rhs:_]}
+			= {memory&main=[El [op mid rhs]:other]}
+		binary memory = memory
+		
+	process (Operator (Binary_NS_N op)) = app3 (id, binary, id)
+	where
+	
+		binary :: !Memory -> Memory
+		binary memory=:{left=[lhs:_], main=[El mid:other], right}
+			= {memory&main=[El [op lhs right:mid]:other]}
+		binary memory=:{left=[], main=[El [top:mid]:other], right}
+			= {memory&main=[El [op top right:mid]:other]}
+		binary memory=:{left=[lhs:_], main=[El mid=:[_:_]:other], right=[]}
+			= {memory&main=[El [op lhs mid]:other]}
 		binary memory = memory
 		
 	process (Operator (Binary_SS_N inv op)) = app3 (id, binary (inv && not flags.strict), id)

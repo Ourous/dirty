@@ -989,8 +989,6 @@ OtherModules
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
 			Fusion:	False
-		NeededLibraries
-			Library:	msvcrt.txt
 	Module
 		Name:	System.Time
 		Dir:	{Application}*Libraries*Platform
@@ -1005,8 +1003,6 @@ OtherModules
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
 			Fusion:	False
-		NeededLibraries
-			Library:	msvcrt.txt
 	Module
 		Name:	System._Pointer
 		Dir:	{Application}*Libraries*Platform
@@ -1219,9 +1215,6 @@ OtherModules
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
 			Fusion:	False
-		NeededObjFiles
-			ObjectFile:	WCsubst.
-			ObjectFile:	bsearch.
 	Module
 		Name:	Text.Unicode.UChar
 		Dir:	{Application}*Libraries*Platform
@@ -1236,9 +1229,6 @@ OtherModules
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
 			Fusion:	False
-		NeededObjFiles
-			ObjectFile:	WCsubst.
-			ObjectFile:	bsearch.
 	Module
 		Name:	Text.Unicode.UChar
 		Dir:	{Application}*Libraries*Platform
@@ -1253,9 +1243,6 @@ OtherModules
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
 			Fusion:	False
-		NeededObjFiles
-			ObjectFile:	WCsubst.
-			ObjectFile:	bsearch.
 	Module
 		Name:	StdArrayExtensions
 		Dir:	{Application}*Libraries*Platform*Deprecated*StdLib

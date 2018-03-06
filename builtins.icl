@@ -482,7 +482,7 @@ moveCursorForwards :: !Memory -> Memory
 moveCursorForwards memory=:{main}
 	# (base, [cur:other]) = span (not o ACTIVE_CURSOR) main
 	| isEmpty other
-		= memory
+		= {memory&main=MERGE_DELIMS(init base ++ [Delim True, last base, Delim False])}
 	| otherwise
 		= {memory&main=MERGE_DELIMS(init base ++ [Delim True, last base:other])}
 	
@@ -490,7 +490,7 @@ moveCursorBackwards :: !Memory -> Memory
 moveCursorBackwards memory=:{main}
 	# (base, [cur:other]) = span (not o ACTIVE_CURSOR) main
 	| isEmpty other
-		= {memory&main=MERGE_DELIMS(init base ++ [Delim True, last base, Delim False])}
+		= memory//{memory&main=MERGE_DELIMS(init base ++ [Delim True, last base, Delim False])}
 	| otherwise
 		= {memory&main=MERGE_DELIMS(base ++ [hd other, Delim True:tl other])}
 		

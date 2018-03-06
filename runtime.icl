@@ -444,30 +444,40 @@ where
 	where
 	
 		binary :: !Memory -> Memory
+		binary memory=:{left=[], main=[El mid=:[_:_]:other], right=[rhs:_]}
+			= {memory&main=[El [op mid rhs]:other]}
 		binary memory=:{left, main=[El mid:other], right=[rhs:_]}
 			= {memory&main=[El [op left rhs:mid]:other]}
 		binary memory=:{left, main=[El [top:mid]:other], right=[]}
 			= {memory&main=[El [op left top:mid]:other]}
-		//binary memory=:{left=[], main=[El mid=:[_:_]:other], right=[rhs:_]}
-		//	= {memory&main=[El [op mid rhs]:other]}
 		binary memory = memory
 		
 	process (Operator (Binary_NS_N op)) = app3 (id, binary, id)
 	where
 	
 		binary :: !Memory -> Memory
+		binary memory=:{left=[lhs:_], main=[El mid=:[_:_]:other], right=[]}
+			= {memory&main=[El [op lhs mid]:other]}
 		binary memory=:{left=[lhs:_], main=[El mid:other], right}
 			= {memory&main=[El [op lhs right:mid]:other]}
 		binary memory=:{left=[], main=[El [top:mid]:other], right}
 			= {memory&main=[El [op top right:mid]:other]}
-		//binary memory=:{left=[lhs:_], main=[El mid=:[_:_]:other], right=[]}
-		//	= {memory&main=[El [op lhs mid]:other]}
 		binary memory = memory
 		
 	process (Operator (Binary_SS_N inv op)) = app3 (id, binary (inv && not flags.strict), id)
 	where
 	
 		binary :: !Bool !Memory -> Memory
+		binary True memory=:{left=[], main=[El mid=:[_:_],El oth=:[_:_]:other],right=[]}
+			= {memory&main=[El [op mid oth]:other]}
+		binary True memory=:{left=[], main=[El mid=:[_:_]:other], right=[]}
+			= {memory&main=[El [op mid []]:other]}
+		binary _ memory=:{left=[], main=[El []:other], right=[]}
+			= {memory&main=[El [op [] []]:other]}
+		binary _ memory=:{left=[], main=[El mid=:[_:_]:other], right}
+			= {memory&main=[El [op mid right]:other]}
+		binary _ memory=:{left, main=[El mid=:[_:_]:other], right=[]}
+			= {memory&main=[El [op left mid]:other]}
 		binary _ memory=:{left, main=[El mid:other], right}
 			= {memory&main=[El [op left right:mid]:other]}
 		
@@ -475,6 +485,16 @@ where
 	where
 	
 		binary :: !Bool !Memory -> Memory
+		binary True memory=:{left=[], main=[El mid=:[_:_],El oth=:[_:_]:other],right=[]}
+			= {memory&main=[El (op mid oth):other]}
+		binary True memory=:{left=[], main=[El mid=:[_:_]:other], right=[]}
+			= {memory&main=[El (op mid []):other]}
+		binary _ memory=:{left=[], main=[El []:_], right=[]}
+			= {memory&main=[El (op [] []):SET_NEW_DELIM memory.main]}
+		binary _ memory=:{left=[], main=[El mid=:[_:_]:other], right}
+			= {memory&main=[El (op mid right):other]}
+		binary _ memory=:{left, main=[El mid=:[_:_]:other], right=[]}
+			= {memory&main=[El (op left mid):other]}
 		binary _ memory=:{left, main, right}
 			= {memory&main=[El (op left right):SET_NEW_DELIM main]}
 			

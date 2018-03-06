@@ -119,7 +119,7 @@ where
 	
 	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y = let
-			wrappedLocation = {x=location.x rem dimension.x, y=location.y rem dimension.y}
+			wrappedLocation = {x=(location.x + dimension.x) rem dimension.x, y=(location.y + dimension.y) rem dimension.y}
 			in execute ({state&location=wrappedLocation,terminate=not wrapping}, memory, world)
 		| otherwise
 			# (state, memory, world) = process commands.[location.y, location.x] smw
@@ -177,12 +177,20 @@ where
 			= case (dir, direction) of
 				(NorthEast, West) = {state&direction=North,location={x=x+1,y=y}}
 				(NorthEast, South) = {state&direction=East,location={x=x,y=y-1}}
+				(NorthEast, North) = {state&location={x=x+1,y=y}}
+				(NorthEast, East) = {state&location={x=x,y=y-1}}
 				(SouthEast, West) = {state&direction=South,location={x=x+1,y=y}}
 				(SouthEast, North) = {state&direction=East,location={x=x,y=y+1}}
+				(SouthEast, South) = {state&location={x=x+1,y=y}}
+				(SouthEast, East) = {state&location={x=x,y=y+1}}
 				(SouthWest, East) = {state&direction=South,location={x=x-1,y=y}}
 				(SouthWest, North) = {state&direction=West,location={x=x,y=y+1}}
+				(SouthWest, South) = {state&location={x=x-1,y=y}}
+				(SouthWest, West) = {state&location={x=x,y=y+1}}
 				(NorthWest, East) = {state&direction=North,location={x=x-1,y=y}}
 				(NorthWest, South) = {state&direction=West,location={x=x,y=y-1}}
+				(NorthWest, North) = {state&location={x=x-1,y=y}}
+				(NorthWest, West) = {state&location={x=x,y=y-1}}
 	
 	process (Control (Either axes)) = either
 	where

@@ -267,7 +267,7 @@ where
 			| direction == dir && TO_BOOL left
 				= ({state&location=loc}, {memory&left=SAFE_TAIL left}, world)
 			| otherwise
-				= (state, memory, world)
+				= (state, {memory&left=SAFE_TAIL left}, world)
 		
 	process (Control (Loop Right dir (Just loc))) = loop
 	where
@@ -276,7 +276,7 @@ where
 			| direction == dir && TO_BOOL right
 				= ({state&location=loc}, {memory&right=SAFE_TAIL right}, world)
 			| otherwise
-				= (state, memory, world)
+				= (state, {memory&right=SAFE_TAIL right}, world)
 	
 	process (Control (Goto dir (Just loc))) = goto
 	where

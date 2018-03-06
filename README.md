@@ -4,4 +4,4 @@ A two-dimensional, lazily evaluated recreational language, implemented in Clean.
 
 **Building:**
 
-    `cpm dirty.prj`
+    cpm dirty_<OS>.prj

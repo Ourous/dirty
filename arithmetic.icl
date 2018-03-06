@@ -587,6 +587,22 @@ bitNOT (Im (Fin val)) = handle (Im (Fin (Int (bitnot (ENTIER val)))))
 bitNOT (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int(bitnot(ENTIER re))), im=(Int(bitnot(ENTIER im)))}))
 bitNOT _ = NaN
 
+bitLEFT :: !Number !Number -> Number
+bitLEFT NaN _ = NaN
+bitLEFT _ NaN = NaN
+bitLEFT Zero _ = Zero
+bitLEFT lhs Zero = lhs
+bitLEFT (Re (Fin lhs)) (Re (Fin rhs))
+	= handle (Re (Fin (INT_OPER (<<) lhs rhs)))
+	
+bitRIGHT :: !Number !Number -> Number
+bitRIGHT NaN _ = NaN
+bitRIGHT _ NaN = NaN
+bitRIGHT Zero _ = Zero
+bitRIGHT lhs Zero = lhs
+bitRIGHT (Re (Fin lhs)) (Re (Fin rhs))
+	= handle (Re (Fin (INT_OPER (>>) lhs rhs)))
+	
 numFloor :: !Number -> Number
 numFloor (Re (Fin val)) = handle (Re (Fin (Int (ENTIER val))))
 numFloor (Im (Fin val)) = handle (Im (Fin (Int (ENTIER val))))

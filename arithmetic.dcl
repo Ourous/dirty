@@ -51,6 +51,9 @@ bitAND :: !Number !Number -> Number
 bitXOR :: !Number !Number -> Number
 bitNOT :: !Number -> Number
 
+bitLEFT :: !Number !Number -> Number
+bitRIGHT :: !Number !Number -> Number
+
 numFloor :: !Number -> Number
 numCeiling :: !Number -> Number
 numRound :: !Number -> Number

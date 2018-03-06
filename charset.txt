@@ -2,12 +2,12 @@
 ⇦ // start, going left
 ⇧ // start, going up
 ⇩ // start, going down
-⭬ // move current baseline up 1
-⭪ // move current baseline down 1
-⭫ // go to next baseline, if none, create new baseline at the end of <main>
+⇢ OR ⭬ // move current baseline up 1
+⇠ OR ⭪ // move current baseline down 1
+⇡ OR ⭫ // go to next baseline, if none, create new baseline at the end of <main>
 🔔 // bell character
 ␈ // delete the last console char
-⭭ // go to last baseline, if none, go to index 0
+⇣ OR ⭭ // go to last baseline, if none, go to index 0
 \n // newline
 ⭮ // rotate counterclockwise
 ⭯ // rotate clockwise

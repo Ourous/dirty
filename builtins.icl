@@ -21,14 +21,11 @@ isIdentical lhs rhs = fromBool (lhs == rhs)
 isElementOf :: !Number [Number] -> Number
 isElementOf lhs rhs = fromBool (isMember lhs rhs)
 isImproperSubsetOf :: [Number] [Number] -> Number
-isImproperSubsetOf lhs rhs = fromBool (any (isPrefixOf lhs) (tails rhs))
-//isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
+isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
 isProperSubsetOf :: [Number] [Number] -> Number
-isProperSubsetOf lhs rhs = fromBool (lhs <> rhs && lhs > [] && (any (isPrefixOf lhs) (tails rhs)))
-//isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
+isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
 isNotSubsetOf :: [Number] [Number] -> Number
-isNotSubsetOf lhs rhs = (fromBool o not o any (isPrefixOf lhs)) (tails rhs)
-//isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
+isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
 
 isUppercase :: !Number -> Number
 isUppercase arg = fromBool (isUpperUChar (toInt arg))
@@ -194,6 +191,13 @@ groupMiddle :: [Number] -> [[Number]]
 groupMiddle arg = group arg
 dupesMiddle :: [Number] -> [Number]
 dupesMiddle arg = [el \\ el <- arg | sum [1 \\ e <- arg | e == el] > 1]
+setIntersection :: [Number] [Number] -> [Number]
+setIntersection lhs rhs = removeDup (filter (\el -> isMember el rhs) lhs)
+setUnion :: [Number] [Number] -> [Number]
+setUnion lhs rhs = removeDup (lhs ++ rhs)
+setExclusion :: [Number] [Number] -> [Number]
+setExclusion lhs rhs = removeDup ((filter (not o \el -> isMember el rhs) lhs) ++ (filter (not o \el -> isMember el lhs) rhs))
+
 
 // special cases
 complexSplit :: !Memory -> Memory

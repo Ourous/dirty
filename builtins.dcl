@@ -79,6 +79,9 @@ setFilter :: [Number] [Number] -> [Number]
 antiFilter :: [Number] [Number] -> [Number]
 groupMiddle :: [Number] -> [[Number]]
 dupesMiddle :: [Number] -> [Number]
+setIntersection :: [Number] [Number] -> [Number]
+setUnion :: [Number] [Number] -> [Number]
+setExclusion :: [Number] [Number] -> [Number]
 //powerset :: [Number] -> [[Number]]
 
 // special cases

@@ -159,20 +159,26 @@ splitOnNewlines arg
 // "set" operators
 fromLeftStepRight :: !Number !Number -> [Number]
 fromLeftStepRight lhs rhs = [lhs, lhs + rhs..]
-fromZeroToMiddle :: !Number -> [Number]
-fromZeroToMiddle arg
+fromOneToMiddle :: !Number -> [Number]
+fromOneToMiddle arg
+	| IS_CPLX arg
+		= [arg]
+	# unit = if(IS_IMAG arg) imagUnit id one
 	| arg < Zero
-		= [Zero, ~one..arg]
+		= [Zero - unit, Zero - unit - unit..arg]
 	| arg > Zero
-		= [Zero, one..arg]
+		= [unit, unit + unit..arg]
 	| otherwise
 		= [arg]
-fromMiddleAvoidZero :: !Number -> [Number]
-fromMiddleAvoidZero arg
-	| arg < Zero	
-		= [arg, dec arg..]
+fromMiddleToZero :: !Number -> [Number]
+fromMiddleToZero arg
+	| IS_CPLX arg
+		= [arg]
+	# unit = if(IS_IMAG arg) imagUnit id one
+	| arg < Zero
+		= [arg, arg + unit..Zero]
 	| arg > Zero
-		= [arg, inc arg..]
+		= [arg, arg - unit..Zero]
 	| otherwise
 		= [arg]
 fromLeftTimesRight :: !Number !Number -> [Number]

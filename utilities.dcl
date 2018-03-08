@@ -18,6 +18,19 @@ mergeDelims :: !Memory -> Memory
 
 //setWhenLast :: [Element] -> [Element]
 
+IS_IMAG num :== case num of
+	(Im _) = True
+	_ = False
+
+IS_REAL num :== case num of
+	(Re _) = True
+	Zero = True
+	_ = False
+	
+IS_CPLX num :== case num of
+	(Cx _) = True
+	_ = False
+
 SAFE_HEAD list
 	:== case list of
 		[] = []

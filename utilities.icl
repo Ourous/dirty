@@ -34,6 +34,31 @@ rotateList n list
 	| otherwise
 		= list
 		
-isLastDelim :: [Element] -> Bool
-isLastDelim [Delim cur:_] = cur
-isLastDelim [_:tail] = isLastDelim tail
+mergeDelims :: !Memory -> Memory
+mergeDelims memory
+	# ( cursor, reversed) = collapseDelims memory.cursor [] memory.main
+	# (delims, cursor, main) = expandDelims 0 cursor [] reversed
+	= {memory&cursor=cursor,delims=delims,main=main}
+where
+	collapseDelims cursor head [Delim hi: tail=:[Delim _: _]]
+		# (delimsGroup, others) = span (IS_DELIM) tail
+		# (Delim lo) = last delimsGroup
+		| (hi == cursor || any (\(Delim val) -> val == cursor) delimsGroup) || (hi >= cursor && cursor >= lo)
+			= collapseDelims lo [Delim lo:head] others
+		| otherwise
+			= collapseDelims cursor [Delim lo:head] others
+	//where
+	//	collectDelims [Delim _: tail=:[Delim _: _]] = collectDelims tail
+	//	collectDelims [Delim val: tail] = (val, tail)
+		
+	collapseDelims cursor head [h:tail]
+		= collapseDelims cursor [h:head] tail
+	collapseDelims cursor head []
+		= (cursor, head)
+
+	expandDelims delims cursor head [Delim val:tail]
+		= expandDelims (inc delims) (if(cursor==val) delims cursor) [Delim delims:head] tail
+	expandDelims delims cursor head [h:tail]
+		= expandDelims delims cursor [h:head] tail
+	expandDelims delims cursor head []
+		= (delims, cursor, head)

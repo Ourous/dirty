@@ -10,6 +10,8 @@ instance == StackID
 
 rotateList :: a u:[b] -> v:[b] | Enum a, [u <= v]
 
+mergeDelims :: !Memory -> Memory
+
 //isLastDelim :: [Element] -> Bool
 
 //setAllFalse :: [Element] -> [Element]
@@ -40,75 +42,28 @@ IS_DELIM element
 		(Delim _) = True
 		_ = False
 		
+IS_ELEM element
+	:== case element of
+		(El _) = True
+		_ = False
+		
 // :: ([Number] -> [Number]) -> (Element -> Element)
-APPLY_IF_ELEM func
+APPLY_ELEM func
 	:== \elem -> case elem of
 		(El arg) = (El (func arg))
 		else = else
 		
-// :: Element -> Bool
-ACTIVE_CURSOR element
-	:== case element of
-		(Delim cur) = cur
-		_ = False
+APPLY_DELIM func
+	:== \elem -> case elem of
+		(Delim arg) = (Delim (func arg))
+		else = else
 		
-DROP_IF_DELIM stack :== case stack of
-	[Delim _:tail] = tail
-	_ = stack
+DELIM_FUNC default func
+	:== \elem -> case elem of
+		(Delim val) = func val
+		_ = default
 		
-MERGE_DELIMS :== mergeDelims
-where
-	mergeDelims [] = []
-	mergeDelims [Delim False, Delim False:tail] = mergeDelims [Delim False:tail]
-	mergeDelims [Delim _, Delim _:tail] = mergeDelims [Delim True:tail]
-	mergeDelims [head:tail] = [head:mergeDelims tail]
-	
-ENSURE_ACTIVE :== ensureActive
-where
-	ensureActive main
-		| areAnyActive main
-			= ensureOneActive main
-		| otherwise
-			= SET_FIRST_DELIM main
-	areAnyActive [] = False
-	areAnyActive [Delim True:_] = True
-	areAnyActive [_:tail] = areAnyActive tail
-	ensureOneActive [] = []
-	ensureOneActive [Delim True:tail] = SET_ALL_FALSE tail
-	ensureOneActive [head:tail] = [head:ensureOneActive tail]
-
-// :: [Element] -> Bool
-IS_FIRST_DELIM :== isLastDelim
-where
-	isLastDelim [Delim cur:_] = cur
-	isLastDelim [_:tail] = isLastDelim tail
-		
-// :: [Element] -> [Element]
-SET_ALL_FALSE :== setAllFalse
-where
-	setAllFalse [] = []
-	setAllFalse [Delim _:tail] = [Delim False:setAllFalse tail]
-	setAllFalse [head:tail] = [head:setAllFalse tail]
-	
-// checks if the delimiter should move forward
-// :: [Element] -> [Element]
-SET_NEW_DELIM :== setNewDelim
-where
-	setNewDelim [Delim _:tail]
-		= [Delim True:SET_ALL_FALSE tail]
-	setNewDelim elements = let
-			(cur, tail) = setLastFalse elements
-		in [(Delim cur):tail]
-	setLastFalse [] = (True, [])
-	setLastFalse [Delim cur:tail] = (cur, [Delim False:tail])
-	setLastFalse [head:tail] = let
-			(cur, otherLast) = setLastFalse tail
-		in (cur, [head:otherLast])
-		
-SET_FIRST_DELIM :== setFirstDelim
-where
-	setFirstDelim [] = []
-	setFirstDelim [Delim _:tail] = [Delim True:SET_ALL_FALSE tail]
-	setFirstDelim [head:tail] = [head:setFirstDelim tail]
-	
-NEW_FIRST_DELIM :== (\e -> SET_FIRST_DELIM (SET_NEW_DELIM e))
+ELEM_FUNC default func
+	:== \elem -> case elem of
+		(El val) = func val
+		_ = default

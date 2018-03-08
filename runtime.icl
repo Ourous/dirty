@@ -7,7 +7,7 @@ import qualified Data.Generics.GenParse as GenParse
 
 instance toString Element where
 	toString (El val) = STACK_TO_STR val
-	toString (Delim cur) = if(cur) "!" "|"
+	toString (Delim cur) = "("<+cur<+")"
 
 unsafe :: !(*World -> *(.a, !*World)) -> .a
 unsafe fn = fst (fn newWorld)
@@ -38,12 +38,12 @@ evaluate :: ![String] *World -> *(Memory, *World)
 evaluate args world
 	| isEmpty args
 		# (Timestamp seed, world) = time world
-		= ({left=[],right=[],main=[El [],Delim True],random=genRandInt seed,note=NaN}, world)
+		= ({note=NaN,left=[],right=[],cursor=0,main=[El [],Delim 0],delims=1,random=genRandInt seed}, world)
 	| otherwise
 		# ((seed, world), args) = case (parseInt (hd args), world) of
 			(Just seed, world) = ((seed, world), tl args)
 			(Nothing, world) = ((\(Timestamp seed, world) -> (seed, world))(time world), args)
-		= ({left=[],right=[],main=parseArgs args++[Delim True],random=genRandInt seed,note=NaN}, world)
+		= ({note=NaN,left=[],right=[],cursor=0,main=parseArgs args++[Delim 0],delims=1,random=genRandInt seed}, world)
 where
 
 	parseArgs :: [String] -> [Element]
@@ -109,13 +109,13 @@ where
 			= world
 	
 	execute (state, memory=:{main=[]}, world)
-		= execute (state, {memory&main=[El[],Delim True]}, world)
+		= execute (state, {memory&main=[El[],Delim 0]}, world)
 	execute (state, memory=:{main=[El mid]}, world)
-		= execute (state, {memory&main=[El mid,Delim True]}, world)
+		= execute (state, {memory&main=[El mid,Delim 0]}, world)
 	execute (state, memory=:{main=[Delim _]}, world)
-		= execute (state, {memory&main=[El[],Delim True]}, world)
-	execute (state, memory=:{main=[Delim cur,head:tail]}, world)
-		= execute (state, {memory&main=ENSURE_ACTIVE[head:tail]}, world)
+		= execute (state, {memory&main=[El[],Delim 0]}, world)
+	execute (state, memory=:{main=[Delim val:tail], cursor, delims}, world)
+		= execute (state, {memory&main=tail,delims=dec delims,cursor=if(cursor==val)dec id cursor}, world)
 	
 	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y = let
@@ -290,8 +290,8 @@ where
 	process (Control (String)) = makeString
 	where
 		
-		makeString (state=:{direction, location}, memory=:{main}, world)
-			= (TRAVERSE_SOME (length content + 1) state, {memory&main=[El(map fromInt(utf8ToUnicode(toString content))):SET_NEW_DELIM main]}, world)
+		makeString (state=:{direction, location}, memory=:{main, delims}, world)
+			= (TRAVERSE_SOME (length content + 1) state, {memory&delims=inc delims,main=[El(map fromInt(utf8ToUnicode(toString content))), Delim delims: main]}, world)
 		where
 			
 			delta = case direction of
@@ -329,7 +329,7 @@ where
 				[El mid:base] = main
 				in (state, {memory&main=[El [val:mid]:base]}, world)
 				
-	process (Literal (Alphabet lettercase)) = app3 (id, \memory -> {memory&main=[El literal:SET_NEW_DELIM memory.main]}, id)
+	process (Literal (Alphabet lettercase)) = app3 (id, \memory -> {memory&delims=inc memory.delims,main=[El literal,Delim memory.delims: memory.main]}, id)
 	where
 	
 		literal :: [Number]
@@ -365,9 +365,9 @@ where
 	process (Operator (IO_ReadAll)) = readAll
 	where
 		
-		readAll (state, memory=:{main}, world)
+		readAll (state, memory=:{main, delims}, world)
 			# (str, world) = readLine world
-			= (state, {memory&main=[El str:SET_NEW_DELIM main]}, world)
+			= (state, {memory&delims=inc delims,main=[El str, Delim delims: main]}, world)
 			
 	process (Operator (IO_WriteOnce)) = writeOnce
 	where
@@ -420,24 +420,24 @@ where
 	where // productive
 		
 		binary :: !Bool !Bool !Memory -> Memory
-		binary _ _ memory=:{left=[lhs:_], right=[rhs:_]}
-			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-		binary False _ memory=:{left=[lhs:_], main=[El [top]:other], right=[]}
-			= {memory&main=[El(op lhs top):SET_NEW_DELIM other]}
-		binary False _ memory=:{left=[], main=[El [top]:other], right=[rhs:_]}
-			= {memory&main=[El(op top rhs):SET_NEW_DELIM other]}
-		binary False _ memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
-			= {memory&main=[El(op lhs top):SET_NEW_DELIM[El mid:other]]}
-		binary False _ memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
-			= {memory&main=[El(op top rhs):SET_NEW_DELIM[El mid:other]]}
-		binary False _ memory=:{left=[lhs,rhs:_], main=[El []:_], right=[]}
-			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-		binary False _ memory=:{left=[], main=[El []:_], right=[rhs,lhs:_]}
-			= {memory&main=[El(op lhs rhs):SET_NEW_DELIM memory.main]}
-		binary False True memory=:{left=[], main=[El [arg1,arg2]:other], right=[]}
-			= {memory&main=[El(op arg1 arg2):SET_NEW_DELIM other]}
-		binary False True memory=:{left=[], main=[El [arg1,arg2:mid]:other], right=[]}
-			= {memory&main=[El(op arg1 arg2):SET_NEW_DELIM[El mid:other]]}
+		binary _ _ memory=:{delims, left=[lhs:_], right=[rhs:_]}
+			= {memory&delims=inc delims,main=[El(op lhs rhs),Delim delims:memory.main]}
+		binary False _ memory=:{delims, left=[lhs:_], main=[El [top]:other], right=[]}
+			= {memory&delims=inc delims,main=[El(op lhs top),Delim delims: other]}
+		binary False _ memory=:{delims, left=[], main=[El [top]:other], right=[rhs:_]}
+			= {memory&delims=inc delims,main=[El(op top rhs),Delim delims: other]}
+		binary False _ memory=:{delims, left=[lhs:_], main=[El [top:mid]:other], right=[]}
+			= {memory&delims=inc delims,main=[El(op lhs top),Delim delims,El mid:other]}
+		binary False _ memory=:{delims, left=[], main=[El [top:mid]:other], right=[rhs:_]}
+			= {memory&delims=inc delims,main=[El(op top rhs),Delim delims,El mid:other]}
+		binary False _ memory=:{delims, left=[lhs,rhs:_], main=[El []:_], right=[]}
+			= {memory&delims=inc delims,main=[El(op lhs rhs),Delim delims: memory.main]}
+		binary False _ memory=:{delims, left=[], main=[El []:_], right=[rhs,lhs:_]}
+			= {memory&delims=inc delims,main=[El(op lhs rhs),Delim delims: memory.main]}
+		binary False True memory=:{delims, left=[], main=[El [arg1,arg2]:other], right=[]}
+			= {memory&delims=inc delims,main=[El(op arg1 arg2),Delim delims: other]}
+		binary False True memory=:{delims, left=[], main=[El [arg1,arg2:mid]:other], right=[]}
+			= {memory&delims=inc delims,main=[El(op arg1 arg2),Delim delims,El mid:other]}
 		binary _ _ memory = memory
 			
 	process (Operator (Binary_SN_N op)) = app3 (id, binary flags.strict, id)
@@ -489,14 +489,14 @@ where
 			= {memory&main=[El (op mid oth):other]}
 		binary False True memory=:{left=[], main=[El mid=:[_:_]:other], right=[]}
 			= {memory&main=[El (op mid []):other]}
-		binary False _ memory=:{left=[], main=[El []:_], right=[]}
-			= {memory&main=[El (op [] []):SET_NEW_DELIM memory.main]}
+		binary False _ memory=:{delims, left=[], main=[El []:_], right=[]}
+			= {memory&delims=inc delims,main=[El (op [] []),Delim delims: memory.main]}
 		binary False _ memory=:{left=[], main=[El mid=:[_:_]:other], right}
 			= {memory&main=[El (op mid right):other]}
 		binary False _ memory=:{left, main=[El mid=:[_:_]:other], right=[]}
 			= {memory&main=[El (op left mid):other]}
-		binary _ _ memory=:{left, main, right}
-			= {memory&main=[El (op left right):SET_NEW_DELIM main]}
+		binary _ _ memory=:{delims, left, main, right}
+			= {memory&delims=inc delims,main=[El (op left right),Delim delims: main]}
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where
@@ -510,10 +510,10 @@ where
 	where
 		
 		unary :: !Memory -> Memory
-		unary memory=:{main=[El [arg]:other]}
-			= {memory&main=[El (op arg):SET_NEW_DELIM other]}
-		unary memory=:{main=[El [arg:mid]:other]}
-			= {memory&main=[El (op arg):SET_NEW_DELIM [El mid:other]]}
+		unary memory=:{delims, main=[El [arg]:other]}
+			= {memory&delims=inc delims,main=[El (op arg),Delim delims: other]}
+		unary memory=:{delims, main=[El [arg:mid]:other]}
+			= {memory&delims=inc delims,main=[El (op arg),Delim delims,El mid:other]}
 		unary memory = memory
 		
 	process (Operator (Unary_S_N op)) = app3 (id, unary, id)
@@ -536,8 +536,8 @@ where
 	where
 		
 		unary :: !Memory -> Memory
-		unary memory=:{main=[El mid:other]}
-			= {memory&main=(map (\e -> (El e)) (op mid)) ++ SET_NEW_DELIM other}
+		unary memory=:{cursor, delims, main=[El mid:other]}
+			= {memory&cursor=delims,delims=inc delims,main=(map (\e -> (El e)) (op mid)) ++ [Delim delims: other]}
 		
 				
 	process (Operator (Unary_M_M op)) = app3 (id, op, id)

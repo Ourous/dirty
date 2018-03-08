@@ -215,7 +215,7 @@ z // conjugate
 ⭩ // move top of right to mid
 ⭲ // copy top of left to right
 ⭰ // copy top of right to left
-⭱ // copy top of mid
+⭱ OR ⤒ // copy top of mid
 ⭶ // copy top of mid to left
 ⭷ // copy top of mid to right
 ⭸ // copy top of left to mid

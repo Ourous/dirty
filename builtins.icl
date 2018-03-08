@@ -188,10 +188,10 @@ setFilter :: [Number] [Number] -> [Number]
 setFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | toBool cond]
 antiFilter :: [Number] [Number] -> [Number]
 antiFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | (not o toBool) cond]
-groupMiddle :: [Number] -> [[Number]]
-groupMiddle arg = group arg
 dupesMiddle :: [Number] -> [Number]
 dupesMiddle arg = [el \\ el <- arg | sum [1 \\ e <- arg | e == el] > 1]
+groupMiddle :: [Number] -> [[Number]]
+groupMiddle arg = group arg
 setIntersection :: [Number] [Number] -> [Number]
 setIntersection lhs rhs = removeDup (filter (\el -> isMember el rhs) lhs)
 setUnion :: [Number] [Number] -> [Number]
@@ -205,57 +205,57 @@ complexSplit :: !Memory -> Memory
 complexSplit memory=:{left, right, main=[El [top:mid]:other]}
 	= {memory&left=[justReal top:left],right=[justImag top:left],main=[El mid:other]}
 complexSplit memory = memory
-matrixProduct :: !Memory -> Memory
-matrixProduct memory=:{left, right} = let
+matrixProduct :: !Memory -> Memory // returns multiple
+matrixProduct memory=:{cursor, delims, left, right, main} = let
 		matrix = [El [lhs * rhs \\ rhs <- right] \\ lhs <- left]
-	in {memory&main=matrix++SET_NEW_DELIM memory.main}
+	in {memory&cursor=delims,delims=inc delims,main=matrix++[Delim delims:memory.main]}
 joinWithNewlines :: !Memory -> Memory
-joinWithNewlines memory=:{main}
-	# (base, other) = span (not o ACTIVE_CURSOR) main
+joinWithNewlines memory=:{cursor, main}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
 		safeBase = [el \\ (El el) <- base]
 		joined = foldl (\a b -> a ++ [fromInt 10] ++ b) [] safeBase
 	in {memory&main=[El joined:other]}
 stacksFromCursor :: !Memory -> Memory
-stacksFromCursor memory=:{main=[El mid:other]} = let
-		base = takeWhile (not o ACTIVE_CURSOR) memory.main
+stacksFromCursor memory=:{cursor,main=[El mid:other]} = let
+		base = takeWhile (DELIM_FUNC True ((<>)cursor)) memory.main
 		stacks = sum [1 \\ (El _) <- base]
 	in {memory&main=[El[fromInt stacks:mid]:other]}
 transposeFromCursor :: !Memory -> Memory
-transposeFromCursor memory=:{main}
-	# (base, other) = span (not o ACTIVE_CURSOR) main
+transposeFromCursor memory=:{cursor,main}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
 		safeBase = [el \\ (El el) <- base]
 		transposed = [(El el) \\ el <- transpose safeBase]
 	in {memory&main=transposed ++ other}
 stackJoin :: !Memory -> Memory
-stackJoin memory=:{main}
-	# (base, other) = span (not o ACTIVE_CURSOR) main
+stackJoin memory=:{cursor,main}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
 		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) base
 		flattened = [El (flatten [el \\ (El el) <- part]) \\ part <- grouped | case part of [Delim _] = False; _ = True]
 	in {memory&main=flattened ++ other}
 stackUnjoin :: !Memory -> Memory
-stackUnjoin memory=:{main=[El mid:other]} = let
+stackUnjoin memory=:{cursor,delims,main=[El mid:other]} = let
 		singles = [El [el] \\ el <- mid]
-	in {memory&main=(if(isEmpty singles) [El []] singles) ++ SET_NEW_DELIM other}
+	in {memory&cursor=delims,delims=inc delims,main=(if(isEmpty singles) [El []] singles) ++ [Delim delims:other]}
 removeDupBase :: !Memory -> Memory
-removeDupBase memory=:{main}
-	# (base, other) = span (not o ACTIVE_CURSOR) main
+removeDupBase memory=:{cursor,main}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let 
 		safeBase = [el \\ (El el) <- base]
 		deduped = [El el \\ el <- removeDup safeBase]
 	in {memory&main=deduped ++ other}
 repeatTopMiddle :: !Memory -> Memory
 repeatTopMiddle memory=:{main=[El []:_]} = memory
-repeatTopMiddle memory=:{main=[El [top:mid]:other]}
-	= {memory&main=[El(repeat top):SET_NEW_DELIM[El mid:other]]}
+repeatTopMiddle memory=:{delims,main=[El [top:mid]:other]}
+	= {memory&delims=inc delims,main=[El(repeat top),Delim delims,El mid:other]}
 repeatFullMiddle :: !Memory -> Memory
-repeatFullMiddle memory=:{main=[El mid:other]}
-	= {memory&main=(repeat (El mid))++SET_NEW_DELIM other}
+repeatFullMiddle memory=:{cursor, delims, main=[El mid:other]}
+	= {memory&cursor=delims,delims=inc delims,main=(repeat (El mid))++[Delim delims:other]}
 sortBaseline :: !Memory -> Memory
-sortBaseline memory=:{main}
-	# (base, other) = span (not o ACTIVE_CURSOR) main
+sortBaseline memory=:{cursor,main}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
 		safeBase = [el \\ (El el) <- base]
 		sorted = [El el \\ el <- sort safeBase]
@@ -271,8 +271,8 @@ stackReverse Middle memory=:{main=[El mid:other]}
 	= {memory&main=[El (reverse mid):other]}
 stackReverse Both memory=:{left, right}
 	= {memory&left=reverse left, right=reverse right}
-stackReverse Primary memory=:{main}
-	# (base, other) = span (not o ACTIVE_CURSOR) main
+stackReverse Primary memory=:{cursor,main}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= {memory&main=reverseEach base ++ other}
 where
 	reverseEach [] = []
@@ -280,8 +280,8 @@ where
 		= [El (reverse head):reverseEach tail]
 	reverseEach [head:tail]
 		= [head:reverseEach tail]
-stackReverse Base memory=:{main}
-	# (base, other) = span (not o ACTIVE_CURSOR) main
+stackReverse Base memory=:{cursor,main}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= {memory&main=reverse base ++ other}
 		
 stackRotate :: !StackID !Memory -> Memory
@@ -298,11 +298,11 @@ stackRotate Middle memory=:{main=[El [top:mid]:other]}
 	in {memory&main=[El(rotate mid):other]}
 stackRotate Primary memory=:{main=[El [top:mid]:other]}
 	= let rotate = rotateList (toInt top)
-	in {memory&main=[El(rotate mid):map(APPLY_IF_ELEM rotate)other]}
-stackRotate Base memory=:{main=[El [top:mid]:other]}
-	# (base, other) = span (not o ACTIVE_CURSOR) [El mid:other]
+	in {memory&main=[El(rotate mid):map(APPLY_ELEM rotate)other]}
+stackRotate Base memory=:{cursor,main=[El [top:mid]:other]}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) [El mid:other]
 	= let rotate = rotateList (toInt top)
-	in {memory&main=MERGE_DELIMS(rotate base ++ other)}
+	in mergeDelims {memory&main=rotate base ++ other}
 
 stackDelete :: !StackID !Memory -> Memory
 stackDelete Left memory = {memory&left=[]}
@@ -310,9 +310,9 @@ stackDelete Right memory = {memory&right=[]}
 stackDelete Middle memory=:{main=[El mid:other]}
 	= {memory&main=other}
 stackDelete Both memory = {memory&left=[],right=[]}
-stackDelete Base memory=:{main}
-	# (base, other) = span (not o ACTIVE_CURSOR) main
-	= {memory&main=SET_FIRST_DELIM (SAFE_TAIL other)}
+stackDelete Base memory=:{cursor,main}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
+	= mergeDelims {memory&main=other}
 stackDelete Main memory = {memory&main=[]}
 stackDelete All memory = {memory&left=[],right=[],main=[]}
 
@@ -334,12 +334,12 @@ stackDrop Both memory=:{left, right, main=[El [top:mid]:other]} = let
 		val = toInt top
 		fn = if(val<=0) (take(~val)) (drop val)
 	in {memory&left=fn left,right=fn right,main=[El mid:other]}
-stackDrop Base memory=:{main=[El [top:mid]:other]}
-	# (base, other) = span (not o ACTIVE_CURSOR) [El mid:other]
+stackDrop Base memory=:{cursor,main=[El [top:mid]:other]}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) [El mid:other]
 	= let
 		val = toInt top
 		fn = if(val<=0) (take(~val)) (drop val)
-	in {memory&main=MERGE_DELIMS(fn base ++ other)}
+	in mergeDelims {memory&main=fn base ++ other}
 	
 cycleTops :: !Rotation !Memory -> Memory
 cycleTops Clockwise memory=:{left, main=[El mid:other], right}
@@ -428,71 +428,60 @@ moveAll NorthWest memory=:{left, main=[El mid:other]}
 	= {memory&left=mid++left,main=other}
 moveAll NorthEast memory=:{right, main=[El mid:other]}
 	= {memory&right=mid++right,main=other}
-moveAll SouthWest memory=:{right, main}
-	= {memory&right=[],main=[El right:SET_NEW_DELIM main]}
-moveAll SouthEast memory=:{left, main}
-	= {memory&left=[],main=[El left:SET_NEW_DELIM main]}
+moveAll SouthWest memory=:{delims, right, main}
+	= {memory&delims=inc delims,right=[],main=[El right,Delim delims: main]}
+moveAll SouthEast memory=:{delims, left, main}
+	= {memory&delims=inc delims,left=[],main=[El left, Delim delims: main]}
 	
 replicateBase :: !Memory -> Memory
-replicateBase memory=:{main}
-	# (base, other) = span (not o ACTIVE_CURSOR) main
-	= {memory&main=base++NEW_FIRST_DELIM main}
+replicateBase memory=:{cursor,main}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
+	= mergeDelims {memory&cursor= -1,main=base++[Delim -1: main]} // do not touch, this is magic
 	
 replicateMiddle :: !Memory -> Memory
-replicateMiddle memory=:{main=[El mid:other]}
-	= {memory&main=[El mid:SET_NEW_DELIM[El mid:other]]}
+replicateMiddle memory=:{delims,main=[El mid:other]}
+	= {memory&delims=inc delims,main=[El mid,Delim delims,El mid:other]}
 	
 replicateTop :: !Memory -> Memory
-replicateTop memory=:{main=[El mid:other]}
-	= {memory&main=[El(SAFE_HEAD mid):SET_NEW_DELIM[El mid:other]]}
+replicateTop memory=:{delims,main=[El mid:other]}
+	= {memory&delims=inc delims,main=[El(SAFE_HEAD mid),Delim delims,El mid:other]}
 	
 dupesBase :: !Memory -> Memory
-dupesBase memory=:{main}
-	# (base, other) = span (not o ACTIVE_CURSOR) main
+dupesBase memory=:{cursor,main}
+	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
 		safeBase = [el \\ (El el) <- base]
 		deduplicated = [El el \\ el <- safeBase | sum [1 \\ e <- safeBase | e == el] > 1]
 	in {memory&main=deduplicated ++ other}
 	
 shiftCursorDownwards :: !Memory -> Memory
-shiftCursorDownwards memory=:{main}
-	# (base, [cur:other]) = span (not o ACTIVE_CURSOR) main
-	| isEmpty other
-		= memory
-	| otherwise
-		= {memory&main=base ++ [Delim False:SET_FIRST_DELIM other]}
+shiftCursorDownwards memory=:{cursor=0, delims} = {memory&cursor=dec delims}
+shiftCursorDownwards memory=:{cursor} = {memory&cursor=dec cursor}
 		
 shiftCursorUpwards :: !Memory -> Memory
-shiftCursorUpwards memory=:{main}
-	# (base, [cur:other]) = span (not o ACTIVE_CURSOR) main
-	| any IS_DELIM base
-		= {memory&main=setLastDelim base ++ [Delim False:other]}
+shiftCursorUpwards memory=:{cursor, delims}
+	| inc cursor == delims
+		= {memory&cursor=0}
 	| otherwise
-		= {memory&main=[hd base:SET_NEW_DELIM(tl base)]++[Delim False:other]}
-where
-	setLastDelim [] = []
-	setLastDelim [Delim False:tail]
-		| any IS_DELIM tail
-			= [Delim False:setLastDelim tail]
-		| otherwise
-			= [Delim True:tail]
-	setLastDelim [head:tail] = [head:setLastDelim tail]
+		= {memory&cursor=inc cursor}
 	
 moveCursorForwards :: !Memory -> Memory
-moveCursorForwards memory=:{main}
-	# (base, [cur:other]) = span (not o ACTIVE_CURSOR) main
+moveCursorForwards memory=:{delims,cursor,main}
+	# (base, [cur:other]) = span (DELIM_FUNC True ((<>)cursor)) main
 	| isEmpty other
-		= {memory&main=MERGE_DELIMS(init base ++ [Delim True, last base, Delim False])}
+		= mergeDelims {memory&cursor= -1,main=init base ++ [Delim -1, last base, Delim 0]}
+		//= mergeDelims {memory&cursor=1,delims=inc delims,main=(map (APPLY_DELIM inc) (init base)) ++ [Delim -1, last base, Delim 0]}
 	| otherwise
-		= {memory&main=MERGE_DELIMS(init base ++ [Delim True, last base:other])}
+		= mergeDelims {memory&main=(init base ++ [cur, last base:other])}
 	
 moveCursorBackwards :: !Memory -> Memory
-moveCursorBackwards memory=:{main}
-	# (base, [cur:other]) = span (not o ACTIVE_CURSOR) main
+moveCursorBackwards memory=:{delims,cursor,main}
+	# (base, [cur:other]) = span (DELIM_FUNC True ((<>)cursor)) main
 	| isEmpty other
-		= memory//{memory&main=MERGE_DELIMS(init base ++ [Delim True, last base, Delim False])}
+		= mergeDelims {memory&cursor= -1,main=[hd main,Delim -1:tl main]}
+		//= mergeDelims {memory&cursor=delims,delims=inc delims,main=[hd main,Delim delims:tl main]}
 	| otherwise
-		= {memory&main=MERGE_DELIMS(base ++ [hd other, Delim True:tl other])}
+		= mergeDelims {memory&main=(base ++ [hd other, cur:tl other])}
 		
 remember :: !Memory -> Memory
 remember memory=:{main=[El [top:mid]:other]}

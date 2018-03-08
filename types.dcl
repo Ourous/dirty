@@ -26,16 +26,18 @@ import StdMaybe
 
 :: Memory
 	= {
+		note :: !Number,
 		left :: [Number],
 		right :: [Number],
+		cursor :: !Int,
 		main :: [Element],
-		note :: !Number,
+		delims :: !Int,
 		random :: ![Int]
 	}
 	
 :: Element
 	= El [Number]
-	| Delim Bool // "is active"
+	| Delim !Int // "is active"
 	
 :: Flags
 	= {

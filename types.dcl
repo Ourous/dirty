@@ -80,6 +80,7 @@ import StdMaybe
 	| Operator OperatorCommand
 	| Stack StackCommand
 	| Environment (*(Memory, *World) -> *(Memory, *World))
+	| PlaceHolder
 	
 :: ControlCommand
 	= Terminate

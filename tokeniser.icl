@@ -163,7 +163,7 @@ unicodeCharset =
 	,[8877]
 	,[8745]
 	,[8746]
-	,[8705]
+	,[1156]
 	,[8712]
 	,[8949]
 	,[8918]
@@ -236,10 +236,10 @@ unicodeCharset =
 	,[11129]
 	,[11134]
 	,[11135]
-	,[11152]
 	,[11153]
-	,[11154]
 	,[11155]
+	,[8849]
+	,[8852]
 	,[7885]
 	,[8470]
 	,[574]
@@ -425,9 +425,9 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Unary_N_N (bitNOT)))//(Operator (Bitwise_Not))
 	,(Operator (Unary_N_N (logicEquiv)))//(Operator (Logic_Coalesce))
 	,(Operator (Unary_N_N (logicNegate)))//(Operator (Logic_Negation))
-	,(Operator (Binary_SS_S True (setIntersection)))//(Operator (Set_Intersection))
+	,(Operator (Binary_SS_S True (setExclusion)))//(Operator (Set_Intersection))
 	,(Operator (Binary_SS_S True (setUnion)))//(Operator (Set_Union))
-	,(Operator (Binary_SS_S True (setExclusion)))//(Operator (Set_Exclusion))
+	,(PlaceHolder)//(Operator (Set_Exclusion))
 	,(Operator (Binary_NS_N (isElementOf)))//(Operator (Logic_ElementOf))
 	,(Operator (Binary_SS_S False (vectorElementOf)))//(Operator (Vector_ElementOf))
 	,(Operator (Binary_SS_S False (vectorLessThan)))//(Operator (Vector_LessThan))
@@ -500,10 +500,10 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Unary_M_M (copyTop SouthWest)))
 	,(Operator (Unary_M_M (copyBoth Horizontal)))//(Stack (CopyBoth Horizontal))
 	,(Operator (Unary_M_M (copyBoth Vertical)))//(Stack (CopyBoth Vertical))
-	,(Operator (Unary_M_M (cycleStacks Clockwise)))//(Stack (CycleFull Clockwise))
 	,(Operator (Unary_M_M (cycleStacks Anticlockwise)))//(Stack (CycleFull Anticlockwise))
-	,(Operator (Unary_M_M (cycleTops Clockwise)))//(Stack (CycleTops Clockwise))
 	,(Operator (Unary_M_M (cycleTops Anticlockwise)))//(Stack (CycleTops Anticlockwise))
+	,(PlaceHolder)
+	,(PlaceHolder)
 	,(Operator (Unary_M_M (sortBaseline)))
 	,(Operator (Unary_M_M (stacksFromCursor)))//(Operator (Set_Length))
 	,(Operator (Unary_M_M (transposeFromCursor)))

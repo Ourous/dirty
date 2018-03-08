@@ -148,8 +148,8 @@ z // conjugate
 ⊨ // coalesce to truthy/falsey
 ⊭ // logical negation
 ∩ // intersection
-∪ // union
-∁ // exclusion
+∪ // exclusion
+∁ // go-to-end (symbol is placeholder)
 ∈ // element of
 ⋵ // vectorized element-of
 ⋖ // vectorized less-than
@@ -222,10 +222,10 @@ z // conjugate
 ⭹ // copy top of right to mid
 ⭾ // copy top of left and right to eachother
 ⭿ // copy top and bottom of mid to eachother
-⮐ // rotate stacks clockwise
 ⮑ // rotate stacks counterclockwise
-⮒ // rotate tops of stacks clockwise
 ⮓ // rotate tops of stacks counterclockwise
+⊑ // how many contiguous subsets are in.. (returns -1 if equal)
+⊔ // split on contiguous subsets
 ọ // sort the baseline
 № // number of stacks from the cursor upwards
 Ⱦ // transpose from cursor upwards

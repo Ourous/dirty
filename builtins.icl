@@ -244,7 +244,7 @@ stackJoin memory=:{cursor,main}
 stackUnjoin :: !Memory -> Memory
 stackUnjoin memory=:{cursor,delims,main=[El mid:other]} = let
 		singles = [El [el] \\ el <- mid]
-	in {memory&cursor=delims,delims=inc delims,main=(if(isEmpty singles) [El []] singles) ++ [Delim delims:other]}
+	in mergeDelims {memory&cursor=delims,delims=inc delims,main=(if(isEmpty singles) [El []] singles) ++ [Delim delims:other]}
 removeDupBase :: !Memory -> Memory
 removeDupBase memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
@@ -257,8 +257,9 @@ repeatTopMiddle memory=:{main=[El []:_]} = memory
 repeatTopMiddle memory=:{delims,main=[El [top:mid]:other]}
 	= {memory&delims=inc delims,main=[El(repeat top),Delim delims,El mid:other]}
 repeatFullMiddle :: !Memory -> Memory
-repeatFullMiddle memory=:{cursor, delims, main=[El mid:other]}
-	= {memory&cursor=delims,delims=inc delims,main=(repeat (El mid))++[Delim delims:other]}
+repeatFullMiddle memory=:{cursor, delims, main=[El mid:other]} // handle the infinite-ness
+	# memory = mergeDelims {memory&cursor=delims,delims=inc delims,main=[El mid,Delim delims:other]}
+	= {memory&main=(repeat (El mid))++memory.main}
 sortBaseline :: !Memory -> Memory
 sortBaseline memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main

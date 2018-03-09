@@ -288,7 +288,7 @@ where
 		= [head:reverseEach tail]
 stackReverse Base memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
-	= {memory&main=reverse base ++ other}
+	= mergeDelims {memory&main=reverse base ++ other}
 		
 stackRotate :: !StackID !Memory -> Memory
 stackRotate _ memory=:{main=[El []:_]} = memory

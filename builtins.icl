@@ -326,25 +326,25 @@ stackDrop :: !StackID !Memory -> Memory
 stackDrop _ memory=:{main=[El []:_]} = memory
 stackDrop Left memory=:{left, main=[El [top:mid]:other]} = let
 		val = toInt top
-		fn = if(val<=0) (take(~val)) (drop val)
+		fn = if(val<0) (take(~val)) (drop val)
 	in {memory&left=fn left,main=[El mid:other]}
 stackDrop Right memory=:{right, main=[El [top:mid]:other]} = let
 		val = toInt top
-		fn = if(val<=0) (take(~val)) (drop val)
+		fn = if(val<0) (take(~val)) (drop val)
 	in {memory&right=fn right,main=[El mid:other]}
 stackDrop Middle memory=:{main=[El [top:mid]:other]} = let
 		val = toInt top
-		fn = if(val<=0) (take(~val)) (drop val)
+		fn = if(val<0) (take(~val)) (drop val)
 	in {memory&main=[El(fn mid):other]}
 stackDrop Both memory=:{left, right, main=[El [top:mid]:other]} = let
 		val = toInt top
-		fn = if(val<=0) (take(~val)) (drop val)
+		fn = if(val<0) (take(~val)) (drop val)
 	in {memory&left=fn left,right=fn right,main=[El mid:other]}
 stackDrop Base memory=:{cursor,main=[El [top:mid]:other]}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) [El mid:other]
 	= let
 		val = toInt top
-		fn = if(val<=0) (take(~val)) (drop val)
+		fn = if(val<0) (take(~val)) (drop val)
 	in mergeDelims {memory&main=fn base ++ other}
 	
 cycleTops :: !Rotation !Memory -> Memory

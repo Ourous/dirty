@@ -537,7 +537,7 @@ where
 		
 		unary :: !Memory -> Memory
 		unary memory=:{cursor, delims, main=[El mid:other]}
-			= {memory&cursor=delims,delims=inc delims,main=(map (\e -> (El e)) (op mid)) ++ [Delim delims: other]}
+			= mergeDelims {memory&cursor=delims,delims=inc delims,main=(map (\e -> (El e)) (op mid)) ++ [Delim delims: other]}
 		
 				
 	process (Operator (Unary_M_M op)) = app3 (id, op, id)

@@ -131,7 +131,7 @@ where
 	
 	writeChar :: !Number -> (IO ())
 	
-	writeChar char = putStr (if(flags.nums) (toString char) (unicodeToUTF8 [toInt char]))
+	writeChar char = putStr (if(flags.nums) (char<+"\n") (unicodeToUTF8 [toInt char]))
 	
 	readLine :: (*World -> ([Number], *World))
 	readLine => app2 (map fromInt o utf8ToUnicode, id) o evalIO getLine

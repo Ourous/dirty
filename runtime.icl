@@ -264,7 +264,7 @@ where
 	where
 		
 		loop (state=:{direction}, memory=:{left}, world)
-			| direction == dir && TO_BOOL left
+			| direction == dir && left > []
 				= ({state&location=loc}, {memory&left=SAFE_TAIL left}, world)
 			| otherwise
 				= (state, {memory&left=SAFE_TAIL left}, world)
@@ -273,7 +273,7 @@ where
 	where
 		
 		loop (state=:{direction}, memory=:{right}, world)
-			| direction == dir && TO_BOOL right
+			| direction == dir && right > []
 				= ({state&location=loc}, {memory&right=SAFE_TAIL right}, world)
 			| otherwise
 				= (state, {memory&right=SAFE_TAIL right}, world)

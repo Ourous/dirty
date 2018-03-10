@@ -2,16 +2,16 @@ implementation module tokeniser
 
 import types, arithmetic, builtins, unicode, StdEnv, StdLib, environment
 
-unicodeToNative :: Int -> Char
+unicodeToNative :: !Int -> Char
 unicodeToNative char
-	# index = findIndex (\e -> any ((==) char) e) unicodeCharset
+	#! index = findIndex (\e -> any ((==) char) e) unicodeCharset
 	| isNothing index
 		= abort "No corresponding native character!"
 	| otherwise
 		= toChar (fromJust index)
 		
 unicodeCharset :: [[Int]]
-unicodeCharset =
+unicodeCharset =:
 	[[8680]
 	,[8678]
 	,[8679]
@@ -270,7 +270,7 @@ unicodeCharset =
 	,[7719]
 	]
 	
-toCommand :: Char -> Command
+toCommand :: !Char -> Command
 toCommand char
 	= commandMapping !! (toInt char)
 

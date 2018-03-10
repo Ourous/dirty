@@ -11,8 +11,8 @@ import StdMaybe
 :: Program
 	= {
 		dimension :: !XYPair,
-		source :: !{{#Char}},
-		commands :: !{{Command}},
+		source :: !{!{#Char}},
+		commands :: !{!{!Command}},
 		wrapping :: !Bool
 	}	
 	

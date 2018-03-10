@@ -67,16 +67,16 @@ where
 				= abort "Invalid memory arguments!"
 
 	parseInt :: (String -> (Maybe Int))
-	parseInt = 'GenParse'.parseString
+	parseInt => 'GenParse'.parseString
 	
 	parseString :: (String -> (Maybe String))
-	parseString = 'GenParse'.parseString
+	parseString => 'GenParse'.parseString
 	
 	parseInts :: (String -> (Maybe [Int]))
-	parseInts = 'GenParse'.parseString
+	parseInts => 'GenParse'.parseString
 	
 	parseReals :: (String -> (Maybe [Real]))
-	parseReals = 'GenParse'.parseString
+	parseReals => 'GenParse'.parseString
 
 initialize :: !Program ![String] *World -> *(State, Memory, *World)
 initialize program=:{commands} args world
@@ -93,14 +93,14 @@ initialize program=:{commands} args world
 	| otherwise
 		= ({direction=dir, location=loc, history='\n', terminate=False}, {memory&random=random}, world)
 where
-	annotated = [(orn, {x=x, y=y}) \\ y <- [0..] & line <-: commands, x <- [0..] & (Control (Start orn)) <-: line]
+	annotated => [(orn, {x=x, y=y}) \\ y <- [0..] & line <-: commands, x <- [0..] & (Control (Start orn)) <-: line]
 
 
-construct :: !Program !Flags -> (*(!State, Memory, *World) -> *World)
+construct :: !Program !Flags -> (*(State, Memory, *World) -> *World)
 construct program=:{dimension, source, commands, wrapping} flags = execute
 where
 
-	execute :: !*(!State, Memory, *World) -> *World
+	execute :: *(!State, !Memory, !*World) -> *World
 	
 	execute (state=:{terminate=True}, memory, world)
 		| flags.dump
@@ -160,13 +160,13 @@ where
 			# (chr, world) = evalIO getChar world
 			= (str <+ chr, world)
 
-	process :: !Command -> (*(State, Memory, *World) -> *(State, Memory, *World))
+	process :: !Command -> (*(!State, !Memory, !*World) -> *(State, Memory, *World))
 	
 	process (Control (Terminate)) = app3 (\state -> {state&terminate=True}, id, id)
 		
-	process (Control (NOOP)) => id
+	process (Control (NOOP)) = id
 		
-	process (Control (Start _)) => id
+	process (Control (Start _)) = id
 		
 	process (Control (Change dir)) = app3(\state -> {state&direction=dir}, id, id)
 	
@@ -192,7 +192,7 @@ where
 				(NorthWest, North) = {state&location={x=x-1,y=y}}
 				(NorthWest, West) = {state&location={x=x,y=y-1}}
 	
-	process (Control (Either axes)) => either
+	process (Control (Either axes)) = either
 	where
 	
 		either (state, memory=:{random=[rng:random]}, world) = let
@@ -201,7 +201,7 @@ where
 				Vertical = if(isEven rng) North South
 		in ({state&direction=newDirection}, {memory&random=random}, world)
 		
-	process (Control (Mirror cond axes)) => mirror
+	process (Control (Mirror cond axes)) = mirror
 	where
 		
 		mirror (state=:{direction}, memory=:{main=[El mid:other]}, world)
@@ -236,7 +236,7 @@ where
 			(Vertical, South) = False
 			_ = True
 		
-	process (Control (Skip cond)) => skip
+	process (Control (Skip cond)) = skip
 	where
 		
 		skip (state, memory=:{main=[El mid:other]}, world)
@@ -260,34 +260,34 @@ where
 				(South, Anticlockwise) = East
 		in {state&direction=dir}
 	
-	process (Control (Loop Left dir (Just loc))) => loop
+	process (Control (Loop Left dir (Just loc))) = loop
 	where
-		
+		loop :: *(!State, !Memory, !*World) -> *(State, Memory, *World)
 		loop (state=:{direction}, memory=:{left}, world)
 			| direction == dir && left <> []
 				= ({state&location=loc}, {memory&left=SAFE_TAIL left}, world)
 			| otherwise
 				= (state, {memory&left=SAFE_TAIL left}, world)
 		
-	process (Control (Loop Right dir (Just loc))) => loop
+	process (Control (Loop Right dir (Just loc))) = loop
 	where
-
+		loop :: *(!State, !Memory, !*World) -> *(State, Memory, *World)
 		loop (state=:{direction}, memory=:{right}, world)
 			| direction == dir && right <> []
 				= ({state&location=loc}, {memory&right=SAFE_TAIL right}, world)
 			| otherwise
 				= (state, {memory&right=SAFE_TAIL right}, world)
 	
-	process (Control (Goto dir (Just loc))) => goto
+	process (Control (Goto dir (Just loc))) = goto
 	where
-	
+		goto :: *(!State, !Memory, !*World) -> *(State, Memory, *World)
 		goto (state=:{direction}, memory=:{main=[El mid:other]}, world)
 			| direction == dir && TO_BOOL mid
 				= ({state&location=loc}, memory, world)
 			| otherwise
 				= (state, memory, world)
 				
-	process (Control (String)) => makeString
+	process (Control (String)) = makeString
 	where
 		
 		makeString (state=:{direction, location}, memory=:{main, delims}, world)
@@ -315,10 +315,10 @@ where
 
 	process (Literal (Quote)) = app3 (id, \memory=:{main=[El mid:other]} -> {memory&main=[El[fromInt(toInt'\''):mid]:other]}, id)
 
-	process (Literal (Digit val)) => literal
+	process (Literal (Digit val)) = literal
 	where
 	
-		literal :: !*(!State, Memory, *World) -> *(State, Memory, *World)
+		literal :: *(!State, !Memory, !*World) -> *(State, Memory, *World)
 		
 		literal (state=:{history}, memory=:{main}, world)
 			| isDigit history = let
@@ -345,14 +345,14 @@ where
 		rand memory=:{main=[El mid:other], random=[rng:random]}
 			= {memory&main=[El[fromInt rng:mid]:other],random=random}
 			
-	process (Environment env) => environment
+	process (Environment env) = environment
 	where
 	
 		environment (state, memory, world)
 			# (memory, world) = env (memory, world)
 			= (state, memory, world)
 				
-	process (Operator (IO_WriteAll)) => writeAll
+	process (Operator (IO_WriteAll)) = writeAll
 	where
 		
 		writeAll (state, memory=:{main=[El[]:other]}, world)
@@ -362,14 +362,14 @@ where
 			# world = execIO (writeLine mid) world
 			= (state, {memory&main=other}, world)
 			
-	process (Operator (IO_ReadAll)) => readAll
+	process (Operator (IO_ReadAll)) = readAll
 	where
 		
 		readAll (state, memory=:{main, delims}, world)
 			# (str, world) = readLine world
 			= (state, {memory&delims=inc delims,main=[El str, Delim delims: main]}, world)
 			
-	process (Operator (IO_WriteOnce)) => writeOnce
+	process (Operator (IO_WriteOnce)) = writeOnce
 	where
 	
 		writeOnce (state, memory=:{main=[El[]:_]}, world)
@@ -379,14 +379,14 @@ where
 			# world = execIO (writeChar top) world
 			= (state, {memory&main=[El mid:other]}, world)
 			
-	process (Operator (IO_ReadOnce)) => readOnce
+	process (Operator (IO_ReadOnce)) = readOnce
 	where
 	
 		readOnce (state, memory=:{main=[El mid:other]}, world)
 			# (chr, world) = readChar world
 			= (state, {memory&main=[El[chr:mid]:other]}, world)
 			
-	process (Operator (IO_Interrobang)) => interrobang
+	process (Operator (IO_Interrobang)) = interrobang
 	where
 	
 		interrobang (state, memory=:{main=[El []:other]}, world)
@@ -422,10 +422,10 @@ where
 		binary :: !Bool !Bool Memory -> Memory
 		binary _ _ memory=:{delims, left=[lhs:_], right=[rhs:_]}
 			= {memory&delims=inc delims,main=[El(op lhs rhs),Delim delims:memory.main]}
-		binary False _ memory=:{delims, left=[lhs:_], main=[El [top]:other], right=[]}
-			= {memory&delims=inc delims,main=[El(op lhs top),Delim delims: other]}
-		binary False _ memory=:{delims, left=[], main=[El [top]:other], right=[rhs:_]}
-			= {memory&delims=inc delims,main=[El(op top rhs),Delim delims: other]}
+		//binary False _ memory=:{delims, left=[lhs:_], main=[El [top]:other], right=[]}
+		//	= {memory&delims=inc delims,main=[El(op lhs top),Delim delims: other]}
+		//binary False _ memory=:{delims, left=[], main=[El [top]:other], right=[rhs:_]}
+		//	= {memory&delims=inc delims,main=[El(op top rhs),Delim delims: other]}
 		binary False _ memory=:{delims, left=[lhs:_], main=[El [top:mid]:other], right=[]}
 			= {memory&delims=inc delims,main=[El(op lhs top),Delim delims,El mid:other]}
 		binary False _ memory=:{delims, left=[], main=[El [top:mid]:other], right=[rhs:_]}
@@ -434,8 +434,8 @@ where
 			= {memory&delims=inc delims,main=[El(op lhs rhs),Delim delims: memory.main]}
 		binary False _ memory=:{delims, left=[], main=[El []:_], right=[rhs,lhs:_]}
 			= {memory&delims=inc delims,main=[El(op lhs rhs),Delim delims: memory.main]}
-		binary False True memory=:{delims, left=[], main=[El [arg1,arg2]:other], right=[]}
-			= {memory&delims=inc delims,main=[El(op arg1 arg2),Delim delims: other]}
+		//binary False True memory=:{delims, left=[], main=[El [arg1,arg2]:other], right=[]}
+		//	= {memory&delims=inc delims,main=[El(op arg1 arg2),Delim delims: other]}
 		binary False True memory=:{delims, left=[], main=[El [arg1,arg2:mid]:other], right=[]}
 			= {memory&delims=inc delims,main=[El(op arg1 arg2),Delim delims,El mid:other]}
 		binary _ _ memory = memory
@@ -510,8 +510,8 @@ where
 	where
 		
 		unary :: Memory -> Memory
-		unary memory=:{delims, main=[El [arg]:other]}
-			= {memory&delims=inc delims,main=[El (op arg),Delim delims: other]}
+		//unary memory=:{delims, main=[El [arg]:other]}
+		//	= {memory&delims=inc delims,main=[El (op arg),Delim delims: other]}
 		unary memory=:{delims, main=[El [arg:mid]:other]}
 			= {memory&delims=inc delims,main=[El (op arg),Delim delims,El mid:other]}
 		unary memory = memory

@@ -1,6 +1,6 @@
 definition module tokeniser
 import types
 
-toCommand :: Char -> Command
+toCommand :: !Char -> Command
 
-unicodeToNative :: Int -> Char
+unicodeToNative :: !Int -> Char

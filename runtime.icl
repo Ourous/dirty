@@ -78,7 +78,7 @@ where
 	parseReals :: (String -> (Maybe [Real]))
 	parseReals => 'GenParse'.parseString
 
-initialize :: !Program ![String] *World -> *(State, Memory, *World)
+initialize :: !Program ![String] *World -> (State, Memory, *World)
 initialize program=:{commands} args world
 	# (memory=:{random=[randpos,randdir:random]}, world)
 		= evaluate args world
@@ -96,17 +96,17 @@ where
 	annotated => [(orn, {x=x, y=y}) \\ y <- [0..] & line <-: commands, x <- [0..] & (Control (Start orn)) <-: line]
 
 
-construct :: !Program !Flags -> (*(State, Memory, *World) -> *World)
+construct :: !Program !Flags -> ((State, Memory, *World) -> *World)
 construct program=:{dimension, source, commands, wrapping} flags = execute
 where
 
-	execute :: *(!State, !Memory, !*World) -> *World
+	execute :: (!State, !Memory, !*World) -> *World
 	
 	execute ({terminate=True}, memory, world)
 		| flags.dump
-			= execIO (putStrLn (MEM_TO_STR memory)) world
+			=  (execIO (putStrLn (MEM_TO_STR memory)) world)
 		| otherwise
-			= world
+			=  world
 	
 	execute (state, memory=:{main=[]}, world)
 		= execute (state, {memory&main=[El[],Delim 0]}, world)
@@ -123,7 +123,7 @@ where
 			in execute ({state&location=wrappedLocation,terminate=not wrapping}, memory, world)
 		| otherwise
 			#! (state, memory, world) = process commands.[location.y, location.x] smw
-			= hyperstrict (execute (TRAVERSE_ONE {state&history=source.[location.y, location.x]}, memory, world))
+			=  (execute (TRAVERSE_ONE {state&history=source.[location.y, location.x]}, memory, world))
 			
 	writeLine :: ![Number] -> (IO ())
 	
@@ -262,21 +262,21 @@ where
 	
 	process (Control (Loop Left dir (Just loc))) = loop
 	where
-		loop :: *(!State, !Memory, !*World) -> *(State, Memory, *World)
+		loop :: (!State, !Memory, !*World) -> (State, Memory, *World)
 		loop smw=:(_, {left=[]}, _) = smw
 		loop (state=:{direction}, memory=:{left}, world)
 			= (if(direction == dir) {state&location=loc} state, {memory&left=SAFE_TAIL left}, world)
 		
 	process (Control (Loop Right dir (Just loc))) = loop
 	where
-		loop :: *(!State, !Memory, !*World) -> *(State, Memory, *World)
+		loop :: (!State, !Memory, !*World) -> (State, Memory, *World)
 		loop smw=:(_, {right=[]}, _) = smw
 		loop (state=:{direction}, memory=:{right}, world)
 			= (if(direction == dir) {state&location=loc} state, {memory&right=SAFE_TAIL right}, world)
 	
 	process (Control (Goto dir (Just loc))) = goto
 	where
-		goto :: *(!State, !Memory, !*World) -> *(State, Memory, *World)
+		goto :: (!State, !Memory, !*World) -> (State, Memory, *World)
 		goto (state=:{direction}, memory=:{main=[El mid:other]}, world)
 			| direction == dir && TO_BOOL mid
 				= ({state&location=loc}, memory, world)
@@ -314,7 +314,7 @@ where
 	process (Literal (Digit val)) = literal
 	where
 	
-		literal :: *(!State, !Memory, !*World) -> *(State, Memory, *World)
+		literal :: (!State, !Memory, !*World) -> (State, Memory, *World)
 		
 		literal (state=:{history}, memory=:{main}, world)
 			| isDigit history = let

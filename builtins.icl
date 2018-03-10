@@ -15,16 +15,16 @@ isGreaterOrEqual :: !Number !Number -> Number
 isGreaterOrEqual lhs rhs = fromBool (lhs >= rhs)
 isNotEqual :: !Number !Number -> Number
 isNotEqual lhs rhs = fromBool (lhs <> rhs)
-isIdentical :: [Number] [Number] -> Number
+isIdentical :: ![Number] ![Number] -> Number
 isIdentical lhs rhs = fromBool (lhs == rhs)
 
-isElementOf :: !Number [Number] -> Number
+isElementOf :: !Number ![Number] -> Number
 isElementOf lhs rhs = fromBool (isMember lhs rhs)
-isImproperSubsetOf :: [Number] [Number] -> Number
+isImproperSubsetOf :: ![Number] ![Number] -> Number
 isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
-isProperSubsetOf :: [Number] [Number] -> Number
+isProperSubsetOf :: ![Number] ![Number] -> Number
 isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
-isNotSubsetOf :: [Number] [Number] -> Number
+isNotSubsetOf :: ![Number] ![Number] -> Number
 isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
 
 isUppercase :: !Number -> Number
@@ -58,15 +58,15 @@ isPrime arg
 	| otherwise
 		= fromBool (all (\e -> arg mod e <> Zero) [inc one..dec arg])
 
-isSorted :: [Number] -> Number
+isSorted :: ![Number] -> Number
 isSorted arg = fromBool (isSorted` arg)
 where
 	isSorted` [h1:tail=:[h2:_]] = h1 <= h2 && isSorted` tail
 	isSorted` _ = True
 	
-areAnyTrue :: [Number] -> Number
+areAnyTrue :: ![Number] -> Number
 areAnyTrue arg = fromBool (any toBool arg)
-areAllTrue :: [Number] -> Number
+areAllTrue :: ![Number] -> Number
 areAllTrue arg = fromBool (all toBool arg)
 
 // coalescing operators
@@ -112,34 +112,34 @@ numCombin :: !Number !Number -> Number
 numCombin lhs rhs = (numPermute lhs rhs) / prod [one..rhs]
 logarithm :: !Number !Number -> Number
 logarithm lhs rhs = (ln rhs) / (ln lhs)
-numProduct :: [Number] -> Number
+numProduct :: ![Number] -> Number
 numProduct [] = Zero
 numProduct arg = foldl (*) one arg
-numSum :: [Number] -> Number
+numSum :: ![Number] -> Number
 numSum arg = foldl (+) Zero arg
 
 // vectorized ops
-vectorPlus :: [Number] [Number] -> [Number]
+vectorPlus :: ![Number] ![Number] -> [Number]
 vectorPlus lhs rhs = zipWith (+) lhs rhs
-vectorTimes :: [Number] [Number] -> [Number]
+vectorTimes :: ![Number] ![Number] -> [Number]
 vectorTimes lhs rhs = zipWith (*) lhs rhs
-vectorNegate :: [Number] -> [Number]
+vectorNegate :: ![Number] -> [Number]
 vectorNegate arg = map (~) arg
-vectorAND :: [Number] [Number] -> [Number]
+vectorAND :: ![Number] ![Number] -> [Number]
 vectorAND lhs rhs = zipWith bitAND lhs rhs
-vectorOR :: [Number] [Number] -> [Number]
+vectorOR :: ![Number] ![Number] -> [Number]
 vectorOR lhs rhs = zipWith bitOR lhs rhs
-vectorIsEqual :: [Number] [Number] -> [Number]
+vectorIsEqual :: ![Number] ![Number] -> [Number]
 vectorIsEqual lhs rhs = zipWith isEqualTo lhs rhs
-vectorElementOf :: [Number] [Number] -> [Number]
+vectorElementOf :: ![Number] ![Number] -> [Number]
 vectorElementOf lhs rhs = map (\e -> isElementOf e rhs) lhs
-vectorLessThan :: [Number] [Number] -> [Number]
+vectorLessThan :: ![Number] ![Number] -> [Number]
 vectorLessThan lhs rhs = zipWith isLessThan lhs rhs
-vectorGreaterThan :: [Number] [Number] -> [Number]
+vectorGreaterThan :: ![Number] ![Number] -> [Number]
 vectorGreaterThan lhs rhs = zipWith isGreaterThan lhs rhs
-vectorLessOrEqual :: [Number] [Number] -> [Number]
+vectorLessOrEqual :: ![Number] ![Number] -> [Number]
 vectorLessOrEqual lhs rhs = zipWith isLessOrEqual lhs rhs
-vectorGreaterOrEqual :: [Number] [Number] -> [Number]
+vectorGreaterOrEqual :: ![Number] ![Number] -> [Number]
 vectorGreaterOrEqual lhs rhs = zipWith isGreaterOrEqual lhs rhs
 
 // miscelaneous operators
@@ -147,7 +147,7 @@ toUppercase :: !Number -> Number
 toUppercase arg = fromInt (toUpperUChar (toInt arg))
 toLowercase :: !Number -> Number
 toLowercase arg = fromInt (toLowerUChar (toInt arg))
-splitOnNewlines :: [Number] -> [[Number]]
+splitOnNewlines :: ![Number] -> [[Number]]
 splitOnNewlines [] = []
 splitOnNewlines arg
 	# (head, tail) = span (\e -> toInt e <> 10) arg
@@ -184,25 +184,25 @@ fromMiddleToZero arg
 fromLeftTimesRight :: !Number !Number -> [Number]
 fromLeftTimesRight lhs rhs = yieldTimesRight lhs
 where yieldTimesRight arg = [arg:yieldTimesRight(arg*rhs)]
-setMinimum :: [Number] -> Number
+setMinimum :: ![Number] -> Number
 setMinimum [] = NaN
 setMinimum [head:tail] = foldl (min) head tail
-setMaximum :: [Number] -> Number
+setMaximum :: ![Number] -> Number
 setMaximum [] = NaN
 setMaximum [head:tail] = foldl (max) head tail
-setFilter :: [Number] [Number] -> [Number]
+setFilter :: ![Number] ![Number] -> [Number]
 setFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | toBool cond]
-antiFilter :: [Number] [Number] -> [Number]
+antiFilter :: ![Number] ![Number] -> [Number]
 antiFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | (not o toBool) cond]
-dupesMiddle :: [Number] -> [Number]
+dupesMiddle :: ![Number] -> [Number]
 dupesMiddle arg = [el \\ el <- arg | sum [1 \\ e <- arg | e == el] > 1]
-groupMiddle :: [Number] -> [[Number]]
+groupMiddle :: ![Number] -> [[Number]]
 groupMiddle arg = group arg
-setIntersection :: [Number] [Number] -> [Number]
+setIntersection :: ![Number] ![Number] -> [Number]
 setIntersection lhs rhs = removeDup (filter (\el -> isMember el rhs) lhs)
-setUnion :: [Number] [Number] -> [Number]
+setUnion :: ![Number] ![Number] -> [Number]
 setUnion lhs rhs = removeDup (lhs ++ rhs)
-setExclusion :: [Number] [Number] -> [Number]
+setExclusion :: ![Number] ![Number] -> [Number]
 setExclusion lhs rhs = removeDup ((filter (not o \el -> isMember el rhs) lhs) ++ (filter (not o \el -> isMember el lhs) rhs))
 
 

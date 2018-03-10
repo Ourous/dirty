@@ -19,7 +19,7 @@ Global
 		DisableRTSFlags:	False
 		StandardRuntimeEnv:	True
 		Profile
-			Memory:	False
+			Memory:	True
 			MemoryMinimumHeapSize:	0
 			Time:	False
 			Stack:	False

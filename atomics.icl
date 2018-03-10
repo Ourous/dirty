@@ -29,7 +29,7 @@ applyUnaryInt op conv val
 			(Real val) = op (conv val)
 		))
 	
-applyBinaryReal :: (Real Real -> Real) (Int -> Real) !Numeric !Numeric -> Numeric
+applyBinaryReal :: !(Real Real -> Real) !(Int -> Real) !Numeric !Numeric -> Numeric
 applyBinaryReal op conv (Real lhs) (Real rhs)
 	= (Real (op lhs rhs))
 applyBinaryReal op conv (Real lhs) (Int rhs)
@@ -39,7 +39,7 @@ applyBinaryReal op conv (Int lhs) (Real rhs)
 applyBinaryReal op conv (Int lhs) (Int rhs)
 	= (Real (op (conv lhs) (conv rhs)))
 		
-applyBinaryInt :: (Int Int -> Int) (Real -> Int) !Numeric !Numeric -> Numeric
+applyBinaryInt :: !(Int Int -> Int) !(Real -> Int) !Numeric !Numeric -> Numeric
 applyBinaryInt op conv (Int lhs) (Int rhs)
 	= (Int (op lhs rhs))
 applyBinaryInt op conv (Real lhs) (Int rhs)
@@ -65,7 +65,7 @@ instance + Numeric where (+) lhs rhs = applyBinaryReal (+) (toReal) lhs rhs
 	(+) (Real lhs) (Real rhs)
 		= (Real (lhs + rhs))
 	*/
-		
+	
 instance - Numeric where (-) lhs rhs = applyBinaryReal (-) (toReal) lhs rhs
 /*
 	(-) (Int lhs) (Int rhs)

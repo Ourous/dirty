@@ -96,11 +96,11 @@ where
 	annotated = [(orn, {x=x, y=y}) \\ y <- [0..] & line <-: commands, x <- [0..] & (Control (Start orn)) <-: line]
 
 
-construct :: !Program !Flags -> (*(!State, !Memory, !*World) -> *World)
+construct :: !Program !Flags -> (*(!State, Memory, *World) -> *World)
 construct program=:{dimension, source, commands, wrapping} flags = execute
 where
 
-	execute :: !*(!State, !Memory, !*World) -> *World
+	execute :: !*(!State, Memory, *World) -> *World
 	
 	execute (state=:{terminate=True}, memory, world)
 		| flags.dump
@@ -160,13 +160,13 @@ where
 			# (chr, world) = evalIO getChar world
 			= (str <+ chr, world)
 
-	process :: !Command -> (*(!State, !Memory, !*World) -> *(State, Memory, *World))
+	process :: !Command -> (*(State, Memory, *World) -> *(State, Memory, *World))
 	
 	process (Control (Terminate)) = app3 (\state -> {state&terminate=True}, id, id)
 		
-	process (Control (NOOP)) = id
+	process (Control (NOOP)) => id
 		
-	process (Control (Start _)) = id
+	process (Control (Start _)) => id
 		
 	process (Control (Change dir)) = app3(\state -> {state&direction=dir}, id, id)
 	
@@ -192,7 +192,7 @@ where
 				(NorthWest, North) = {state&location={x=x-1,y=y}}
 				(NorthWest, West) = {state&location={x=x,y=y-1}}
 	
-	process (Control (Either axes)) = either
+	process (Control (Either axes)) => either
 	where
 	
 		either (state, memory=:{random=[rng:random]}, world) = let
@@ -201,7 +201,7 @@ where
 				Vertical = if(isEven rng) North South
 		in ({state&direction=newDirection}, {memory&random=random}, world)
 		
-	process (Control (Mirror cond axes)) = mirror
+	process (Control (Mirror cond axes)) => mirror
 	where
 		
 		mirror (state=:{direction}, memory=:{main=[El mid:other]}, world)
@@ -236,7 +236,7 @@ where
 			(Vertical, South) = False
 			_ = True
 		
-	process (Control (Skip cond)) = skip
+	process (Control (Skip cond)) => skip
 	where
 		
 		skip (state, memory=:{main=[El mid:other]}, world)
@@ -260,25 +260,25 @@ where
 				(South, Anticlockwise) = East
 		in {state&direction=dir}
 	
-	process (Control (Loop Left dir (Just loc))) = loop
+	process (Control (Loop Left dir (Just loc))) => loop
 	where
 		
 		loop (state=:{direction}, memory=:{left}, world)
-			| direction == dir && left > []
+			| direction == dir && left <> []
 				= ({state&location=loc}, {memory&left=SAFE_TAIL left}, world)
 			| otherwise
 				= (state, {memory&left=SAFE_TAIL left}, world)
 		
-	process (Control (Loop Right dir (Just loc))) = loop
+	process (Control (Loop Right dir (Just loc))) => loop
 	where
-		
+
 		loop (state=:{direction}, memory=:{right}, world)
-			| direction == dir && right > []
+			| direction == dir && right <> []
 				= ({state&location=loc}, {memory&right=SAFE_TAIL right}, world)
 			| otherwise
 				= (state, {memory&right=SAFE_TAIL right}, world)
 	
-	process (Control (Goto dir (Just loc))) = goto
+	process (Control (Goto dir (Just loc))) => goto
 	where
 	
 		goto (state=:{direction}, memory=:{main=[El mid:other]}, world)
@@ -287,21 +287,21 @@ where
 			| otherwise
 				= (state, memory, world)
 				
-	process (Control (String)) = makeString
+	process (Control (String)) => makeString
 	where
 		
 		makeString (state=:{direction, location}, memory=:{main, delims}, world)
 			= (TRAVERSE_SOME (length content + 1) state, {memory&delims=inc delims,main=[El(map fromInt(utf8ToUnicode(toString content))), Delim delims: main]}, world)
 		where
 			
-			delta = case direction of
+			delta => case direction of
 				East = location.x+1
 				West = dimension.x-location.x
 				North = dimension.y-location.y
 				South = location.y+1
 				
-			wrappedLine = let
-				line = case direction of
+			wrappedLine => let
+				line => case direction of
 					East = [c \\ c <-: source.[location.y]]
 					West = reverse [c \\ c <-: source.[location.y]]
 					North = reverse [src.[location.x] \\ src <-: source]
@@ -309,16 +309,16 @@ where
 			in line ++ ['\n'] ++ line
 			
 			content :: [Char]
-			content = (takeWhile ((<>)'\'') o drop delta) wrappedLine
+			content => (takeWhile ((<>)'\'') o drop delta) wrappedLine
 			
 	process (Literal (Pi)) = app3 (id, \memory=:{main=[El mid:other]} -> {memory&main=[El[fromReal pi:mid]:other]}, id)
 
 	process (Literal (Quote)) = app3 (id, \memory=:{main=[El mid:other]} -> {memory&main=[El[fromInt(toInt'\''):mid]:other]}, id)
 
-	process (Literal (Digit val)) = literal
+	process (Literal (Digit val)) => literal
 	where
 	
-		literal :: !*(!State, !Memory, *World) -> *(State, Memory, *World)
+		literal :: !*(!State, Memory, *World) -> *(State, Memory, *World)
 		
 		literal (state=:{history}, memory=:{main}, world)
 			| isDigit history = let
@@ -333,7 +333,7 @@ where
 	where
 	
 		literal :: [Number]
-		literal = case lettercase of
+		literal => case lettercase of
 			Lowercase = [fromInt (toInt c) \\ c <-: "abcdefghijklmnopqrstuvwxyz"]
 			Uppercase = [fromInt (toInt c) \\ c <-: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
 			
@@ -345,14 +345,14 @@ where
 		rand memory=:{main=[El mid:other], random=[rng:random]}
 			= {memory&main=[El[fromInt rng:mid]:other],random=random}
 			
-	process (Environment env) = environment
+	process (Environment env) => environment
 	where
 	
 		environment (state, memory, world)
 			# (memory, world) = env (memory, world)
 			= (state, memory, world)
 				
-	process (Operator (IO_WriteAll)) = writeAll
+	process (Operator (IO_WriteAll)) => writeAll
 	where
 		
 		writeAll (state, memory=:{main=[El[]:other]}, world)
@@ -362,14 +362,14 @@ where
 			# world = execIO (writeLine mid) world
 			= (state, {memory&main=other}, world)
 			
-	process (Operator (IO_ReadAll)) = readAll
+	process (Operator (IO_ReadAll)) => readAll
 	where
 		
 		readAll (state, memory=:{main, delims}, world)
 			# (str, world) = readLine world
 			= (state, {memory&delims=inc delims,main=[El str, Delim delims: main]}, world)
 			
-	process (Operator (IO_WriteOnce)) = writeOnce
+	process (Operator (IO_WriteOnce)) => writeOnce
 	where
 	
 		writeOnce (state, memory=:{main=[El[]:_]}, world)
@@ -379,14 +379,14 @@ where
 			# world = execIO (writeChar top) world
 			= (state, {memory&main=[El mid:other]}, world)
 			
-	process (Operator (IO_ReadOnce)) = readOnce
+	process (Operator (IO_ReadOnce)) => readOnce
 	where
 	
 		readOnce (state, memory=:{main=[El mid:other]}, world)
 			# (chr, world) = readChar world
 			= (state, {memory&main=[El[chr:mid]:other]}, world)
 			
-	process (Operator (IO_Interrobang)) = interrobang
+	process (Operator (IO_Interrobang)) => interrobang
 	where
 	
 		interrobang (state, memory=:{main=[El []:other]}, world)
@@ -400,7 +400,7 @@ where
 	process (Operator (Binary_NN_N inv op)) = app3 (id, binary flags.strict inv, id)
 	where
 		
-		binary :: !Bool !Bool !Memory -> Memory
+		binary :: !Bool !Bool Memory -> Memory
 		binary _ _ memory=:{left=[lhs:_], main=[El mid:other], right=[rhs:_]}
 			= {memory&main=[El[op lhs rhs:mid]:other]}
 		binary False _ memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
@@ -419,7 +419,7 @@ where
 	process (Operator (Binary_NN_S inv op)) = app3 (id, binary flags.strict inv, id)
 	where // productive
 		
-		binary :: !Bool !Bool !Memory -> Memory
+		binary :: !Bool !Bool Memory -> Memory
 		binary _ _ memory=:{delims, left=[lhs:_], right=[rhs:_]}
 			= {memory&delims=inc delims,main=[El(op lhs rhs),Delim delims:memory.main]}
 		binary False _ memory=:{delims, left=[lhs:_], main=[El [top]:other], right=[]}
@@ -443,7 +443,7 @@ where
 	process (Operator (Binary_SN_N op)) = app3 (id, binary flags.strict, id)
 	where
 	
-		binary :: !Bool !Memory -> Memory
+		binary :: !Bool Memory -> Memory
 		binary False memory=:{left=[], main=[El mid=:[_:_]:other], right=[rhs:_]}
 			= {memory&main=[El [op mid rhs]:other]}
 		binary _ memory=:{left, main=[El mid:other], right=[rhs:_]}
@@ -455,7 +455,7 @@ where
 	process (Operator (Binary_NS_N op)) = app3 (id, binary flags.strict, id)
 	where
 	
-		binary :: !Bool !Memory -> Memory
+		binary :: !Bool Memory -> Memory
 		binary False memory=:{left=[lhs:_], main=[El mid=:[_:_]:other], right=[]}
 			= {memory&main=[El [op lhs mid]:other]}
 		binary _ memory=:{left=[lhs:_], main=[El mid:other], right}
@@ -467,7 +467,7 @@ where
 	process (Operator (Binary_SS_N inv op)) = app3 (id, binary flags.strict inv, id)
 	where
 	
-		binary :: !Bool !Bool !Memory -> Memory
+		binary :: !Bool !Bool Memory -> Memory
 		binary False True memory=:{left=[], main=[El mid=:[_:_],El oth=:[_:_]:other],right=[]}
 			= {memory&main=[El [op mid oth]:other]}
 		binary False True memory=:{left=[], main=[El mid=:[_:_]:other], right=[]}
@@ -484,7 +484,7 @@ where
 	process (Operator (Binary_SS_S inv op)) = app3 (id, binary flags.strict inv, id)
 	where
 	
-		binary :: !Bool !Bool !Memory -> Memory
+		binary :: !Bool !Bool Memory -> Memory
 		binary False True memory=:{left=[], main=[El mid=:[_:_],El oth=:[_:_]:other],right=[]}
 			= {memory&main=[El (op mid oth):other]}
 		binary False True memory=:{left=[], main=[El mid=:[_:_]:other], right=[]}
@@ -501,7 +501,7 @@ where
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where
 		
-		unary :: !Memory -> Memory
+		unary :: Memory -> Memory
 		unary memory=:{main=[El [arg:mid]:other]}
 			= {memory&main=[El [op arg:mid]:other]}
 		unary memory = memory
@@ -509,7 +509,7 @@ where
 	process (Operator (Unary_N_S op)) = app3 (id, unary, id)
 	where
 		
-		unary :: !Memory -> Memory
+		unary :: Memory -> Memory
 		unary memory=:{delims, main=[El [arg]:other]}
 			= {memory&delims=inc delims,main=[El (op arg),Delim delims: other]}
 		unary memory=:{delims, main=[El [arg:mid]:other]}
@@ -519,7 +519,7 @@ where
 	process (Operator (Unary_S_N op)) = app3 (id, unary, id)
 	where
 	
-		unary :: !Memory -> Memory
+		unary :: Memory -> Memory
 		unary memory=:{main=[El mid:other]}
 			= {memory&main=[El [op mid]:other]}
 		//unary memory = memory
@@ -527,7 +527,7 @@ where
 	process (Operator (Unary_S_S op)) = app3 (id, unary, id)
 	where
 		
-		unary :: !Memory -> Memory
+		unary :: Memory -> Memory
 		unary memory=:{main=[El mid:other]}
 			= {memory&main=[El (op mid):other]}
 		//unary memory = memory
@@ -535,7 +535,7 @@ where
 	process (Operator (Unary_S_T op)) = app3 (id, unary, id)
 	where
 		
-		unary :: !Memory -> Memory
+		unary :: Memory -> Memory
 		unary memory=:{cursor, delims, main=[El mid:other]}
 			= mergeDelims {memory&cursor=delims,delims=inc delims,main=(map (\e -> (El e)) (op mid)) ++ [Delim delims: other]}
 		

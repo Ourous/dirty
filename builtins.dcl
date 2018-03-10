@@ -10,13 +10,13 @@ isEqualTo :: !Number !Number -> Number
 isLessOrEqual :: !Number !Number -> Number
 isGreaterOrEqual :: !Number !Number -> Number
 isNotEqual :: !Number !Number -> Number
-isIdentical :: [Number] [Number] -> Number
+isIdentical :: ![Number] ![Number] -> Number
 
-isElementOf :: !Number [Number] -> Number
+isElementOf :: !Number ![Number] -> Number
 
-isImproperSubsetOf :: [Number] [Number] -> Number
-isProperSubsetOf :: [Number] [Number] -> Number
-isNotSubsetOf :: [Number] [Number] -> Number
+isImproperSubsetOf :: ![Number] ![Number] -> Number
+isProperSubsetOf :: ![Number] ![Number] -> Number
+isNotSubsetOf :: ![Number] ![Number] -> Number
 
 isUppercase :: !Number -> Number
 isLowercase :: !Number -> Number
@@ -27,10 +27,10 @@ isInfinite :: !Number -> Number
 
 isPrime :: !Number -> Number
 
-isSorted :: [Number] -> Number
+isSorted :: ![Number] -> Number
 
-areAnyTrue :: [Number] -> Number
-areAllTrue :: [Number] -> Number
+areAnyTrue :: ![Number] -> Number
+areAllTrue :: ![Number] -> Number
 
 // coalescing operators
 logicEquiv :: !Number -> Number
@@ -46,26 +46,26 @@ imagUnit :: !Number -> Number
 numPermute :: !Number !Number -> Number
 numCombin :: !Number !Number -> Number
 logarithm :: !Number !Number -> Number
-numProduct :: [Number] -> Number
-numSum :: [Number] -> Number
+numProduct :: ![Number] -> Number
+numSum :: ![Number] -> Number
 
 // vectorized ops
-vectorPlus :: [Number] [Number] -> [Number]
-vectorTimes :: [Number] [Number] -> [Number]
-vectorNegate :: [Number] -> [Number]
-vectorAND :: [Number] [Number] -> [Number]
-vectorOR :: [Number] [Number] -> [Number]
-vectorIsEqual :: [Number] [Number] -> [Number]
-vectorElementOf :: [Number] [Number] -> [Number]
-vectorLessThan :: [Number] [Number] -> [Number]
-vectorGreaterThan :: [Number] [Number] -> [Number]
-vectorLessOrEqual :: [Number] [Number] -> [Number]
-vectorGreaterOrEqual :: [Number] [Number] -> [Number]
+vectorPlus :: ![Number] ![Number] -> [Number]
+vectorTimes :: ![Number] ![Number] -> [Number]
+vectorNegate :: ![Number] -> [Number]
+vectorAND :: ![Number] ![Number] -> [Number]
+vectorOR :: ![Number] ![Number] -> [Number]
+vectorIsEqual :: ![Number] ![Number] -> [Number]
+vectorElementOf :: ![Number] ![Number] -> [Number]
+vectorLessThan :: ![Number] ![Number] -> [Number]
+vectorGreaterThan :: ![Number] ![Number] -> [Number]
+vectorLessOrEqual :: ![Number] ![Number] -> [Number]
+vectorGreaterOrEqual :: ![Number] ![Number] -> [Number]
 
 // miscelaneous operators
 toUppercase :: !Number -> Number
 toLowercase :: !Number -> Number
-splitOnNewlines :: [Number] -> [[Number]]
+splitOnNewlines :: ![Number] -> [[Number]]
 //MORE TO COME
 
 // "set" operators
@@ -73,15 +73,15 @@ fromLeftStepRight :: !Number !Number -> [Number]
 fromOneToMiddle :: !Number -> [Number]
 fromMiddleToZero :: !Number -> [Number]
 fromLeftTimesRight :: !Number !Number -> [Number]
-setMinimum :: [Number] -> Number
-setMaximum :: [Number] -> Number
-setFilter :: [Number] [Number] -> [Number]
-antiFilter :: [Number] [Number] -> [Number]
-groupMiddle :: [Number] -> [[Number]]
-dupesMiddle :: [Number] -> [Number]
-setIntersection :: [Number] [Number] -> [Number]
-setUnion :: [Number] [Number] -> [Number]
-setExclusion :: [Number] [Number] -> [Number]
+setMinimum :: ![Number] -> Number
+setMaximum :: ![Number] -> Number
+setFilter :: ![Number] ![Number] -> [Number]
+antiFilter :: ![Number] ![Number] -> [Number]
+groupMiddle :: ![Number] -> [[Number]]
+dupesMiddle :: ![Number] -> [Number]
+setIntersection :: ![Number] ![Number] -> [Number]
+setUnion :: ![Number] ![Number] -> [Number]
+setExclusion :: ![Number] ![Number] -> [Number]
 //powerset :: [Number] -> [[Number]]
 
 // special cases

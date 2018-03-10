@@ -1,8 +1,6 @@
 implementation module arithmetic
 
-import types, atomics, StdBool, StdOverloaded, StdInt, StdReal, StdClass, Math.Geometry, StdString
-from StdLibMisc import isFinite
-from StdMisc import abort
+import types, atomics, Math.Geometry, StdLib, StdEnv
 
 instance == Sign where
 	(==) Positive Positive = True

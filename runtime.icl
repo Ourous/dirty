@@ -1,7 +1,7 @@
 implementation module runtime
 
 import types, atomics, arithmetic, builtins, utilities, unicode, environment
-import StdEnv, StdLib, System.IO, System.Time, Math.Random, Text
+import StdEnv, StdLib, System.IO, System.Time, Math.Random, Text, Data.Func
 from Math.Geometry import pi
 import qualified Data.Generics.GenParse as GenParse
 
@@ -102,7 +102,7 @@ where
 
 	execute :: *(!State, !Memory, !*World) -> *World
 	
-	execute (state=:{terminate=True}, memory, world)
+	execute ({terminate=True}, memory, world)
 		| flags.dump
 			= execIO (putStrLn (MEM_TO_STR memory)) world
 		| otherwise
@@ -115,7 +115,7 @@ where
 	execute (state, memory=:{main=[Delim _]}, world)
 		= execute (state, {memory&main=[El[],Delim 0]}, world)
 	execute (state, memory=:{main=[Delim val:tail], cursor, delims}, world)
-		= execute (state, {memory&main=tail,delims=dec delims,cursor=if(cursor==val)dec id cursor}, world)
+		= execute (state, {memory&main=tail,delims=dec delims,cursor=if(cursor==val) dec id cursor}, world)
 	
 	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y = let
@@ -123,7 +123,7 @@ where
 			in execute ({state&location=wrappedLocation,terminate=not wrapping}, memory, world)
 		| otherwise
 			#! (state, memory, world) = process commands.[location.y, location.x] smw
-			= execute (TRAVERSE_ONE {state&history=source.[location.y, location.x]} , memory, world)
+			= hyperstrict (execute (TRAVERSE_ONE {state&history=source.[location.y, location.x]}, memory, world))
 			
 	writeLine :: ![Number] -> (IO ())
 	

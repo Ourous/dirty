@@ -1,6 +1,6 @@
 implementation module parser
 
-import types, utilities, tokeniser, StdEnv, StdLib, Text, unicode
+import types, utilities, tokeniser, StdEnv, StdLib, Text, unicode, Data.Func
 	
 
 parseUTF8 :: !String -> Program

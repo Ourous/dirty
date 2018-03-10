@@ -1,10 +1,6 @@
 implementation module atomics
 
-import types, StdOverloaded, StdBool, StdInt, StdReal, StdString
-from StdLib import isFinite
-from StdMisc import abort
-from StdFunc import id
-import StdClass
+import types, StdEnv, StdLib
 
 FRAC_MAX :== 4503599627370496.0
 FRAC_MIN :== -4503599627370496.0

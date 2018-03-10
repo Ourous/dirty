@@ -122,7 +122,7 @@ where
 			wrappedLocation = {x=(location.x + dimension.x) rem dimension.x, y=(location.y + dimension.y) rem dimension.y}
 			in execute ({state&location=wrappedLocation,terminate=not wrapping}, memory, world)
 		| otherwise
-			# (state, memory, world) = process commands.[location.y, location.x] smw
+			#! (state, memory, world) = process commands.[location.y, location.x] smw
 			= execute (TRAVERSE_ONE {state&history=source.[location.y, location.x]} , memory, world)
 			
 	writeLine :: ![Number] -> (IO ())
@@ -263,20 +263,16 @@ where
 	process (Control (Loop Left dir (Just loc))) = loop
 	where
 		loop :: *(!State, !Memory, !*World) -> *(State, Memory, *World)
+		loop smw=:(_, {left=[]}, _) = smw
 		loop (state=:{direction}, memory=:{left}, world)
-			| direction == dir && left <> []
-				= ({state&location=loc}, {memory&left=SAFE_TAIL left}, world)
-			| otherwise
-				= (state, {memory&left=SAFE_TAIL left}, world)
+			= (if(direction == dir) {state&location=loc} state, {memory&left=SAFE_TAIL left}, world)
 		
 	process (Control (Loop Right dir (Just loc))) = loop
 	where
 		loop :: *(!State, !Memory, !*World) -> *(State, Memory, *World)
+		loop smw=:(_, {right=[]}, _) = smw
 		loop (state=:{direction}, memory=:{right}, world)
-			| direction == dir && right <> []
-				= ({state&location=loc}, {memory&right=SAFE_TAIL right}, world)
-			| otherwise
-				= (state, {memory&right=SAFE_TAIL right}, world)
+			= (if(direction == dir) {state&location=loc} state, {memory&right=SAFE_TAIL right}, world)
 	
 	process (Control (Goto dir (Just loc))) = goto
 	where

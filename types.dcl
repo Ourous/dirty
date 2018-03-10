@@ -27,16 +27,16 @@ import StdMaybe
 :: Memory
 	= {
 		note :: !Number,
-		left :: [Number],
-		right :: [Number],
+		left :: ![Number],
+		right :: ![Number],
 		cursor :: !Int,
-		main :: [Element],
+		main :: ![Element],
 		delims :: !Int,
 		random :: ![Int]
 	}
 	
 :: Element
-	= El [Number]
+	= El ![Number]
 	| Delim !Int // "is active"
 	
 :: Flags
@@ -107,7 +107,7 @@ import StdMaybe
 :: LiteralCommand
 	= Pi
 	| Quote
-	| Digit Number
+	| Digit !Number
 	| Alphabet LetterCase
 	| EmptySet
 	
@@ -134,14 +134,14 @@ import StdMaybe
 	| IO_ClearConsole
 	| IO_Backspace
 	| IO_Environment
-	| Binary_NN_N Bool (Number Number -> Number)
-	| Binary_NN_S Bool (Number Number -> [Number])
+	| Binary_NN_N !Bool (Number Number -> Number)
+	| Binary_NN_S !Bool (Number Number -> [Number])
 	| Binary_SN_N ([Number] Number -> Number)
 	| Binary_SN_S ([Number] Number -> [Number])
 	| Binary_NS_N (Number [Number] -> Number)
 	| Binary_NS_S (Number [Number] -> [Number])
-	| Binary_SS_N Bool ([Number] [Number] -> Number)
-	| Binary_SS_S Bool ([Number] [Number] -> [Number])
+	| Binary_SS_N !Bool ([Number] [Number] -> Number)
+	| Binary_SS_S !Bool ([Number] [Number] -> [Number])
 	| Unary_N_N (Number -> Number)
 	| Unary_N_S (Number -> [Number])
 	| Unary_S_N ([Number] -> Number)

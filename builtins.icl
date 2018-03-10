@@ -15,16 +15,16 @@ isGreaterOrEqual :: !Number !Number -> Number
 isGreaterOrEqual lhs rhs = fromBool (lhs >= rhs)
 isNotEqual :: !Number !Number -> Number
 isNotEqual lhs rhs = fromBool (lhs <> rhs)
-isIdentical :: ![Number] ![Number] -> Number
+isIdentical :: !(Stack Number) !(Stack Number) -> Number
 isIdentical lhs rhs = fromBool (lhs == rhs)
 
-isElementOf :: !Number ![Number] -> Number
+isElementOf :: !Number !(Stack Number) -> Number
 isElementOf lhs rhs = fromBool (isMember lhs rhs)
-isImproperSubsetOf :: ![Number] ![Number] -> Number
+isImproperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
 isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
-isProperSubsetOf :: ![Number] ![Number] -> Number
+isProperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
 isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
-isNotSubsetOf :: ![Number] ![Number] -> Number
+isNotSubsetOf :: !(Stack Number) !(Stack Number) -> Number
 isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
 
 isUppercase :: !Number -> Number
@@ -58,15 +58,15 @@ isPrime arg
 	| otherwise
 		= fromBool (all (\e -> arg mod e <> Zero) [inc one..dec arg])
 
-isSorted :: ![Number] -> Number
+isSorted :: !(Stack Number) -> Number
 isSorted arg = fromBool (isSorted` arg)
 where
 	isSorted` [h1:tail=:[h2:_]] = h1 <= h2 && isSorted` tail
 	isSorted` _ = True
 	
-areAnyTrue :: ![Number] -> Number
+areAnyTrue :: !(Stack Number) -> Number
 areAnyTrue arg = fromBool (any toBool arg)
-areAllTrue :: ![Number] -> Number
+areAllTrue :: !(Stack Number) -> Number
 areAllTrue arg = fromBool (all toBool arg)
 
 // coalescing operators
@@ -76,7 +76,7 @@ logicNegate :: !Number -> Number
 logicNegate arg = fromBool (not (toBool arg))
 
 // remaining math ops
-primeFactors :: !Number -> [Number]
+primeFactors :: !Number -> (Stack Number)
 primeFactors NaN = []
 primeFactors arg
 	| abs arg < inc one || numCeiling arg <> numFloor arg
@@ -112,34 +112,34 @@ numCombin :: !Number !Number -> Number
 numCombin lhs rhs = (numPermute lhs rhs) / prod [one..rhs]
 logarithm :: !Number !Number -> Number
 logarithm lhs rhs = (ln rhs) / (ln lhs)
-numProduct :: ![Number] -> Number
+numProduct :: !(Stack Number) -> Number
 numProduct [] = Zero
 numProduct arg = foldl (*) one arg
-numSum :: ![Number] -> Number
+numSum :: !(Stack Number) -> Number
 numSum arg = foldl (+) Zero arg
 
 // vectorized ops
-vectorPlus :: ![Number] ![Number] -> [Number]
+vectorPlus :: !(Stack Number) !(Stack Number) -> (Stack Number)
 vectorPlus lhs rhs = zipWith (+) lhs rhs
-vectorTimes :: ![Number] ![Number] -> [Number]
+vectorTimes :: !(Stack Number) !(Stack Number) -> (Stack Number)
 vectorTimes lhs rhs = zipWith (*) lhs rhs
-vectorNegate :: ![Number] -> [Number]
+vectorNegate :: !(Stack Number) -> (Stack Number)
 vectorNegate arg = map (~) arg
-vectorAND :: ![Number] ![Number] -> [Number]
+vectorAND :: !(Stack Number) !(Stack Number) -> (Stack Number)
 vectorAND lhs rhs = zipWith bitAND lhs rhs
-vectorOR :: ![Number] ![Number] -> [Number]
+vectorOR :: !(Stack Number) !(Stack Number) -> (Stack Number)
 vectorOR lhs rhs = zipWith bitOR lhs rhs
-vectorIsEqual :: ![Number] ![Number] -> [Number]
+vectorIsEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
 vectorIsEqual lhs rhs = zipWith isEqualTo lhs rhs
-vectorElementOf :: ![Number] ![Number] -> [Number]
+vectorElementOf :: !(Stack Number) !(Stack Number) -> (Stack Number)
 vectorElementOf lhs rhs = map (\e -> isElementOf e rhs) lhs
-vectorLessThan :: ![Number] ![Number] -> [Number]
+vectorLessThan :: !(Stack Number) !(Stack Number) -> (Stack Number)
 vectorLessThan lhs rhs = zipWith isLessThan lhs rhs
-vectorGreaterThan :: ![Number] ![Number] -> [Number]
+vectorGreaterThan :: !(Stack Number) !(Stack Number) -> (Stack Number)
 vectorGreaterThan lhs rhs = zipWith isGreaterThan lhs rhs
-vectorLessOrEqual :: ![Number] ![Number] -> [Number]
+vectorLessOrEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
 vectorLessOrEqual lhs rhs = zipWith isLessOrEqual lhs rhs
-vectorGreaterOrEqual :: ![Number] ![Number] -> [Number]
+vectorGreaterOrEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
 vectorGreaterOrEqual lhs rhs = zipWith isGreaterOrEqual lhs rhs
 
 // miscelaneous operators
@@ -147,7 +147,7 @@ toUppercase :: !Number -> Number
 toUppercase arg = fromInt (toUpperUChar (toInt arg))
 toLowercase :: !Number -> Number
 toLowercase arg = fromInt (toLowerUChar (toInt arg))
-splitOnNewlines :: ![Number] -> [[Number]]
+splitOnNewlines :: !(Stack Number) -> (Stack Element)
 splitOnNewlines [] = []
 splitOnNewlines arg
 	# (head, tail) = span (\e -> toInt e <> 10) arg
@@ -157,9 +157,9 @@ splitOnNewlines arg
 		= [head:splitOnNewlines (tl tail)]
 
 // "set" operators
-fromLeftStepRight :: !Number !Number -> [Number]
+fromLeftStepRight :: !Number !Number -> (Stack Number)
 fromLeftStepRight lhs rhs = [lhs, lhs + rhs..]
-fromOneToMiddle :: !Number -> [Number]
+fromOneToMiddle :: !Number -> (Stack Number)
 fromOneToMiddle arg
 	| IS_CPLX arg
 		= [arg]
@@ -170,7 +170,7 @@ fromOneToMiddle arg
 		= [unit, unit + unit..arg]
 	| otherwise
 		= [arg]
-fromMiddleToZero :: !Number -> [Number]
+fromMiddleToZero :: !Number -> (Stack Number)
 fromMiddleToZero arg
 	| IS_CPLX arg
 		= [arg]
@@ -181,28 +181,28 @@ fromMiddleToZero arg
 		= [arg, arg - unit..Zero]
 	| otherwise
 		= [arg]
-fromLeftTimesRight :: !Number !Number -> [Number]
+fromLeftTimesRight :: !Number !Number -> (Stack Number)
 fromLeftTimesRight lhs rhs = yieldTimesRight lhs
 where yieldTimesRight arg = [arg:yieldTimesRight(arg*rhs)]
-setMinimum :: ![Number] -> Number
+setMinimum :: !(Stack Number) -> Number
 setMinimum [] = NaN
 setMinimum [head:tail] = foldl (min) head tail
-setMaximum :: ![Number] -> Number
+setMaximum :: !(Stack Number) -> Number
 setMaximum [] = NaN
 setMaximum [head:tail] = foldl (max) head tail
-setFilter :: ![Number] ![Number] -> [Number]
+setFilter :: !(Stack Number) !(Stack Number) -> (Stack Number)
 setFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | toBool cond]
-antiFilter :: ![Number] ![Number] -> [Number]
+antiFilter :: !(Stack Number) !(Stack Number) -> (Stack Number)
 antiFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | (not o toBool) cond]
-dupesMiddle :: ![Number] -> [Number]
+dupesMiddle :: !(Stack Number) -> (Stack Number)
 dupesMiddle arg = [el \\ el <- arg | sum [1 \\ e <- arg | e == el] > 1]
-groupMiddle :: ![Number] -> [[Number]]
+groupMiddle :: !(Stack Number) -> (Stack Element)
 groupMiddle arg = group arg
-setIntersection :: ![Number] ![Number] -> [Number]
+setIntersection :: !(Stack Number) !(Stack Number) -> (Stack Number)
 setIntersection lhs rhs = removeDup (filter (\el -> isMember el rhs) lhs)
-setUnion :: ![Number] ![Number] -> [Number]
+setUnion :: !(Stack Number) !(Stack Number) -> (Stack Number)
 setUnion lhs rhs = removeDup (lhs ++ rhs)
-setExclusion :: ![Number] ![Number] -> [Number]
+setExclusion :: !(Stack Number) !(Stack Number) -> (Stack Number)
 setExclusion lhs rhs = removeDup ((filter (not o \el -> isMember el rhs) lhs) ++ (filter (not o \el -> isMember el lhs) rhs))
 
 

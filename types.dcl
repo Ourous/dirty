@@ -2,6 +2,12 @@ definition module types
 
 import StdMaybe
 
+:: Stack t
+	= {
+		stack :: [!t],
+		bounded :: !Bool
+	}
+
 :: XYPair
 	= {
 		x :: !Int,
@@ -27,16 +33,16 @@ import StdMaybe
 :: Memory
 	= {
 		note :: !Number,
-		left :: ![Number],
-		right :: ![Number],
+		left :: !Stack Number,//![Number],
+		right :: !Stack Number,//![Number],
 		cursor :: !Int,
-		main :: ![Element],
+		main :: !Stack Element,//![Element],
 		delims :: !Int,
 		random :: ![Int]
 	}
 	
 :: Element
-	= El ![Number]
+	= El !(Stack Number)
 	| Delim !Int // "is active"
 	
 :: Flags
@@ -80,7 +86,6 @@ import StdMaybe
 	| Literal LiteralCommand
 	| Variable VariableCommand
 	| Operator OperatorCommand
-	| Stack StackCommand
 	| Environment (*(Memory, *World) -> *(Memory, *World))
 	| PlaceHolder
 	
@@ -225,58 +230,6 @@ import StdMaybe
 	| Chars_ToUppercase
 	| Chars_JoinWithNewlines
 	| Chars_SplitOnNewlines
-	
-:: StackCommand
-	= Reverse_Left
-	| Reverse_Right
-	| Reverse_Middle
-	| Reverse_Both
-	| Reverse_Primary
-	| Reverse_Base
-	| Reverse_All
-	| Rotate_Left
-	| Rotate_Right
-	| Rotate_Middle
-	| Rotate_Both
-	| Rotate_Primary
-	| Rotate_Base
-	| Rotate_All
-	| Delete_Left
-	| Delete_Right
-	| Delete_Middle
-	| Delete_Both
-	| Delete_Base
-	| Delete_Main
-	| Delete_All
-	| Drop_Left
-	| Drop_Right
-	| Drop_Middle
-	| Drop_Both
-	| Drop_Base
-	| Unjoin
-	| CycleTops Rotation
-	| CycleFull Rotation
-	| Unpack_LeftRight
-	| Unpack_RightLeft
-	| SwapTop Axes
-	| SwapLeftRight
-	| MoveTop Direction
-	| MoveAll Direction
-	| CopyTop Direction
-	| CopyBoth Axes
-	| Replicate_Base
-	| Replicate_TopOfMiddle
-	| Replicate_AllOfMiddle
-	| Repeat_TopOfMiddle
-	| Repeat_AllOfMiddle
-	| Group_Base
-	| Uniques_Middle
-	| Uniques_Base
-	| Duplicates_Middle
-	| Duplicates_Base
-	| ShiftBase Direction
-	| JoinFromBase
-	| AdjustOffset
 
 :: Rotation
 	= Clockwise

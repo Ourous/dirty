@@ -340,7 +340,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Binary_NN_N True (isEqualTo)))//(Operator (Logic_Equality))
 	,(Operator (Binary_NN_N False (isGreaterThan)))//(Operator (Logic_GreaterThan))
 	,(Operator (IO_ReadOnce))
-	,(Stack (AdjustOffset))
+	,PlaceHolder//(Stack (AdjustOffset))
 	,(Literal (Alphabet Uppercase))
 	,(Operator (Math_ConvertToBase))
 	,(Operator (Unary_N_N (acos)))//(Operator (Math_ArcCoSine))

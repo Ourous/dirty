@@ -96,11 +96,11 @@ where
 	annotated => [(orn, {x=x, y=y}) \\ y <- [0..] & line <-: commands, x <- [0..] & (Control (Start orn)) <-: line]
 
 
-construct :: !Program !Flags -> ((State, Memory, *World) -> *World)
+construct :: !Program !Flags -> (*(State, Memory, *World) -> *World)
 construct program=:{dimension, source, commands, wrapping} flags = execute
 where
 
-	execute :: (!State, !Memory, !*World) -> *World
+	execute :: *(!State, !Memory, !*World) -> *World
 	
 	execute ({terminate=True}, memory, world)
 		| flags.dump
@@ -160,7 +160,7 @@ where
 			# (chr, world) = evalIO getChar world
 			= (str <+ chr, world)
 
-	process :: !Command -> (*(!State, !Memory, !*World) -> *(State, Memory, *World))
+	process :: !Command -> ((!State, !Memory, !*World) -> (State, Memory, *World))
 	
 	process (Control (Terminate)) = app3 (\state -> {state&terminate=True}, id, id)
 		

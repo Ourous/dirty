@@ -5,15 +5,5 @@
 - Add actually descriptive error messages for when files can't be parsed or runtime errors occur.
 - Move `random` member into `state` instead of `memory`
 - PRIORITY:
-	- change group operator to work on primary stack
-	- change delimiter system to numbered delimiters with active storage
-	- review operators that alter cursor position or add delimiters
-		- numeric-returns should at most add a stack
-		- stack-returns should add a delimiter
-		- multi-returns should always add and set the cursor
-	- stop the cursor position from updating conditionally based on relative distance
-	- make cursor movement wrapping
-		- moving down one from the bottom goes to the top
-		- shifting down one from the bottom adds one below the top
-		- shifting up one from the top sets the bottom active and removes the delim at the top
+	- fix the stack-overflow bug with loops
 	- implement the set operators

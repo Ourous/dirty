@@ -1,6 +1,6 @@
 implementation module builtins
 
-import types, atomics, arithmetic, utilities, StdEnv, StdLib, unicode
+import types, atomics, arithmetic, utilities, StdEnv, StdLib, unicode, stacks
 
 // "boolean" functions
 isLessThan :: !Number !Number -> Number
@@ -19,11 +19,13 @@ isIdentical :: !(Stack Number) !(Stack Number) -> Number
 isIdentical lhs rhs = fromBool (lhs == rhs)
 
 isElementOf :: !Number !(Stack Number) -> Number
-isElementOf lhs rhs = fromBool (isMember lhs rhs)
+isElementOf lhs rhs = fromBool (areAny ((==) lhs) rhs)//fromBool (isMember lhs rhs)
 isImproperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
-isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
+isImproperSubsetOf lhs rhs = fromBool (areAll (\e -> occurrences ((==) e) lhs <= occurrences ((==) e) rhs) lhs)
+//isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
 isProperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
-isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
+isProperSubsetOf lhs rhs = fromBool (areAll (\e -> occurrences ((==) e) lhs <= occurrences ((==) e) rhs) lhs && areAny (\e -> occurrences ((==) e) lhs < occurrences ((==) e) rhs) lhs)
+//isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
 isNotSubsetOf :: !(Stack Number) !(Stack Number) -> Number
 isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
 
@@ -65,9 +67,9 @@ where
 	isSorted` _ = True
 	
 areAnyTrue :: !(Stack Number) -> Number
-areAnyTrue arg = fromBool (any toBool arg)
+areAnyTrue arg = fromBool (areAny toBool arg)
 areAllTrue :: !(Stack Number) -> Number
-areAllTrue arg = fromBool (all toBool arg)
+areAllTrue arg = fromBool (areAll toBool arg)
 
 // coalescing operators
 logicEquiv :: !Number -> Number
@@ -113,10 +115,12 @@ numCombin lhs rhs = (numPermute lhs rhs) / prod [one..rhs]
 logarithm :: !Number !Number -> Number
 logarithm lhs rhs = (ln rhs) / (ln lhs)
 numProduct :: !(Stack Number) -> Number
-numProduct [] = Zero
-numProduct arg = foldl (*) one arg
+numProduct {stack=[!]} = Zero
+numProduct {bounded=False} = NaN
+numProduct arg = reduce (*) one arg//foldl (*) one arg
 numSum :: !(Stack Number) -> Number
-numSum arg = foldl (+) Zero arg
+numSum {bounded=False} = NaN
+numSum arg = reduce (+) Zero arg//foldl (+) Zero arg
 
 // vectorized ops
 vectorPlus :: !(Stack Number) !(Stack Number) -> (Stack Number)

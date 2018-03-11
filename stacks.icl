@@ -1,6 +1,6 @@
 implementation module stacks
 
-import types, _SystemStrictLists, _SystemEnumStrict, StdEnv, StdLib, Data.Func
+import types, _SystemStrictLists, _SystemEnumStrict, StdEnv, StdLib, Data.Func, arithmetic
 
 appendStrict lhs [!] = lhs
 appendStrict [!] rhs = rhs
@@ -16,6 +16,16 @@ instance + (Stack t) where
 		
 instance zero (Stack t) where
 	zero =: {stack=[!], bounded=True}
+
+instance == (Stack Number) where
+	(==) {stack=lhs, bounded=True} {stack=rhs, bounded=True} = lhs == rhs
+	(==) _ _ = False
+	
+instance == [!Number] where
+	(==) [!] [!] = True
+	(==) [!l:lhs] [!r:rhs] = l == r && lhs == rhs
+	(==) _ _ = False
+	
 /*	
 fromList :: ![a] !Bool -> (Stack a)
 fromList list bounded = {stack=[!el \\ el <- list], bounded=bounded}
@@ -45,3 +55,39 @@ where
 	reduce` acc [!head:tail]
 		= reduce` (fn head acc) tail
 		
+categorize :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
+categorize fn arg=:{stack, bounded}
+	# (l, r) = categorize` stack
+	= ({stack=l,bounded=bounded}, {stack=r,bounded=bounded})
+where
+	categorize` [!] = ([!], [!])
+	categorize` [!head:tail]
+		# (l, r) = categorize` tail
+		| fn head
+			= ([!head:l], r)
+		| otherwise
+			= (l, [!head:r])
+			
+occurrences :: !(a -> Bool) !(Stack a) -> Int
+occurrences fn {stack} = occurrences` 0 stack
+where
+	occurrences` acc [!] = acc
+	occurrences` acc [!head:tail]
+		| fn head
+			= occurrences` (inc acc) tail
+		| otherwise
+			= occurrences` acc tail
+		
+areAll :: !(a -> Bool) !(Stack a) -> Bool
+areAll _ {bounded=False} = False
+areAll fn {stack} = areAll` stack
+where
+	areAll` [!] = True
+	areAll` [!head:tail] = fn head && areAll` tail
+	
+areAny :: !(a -> Bool) !(Stack a) -> Bool
+areAny _ {bounded=False} = True
+areAny fn {stack} = areAny` stack
+where
+	areAny` [!] = False
+	areAny` [!head:tail] = fn head || areAny` tail

@@ -309,41 +309,40 @@ stackReverse Base memory=:{cursor,main}
 		
 
 stackRotate :: !StackID !Memory -> Memory
-stackRotate _ _ = abort "TBI"/*
-stackRotate _ memory=:{main=[El []:_]} = memory
-stackRotate Left memory=:{left, main=[El [top:mid]:other]}
-	= {memory&left=rotateList(toInt top)left,main=[El mid:other]}
-stackRotate Right memory=:{right, main=[El [top:mid]:other]}
-	= {memory&right=rotateList(toInt top)right,main=[El mid:other]}
-stackRotate Both memory=:{left, right, main=[El [top:mid]:other]}
-	= let rotate = rotateList (toInt top)
-	in {memory&left=rotate left,right=rotate right,main=[El mid:other]}
-stackRotate Middle memory=:{main=[El [top:mid]:other]}
-	= let rotate = rotateList (toInt top)
-	in {memory&main=[El(rotate mid):other]}
-stackRotate Primary memory=:{main=[El [top:mid]:other]}
-	= let rotate = rotateList (toInt top)
-	in {memory&main=[El(rotate mid):map(APPLY_ELEM rotate)other]}
-stackRotate Base memory=:{cursor,main=[El [top:mid]:other]}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) [El mid:other]
-	= let rotate = rotateList (toInt top)
-	in mergeDelims {memory&main=rotate base ++ other}
+stackRotate _ memory=:{main={stack=[!El {stack=[!]}:_]}} = memory
+stackRotate Left memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	= {memory&left=rotated (toInt top) left,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+stackRotate Right memory=:{right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	= {memory&right=rotated (toInt top) right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+stackRotate Both memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	= let rotate = rotated (toInt top)
+	in {memory&left=rotate left,right=rotate right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+stackRotate Middle memory=:{main=main`=:{stack=[!El mid`:other]}}
+	= let rotate = rotated (toInt (headOf mid`))
+	in {memory&main={main`&stack=[!El (rotate (tailOf mid`)):other]}}
+stackRotate Primary memory=:{cursor, main=main`=:{stack=[!El mid`=:{stack=[!top:_]}:other]}}
+	# (base, other) = splitWhen (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El (tailOf mid`):other]}
+	= let rotate = rotated (toInt top)
+	in {memory&main=forEach (APPLY_ELEM rotate) base + other}
+stackRotate Base memory=:{cursor,main=main`=:{stack=[!El mid`=:{stack=[!top:_]}:other]}}
+	# (base, other) = splitWhen (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El (tailOf mid`):other]}
+	= let rotate = rotated (toInt top)
+	in mergeDelims {memory&main=rotate base + other}
 
-*/
+
 stackDelete :: !StackID !Memory -> Memory
-stackDelete _ _ = abort "TBI"/*
-stackDelete Left memory = {memory&left=[]}
-stackDelete Right memory = {memory&right=[]}
-stackDelete Middle memory=:{main=[El mid:other]}
-	= {memory&main=other}
-stackDelete Both memory = {memory&left=[],right=[]}
+stackDelete Left memory = {memory&left=zero}
+stackDelete Right memory = {memory&right=zero}
+stackDelete Middle memory=:{main}
+	= {memory&main=tailOf main}
+stackDelete Both memory = {memory&left=zero,right=zero}
 stackDelete Base memory=:{cursor,main}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
+	# (base, other) = splitWhen (DELIM_FUNC False ((==)cursor)) main
 	= mergeDelims {memory&main=other}
-stackDelete Main memory = {memory&main=[]}
-stackDelete All memory = {memory&left=[],right=[],main=[]}
+stackDelete Main memory = {memory&main=zero}
+stackDelete All memory = {memory&left=zero,right=zero,main=zero}
 
-*/
+
 stackDrop :: !StackID !Memory -> Memory
 stackDrop _ _ = abort "TBI"/*
 stackDrop _ memory=:{main=[El []:_]} = memory

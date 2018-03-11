@@ -1,6 +1,6 @@
 implementation module stacks
 
-import types, _SystemStrictLists, _SystemEnumStrict, StdEnv, StdLib, Data.Func, arithmetic
+import types, _SystemStrictLists, _SystemEnumStrict, StdEnv, StdLib, Data.Func, arithmetic, utilities
 
 appendStrict lhs [!] = lhs
 appendStrict [!] rhs = rhs
@@ -122,6 +122,10 @@ reversed {stack, bounded}
 where
 	reversed` [!] = [!]
 	reversed` [!head:tail] = appendStrict (reversed` tail) [!head]
+	
+rotated :: !Int !(Stack a) -> (Stack a)
+rotated num arg
+	= fromList (rotateList num (toList arg)) arg.bounded
 
 occurrences :: !(a -> Bool) !(Stack a) -> Int
 occurrences fn {stack} = occurrences` 0 stack

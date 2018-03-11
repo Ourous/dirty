@@ -32,6 +32,7 @@ categorize :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
 splitWhen :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
 uniques :: !(Stack a) -> (Stack a) | Eq a
 reversed :: !(Stack a) -> (Stack a)
+rotated :: !Int !(Stack a) -> (Stack a)
 
 occurrences :: !(a -> Bool) !(Stack a) -> Int
 

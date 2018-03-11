@@ -1,6 +1,6 @@
 definition module stacks
 
-import types, _SystemStrictLists, _SystemEnumStrict, StdOverloaded
+import types, _SystemStrictLists, _SystemEnumStrict, StdOverloaded, StdClass
 
 instance + (Stack t)
 instance zero (Stack t)
@@ -30,6 +30,8 @@ forEach :: !(a -> b) !(Stack a) -> (Stack b)
 reduce :: !(a b -> b) !b !(Stack a) -> b
 categorize :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
 splitWhen :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
+uniques :: !(Stack a) -> (Stack a) | Eq a
+reversed :: !(Stack a) -> (Stack a)
 
 occurrences :: !(a -> Bool) !(Stack a) -> Int
 

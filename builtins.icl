@@ -210,7 +210,7 @@ groupMiddle arg=:{bounded}
 	# groups = map (\e -> (El (fromList e False))) (group list) // TODO: all complete groups are bounded, find a way to implement that
 	= fromList groups bounded
 setIntersection :: !(Stack Number) !(Stack Number) -> (Stack Number)
-setIntersection lhs rhs = abort "TBI"//removeDup (filter (\el -> isMember el rhs) lhs)
+setIntersection lhs rhs = uniques (filterBy (\e -> areAny ((==) e) rhs) lhs)//removeDup (filter (\el -> isMember el rhs) lhs)
 setUnion :: !(Stack Number) !(Stack Number) -> (Stack Number)
 setUnion lhs rhs = abort "TBI"//removeDup (lhs ++ rhs)
 setExclusion :: !(Stack Number) !(Stack Number) -> (Stack Number)
@@ -219,11 +219,10 @@ setExclusion lhs rhs = abort "TBI"//removeDup ((filter (not o \el -> isMember el
 
 // special cases
 complexSplit :: !Memory -> Memory
-complexSplit _ = abort "TBI"/*
 complexSplit memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
 	= {memory&left=fromSingle (justReal top) + left,right=fromSingle (justImag top) + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
 complexSplit memory = memory
-*/
+
 matrixProduct :: !Memory -> Memory // returns multiple
 matrixProduct _ = abort "TBI"/*
 matrixProduct memory=:{cursor, delims, left, right, main} = abort "TBI"// let
@@ -231,16 +230,14 @@ matrixProduct memory=:{cursor, delims, left, right, main} = abort "TBI"// let
 //	in {memory&cursor=delims,delims=inc delims,main=matrix++[Delim delims:memory.main]}
 */
 joinWithNewlines :: !Memory -> Memory
-joinWithNewlines _ = abort "TBI"/*
-joinWithNewlines memory=:{cursor, main} = abort "TBI"
-*/
+joinWithNewlines _ = abort "TBI"
+
 stacksFromCursor :: !Memory -> Memory
-stacksFromCursor _ = abort "TBI"/*
-stacksFromCursor memory=:{cursor,main=[El mid:other]} = let
-		base = takeWhile (DELIM_FUNC True ((<>)cursor)) memory.main
-		stacks = sum [1 \\ (El _) <- base]
-	in {memory&main=[El[fromInt stacks:mid]:other]}
-*/
+stacksFromCursor memory=:{cursor,main=main`=:{stack=[!El mid`:other]}} = let
+		(base, _) = splitWhen (DELIM_FUNC False ((==)cursor)) memory.main
+		stacks = occurrences (IS_ELEM) base
+	in {memory&main={main`&stack=[!El (fromSingle (fromInt stacks) + mid`):other]}}
+
 transposeFromCursor :: !Memory -> Memory
 transposeFromCursor _ = abort "TBI"/*
 transposeFromCursor memory=:{cursor,main}
@@ -251,20 +248,18 @@ transposeFromCursor memory=:{cursor,main}
 	in {memory&main=transposed ++ other}
 */
 stackJoin :: !Memory -> Memory
-stackJoin _ = abort "TBI"/*
 stackJoin memory=:{cursor,main}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
+	# (base, other) = splitWhen (DELIM_FUNC False ((==)cursor)) main
 	= let
-		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) base
-		flattened = [El (flatten [el \\ (El el) <- part]) \\ part <- grouped | case part of [Delim _] = False; _ = True]
-	in {memory&main=flattened ++ other}
-*/
+		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) (toList base)
+		flattened = [!El (fromList (flatten [toList el \\ (El el) <- part]) (all (\e -> case e of (El el) = el.bounded; _ = False) part)) \\ part <- grouped | case part of [Delim _] = False; _ = True]
+	in {memory&main=fromStrictList flattened base.bounded + other}
+
 stackUnjoin :: !Memory -> Memory
-stackUnjoin _ = abort "TBI"/*
-stackUnjoin memory=:{cursor,delims,main=[El mid:other]} = let
-		singles = [El [el] \\ el <- mid]
-	in mergeDelims {memory&cursor=delims,delims=inc delims,main=(if(isEmpty singles) [El []] singles) ++ [Delim delims:other]}
-*/
+stackUnjoin memory=:{cursor,delims,main=main`=:{stack=[!El mid`:other]}} = let
+		singles = fromStrictList [!El (fromSingle el) \\ el <- toList mid`] mid`.bounded
+	in mergeDelims {memory&cursor=delims,delims=inc delims,main=(if(case singles.stack of [!] = True; _ = False) (fromSingle (El zero)) singles) + (fromSingle (Delim delims)) + (fromStrictList other main`.bounded)}
+
 removeDupBase :: !Memory -> Memory
 removeDupBase _ = abort "TBI"/*
 removeDupBase memory=:{cursor,main}
@@ -275,11 +270,10 @@ removeDupBase memory=:{cursor,main}
 	in {memory&main=deduped ++ other}
 */
 repeatTopMiddle :: !Memory -> Memory
-repeatTopMiddle _ = abort "TBI"/*
-repeatTopMiddle memory=:{main=[El []:_]} = memory
-repeatTopMiddle memory=:{delims,main=[El [top:mid]:other]}
-	= {memory&delims=inc delims,main=[El(repeat top),Delim delims,El mid:other]}
-*/
+repeatTopMiddle memory=:{delims,main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	= {memory&delims=inc delims,main={main`&stack=[!El (fromList (repeat top) False),Delim delims,El (fromStrictList mid mid`.bounded):other]}}
+repeatTopMiddle memory = memory
+	
 repeatFullMiddle :: !Memory -> Memory
 repeatFullMiddle _ = abort "TBI"/*
 repeatFullMiddle memory=:{cursor, delims, main=[El mid:other]} // handle the infinite-ness
@@ -298,29 +292,22 @@ sortBaseline memory=:{cursor,main}
 // stack manipulations
 */
 stackReverse :: !StackID !Memory -> Memory
-stackReverse _ _ = abort "TBI"/*
 stackReverse Left memory=:{left}
-	= {memory&left=reverse left}
+	= {memory&left=reversed left}
 stackReverse Right memory=:{right}
-	= {memory&right=reverse right}
-stackReverse Middle memory=:{main=[El mid:other]}
-	= {memory&main=[El (reverse mid):other]}
+	= {memory&right=reversed right}
+stackReverse Middle memory=:{main=main`=:{stack=[!El mid`:other]}}
+	= {memory&main={main`&stack=[!El (reversed mid`):other]}}
 stackReverse Both memory=:{left, right}
-	= {memory&left=reverse left, right=reverse right}
+	= {memory&left=reversed left, right=reversed right}
 stackReverse Primary memory=:{cursor,main}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
-	= {memory&main=reverseEach base ++ other}
-where
-	reverseEach [] = []
-	reverseEach [El head:tail]
-		= [El (reverse head):reverseEach tail]
-	reverseEach [head:tail]
-		= [head:reverseEach tail]
+	# (base, other) = splitWhen (DELIM_FUNC False ((==)cursor)) main
+	= {memory&main=forEach (APPLY_ELEM reversed) base + other}
 stackReverse Base memory=:{cursor,main}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
-	= mergeDelims {memory&main=reverse base ++ other}
+	# (base, other) = splitWhen (DELIM_FUNC False ((==)cursor)) main
+	= mergeDelims {memory&main=reversed base + other}
 		
-*/
+
 stackRotate :: !StackID !Memory -> Memory
 stackRotate _ _ = abort "TBI"/*
 stackRotate _ memory=:{main=[El []:_]} = memory
@@ -523,20 +510,16 @@ dupesBase memory=:{cursor,main}
 	
 */
 shiftCursorDownwards :: !Memory -> Memory
-shiftCursorDownwards _ = abort "TBI"/*
 shiftCursorDownwards memory=:{cursor=0, delims} = {memory&cursor=dec delims}
 shiftCursorDownwards memory=:{cursor} = {memory&cursor=dec cursor}
-		
-*/
+
 shiftCursorUpwards :: !Memory -> Memory
-shiftCursorUpwards _ = abort "TBI"/*
 shiftCursorUpwards memory=:{cursor, delims}
 	| inc cursor == delims
 		= {memory&cursor=0}
 	| otherwise
 		= {memory&cursor=inc cursor}
-	
-*/
+
 moveCursorForwards :: !Memory -> Memory
 moveCursorForwards _ = abort "TBI"/*
 moveCursorForwards memory=:{delims,cursor,main}
@@ -560,12 +543,9 @@ moveCursorBackwards memory=:{delims,cursor,main}
 
 */
 remember :: !Memory -> Memory
-remember _ = abort "TBI"/*
-remember memory=:{main=[El [top:mid]:other]}
-	= {memory&main=[El mid:other],note=top}
+remember memory=:{main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	= {memory&main={main`&stack=[!El {mid`&stack=mid}:other]},note=top}
 
-*/
 recall :: !Memory -> Memory
-recall _ = abort "TBI"/*
-recall memory=:{main=[El mid:other], note}
-	= {memory&main=[El[note:mid]:other]}*/
+recall memory=:{main=main`=:{stack=[!El mid`:other]}, note}
+	= {memory&main={main`&stack=[!El (fromSingle note + mid`):other]}}

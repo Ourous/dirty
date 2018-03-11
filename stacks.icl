@@ -73,7 +73,7 @@ where
 
 forEach :: !(a -> b) !(Stack a) -> (Stack b)
 forEach fn arg=:{stack, bounded}
-	= {arg&stack=if(bounded) hyperstrict id (forEach` stack)}
+	= {arg&stack=forEach` stack}
 where
 	forEach` [!] = [!]
 	forEach` [!head:tail]
@@ -111,8 +111,18 @@ where
 		| otherwise
 			# (l, r) = splitWhen` tail
 			= (l + fromSingle head, r)
-	
-			
+
+uniques :: !(Stack a) -> (Stack a) | Eq a
+uniques arg
+	= fromList (removeDup (toList arg)) arg.bounded
+
+reversed :: !(Stack a) -> (Stack a)
+reversed {stack, bounded}
+	= {stack=reversed` stack, bounded=bounded}
+where
+	reversed` [!] = [!]
+	reversed` [!head:tail] = appendStrict (reversed` tail) [!head]
+
 occurrences :: !(a -> Bool) !(Stack a) -> Int
 occurrences fn {stack} = occurrences` 0 stack
 where

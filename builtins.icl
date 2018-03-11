@@ -27,7 +27,8 @@ isProperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
 isProperSubsetOf lhs rhs = fromBool (areAll (\e -> occurrences ((==) e) lhs <= occurrences ((==) e) rhs) lhs && areAny (\e -> occurrences ((==) e) lhs < occurrences ((==) e) rhs) lhs)
 //isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
 isNotSubsetOf :: !(Stack Number) !(Stack Number) -> Number
-isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
+isNotSubsetOf lhs rhs = fromBool (areAny (\e -> occurrences ((==) e) lhs > occurrences ((==) e) rhs) lhs)
+//isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
 
 isUppercase :: !Number -> Number
 isUppercase arg = fromBool (isUpperUChar (toInt arg))
@@ -61,9 +62,10 @@ isPrime arg
 		= fromBool (all (\e -> arg mod e <> Zero) [inc one..dec arg])
 
 isSorted :: !(Stack Number) -> Number
-isSorted arg = fromBool (isSorted` arg)
+isSorted {bounded=False} = Zero
+isSorted {stack} = fromBool (isSorted` stack)
 where
-	isSorted` [h1:tail=:[h2:_]] = h1 <= h2 && isSorted` tail
+	isSorted` [!h1:tail=:[!h2:_]] = h1 <= h2 && isSorted` tail
 	isSorted` _ = True
 	
 areAnyTrue :: !(Stack Number) -> Number
@@ -79,6 +81,8 @@ logicNegate arg = fromBool (not (toBool arg))
 
 // remaining math ops
 primeFactors :: !Number -> (Stack Number)
+primeFactors _ = zero
+/*
 primeFactors NaN = []
 primeFactors arg
 	| abs arg < inc one || numCeiling arg <> numFloor arg
@@ -86,6 +90,7 @@ primeFactors arg
 	| otherwise
 		# factors = [n \\ n <- [inc one..arg] | arg mod n == Zero && (toBool o isPrime) n]
 		= factors ++ (primeFactors (arg/(prod factors)))
+*/
 conjugate :: !Number -> Number
 conjugate (Im (Fin val)) = (Im (Fin (~val)))
 conjugate (Cx (Fin val=:{im})) = (Cx (Fin {val&im=(~im)}))

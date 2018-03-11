@@ -18,6 +18,7 @@ fromSingle val :== {stack=[!val],bounded=True}
 
 // standard functions
 
+
 forEach :: !(a -> b) !(Stack a) -> (Stack b)
 reduce :: !(a b -> b) !b !(Stack a) -> b
 categorize :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)

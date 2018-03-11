@@ -219,54 +219,75 @@ setExclusion lhs rhs = abort "TBI"//removeDup ((filter (not o \el -> isMember el
 
 // special cases
 complexSplit :: !Memory -> Memory
+complexSplit _ = abort "TBI"/*
 complexSplit memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
 	= {memory&left=fromSingle (justReal top) + left,right=fromSingle (justImag top) + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
 complexSplit memory = memory
+*/
 matrixProduct :: !Memory -> Memory // returns multiple
+matrixProduct _ = abort "TBI"/*
 matrixProduct memory=:{cursor, delims, left, right, main} = abort "TBI"// let
 //		matrix = [El [lhs * rhs \\ rhs <- right] \\ lhs <- left]
 //	in {memory&cursor=delims,delims=inc delims,main=matrix++[Delim delims:memory.main]}
+*/
 joinWithNewlines :: !Memory -> Memory
-joinWithNewlines memory=:{cursor, main} = abort "TBI"/*
+joinWithNewlines _ = abort "TBI"/*
+joinWithNewlines memory=:{cursor, main} = abort "TBI"
+*/
 stacksFromCursor :: !Memory -> Memory
+stacksFromCursor _ = abort "TBI"/*
 stacksFromCursor memory=:{cursor,main=[El mid:other]} = let
 		base = takeWhile (DELIM_FUNC True ((<>)cursor)) memory.main
 		stacks = sum [1 \\ (El _) <- base]
 	in {memory&main=[El[fromInt stacks:mid]:other]}
+*/
 transposeFromCursor :: !Memory -> Memory
+transposeFromCursor _ = abort "TBI"/*
 transposeFromCursor memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
 		safeBase = [el \\ (El el) <- base]
 		transposed = [(El el) \\ el <- transpose safeBase]
 	in {memory&main=transposed ++ other}
+*/
 stackJoin :: !Memory -> Memory
+stackJoin _ = abort "TBI"/*
 stackJoin memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
 		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) base
 		flattened = [El (flatten [el \\ (El el) <- part]) \\ part <- grouped | case part of [Delim _] = False; _ = True]
 	in {memory&main=flattened ++ other}
+*/
 stackUnjoin :: !Memory -> Memory
+stackUnjoin _ = abort "TBI"/*
 stackUnjoin memory=:{cursor,delims,main=[El mid:other]} = let
 		singles = [El [el] \\ el <- mid]
 	in mergeDelims {memory&cursor=delims,delims=inc delims,main=(if(isEmpty singles) [El []] singles) ++ [Delim delims:other]}
+*/
 removeDupBase :: !Memory -> Memory
+removeDupBase _ = abort "TBI"/*
 removeDupBase memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let 
 		safeBase = [el \\ (El el) <- base]
 		deduped = [El el \\ el <- removeDup safeBase]
 	in {memory&main=deduped ++ other}
+*/
 repeatTopMiddle :: !Memory -> Memory
+repeatTopMiddle _ = abort "TBI"/*
 repeatTopMiddle memory=:{main=[El []:_]} = memory
 repeatTopMiddle memory=:{delims,main=[El [top:mid]:other]}
 	= {memory&delims=inc delims,main=[El(repeat top),Delim delims,El mid:other]}
+*/
 repeatFullMiddle :: !Memory -> Memory
+repeatFullMiddle _ = abort "TBI"/*
 repeatFullMiddle memory=:{cursor, delims, main=[El mid:other]} // handle the infinite-ness
 	# memory = mergeDelims {memory&cursor=delims,delims=inc delims,main=[El mid,Delim delims:other]}
 	= {memory&main=(repeat (El mid))++memory.main}
+*/
 sortBaseline :: !Memory -> Memory
+sortBaseline _ = abort "TBI"/*
 sortBaseline memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
@@ -275,7 +296,9 @@ sortBaseline memory=:{cursor,main}
 	in {memory&main=sorted ++ other}
 	
 // stack manipulations
+*/
 stackReverse :: !StackID !Memory -> Memory
+stackReverse _ _ = abort "TBI"/*
 stackReverse Left memory=:{left}
 	= {memory&left=reverse left}
 stackReverse Right memory=:{right}
@@ -297,7 +320,9 @@ stackReverse Base memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= mergeDelims {memory&main=reverse base ++ other}
 		
+*/
 stackRotate :: !StackID !Memory -> Memory
+stackRotate _ _ = abort "TBI"/*
 stackRotate _ memory=:{main=[El []:_]} = memory
 stackRotate Left memory=:{left, main=[El [top:mid]:other]}
 	= {memory&left=rotateList(toInt top)left,main=[El mid:other]}
@@ -317,7 +342,9 @@ stackRotate Base memory=:{cursor,main=[El [top:mid]:other]}
 	= let rotate = rotateList (toInt top)
 	in mergeDelims {memory&main=rotate base ++ other}
 
+*/
 stackDelete :: !StackID !Memory -> Memory
+stackDelete _ _ = abort "TBI"/*
 stackDelete Left memory = {memory&left=[]}
 stackDelete Right memory = {memory&right=[]}
 stackDelete Middle memory=:{main=[El mid:other]}
@@ -329,7 +356,9 @@ stackDelete Base memory=:{cursor,main}
 stackDelete Main memory = {memory&main=[]}
 stackDelete All memory = {memory&left=[],right=[],main=[]}
 
+*/
 stackDrop :: !StackID !Memory -> Memory
+stackDrop _ _ = abort "TBI"/*
 stackDrop _ memory=:{main=[El []:_]} = memory
 stackDrop Left memory=:{left, main=[El [top:mid]:other]} = let
 		val = toInt top
@@ -354,37 +383,49 @@ stackDrop Base memory=:{cursor,main=[El [top:mid]:other]}
 		fn = if(val<0) (take(~val)) (drop val)
 	in mergeDelims {memory&main=fn base ++ other}
 	
+*/
 cycleTops :: !Rotation !Memory -> Memory
+cycleTops _ _ = abort "TBI"/*
 cycleTops Clockwise memory=:{left, main=[El mid:other], right}
 	= {memory&left=SAFE_HEAD right++SAFE_TAIL left,right=SAFE_HEAD mid++SAFE_TAIL right,main=[El(SAFE_HEAD left++SAFE_TAIL mid):other]}
 cycleTops Anticlockwise memory=:{left, main=[El mid:other], right}
 	= {memory&left=SAFE_HEAD mid++SAFE_TAIL left,right=SAFE_HEAD left++SAFE_TAIL right,main=[El(SAFE_HEAD right++SAFE_TAIL mid):other]}
 	
+*/
 cycleStacks :: !Rotation !Memory -> Memory
+cycleStacks _ _ = abort "TBI"/*
 cycleStacks Clockwise memory=:{left, main=[El mid:other], right}
 	= {memory&left=right,right=mid,main=[El left:other]}
 cycleStacks Anticlockwise memory=:{left, main=[El mid:other], right}
 	= {memory&left=mid,right=left,main=[El right:other]}
 	
+*/
 unpackLeftRight :: !Memory -> Memory
+unpackLeftRight _ = abort "TBI"/*
 unpackLeftRight memory=:{left, main=[El[lhs,rhs:mid]:other], right}
 	= {memory&left=[lhs:left],right=[rhs:right],main=[El mid:other]}
 unpackLeftRight memory=:{left, main=[El[lhs]:other]}
 	= {memory&left=[lhs:left],main=[El []:other]}
 unpackLeftRight memory = memory
 
+*/
 unpackRightLeft :: !Memory -> Memory
+unpackRightLeft _ = abort "TBI"/*
 unpackRightLeft memory=:{left, main=[El[rhs,lhs:mid]:other], right}
 	= {memory&left=[lhs:left],right=[rhs:right],main=[El mid:other]}
 unpackRightLeft memory=:{right, main=[El[rhs]:other]}
 	= {memory&right=[rhs:right],main=[El []:other]}
 unpackRightLeft memory = memory
 
+*/
 swapLeftRight :: !Memory -> Memory
+swapLeftRight _ = abort "TBI"/*
 swapLeftRight memory=:{left, right}
 	= {memory&left=right,right=left}
 	
+*/
 swapTop :: !Axes !Memory -> Memory
+swapTop _ _ = abort "TBI"/*
 swapTop Horizontal memory=:{left, right}
 	= {memory&left=SAFE_HEAD right++SAFE_TAIL left,right=SAFE_HEAD left++SAFE_TAIL right}
 swapTop Vertical memory=:{main=[El [top:mid=:[_:_]]:other]}
@@ -395,7 +436,9 @@ swapTop Inverse memory=:{left, main=[El mid:other]}
 	= {memory&left=SAFE_HEAD mid++SAFE_TAIL left,main=[El(SAFE_HEAD left++SAFE_TAIL mid):other]}
 swapTop _ memory = memory	
 
+*/
 moveTop :: !Direction !Memory -> Memory
+moveTop _ _ = abort "TBI"/*
 moveTop East memory=:{left, right=[top:right]}
 	= {memory&left=[top:left],right=right}
 moveTop West memory=:{left=[top:left], right}
@@ -412,7 +455,9 @@ moveTop SouthEast memory=:{left=[top:left], main=[El mid:other]}
 	= {memory&left=left,main=[El[top:mid]:other]}
 moveTop _ memory = memory
 	
+*/
 copyTop :: !Direction !Memory -> Memory
+copyTop _ _ = abort "TBI"/*
 copyTop East memory=:{left, right=[top:_]}
 	= {memory&left=[top:left]}
 copyTop West memory=:{left=[top:_], right}
@@ -429,7 +474,9 @@ copyTop SouthEast memory=:{left=[top:_], main=[El mid:other]}
 	= {memory&main=[El[top:mid]:other]}
 copyTop _ memory = memory
 	
+*/
 copyBoth :: !Axes !Memory -> Memory
+copyBoth _ _ = abort "TBI"/*
 copyBoth Horizontal memory=:{left=[lhs:_], right=[rhs:_]}
 	= {memory&left=[rhs:memory.left],right=[lhs:memory.right]}
 copyBoth Vertical memory=:{main=[El (mid=:[_:_]):other]}
@@ -445,21 +492,28 @@ moveAll SouthWest memory=:{delims, right, main}
 	= {memory&delims=inc delims,right=zero,main=fromStrictList [!El right,Delim delims] True + main}
 moveAll SouthEast memory=:{delims, left, main}
 	= {memory&delims=inc delims,left=zero,main=fromStrictList [!El left, Delim delims] True + main}
-/*
+
 replicateBase :: !Memory -> Memory
+replicateBase _ = abort "TBI"/*
 replicateBase memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= mergeDelims {memory&cursor= -1,main=base++[Delim -1: main]} // do not touch, this is magic
 	
+*/
 replicateMiddle :: !Memory -> Memory
+replicateMiddle _ = abort "TBI"/*
 replicateMiddle memory=:{delims,main=[El mid:other]}
 	= {memory&delims=inc delims,main=[El mid,Delim delims,El mid:other]}
 	
+*/
 replicateTop :: !Memory -> Memory
+replicateTop _ = abort "TBI"/*
 replicateTop memory=:{delims,main=[El mid:other]}
 	= {memory&delims=inc delims,main=[El(SAFE_HEAD mid),Delim delims,El mid:other]}
 	
+*/
 dupesBase :: !Memory -> Memory
+dupesBase _ = abort "TBI"/*
 dupesBase memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
@@ -467,18 +521,24 @@ dupesBase memory=:{cursor,main}
 		deduplicated = [El el \\ el <- safeBase | sum [1 \\ e <- safeBase | e == el] > 1]
 	in {memory&main=deduplicated ++ other}
 	
+*/
 shiftCursorDownwards :: !Memory -> Memory
+shiftCursorDownwards _ = abort "TBI"/*
 shiftCursorDownwards memory=:{cursor=0, delims} = {memory&cursor=dec delims}
 shiftCursorDownwards memory=:{cursor} = {memory&cursor=dec cursor}
 		
+*/
 shiftCursorUpwards :: !Memory -> Memory
+shiftCursorUpwards _ = abort "TBI"/*
 shiftCursorUpwards memory=:{cursor, delims}
 	| inc cursor == delims
 		= {memory&cursor=0}
 	| otherwise
 		= {memory&cursor=inc cursor}
 	
+*/
 moveCursorForwards :: !Memory -> Memory
+moveCursorForwards _ = abort "TBI"/*
 moveCursorForwards memory=:{delims,cursor,main}
 	# (base, [cur:other]) = span (DELIM_FUNC True ((<>)cursor)) main
 	| isEmpty other
@@ -487,7 +547,9 @@ moveCursorForwards memory=:{delims,cursor,main}
 	| otherwise
 		= mergeDelims {memory&main=(init base ++ [cur, last base:other])}
 	
+*/
 moveCursorBackwards :: !Memory -> Memory
+moveCursorBackwards _ = abort "TBI"/*
 moveCursorBackwards memory=:{delims,cursor,main}
 	# (base, [cur:other]) = span (DELIM_FUNC True ((<>)cursor)) main
 	| isEmpty other
@@ -496,10 +558,14 @@ moveCursorBackwards memory=:{delims,cursor,main}
 	| otherwise
 		= mergeDelims {memory&main=(base ++ [hd other, cur:tl other])}
 
+*/
 remember :: !Memory -> Memory
+remember _ = abort "TBI"/*
 remember memory=:{main=[El [top:mid]:other]}
 	= {memory&main=[El mid:other],note=top}
 
+*/
 recall :: !Memory -> Memory
+recall _ = abort "TBI"/*
 recall memory=:{main=[El mid:other], note}
 	= {memory&main=[El[note:mid]:other]}*/

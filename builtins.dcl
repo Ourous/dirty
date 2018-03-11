@@ -86,7 +86,7 @@ setExclusion :: !(Stack Number) !(Stack Number) -> (Stack Number)
 
 // special cases
 complexSplit :: !Memory -> Memory
-matrixProduct :: !Memory -> Memory
+matrixProduct :: !Memory -> Memory/*
 joinWithNewlines :: !Memory -> Memory
 stacksFromCursor :: !Memory -> Memory
 transposeFromCursor :: !Memory -> Memory
@@ -110,8 +110,8 @@ swapLeftRight :: !Memory -> Memory
 swapTop :: !Axes !Memory -> Memory
 moveTop :: !Direction !Memory -> Memory
 copyTop :: !Direction !Memory -> Memory
-copyBoth :: !Axes !Memory -> Memory
-moveAll :: !Direction !Memory -> Memory
+copyBoth :: !Axes !Memory -> Memory*/
+moveAll :: !Direction !Memory -> Memory/*
 replicateBase :: !Memory -> Memory
 replicateMiddle :: !Memory -> Memory
 replicateTop :: !Memory -> Memory
@@ -123,4 +123,4 @@ moveCursorBackwards :: !Memory -> Memory
 
 // note modifiers
 remember :: !Memory -> Memory
-recall :: !Memory -> Memory
+recall :: !Memory -> Memory*/

@@ -1,6 +1,6 @@
 implementation module runtime
 
-import types, atomics, arithmetic, builtins, utilities, unicode, environment, stacks
+import types, atomics, arithmetic, builtins, utilities, unicode, stacks//, environment
 import StdEnv, StdLib, System.IO, System.Time, Math.Random, Text, Data.Func
 from Math.Geometry import pi
 import qualified Data.Generics.GenParse as GenParse

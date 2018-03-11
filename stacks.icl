@@ -39,6 +39,38 @@ fromSingle :: !a -> (Stack a)
 fromSingle val = {stack=[!val],bounded=True}
 */
 
+filterBy :: !(a -> Bool) !(Stack a) -> (Stack a)
+filterBy fn {stack, bounded}
+	= {stack=filterBy` stack, bounded=bounded}
+where
+	filterBy` [!] = [!]
+	filterBy` [!head:tail]
+		| fn head
+			= [!head:filterBy` tail]
+		| otherwise
+			= filterBy` tail
+			
+filterOn :: !(b -> Bool) !(Stack a) !(Stack b) -> (Stack a)
+filterOn fn lhs rhs
+	= {stack=filterOn` lhs.stack rhs.stack, bounded=lhs.bounded||rhs.bounded}
+where
+	filterOn` [!] _ = [!]
+	filterOn` _ [!] = [!]
+	filterOn` [!l:lhs] [!r:rhs]
+		| fn r
+			= [!l:filterOn` lhs rhs]
+		| otherwise
+			= filterOn` lhs rhs
+
+withEach :: !(a a -> b) !(Stack a) !(Stack a) -> (Stack b)
+withEach fn lhs rhs
+	= {stack=withEach` lhs.stack rhs.stack, bounded=lhs.bounded||rhs.bounded}
+where
+	withEach` [!] _ = [!]
+	withEach` _ [!] = [!]
+	withEach` [!l:lhs] [!r:rhs]
+		= [!fn l r:withEach` lhs rhs]
+
 forEach :: !(a -> b) !(Stack a) -> (Stack b)
 forEach fn arg=:{stack, bounded}
 	= {arg&stack=if(bounded) hyperstrict id (forEach` stack)}
@@ -67,6 +99,19 @@ where
 			= ([!head:l], r)
 		| otherwise
 			= (l, [!head:r])
+			
+splitWhen :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
+splitWhen fn arg=:{stack, bounded}
+	= splitWhen` stack
+where
+	splitWhen` [!] = (zero, zero)
+	splitWhen` [!head:tail]
+		| fn head
+			= (zero, {stack=[!head:tail],bounded=bounded})
+		| otherwise
+			# (l, r) = splitWhen` tail
+			= (l + fromSingle head, r)
+	
 			
 occurrences :: !(a -> Bool) !(Stack a) -> Int
 occurrences fn {stack} = occurrences` 0 stack

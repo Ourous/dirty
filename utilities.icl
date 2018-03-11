@@ -1,6 +1,6 @@
 implementation module utilities
 
-import types, StdEnv, StdLib
+import types, StdEnv, StdLib, stacks
 
 instance == Direction where
 	(==) East East = True
@@ -35,10 +35,10 @@ rotateList n list
 		= list
 		
 mergeDelims :: !Memory -> Memory
-mergeDelims memory
-	# ( cursor, reversed) = collapseDelims memory.cursor [] memory.main
+mergeDelims memory=:{main={bounded}}
+	# (cursor, reversed) = collapseDelims memory.cursor [] (toList memory.main)
 	# (delims, cursor, main) = expandDelims 0 cursor [] reversed
-	= {memory&cursor=cursor,delims=delims,main=main}
+	= {memory&cursor=cursor,delims=delims,main=fromList main bounded}
 where
 	collapseDelims cursor head [Delim hi: tail=:[Delim _: _]]
 		# (delimsGroup, others) = span (IS_DELIM) tail

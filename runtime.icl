@@ -490,18 +490,22 @@ where
 	where
 	
 		binary :: !Bool !Bool Memory -> Memory
-		binary False True memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]},El oth`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
-			= {memory&main={main`&stack=[!El (op mid` oth`):other]}}
-		binary False True memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
-			= {memory&main={main`&stack=[!El (op mid` zero):other]}}
+		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]},El {stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, El oth, other) = decon2 memory.main
+			= {memory&main=recons (El (op mid oth), other)}
+		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			= {memory&main=recons (El (op mid zero), other)}
 		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
-			= {memory&delims=inc delims,main=fromList [El (op zero zero),Delim delims] True + memory.main}
-		binary False _ memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right}
-			= {memory&main={main`&stack=[!El (op mid` right):other]}}
-		binary False _ memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
-			= {memory&main={main`&stack=[!El (op left mid`):other]}}
+			= {memory&delims=inc delims,main=recon2 (El (op zero zero), Delim delims, memory.main)}
+		binary False _ memory=:{left={stack=[!]}, main={stack=[!El{stack=[!_:_]}:_]}, right}
+			# (El mid, other) = decons memory.main
+			= {memory&main=recons (El (op mid right), other)}
+		binary False _ memory=:{left, main={stack=[!El{stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			= {memory&main=recons (El (op left mid), other)}
 		binary _ _ memory=:{delims, left, main, right}
-			= {memory&delims=inc delims,main=fromList [El (op left right),Delim delims] True + main}
+			= {memory&delims=inc delims,main=recon2 (El (op left right), Delim delims, main)}
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where

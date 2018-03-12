@@ -15,7 +15,7 @@ Global
 		ShowExecutionTime:	True
 		ShowGC:	False
 		ShowStackSize:	False
-		MarkingCollector:	True
+		MarkingCollector:	False
 		DisableRTSFlags:	False
 		StandardRuntimeEnv:	True
 		Profile

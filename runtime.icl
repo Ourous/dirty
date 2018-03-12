@@ -405,18 +405,37 @@ where
 	where
 		
 		binary :: !Bool !Bool Memory -> Memory
-		binary _ _ memory=:{left={stack=[!lhs:_]}, main=main`=:{stack=[!El mid`:other]}, right={stack=[!rhs:_]}}
-			= {memory&main={main`&stack=[!El (fromSingle (op lhs rhs) + mid`):other]}}
-		binary False _ memory=:{left={stack=[!lhs:_]}, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}, right={stack=[!]}}
-			= {memory&main={main`&stack=[!El {mid`&stack=[!op lhs top:mid]}:other]}}
-		binary False _ memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}, right={stack=[!rhs:_]}}
-			= {memory&main={main`&stack=[!El {mid`&stack=[!op top rhs:mid]}:other]}}
-		binary False _ memory=:{left={stack=[!]}, main=main`=:{stack=[!El {stack=[!]}:other]}, right={stack=[!rhs,lhs:_]}}
-			= {memory&main={main`&stack=[!El (fromSingle (op lhs rhs)):other]}}
-		binary False _ memory=:{left={stack=[!lhs,rhs:_]}, main=main`=:{stack=[!El {stack=[!]}:other]}, right={stack=[!]}}
-			= {memory&main={main`&stack=[!El (fromSingle (op lhs rhs)):other]}}
-		binary False True memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!arg1,arg2:mid]}:other]}, right={stack=[!]}}
-			= {memory&main={main`&stack=[!El {mid`&stack=[!op arg1 arg2:mid]}:other]}}
+		binary _ _ memory=:{left={stack=[!lhs:_]}, right={stack=[!rhs:_]}}
+			# (El mid, other) = decons memory.main
+			#! val = op lhs rhs
+			#! mid = recons (val, mid)
+			= {memory&main=recons (El mid, other)}
+		binary False _ memory=:{left={stack=[!lhs:_]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			# (top, mid) = decons mid
+			#! val = op lhs top
+			#! mid = recons (val, mid)
+			= {memory&main=recons (El mid, other)}
+		binary False _ memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!rhs:_]}}
+			# (El mid, other) = decons memory.main
+			# (top, mid) = decons mid
+			#! val = op top rhs
+			#! mid = recons (val, mid)
+			= {memory&main=recons (El mid, other)}
+		binary False _ memory=:{left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!rhs,lhs:_]}}
+			#! val = op lhs rhs
+			#! mid = fromSingle val
+			= {memory&main=recons (El mid, tailOf memory.main)}
+		binary False _ memory=:{left={stack=[!lhs,rhs:_]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
+			#! val = op lhs rhs
+			#! mid = fromSingle val
+			= {memory&main=recons (El mid, tailOf memory.main)}
+		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_,_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			# (arg1, arg2, mid) = decon2 mid
+			#! val = op arg1 arg2
+			#! mid = recons (val, mid)
+			= {memory&main=recons (El mid, other)}
 		binary _ _ memory = memory
 		
 			
@@ -425,23 +444,29 @@ where
 		
 		binary :: !Bool !Bool Memory -> Memory
 		binary _ _ memory=:{delims, left={stack=[!lhs:_]}, right={stack=[!rhs:_]}}
-			= {memory&delims=inc delims,main=recon2 (El (op lhs rhs), Delim delims, memory.main)}
+			#! val = op lhs rhs
+			= {memory&delims=inc delims,main=recon2 (El val, Delim delims, memory.main)}
 		binary False _ memory=:{delims, left={stack=[!lhs:_]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
 			# (El mid, other) = decons memory.main
 			# (top, mid) = decons mid
-			= {memory&delims=inc delims,main=recon3 (El(op lhs top), Delim delims, El mid, other)}
+			#! val = op lhs top
+			= {memory&delims=inc delims,main=recon3 (El val, Delim delims, El mid, other)}
 		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!rhs:_]}}
 			# (El mid, other) = decons memory.main
 			# (top, mid) = decons mid
-			= {memory&delims=inc delims,main=recon3 (El(op top rhs), Delim delims, El mid, other)}
+			#! val = op top rhs
+			= {memory&delims=inc delims,main=recon3 (El val, Delim delims, El mid, other)}
 		binary False _ memory=:{delims, left={stack=[!lhs,rhs:_]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
-			= {memory&delims=inc delims,main=recon2 (El(op lhs rhs), Delim delims, memory.main)}
+			#! val = op lhs rhs
+			= {memory&delims=inc delims,main=recon2 (El val, Delim delims, memory.main)}
 		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!rhs,lhs:_]}}
-			= {memory&delims=inc delims,main=recon2 (El(op lhs rhs), Delim delims, memory.main)}
+			#! val = op lhs rhs
+			= {memory&delims=inc delims,main=recon2 (El val, Delim delims, memory.main)}
 		binary False True memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!_,_:_]}:_]}, right={stack=[!]}}
 			# (El mid, other) = decons memory.main
 			# (arg1, arg2, mid) = decon2 mid
-			= {memory&delims=inc delims,main=recon3 (El(op arg1 arg2), Delim delims, El mid, other)}
+			#! val = op arg1 arg2
+			= {memory&delims=inc delims,main=recon3 (El val, Delim delims, El mid, other)}
 		binary _ _ memory = memory
 			
 	process (Operator (Binary_SN_N op)) = app3 (id, binary flags.strict, id)
@@ -450,44 +475,77 @@ where
 		binary :: !Bool Memory -> Memory
 		binary False memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!rhs:_]}}
 			# (El mid, other) = decons memory.main
-			= {memory&main=recons (El (fromSingle (op mid rhs)), other)}
+			#! val = op mid rhs
+			#! mid = fromSingle val
+			= {memory&main=recons (El mid, other)}
 		binary _ memory=:{left, right={stack=[!rhs:_]}}
 			# (El mid, other) = decons memory.main
-			= {memory&main=recons (El (recons (op left rhs, mid)), other)}
+			#! val = op left rhs
+			#! mid = recons (val, mid)
+			= {memory&main=recons (El mid, other)}
 		binary False memory=:{left, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
 			# (El mid, other) = decons memory.main
 			# (top, mid) = decons mid
-			= {memory&main=recons (El (recons (op left top, mid)), other)}
+			#! val = op left top
+			#! mid = recons (val, mid)
+			= {memory&main=recons (El mid, other)}
 		binary _ memory = memory
 		
 	process (Operator (Binary_NS_N op)) = app3 (id, binary flags.strict, id)
 	where
 	
 		binary :: !Bool Memory -> Memory
-		binary False memory=:{left={stack=[!lhs:_]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
-			= {memory&main={main`&stack=[!El (fromSingle (op lhs mid`)):other]}}
-		binary _ memory=:{left={stack=[!lhs:_]}, main=main`=:{stack=[!El mid`:other]}, right}
-			= {memory&main={main`&stack=[!El (fromSingle (op lhs right) + mid`):other]}}
-		binary False memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}, right}
-			= {memory&main={main`&stack=[!El {mid`&stack=[!op top right:mid]}:other]}}
+		binary False memory=:{left={stack=[!lhs:_]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			#! val = op lhs mid
+			#! mid = fromSingle val
+			= {memory&main=recons (El mid, other)}
+		binary _ memory=:{left={stack=[!lhs:_]}, right}
+			# (El mid, other) = decons memory.main
+			#! val = op lhs right
+			#! mid = recons (val, mid)
+			= {memory&main=recons (El mid, other)}
+		binary False memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right}
+			# (El mid, other) = decons memory.main
+			# (top, mid) = decons mid
+			#! val = op top right
+			#! mid = recons (val, mid)
+			= {memory&main=recons (El mid, other)}
 		binary _ memory = memory
 		
 	process (Operator (Binary_SS_N inv op)) = app3 (id, binary flags.strict inv, id)
 	where
 	
 		binary :: !Bool !Bool Memory -> Memory
-		binary False True memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]},El oth`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
-			= {memory&main={main`&stack=[!El (fromSingle (op mid` oth`)):other]}}
-		binary False True memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
-			= {memory&main={main`&stack=[!El (fromSingle (op mid` zero)):other]}}
+		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]},El {stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, El oth, other) = decon2 memory.main
+			#! val = op mid oth
+			#! mid = fromSingle val
+			= {memory&main=recons (El mid, other)}
+		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			#! val = op mid zero
+			#! mid = fromSingle val
+			= {memory&main=recons (El mid, other)}
 		binary False _ memory=:{left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
-			= {memory&main=fromSingle (El (fromSingle (op zero zero))) + memory.main}
-		binary False _ memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right}
-			= {memory&main={main`&stack=[!El (fromSingle (op mid` right)):other]}}
-		binary False _ memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
-			= {memory&main={main`&stack=[!El (fromSingle (op left mid`)):other]}}
-		binary _ _ memory=:{left, main=main`=:{stack=[!El mid`:other]}, right}
-			= {memory&main={main`&stack=[!El ((fromSingle (op left right)) + mid`):other]}}
+			#! val = op zero zero
+			#! mid = fromSingle val
+			= {memory&main=recons (El mid, memory.main)}
+		binary False _ memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right}
+			# (El mid, other) = decons memory.main
+			#! val = op mid right
+			#! mid = fromSingle val
+			= {memory&main=recons (El mid, other)}
+		binary False _ memory=:{left, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			#! val = op left mid
+			#! mid = fromSingle val
+			= {memory&main=recons (El mid, other)}
+		binary _ _ memory=:{left, main, right}
+			# (El mid, other) = decons memory.main
+			#! val = op left right
+			#! mid = recons (val, mid)
+			= {memory&main=recons (El mid, other)}
 		
 	process (Operator (Binary_SS_S inv op)) = app3 (id, binary flags.strict inv, id)
 	where
@@ -495,27 +553,37 @@ where
 		binary :: !Bool !Bool Memory -> Memory
 		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]},El {stack=[!_:_]}:_]}, right={stack=[!]}}
 			# (El mid, El oth, other) = decon2 memory.main
-			= {memory&main=recons (El (op mid oth), other)}
+			#! val = op mid oth
+			= {memory&main=recons (El val, other)}
 		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
 			# (El mid, other) = decons memory.main
-			= {memory&main=recons (El (op mid zero), other)}
+			#! val = op mid zero
+			= {memory&main=recons (El val, other)}
 		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
-			= {memory&delims=inc delims,main=recon2 (El (op zero zero), Delim delims, memory.main)}
+			#! val = op zero zero
+			= {memory&delims=inc delims,main=recon2 (El val, Delim delims, memory.main)}
 		binary False _ memory=:{left={stack=[!]}, main={stack=[!El{stack=[!_:_]}:_]}, right}
 			# (El mid, other) = decons memory.main
-			= {memory&main=recons (El (op mid right), other)}
+			#! val = op mid right
+			= {memory&main=recons (El val, other)}
 		binary False _ memory=:{left, main={stack=[!El{stack=[!_:_]}:_]}, right={stack=[!]}}
 			# (El mid, other) = decons memory.main
-			= {memory&main=recons (El (op left mid), other)}
+			#! val = op left mid
+			= {memory&main=recons (El val, other)}
 		binary _ _ memory=:{delims, left, main, right}
-			= {memory&delims=inc delims,main=recon2 (El (op left right), Delim delims, main)}
+			#! val = op left right
+			= {memory&delims=inc delims,main=recon2 (El val, Delim delims, main)}
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where
 		
 		unary :: Memory -> Memory
-		unary memory=:{main=main`=:{stack=[!El mid`=:{stack=[!arg:mid]}:other]}}
-			= {memory&main={main`&stack=[!El {mid`&stack=[!op arg:mid]}:other]}}
+		unary memory=:{main={stack=[!El {stack=[!_:_]}:_]}}
+			# (El mid, other) = decons memory.main
+			# (arg, mid) = decons mid
+			#! val = op arg
+			#! mid = recons (val, mid)
+			= {memory&main=recons (El mid, other)}
 		unary memory = memory
 		
 	process (Operator (Unary_N_S op)) = app3 (id, unary, id)
@@ -524,24 +592,32 @@ where
 		unary :: Memory -> Memory
 		//unary memory=:{delims, main=[El [arg]:other]}
 		//	= {memory&delims=inc delims,main=[El (op arg),Delim delims: other]}
-		unary memory=:{delims, main=main`=:{stack=[!El mid`=:{stack=[!arg:mid]}:other]}}
-			= {memory&delims=inc delims,main={main`&stack=[!El (op arg),Delim delims,El {mid`&stack=mid}:other]}}
+		unary memory=:{delims, main={stack=[!El {stack=[!_:_]}:_]}}
+			# (El mid, other) = decons memory.main
+			# (arg, mid) = decons mid
+			#! val = op arg
+			= {memory&delims=inc delims,main=recon3 (El val, Delim delims, El mid, other)}
 		unary memory = memory
 		
 	process (Operator (Unary_S_N op)) = app3 (id, unary, id)
 	where
 	
 		unary :: Memory -> Memory
-		unary memory=:{main=main`=:{stack=[!El mid`:other]}}
-			= {memory&main={main`&stack=[!El {stack=[!op mid`],bounded=True}:other]}}
+		unary memory
+			# (El mid, other) = decons memory.main
+			#! val = op mid
+			#! mid = fromSingle val
+			= {memory&main=recons (El mid, other)}
 		//unary memory = memory
 		
 	process (Operator (Unary_S_S op)) = app3 (id, unary, id)
 	where
 		
 		unary :: Memory -> Memory
-		unary memory=:{main=main`=:{stack=[!El mid`:other]}}
-			= {memory&main={main`&stack=[!El (op mid`):other]}}
+		unary memory
+			# (El mid, other) = decons memory.main
+			#! mid = op mid
+			= {memory&main=recons (El mid, other)}
 		//unary memory = memory
 	
 	process (Operator (Unary_S_T op)) = app3 (id, unary, id)

@@ -16,7 +16,6 @@ where
 //fromSingle :: !a -> (Stack a)
 fromSingle val :== {stack=[!val],bounded=True}
 
-
 decons arg=:{stack=[!head:tail]} :== (head, {arg&stack=tail})
 recons (head, arg=:{stack=tail}) :== {arg&stack=[!head:tail]}
 safeDecon arg :== (safeHead arg, safeTail arg)
@@ -38,21 +37,21 @@ safeHead arg=:{stack} :== case stack of
 safeLast :: !(Stack a) -> (Stack a)
 safeInit :: !(Stack a) -> (Stack a)
 
-S_filterBy :: !(a -> Bool) !(Stack a) -> (Stack a)
-S_filterOn :: !(b -> Bool) !(Stack a) !(Stack b) -> (Stack a)
-S_zipWith :: !(a a -> b) !(Stack a) !(Stack a) -> (Stack b)
-S_map :: !(a -> b) !(Stack a) -> (Stack b)
-S_reduce :: !(a b -> b) !b !(Stack a) -> b
-S_partition :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
-S_span :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
-S_uniques :: !(Stack a) -> (Stack a) | Eq a
-S_reverse :: !(Stack a) -> (Stack a)
-S_rotate :: !Int !(Stack a) -> (Stack a)
-S_take :: !Int !(Stack a) -> (Stack a)
-S_drop :: !Int !(Stack a) -> (Stack a)
-S_sort :: !(Stack a) -> (Stack a) | Ord a
+S_filterBy :: !(a -> Bool) !.(Stack a) -> .(Stack a)
+S_filterOn :: !(b -> Bool) !.(Stack a) !.(Stack b) -> .(Stack a)
+S_zipWith :: !(a a -> b) !.(Stack a) !.(Stack a) -> .(Stack b)
+S_map :: !(a -> b) !.(Stack a) -> .(Stack b)
+S_reduce :: !(a .b -> .b) !.b !.(Stack a) -> .b
+S_partition :: !(a -> Bool) !.(Stack a) -> *(.(Stack a), .(Stack a))
+S_span :: !(a -> Bool) !.(Stack a) ->  *(Stack a, Stack a)
+S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
+S_reverse :: !.(Stack a) -> .(Stack a)
+S_rotate :: !Int !.(Stack a) -> .(Stack a)
+S_take :: !Int !.(Stack a) -> .(Stack a)
+S_drop :: !Int !.(Stack a) -> .(Stack a)
+S_sort :: !.(Stack a) -> .(Stack a) | Ord a
 
-S_occurrences :: !(a -> Bool) !(Stack a) -> Int
+S_occurrences :: !(a -> Bool) !.(Stack a) -> Int
 
-S_all :: !(a -> Bool) !(Stack a) -> Bool
-S_any :: !(a -> Bool) !(Stack a) -> Bool
+S_all :: !(a -> Bool) !.(Stack a) -> Bool
+S_any :: !(a -> Bool) !.(Stack a) -> Bool

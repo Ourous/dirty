@@ -293,7 +293,7 @@ where
 	where
 		
 		makeString (state=:{direction, location}, memory=:{main, delims}, world)
-			= (TRAVERSE_SOME (length content + 1) state, {memory&delims=inc delims,main=recon2 (El (fromStrictList [!fromInt el \\ el <- content] True), Delim delims, main)}, world)
+			= (TRAVERSE_SOME (length content + newlineAdjust) state, {memory&delims=inc delims,main=recon2 (El (fromStrictList [!fromInt el \\ el <- content] True), Delim delims, main)}, world)
 		where
 			
 			delta => case direction of
@@ -309,6 +309,9 @@ where
 					North = reverse [src.[location.x] \\ src <-: source]
 					South = [src.[location.x] \\ src <-: source]
 			in line ++ ['\n'] ++ line
+			
+			newlineAdjust :: Int
+			newlineAdjust => if(isMember 10 content) 0 1
 			
 			content :: [Int]
 			content => (utf8ToUnicode o toString o takeWhile ((<>)'\'') o drop delta) wrappedLine

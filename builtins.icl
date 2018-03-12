@@ -475,18 +475,14 @@ moveAll SouthEast memory=:{delims, left, main}
 	= {memory&delims=inc delims,left=zero,main=fromStrictList [!El left, Delim delims] True + main}
 
 replicateBase :: !Memory -> Memory
-replicateBase _ = abort "TBI"/*
 replicateBase memory=:{cursor,main}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
-	= mergeDelims {memory&cursor= -1,main=base++[Delim -1: main]} // do not touch, this is magic
-	
-*/
+	# (base, _) = S_span (DELIM_FUNC False ((==)cursor)) main
+	= mergeDelims {memory&cursor= -1,main=base + recons (Delim -1, main)} // do not touch, this is magic
+
 replicateMiddle :: !Memory -> Memory
-replicateMiddle _ = abort "TBI"/*
-replicateMiddle memory=:{delims,main=[El mid:other]}
-	= {memory&delims=inc delims,main=[El mid,Delim delims,El mid:other]}
-	
-*/
+replicateMiddle memory=:{delims}
+	= {memory&delims=inc delims,main=recon2 (headOf memory.main, Delim delims, memory.main)}
+
 replicateTop :: !Memory -> Memory
 replicateTop memory=:{delims,main={stack=[!El {stack=[!top:_]}:_]}}
 	= {memory&delims=inc delims,main=recon2 (El (fromSingle top), Delim delims, memory.main)}

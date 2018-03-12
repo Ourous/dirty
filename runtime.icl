@@ -265,14 +265,20 @@ where
 		loop :: (!State, !Memory, !*World) -> (State, Memory, *World)
 		loop smw=:(_, {left={stack=[!]}}, _) = smw
 		loop (state=:{direction}, memory, world)
-			= (if(direction == dir) {state&location=loc} state, {memory&left=tailOf memory.left}, world)
+			| direction == dir
+				= ({state&location=loc}, {memory&left=tailOf memory.left}, world)
+			| otherwise
+				= (state, memory, world)
 		
 	process (Control (Loop Right dir (Just loc))) = loop
 	where
 		loop :: (!State, !Memory, !*World) -> (State, Memory, *World)
 		loop smw=:(_, {right={stack=[!]}}, _) = smw
-		loop (state=:{direction}, memory=:{right=right`=:{stack=[!_:tail]}}, world)
-			= (if(direction == dir) {state&location=loc} state, {memory&right={right`&stack=tail}}, world)
+		loop (state=:{direction}, memory, world)
+			| direction == dir
+				= ({state&location=loc}, {memory&right=tailOf memory.right}, world)
+			| otherwise
+				= (state, memory, world)
 	
 	process (Control (Goto dir (Just loc))) = goto
 	where

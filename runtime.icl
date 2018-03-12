@@ -160,7 +160,7 @@ where
 			# (chr, world) = evalIO getChar world
 			= (str <+ chr, world)
 
-	process :: !Command -> ((!State, !Memory, !*World) -> (State, Memory, *World))
+	process :: !Command -> *(*(!State, !Memory, !*World) -> *(State, Memory, *World))
 	
 	process (Control (Terminate)) = app3 (\state -> {state&terminate=True}, id, id)
 
@@ -264,8 +264,8 @@ where
 	where
 		loop :: (!State, !Memory, !*World) -> (State, Memory, *World)
 		loop smw=:(_, {left={stack=[!]}}, _) = smw
-		loop (state=:{direction}, memory=:{left=left`=:{stack=[!_:tail]}}, world)
-			= (if(direction == dir) {state&location=loc} state, {memory&left={left`&stack=tail}}, world)
+		loop (state=:{direction}, memory, world)
+			= (if(direction == dir) {state&location=loc} state, {memory&left=tailOf memory.left}, world)
 		
 	process (Control (Loop Right dir (Just loc))) = loop
 	where

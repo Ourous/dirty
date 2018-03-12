@@ -101,7 +101,8 @@ where
 		
 S_reduce :: !(a b -> b) !b !(Stack a) -> b
 S_reduce fn init arg=:{stack, bounded}
-	= if(bounded) hyperstrict id (reduce` init stack)
+	//= if(bounded) hyperstrict id (reduce` init stack)
+	= reduce` init stack
 where
 	reduce` acc [!] = acc
 	reduce` acc [!head:tail]

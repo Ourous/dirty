@@ -171,7 +171,7 @@ fromOneToMiddle :: !Number -> (Stack Number)
 fromOneToMiddle arg
 	| IS_CPLX arg
 		= fromSingle arg
-	# unit = if(IS_IMAG arg) imagUnit id one
+	#! unit = if(IS_IMAG arg) imagUnit id one
 	| arg < Zero
 		= fromStrictList [!Zero - unit, Zero - unit - unit..arg] True
 	| arg > Zero
@@ -182,7 +182,7 @@ fromMiddleToZero :: !Number -> (Stack Number)
 fromMiddleToZero arg
 	| IS_CPLX arg
 		= fromSingle arg
-	# unit = if(IS_IMAG arg) imagUnit id one
+	#! unit = if(IS_IMAG arg) imagUnit id one
 	| arg < Zero
 		= fromStrictList [!arg, arg + unit..Zero] True
 	| arg > Zero
@@ -465,14 +465,16 @@ copyBoth Vertical memory=:{main={stack=[!El _:_]}}
 copyBoth _ memory = memory
 
 moveAll :: !Direction !Memory -> Memory
-moveAll NorthWest memory=:{left, main=main`=:{stack=[!El mid`:other]}}
-	= {memory&left=mid` + left,main={main`&stack=other}}
-moveAll NorthEast memory=:{right, main=main`=:{stack=[!El mid`:other]}}
-	= {memory&right=mid` + right,main={main`&stack=other}}
+moveAll NorthWest memory=:{left, main}
+	# (El mid, other) = decons main
+	= {memory&left=mid + left,main=other}
+moveAll NorthEast memory=:{right, main}
+	# (El mid, other) = decons main
+	= {memory&right=mid + right,main=other}
 moveAll SouthWest memory=:{delims, right, main}
-	= {memory&delims=inc delims,right=zero,main=fromStrictList [!El right,Delim delims] True + main}
+	= {memory&delims=inc delims,right=zero,main=recon2 (El right, Delim delims, main)}
 moveAll SouthEast memory=:{delims, left, main}
-	= {memory&delims=inc delims,left=zero,main=fromStrictList [!El left, Delim delims] True + main}
+	= {memory&delims=inc delims,left=zero,main=recon2 (El left, Delim delims, main)}
 
 replicateBase :: !Memory -> Memory
 replicateBase memory=:{cursor,main}

@@ -18,7 +18,7 @@ newWorld = code inline {
 }
 
 STACK_TO_STR stack
-	:== "["+(join","(toList (forEach toString stack)))+"]"
+	:== "["+(join","(toList (S_map toString stack)))+"]"
 	
 MEM_TO_STR memory=:{cursor, note, left, right, main}
 	:== "{cursor="<+cursor<+",note="<+note<+",left="+STACK_TO_STR left+",right="+STACK_TO_STR right+",main="+STACK_TO_STR main+"}"

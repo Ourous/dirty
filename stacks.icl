@@ -39,19 +39,39 @@ fromSingle :: !a -> (Stack a)
 fromSingle val = {stack=[!val],bounded=True}
 */
 
-filterBy :: !(a -> Bool) !(Stack a) -> (Stack a)
-filterBy fn {stack, bounded}
-	= {stack=filterBy` stack, bounded=bounded}
+lastOf :: !(Stack a) -> a
+lastOf {stack} = last` stack
 where
-	filterBy` [!] = [!]
-	filterBy` [!head:tail]
+	last` [!last] = last
+	last` [!_:tail] = last` tail
+	
+initOf :: !(Stack a) -> (Stack a)
+initOf arg = {arg&stack=init` arg.stack}
+where
+	init` [!last] = [!]
+	init` [!head:tail] = [!head:init` tail]
+safeLast :: !(Stack a) -> (Stack a)
+safeLast {stack=[!]} = zero
+safeLast arg = fromSingle (lastOf arg)
+safeInit :: !(Stack a) -> (Stack a)
+safeInit arg = {arg&stack=init` arg.stack}
+where
+	init` [!head:tail] = [!head:init` tail]
+	init` _ = [!]
+
+S_filterBy :: !(a -> Bool) !(Stack a) -> (Stack a)
+S_filterBy fn {stack, bounded}
+	= {stack=S_filterBy` stack, bounded=bounded}
+where
+	S_filterBy` [!] = [!]
+	S_filterBy` [!head:tail]
 		| fn head
-			= [!head:filterBy` tail]
+			= [!head:S_filterBy` tail]
 		| otherwise
-			= filterBy` tail
+			= S_filterBy` tail
 			
-filterOn :: !(b -> Bool) !(Stack a) !(Stack b) -> (Stack a)
-filterOn fn lhs rhs
+S_filterOn :: !(b -> Bool) !(Stack a) !(Stack b) -> (Stack a)
+S_filterOn fn lhs rhs
 	= {stack=filterOn` lhs.stack rhs.stack, bounded=lhs.bounded||rhs.bounded}
 where
 	filterOn` [!] _ = [!]
@@ -62,8 +82,8 @@ where
 		| otherwise
 			= filterOn` lhs rhs
 
-withEach :: !(a a -> b) !(Stack a) !(Stack a) -> (Stack b)
-withEach fn lhs rhs
+S_zipWith :: !(a a -> b) !(Stack a) !(Stack a) -> (Stack b)
+S_zipWith fn lhs rhs
 	= {stack=withEach` lhs.stack rhs.stack, bounded=lhs.bounded||rhs.bounded}
 where
 	withEach` [!] _ = [!]
@@ -71,24 +91,24 @@ where
 	withEach` [!l:lhs] [!r:rhs]
 		= [!fn l r:withEach` lhs rhs]
 
-forEach :: !(a -> b) !(Stack a) -> (Stack b)
-forEach fn arg=:{stack, bounded}
+S_map :: !(a -> b) !(Stack a) -> (Stack b)
+S_map fn arg=:{stack, bounded}
 	= {arg&stack=forEach` stack}
 where
 	forEach` [!] = [!]
 	forEach` [!head:tail]
 		= [!fn head:forEach` tail]
 		
-reduce :: !(a b -> b) !b !(Stack a) -> b
-reduce fn init arg=:{stack, bounded}
+S_reduce :: !(a b -> b) !b !(Stack a) -> b
+S_reduce fn init arg=:{stack, bounded}
 	= if(bounded) hyperstrict id (reduce` init stack)
 where
 	reduce` acc [!] = acc
 	reduce` acc [!head:tail]
 		= reduce` (fn head acc) tail
 		
-categorize :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
-categorize fn arg=:{stack, bounded}
+S_partition :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
+S_partition fn arg=:{stack, bounded}
 	# (l, r) = categorize` stack
 	= ({stack=l,bounded=bounded}, {stack=r,bounded=bounded})
 where
@@ -100,8 +120,8 @@ where
 		| otherwise
 			= (l, [!head:r])
 			
-splitWhen :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
-splitWhen fn arg=:{stack, bounded}
+S_span :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
+S_span fn arg=:{stack, bounded}
 	= splitWhen` stack
 where
 	splitWhen` [!] = (zero, zero)
@@ -112,23 +132,45 @@ where
 			# (l, r) = splitWhen` tail
 			= (l + fromSingle head, r)
 
-uniques :: !(Stack a) -> (Stack a) | Eq a
-uniques arg
+S_uniques :: !(Stack a) -> (Stack a) | Eq a
+S_uniques arg
 	= fromList (removeDup (toList arg)) arg.bounded
 
-reversed :: !(Stack a) -> (Stack a)
-reversed {stack, bounded}
+S_reverse :: !(Stack a) -> (Stack a)
+S_reverse {stack, bounded}
 	= {stack=reversed` stack, bounded=bounded}
 where
 	reversed` [!] = [!]
 	reversed` [!head:tail] = appendStrict (reversed` tail) [!head]
 	
-rotated :: !Int !(Stack a) -> (Stack a)
-rotated num arg
+S_rotate :: !Int !(Stack a) -> (Stack a)
+S_rotate num arg
 	= fromList (rotateList num (toList arg)) arg.bounded
+	
+S_take :: !Int !(Stack a) -> (Stack a)
+S_take num arg
+	= {stack=take` num arg.stack, bounded=True}
+where
+	take` _ [!] = [!]
+	take` num [!head:tail]
+		| num > 0
+			= [!head:take`(dec num)tail]
+		| otherwise
+			= [!]
+			
+S_drop :: !Int !(Stack a) -> (Stack a)
+S_drop num arg
+	= {arg&stack=drop` num arg.stack}
+where
+	drop` _ [!] = [!]
+	drop` num list=:[!_:tail]
+		| num > 0
+			= drop`(dec num)tail
+		| otherwise
+			= list
 
-occurrences :: !(a -> Bool) !(Stack a) -> Int
-occurrences fn {stack} = occurrences` 0 stack
+S_occurrences :: !(a -> Bool) !(Stack a) -> Int
+S_occurrences fn {stack} = occurrences` 0 stack
 where
 	occurrences` acc [!] = acc
 	occurrences` acc [!head:tail]
@@ -137,16 +179,16 @@ where
 		| otherwise
 			= occurrences` acc tail
 		
-areAll :: !(a -> Bool) !(Stack a) -> Bool
-areAll _ {bounded=False} = False
-areAll fn {stack} = areAll` stack
+S_all :: !(a -> Bool) !(Stack a) -> Bool
+S_all _ {bounded=False} = False
+S_all fn {stack} = areAll` stack
 where
 	areAll` [!] = True
 	areAll` [!head:tail] = fn head && areAll` tail
 	
-areAny :: !(a -> Bool) !(Stack a) -> Bool
-areAny _ {bounded=False} = True
-areAny fn {stack} = areAny` stack
+S_any :: !(a -> Bool) !(Stack a) -> Bool
+S_any _ {bounded=False} = True
+S_any fn {stack} = areAny` stack
 where
 	areAny` [!] = False
 	areAny` [!head:tail] = fn head || areAny` tail

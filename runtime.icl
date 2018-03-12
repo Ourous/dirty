@@ -1,6 +1,6 @@
 implementation module runtime
 
-import types, atomics, arithmetic, builtins, utilities, unicode, environment
+import types, atomics, arithmetic, builtins, utilities, unicode, stacks//, environment
 import StdEnv, StdLib, System.IO, System.Time, Math.Random, Text, Data.Func
 from Math.Geometry import pi
 import qualified Data.Generics.GenParse as GenParse
@@ -18,7 +18,7 @@ newWorld = code inline {
 }
 
 STACK_TO_STR stack
-	:== "["+(join","(map toString stack))+"]"
+	:== "["+(join","(toList (S_map toString stack)))+"]"
 	
 MEM_TO_STR memory=:{cursor, note, left, right, main}
 	:== "{cursor="<+cursor<+",note="<+note<+",left="+STACK_TO_STR left+",right="+STACK_TO_STR right+",main="+STACK_TO_STR main+"}"
@@ -38,12 +38,12 @@ evaluate :: ![String] *World -> *(Memory, *World)
 evaluate args world
 	| isEmpty args
 		# (Timestamp seed, world) = time world
-		= ({note=NaN,left=[],right=[],cursor=0,main=[El [],Delim 0],delims=1,random=genRandInt seed}, world)
+		= ({note=NaN,left={stack=[!],bounded=True},right={stack=[!],bounded=True},cursor=0,main={stack=[!El {stack=[!],bounded=True},Delim 0],bounded=True},delims=1,random=genRandInt seed}, world)
 	| otherwise
 		# ((seed, world), args) = case (parseInt (hd args), world) of
 			(Just seed, world) = ((seed, world), tl args)
 			(Nothing, world) = ((\(Timestamp seed, world) -> (seed, world))(time world), args)
-		= ({note=NaN,left=[],right=[],cursor=0,main=parseArgs args++[Delim 0],delims=1,random=genRandInt seed}, world)
+		= ({note=NaN,left={stack=[!],bounded=True},right={stack=[!],bounded=True},cursor=0,main=fromList (parseArgs args++[Delim 0]) True,delims=1,random=genRandInt seed}, world)
 where
 
 	parseArgs :: [String] -> [Element]
@@ -54,15 +54,15 @@ where
 			# try = parseString arg
 			| isJust try
 				# (Just try) = try
-				= (El (map fromInt (utf8ToUnicode try)))
+				= (El {stack=[!fromInt el \\ el <- utf8ToUnicode try],bounded=True})
 			# try = parseInts arg
 			| isJust try
 				# (Just try) = try
-				= (El (map fromInt try))
+				= (El {stack=[!fromInt el \\ el <- try],bounded=True})
 			# try = parseReals arg
 			| isJust try
 				# (Just try) = try
-				= (El (map fromReal try))
+				= (El {stack=[!fromReal el \\ el <- try],bounded=True})
 			| otherwise
 				= abort "Invalid memory arguments!"
 
@@ -108,14 +108,14 @@ where
 		| otherwise
 			=  world
 	
-	execute (state, memory=:{main=[]}, world)
-		= execute (state, {memory&main=[El[],Delim 0]}, world)
-	execute (state, memory=:{main=[El mid]}, world)
-		= execute (state, {memory&main=[El mid,Delim 0]}, world)
-	execute (state, memory=:{main=[Delim _]}, world)
-		= execute (state, {memory&main=[El[],Delim 0]}, world)
-	execute (state, memory=:{main=[Delim val:tail], cursor, delims}, world)
-		= execute (state, {memory&main=tail,delims=dec delims,cursor=if(cursor==val) dec id cursor}, world)
+	execute (state, memory=:{main={stack=[!]}}, world)
+		= execute (state, {memory&main={stack=[!El zero,Delim 0],bounded=True}}, world)
+	execute (state, memory=:{main={stack=[!El mid]}}, world)
+		= execute (state, {memory&main={stack=[!El mid,Delim 0],bounded=True}}, world)
+	execute (state, memory=:{main={stack=[!Delim _]}}, world)
+		= execute (state, {memory&main={stack=[!El zero,Delim 0],bounded=True}}, world)
+	execute (state, memory=:{main=main`=:{stack=[!Delim val:tail]}, cursor, delims}, world)
+		= execute (state, {memory&main={main`&stack=tail},delims=dec delims,cursor=if(cursor==val) dec id cursor}, world)
 	
 	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y = let
@@ -125,9 +125,9 @@ where
 			#! (state, memory, world) = process commands.[location.y, location.x] smw
 			=  (execute (TRAVERSE_ONE {state&history=source.[location.y, location.x]}, memory, world))
 			
-	writeLine :: ![Number] -> (IO ())
+	writeLine :: !(Stack Number) -> (IO ())
 	
-	writeLine stack = putStrLn (if(flags.nums) (STACK_TO_STR stack)  (unicodeToUTF8 (map toInt stack)))
+	writeLine stack = putStrLn (if(flags.nums) (STACK_TO_STR stack)  (unicodeToUTF8 (map toInt (toList stack))))
 	
 	writeChar :: !Number -> (IO ())
 	
@@ -163,7 +163,7 @@ where
 	process :: !Command -> ((!State, !Memory, !*World) -> (State, Memory, *World))
 	
 	process (Control (Terminate)) = app3 (\state -> {state&terminate=True}, id, id)
-		
+
 	process (Control (NOOP)) = id
 		
 	process (Control (Start _)) = id
@@ -204,7 +204,7 @@ where
 	process (Control (Mirror cond axes)) = mirror
 	where
 		
-		mirror (state=:{direction}, memory=:{main=[El mid:other]}, world)
+		mirror (state=:{direction}, memory=:{main={stack=[!El mid:_]}}, world)
 			| axesCollide direction && (cond || TO_BOOL mid) = let
 					reflector = case axes of
 						Inverse = reflectInverse
@@ -239,7 +239,7 @@ where
 	process (Control (Skip cond)) = skip
 	where
 		
-		skip (state, memory=:{main=[El mid:other]}, world)
+		skip (state, memory=:{main={stack=[!El mid:_]}}, world)
 			| cond || TO_BOOL mid
 				= (TRAVERSE_ONE state, memory, world)
 			| otherwise
@@ -259,35 +259,35 @@ where
 				(South, Clockwise) = West
 				(South, Anticlockwise) = East
 		in {state&direction=dir}
-	
+
 	process (Control (Loop Left dir (Just loc))) = loop
 	where
 		loop :: (!State, !Memory, !*World) -> (State, Memory, *World)
-		loop smw=:(_, {left=[]}, _) = smw
-		loop (state=:{direction}, memory=:{left}, world)
-			= (if(direction == dir) {state&location=loc} state, {memory&left=SAFE_TAIL left}, world)
+		loop smw=:(_, {left={stack=[!]}}, _) = smw
+		loop (state=:{direction}, memory=:{left=left`=:{stack=[!_:tail]}}, world)
+			= (if(direction == dir) {state&location=loc} state, {memory&left={left`&stack=tail}}, world)
 		
 	process (Control (Loop Right dir (Just loc))) = loop
 	where
 		loop :: (!State, !Memory, !*World) -> (State, Memory, *World)
-		loop smw=:(_, {right=[]}, _) = smw
-		loop (state=:{direction}, memory=:{right}, world)
-			= (if(direction == dir) {state&location=loc} state, {memory&right=SAFE_TAIL right}, world)
+		loop smw=:(_, {right={stack=[!]}}, _) = smw
+		loop (state=:{direction}, memory=:{right=right`=:{stack=[!_:tail]}}, world)
+			= (if(direction == dir) {state&location=loc} state, {memory&right={right`&stack=tail}}, world)
 	
 	process (Control (Goto dir (Just loc))) = goto
 	where
 		goto :: (!State, !Memory, !*World) -> (State, Memory, *World)
-		goto (state=:{direction}, memory=:{main=[El mid:other]}, world)
-			| direction == dir && TO_BOOL mid
+		goto (state=:{direction}, memory=:{main={stack=[!El mid`:other]}}, world)
+			| direction == dir && TO_BOOL mid`
 				= ({state&location=loc}, memory, world)
 			| otherwise
 				= (state, memory, world)
-				
+		
 	process (Control (String)) = makeString
 	where
 		
 		makeString (state=:{direction, location}, memory=:{main, delims}, world)
-			= (TRAVERSE_SOME (length content + 1) state, {memory&delims=inc delims,main=[El(map fromInt(utf8ToUnicode(toString content))), Delim delims: main]}, world)
+			= (TRAVERSE_SOME (length content + 1) state, {memory&delims=inc delims,main=recon2 (El (fromStrictList [!fromInt el \\ el <- content] True), Delim delims, main)}, world)
 		where
 			
 			delta => case direction of
@@ -304,12 +304,12 @@ where
 					South = [src.[location.x] \\ src <-: source]
 			in line ++ ['\n'] ++ line
 			
-			content :: [Char]
-			content => (takeWhile ((<>)'\'') o drop delta) wrappedLine
+			content :: [Int]
+			content => (utf8ToUnicode o toString o takeWhile ((<>)'\'') o drop delta) wrappedLine
 			
-	process (Literal (Pi)) = app3 (id, \memory=:{main=[El mid:other]} -> {memory&main=[El[fromReal pi:mid]:other]}, id)
+	process (Literal (Pi)) = app3 (id, \memory=:{main={stack=[!El mid:_]}} -> {memory&main=recons (El (recons (fromReal pi, mid)), tailOf memory.main)}, id)
 
-	process (Literal (Quote)) = app3 (id, \memory=:{main=[El mid:other]} -> {memory&main=[El[fromInt(toInt'\''):mid]:other]}, id)
+	process (Literal (Quote)) = app3 (id, \memory=:{main={stack=[!El mid:_]}} -> {memory&main=recons (El (recons (fromInt (toInt '\''), mid)), tailOf memory.main)}, id)
 
 	process (Literal (Digit val)) = literal
 	where
@@ -318,29 +318,30 @@ where
 		
 		literal (state=:{history}, memory=:{main}, world)
 			| isDigit history = let
-				[El [top:mid]:base] = main
+				[!El mid`=:{stack=[!top:mid]}:base] = main.stack
 				res = top * (fromInt 10) + val
-				in (state, {memory&main=[El [res:mid]:base]}, world)
+				in (state, {memory&main={main&stack=[!El {mid`&stack=[!res:mid]}:base]}}, world)
 			| otherwise = let
-				[El mid:base] = main
-				in (state, {memory&main=[El [val:mid]:base]}, world)
-				
-	process (Literal (Alphabet lettercase)) = app3 (id, \memory -> {memory&delims=inc memory.delims,main=[El literal,Delim memory.delims: memory.main]}, id)
+				[!El mid`:base] = main.stack
+				in (state, {memory&main={main&stack=[!El (fromSingle val + mid`):base]}}, world)
+						
+	process (Literal (Alphabet lettercase)) = app3 (id, \memory -> {memory&delims=inc memory.delims,main=recon2 (El (fromStrictList literal True), Delim memory.delims, memory.main)}, id)
 	where
 	
-		literal :: [Number]
+		literal :: [!Number]
 		literal => case lettercase of
-			Lowercase = [fromInt (toInt c) \\ c <-: "abcdefghijklmnopqrstuvwxyz"]
-			Uppercase = [fromInt (toInt c) \\ c <-: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
-			
-	process (Literal (EmptySet)) = app3 (id, \memory -> {memory&main=[El []:memory.main]}, id)
+			Lowercase = [!fromInt (toInt c) \\ c <-: "abcdefghijklmnopqrstuvwxyz"]
+			Uppercase = [!fromInt (toInt c) \\ c <-: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
+
+	process (Literal (EmptySet)) = app3 (id, \memory -> {memory&main=recons (El zero, memory.main)}, id)
 				
 	process (Variable (Random)) = app3 (id, rand, id)
 	where
 	
-		rand memory=:{main=[El mid:other], random=[rng:random]}
-			= {memory&main=[El[fromInt rng:mid]:other],random=random}
-			
+		rand memory=:{main, random=[rng:random]}
+			# (El mid, other) = decons main
+			= {memory&main=recons (El (recons (fromInt rng, mid)), other), random=random}
+	
 	process (Environment env) = environment
 	where
 	
@@ -351,11 +352,9 @@ where
 	process (Operator (IO_WriteAll)) = writeAll
 	where
 		
-		writeAll (state, memory=:{main=[El[]:other]}, world)
-			= (state, {memory&main=other}, world)
-		
-		writeAll (state, memory=:{main=[El mid:other]}, world)
-			# world = execIO (writeLine mid) world
+		writeAll (state, memory=:{main}, world)
+			# (El mid, other) = decons main
+			# world = execIO (writeLine ( mid)) world
 			= (state, {memory&main=other}, world)
 			
 	process (Operator (IO_ReadAll)) = readAll
@@ -363,52 +362,52 @@ where
 		
 		readAll (state, memory=:{main, delims}, world)
 			# (str, world) = readLine world
-			= (state, {memory&delims=inc delims,main=[El str, Delim delims: main]}, world)
+			= (state, {memory&delims=inc delims,main=recon2 (El (fromList str True), Delim delims, main)}, world)
 			
 	process (Operator (IO_WriteOnce)) = writeOnce
 	where
 	
-		writeOnce (state, memory=:{main=[El[]:_]}, world)
+		writeOnce (state, memory=:{main={stack=[!El{stack=[!]}:_]}}, world)
 			= (state, memory, world)
 			
-		writeOnce (state, memory=:{main=[El[top:mid]:other]}, world)
+		writeOnce (state, memory=:{main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}, world)
 			# world = execIO (writeChar top) world
-			= (state, {memory&main=[El mid:other]}, world)
+			= (state, {memory&main={main`&stack=[!El {mid`&stack=mid}:other]}}, world)
 			
 	process (Operator (IO_ReadOnce)) = readOnce
 	where
 	
-		readOnce (state, memory=:{main=[El mid:other]}, world)
+		readOnce (state, memory=:{main=main`=:{stack=[!El mid`:other]}}, world)
 			# (chr, world) = readChar world
-			= (state, {memory&main=[El[chr:mid]:other]}, world)
+			= (state, {memory&main={main`&stack=[!El (fromSingle chr + mid`):other]}}, world)
 			
 	process (Operator (IO_Interrobang)) = interrobang
 	where
 	
-		interrobang (state, memory=:{main=[El []:other]}, world)
+		interrobang (state, memory=:{main=main`=:{stack=[!El {stack=[!]}:other]}}, world)
 			# (chr, world) = readChar world
-			= (state, {memory&main=[El[chr]:other]}, world)
-		interrobang (state, memory=:{main=[El [top:mid]:other]}, world)
+			= (state, {memory&main={main`&stack=[!El (fromSingle chr):other]}}, world)
+		interrobang (state, memory=:{main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}, world)
 			# world = execIO (writeChar top) world
 			# (chr, world) = readChar world
-			= (state, {memory&main=[El[chr:mid]:other]}, world)
+			= (state, {memory&main={main`&stack=[!El {mid`&stack=[!chr:mid]}:other]}}, world)
 
 	process (Operator (Binary_NN_N inv op)) = app3 (id, binary flags.strict inv, id)
 	where
 		
 		binary :: !Bool !Bool Memory -> Memory
-		binary _ _ memory=:{left=[lhs:_], main=[El mid:other], right=[rhs:_]}
-			= {memory&main=[El[op lhs rhs:mid]:other]}
-		binary False _ memory=:{left=[lhs:_], main=[El [top:mid]:other], right=[]}
-			= {memory&main=[El[op lhs top:mid]:other]}
-		binary False _ memory=:{left=[], main=[El [top:mid]:other], right=[rhs:_]}
-			= {memory&main=[El[op top rhs:mid]:other]}
-		binary False _ memory=:{left=[], main=[El []:other], right=[rhs,lhs:_]}
-			= {memory&main=[El[op lhs rhs]:other]}
-		binary False _ memory=:{left=[lhs,rhs:_], main=[El []:other], right=[]}
-			= {memory&main=[El[op lhs rhs]:other]}
-		binary False True memory=:{left=[], main=[El [arg1,arg2:mid]:other], right=[]}
-			= {memory&main=[El[op arg1 arg2:mid]:other]}
+		binary _ _ memory=:{left={stack=[!lhs:_]}, main=main`=:{stack=[!El mid`:other]}, right={stack=[!rhs:_]}}
+			= {memory&main={main`&stack=[!El (fromSingle (op lhs rhs) + mid`):other]}}
+		binary False _ memory=:{left={stack=[!lhs:_]}, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}, right={stack=[!]}}
+			= {memory&main={main`&stack=[!El {mid`&stack=[!op lhs top:mid]}:other]}}
+		binary False _ memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}, right={stack=[!rhs:_]}}
+			= {memory&main={main`&stack=[!El {mid`&stack=[!op top rhs:mid]}:other]}}
+		binary False _ memory=:{left={stack=[!]}, main=main`=:{stack=[!El {stack=[!]}:other]}, right={stack=[!rhs,lhs:_]}}
+			= {memory&main={main`&stack=[!El (fromSingle (op lhs rhs)):other]}}
+		binary False _ memory=:{left={stack=[!lhs,rhs:_]}, main=main`=:{stack=[!El {stack=[!]}:other]}, right={stack=[!]}}
+			= {memory&main={main`&stack=[!El (fromSingle (op lhs rhs)):other]}}
+		binary False True memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!arg1,arg2:mid]}:other]}, right={stack=[!]}}
+			= {memory&main={main`&stack=[!El {mid`&stack=[!op arg1 arg2:mid]}:other]}}
 		binary _ _ memory = memory
 		
 			
@@ -416,90 +415,94 @@ where
 	where // productive
 		
 		binary :: !Bool !Bool Memory -> Memory
-		binary _ _ memory=:{delims, left=[lhs:_], right=[rhs:_]}
-			= {memory&delims=inc delims,main=[El(op lhs rhs),Delim delims:memory.main]}
-		//binary False _ memory=:{delims, left=[lhs:_], main=[El [top]:other], right=[]}
-		//	= {memory&delims=inc delims,main=[El(op lhs top),Delim delims: other]}
-		//binary False _ memory=:{delims, left=[], main=[El [top]:other], right=[rhs:_]}
-		//	= {memory&delims=inc delims,main=[El(op top rhs),Delim delims: other]}
-		binary False _ memory=:{delims, left=[lhs:_], main=[El [top:mid]:other], right=[]}
-			= {memory&delims=inc delims,main=[El(op lhs top),Delim delims,El mid:other]}
-		binary False _ memory=:{delims, left=[], main=[El [top:mid]:other], right=[rhs:_]}
-			= {memory&delims=inc delims,main=[El(op top rhs),Delim delims,El mid:other]}
-		binary False _ memory=:{delims, left=[lhs,rhs:_], main=[El []:_], right=[]}
-			= {memory&delims=inc delims,main=[El(op lhs rhs),Delim delims: memory.main]}
-		binary False _ memory=:{delims, left=[], main=[El []:_], right=[rhs,lhs:_]}
-			= {memory&delims=inc delims,main=[El(op lhs rhs),Delim delims: memory.main]}
-		//binary False True memory=:{delims, left=[], main=[El [arg1,arg2]:other], right=[]}
-		//	= {memory&delims=inc delims,main=[El(op arg1 arg2),Delim delims: other]}
-		binary False True memory=:{delims, left=[], main=[El [arg1,arg2:mid]:other], right=[]}
-			= {memory&delims=inc delims,main=[El(op arg1 arg2),Delim delims,El mid:other]}
+		binary _ _ memory=:{delims, left={stack=[!lhs:_]}, right={stack=[!rhs:_]}}
+			= {memory&delims=inc delims,main=recon2 (El (op lhs rhs), Delim delims, memory.main)}
+		binary False _ memory=:{delims, left={stack=[!lhs:_]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			# (top, mid) = decons mid
+			= {memory&delims=inc delims,main=recon3 (El(op lhs top), Delim delims, El mid, other)}
+		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!rhs:_]}}
+			# (El mid, other) = decons memory.main
+			# (top, mid) = decons mid
+			= {memory&delims=inc delims,main=recon3 (El(op top rhs), Delim delims, El mid, other)}
+		binary False _ memory=:{delims, left={stack=[!lhs,rhs:_]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
+			= {memory&delims=inc delims,main=recon2 (El(op lhs rhs), Delim delims, memory.main)}
+		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!rhs,lhs:_]}}
+			= {memory&delims=inc delims,main=recon2 (El(op lhs rhs), Delim delims, memory.main)}
+		binary False True memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!_,_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			# (arg1, arg2, mid) = decon2 mid
+			= {memory&delims=inc delims,main=recon3 (El(op arg1 arg2), Delim delims, El mid, other)}
 		binary _ _ memory = memory
 			
 	process (Operator (Binary_SN_N op)) = app3 (id, binary flags.strict, id)
 	where
 	
 		binary :: !Bool Memory -> Memory
-		binary False memory=:{left=[], main=[El mid=:[_:_]:other], right=[rhs:_]}
-			= {memory&main=[El [op mid rhs]:other]}
-		binary _ memory=:{left, main=[El mid:other], right=[rhs:_]}
-			= {memory&main=[El [op left rhs:mid]:other]}
-		binary False memory=:{left, main=[El [top:mid]:other], right=[]}
-			= {memory&main=[El [op left top:mid]:other]}
+		binary False memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!rhs:_]}}
+			# (El mid, other) = decons memory.main
+			= {memory&main=recons (El (fromSingle (op mid rhs)), other)}
+		binary _ memory=:{left, right={stack=[!rhs:_]}}
+			# (El mid, other) = decons memory.main
+			= {memory&main=recons (El (recons (op left rhs, mid)), other)}
+		binary False memory=:{left, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			# (top, mid) = decons mid
+			= {memory&main=recons (El (recons (op left top, mid)), other)}
 		binary _ memory = memory
 		
 	process (Operator (Binary_NS_N op)) = app3 (id, binary flags.strict, id)
 	where
 	
 		binary :: !Bool Memory -> Memory
-		binary False memory=:{left=[lhs:_], main=[El mid=:[_:_]:other], right=[]}
-			= {memory&main=[El [op lhs mid]:other]}
-		binary _ memory=:{left=[lhs:_], main=[El mid:other], right}
-			= {memory&main=[El [op lhs right:mid]:other]}
-		binary False memory=:{left=[], main=[El [top:mid]:other], right}
-			= {memory&main=[El [op top right:mid]:other]}
+		binary False memory=:{left={stack=[!lhs:_]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
+			= {memory&main={main`&stack=[!El (fromSingle (op lhs mid`)):other]}}
+		binary _ memory=:{left={stack=[!lhs:_]}, main=main`=:{stack=[!El mid`:other]}, right}
+			= {memory&main={main`&stack=[!El (fromSingle (op lhs right) + mid`):other]}}
+		binary False memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}, right}
+			= {memory&main={main`&stack=[!El {mid`&stack=[!op top right:mid]}:other]}}
 		binary _ memory = memory
 		
 	process (Operator (Binary_SS_N inv op)) = app3 (id, binary flags.strict inv, id)
 	where
 	
 		binary :: !Bool !Bool Memory -> Memory
-		binary False True memory=:{left=[], main=[El mid=:[_:_],El oth=:[_:_]:other],right=[]}
-			= {memory&main=[El [op mid oth]:other]}
-		binary False True memory=:{left=[], main=[El mid=:[_:_]:other], right=[]}
-			= {memory&main=[El [op mid []]:other]}
-		binary False _ memory=:{left=[], main=[El []:other], right=[]}
-			= {memory&main=[El [op [] []]:other]}
-		binary False _ memory=:{left=[], main=[El mid=:[_:_]:other], right}
-			= {memory&main=[El [op mid right]:other]}
-		binary False _ memory=:{left, main=[El mid=:[_:_]:other], right=[]}
-			= {memory&main=[El [op left mid]:other]}
-		binary _ _ memory=:{left, main=[El mid:other], right}
-			= {memory&main=[El [op left right:mid]:other]}
+		binary False True memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]},El oth`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
+			= {memory&main={main`&stack=[!El (fromSingle (op mid` oth`)):other]}}
+		binary False True memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
+			= {memory&main={main`&stack=[!El (fromSingle (op mid` zero)):other]}}
+		binary False _ memory=:{left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
+			= {memory&main=fromSingle (El (fromSingle (op zero zero))) + memory.main}
+		binary False _ memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right}
+			= {memory&main={main`&stack=[!El (fromSingle (op mid` right)):other]}}
+		binary False _ memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
+			= {memory&main={main`&stack=[!El (fromSingle (op left mid`)):other]}}
+		binary _ _ memory=:{left, main=main`=:{stack=[!El mid`:other]}, right}
+			= {memory&main={main`&stack=[!El ((fromSingle (op left right)) + mid`):other]}}
 		
 	process (Operator (Binary_SS_S inv op)) = app3 (id, binary flags.strict inv, id)
 	where
 	
 		binary :: !Bool !Bool Memory -> Memory
-		binary False True memory=:{left=[], main=[El mid=:[_:_],El oth=:[_:_]:other],right=[]}
-			= {memory&main=[El (op mid oth):other]}
-		binary False True memory=:{left=[], main=[El mid=:[_:_]:other], right=[]}
-			= {memory&main=[El (op mid []):other]}
-		binary False _ memory=:{delims, left=[], main=[El []:_], right=[]}
-			= {memory&delims=inc delims,main=[El (op [] []),Delim delims: memory.main]}
-		binary False _ memory=:{left=[], main=[El mid=:[_:_]:other], right}
-			= {memory&main=[El (op mid right):other]}
-		binary False _ memory=:{left, main=[El mid=:[_:_]:other], right=[]}
-			= {memory&main=[El (op left mid):other]}
+		binary False True memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]},El oth`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
+			= {memory&main={main`&stack=[!El (op mid` oth`):other]}}
+		binary False True memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
+			= {memory&main={main`&stack=[!El (op mid` zero):other]}}
+		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
+			= {memory&delims=inc delims,main=fromList [El (op zero zero),Delim delims] True + memory.main}
+		binary False _ memory=:{left={stack=[!]}, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right}
+			= {memory&main={main`&stack=[!El (op mid` right):other]}}
+		binary False _ memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!_:_]}:other]}, right={stack=[!]}}
+			= {memory&main={main`&stack=[!El (op left mid`):other]}}
 		binary _ _ memory=:{delims, left, main, right}
-			= {memory&delims=inc delims,main=[El (op left right),Delim delims: main]}
+			= {memory&delims=inc delims,main=fromList [El (op left right),Delim delims] True + main}
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where
 		
 		unary :: Memory -> Memory
-		unary memory=:{main=[El [arg:mid]:other]}
-			= {memory&main=[El [op arg:mid]:other]}
+		unary memory=:{main=main`=:{stack=[!El mid`=:{stack=[!arg:mid]}:other]}}
+			= {memory&main={main`&stack=[!El {mid`&stack=[!op arg:mid]}:other]}}
 		unary memory = memory
 		
 	process (Operator (Unary_N_S op)) = app3 (id, unary, id)
@@ -508,32 +511,32 @@ where
 		unary :: Memory -> Memory
 		//unary memory=:{delims, main=[El [arg]:other]}
 		//	= {memory&delims=inc delims,main=[El (op arg),Delim delims: other]}
-		unary memory=:{delims, main=[El [arg:mid]:other]}
-			= {memory&delims=inc delims,main=[El (op arg),Delim delims,El mid:other]}
+		unary memory=:{delims, main=main`=:{stack=[!El mid`=:{stack=[!arg:mid]}:other]}}
+			= {memory&delims=inc delims,main={main`&stack=[!El (op arg),Delim delims,El {mid`&stack=mid}:other]}}
 		unary memory = memory
 		
 	process (Operator (Unary_S_N op)) = app3 (id, unary, id)
 	where
 	
 		unary :: Memory -> Memory
-		unary memory=:{main=[El mid:other]}
-			= {memory&main=[El [op mid]:other]}
+		unary memory=:{main=main`=:{stack=[!El mid`:other]}}
+			= {memory&main={main`&stack=[!El {stack=[!op mid`],bounded=True}:other]}}
 		//unary memory = memory
 		
 	process (Operator (Unary_S_S op)) = app3 (id, unary, id)
 	where
 		
 		unary :: Memory -> Memory
-		unary memory=:{main=[El mid:other]}
-			= {memory&main=[El (op mid):other]}
+		unary memory=:{main=main`=:{stack=[!El mid`:other]}}
+			= {memory&main={main`&stack=[!El (op mid`):other]}}
 		//unary memory = memory
 	
 	process (Operator (Unary_S_T op)) = app3 (id, unary, id)
 	where
 		
 		unary :: Memory -> Memory
-		unary memory=:{cursor, delims, main=[El mid:other]}
-			= mergeDelims {memory&cursor=delims,delims=inc delims,main=(map (\e -> (El e)) (op mid)) ++ [Delim delims: other]}
+		unary memory=:{cursor, delims, main={stack=[!El mid`:other],bounded}}
+			= mergeDelims {memory&cursor=delims,delims=inc delims,main=(op mid`) + {stack=[!Delim delims: other],bounded=bounded}}
 		
 				
 	process (Operator (Unary_M_M op)) = app3 (id, op, id)

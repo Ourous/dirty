@@ -1,6 +1,6 @@
 implementation module builtins
 
-import types, atomics, arithmetic, utilities, StdEnv, StdLib, unicode
+import types, atomics, arithmetic, utilities, StdEnv, StdLib, unicode, stacks
 
 // "boolean" functions
 isLessThan :: !Number !Number -> Number
@@ -15,17 +15,20 @@ isGreaterOrEqual :: !Number !Number -> Number
 isGreaterOrEqual lhs rhs = fromBool (lhs >= rhs)
 isNotEqual :: !Number !Number -> Number
 isNotEqual lhs rhs = fromBool (lhs <> rhs)
-isIdentical :: ![Number] ![Number] -> Number
+isIdentical :: !(Stack Number) !(Stack Number) -> Number
 isIdentical lhs rhs = fromBool (lhs == rhs)
 
-isElementOf :: !Number ![Number] -> Number
-isElementOf lhs rhs = fromBool (isMember lhs rhs)
-isImproperSubsetOf :: ![Number] ![Number] -> Number
-isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
-isProperSubsetOf :: ![Number] ![Number] -> Number
-isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
-isNotSubsetOf :: ![Number] ![Number] -> Number
-isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
+isElementOf :: !Number !(Stack Number) -> Number
+isElementOf lhs rhs = fromBool (S_any ((==) lhs) rhs)//fromBool (isMember lhs rhs)
+isImproperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
+isImproperSubsetOf lhs rhs = fromBool (S_all (\e -> S_occurrences ((==) e) lhs <= S_occurrences ((==) e) rhs) lhs)
+//isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
+isProperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
+isProperSubsetOf lhs rhs = fromBool (S_all (\e -> S_occurrences ((==) e) lhs <= S_occurrences ((==) e) rhs) lhs && S_any (\e -> S_occurrences ((==) e) lhs < S_occurrences ((==) e) rhs) lhs)
+//isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
+isNotSubsetOf :: !(Stack Number) !(Stack Number) -> Number
+isNotSubsetOf lhs rhs = fromBool (S_any (\e -> S_occurrences ((==) e) lhs > S_occurrences ((==) e) rhs) lhs)
+//isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
 
 isUppercase :: !Number -> Number
 isUppercase arg = fromBool (isUpperUChar (toInt arg))
@@ -58,16 +61,17 @@ isPrime arg
 	| otherwise
 		= fromBool (all (\e -> arg mod e <> Zero) [inc one..dec arg])
 
-isSorted :: ![Number] -> Number
-isSorted arg = fromBool (isSorted` arg)
+isSorted :: !(Stack Number) -> Number
+isSorted {bounded=False} = Zero
+isSorted {stack} = fromBool (isSorted` stack)
 where
-	isSorted` [h1:tail=:[h2:_]] = h1 <= h2 && isSorted` tail
+	isSorted` [!h1:tail=:[!h2:_]] = h1 <= h2 && isSorted` tail
 	isSorted` _ = True
 	
-areAnyTrue :: ![Number] -> Number
-areAnyTrue arg = fromBool (any toBool arg)
-areAllTrue :: ![Number] -> Number
-areAllTrue arg = fromBool (all toBool arg)
+areAnyTrue :: !(Stack Number) -> Number
+areAnyTrue arg = fromBool (S_any toBool arg)
+areAllTrue :: !(Stack Number) -> Number
+areAllTrue arg = fromBool (S_all toBool arg)
 
 // coalescing operators
 logicEquiv :: !Number -> Number
@@ -76,7 +80,9 @@ logicNegate :: !Number -> Number
 logicNegate arg = fromBool (not (toBool arg))
 
 // remaining math ops
-primeFactors :: !Number -> [Number]
+primeFactors :: !Number -> (Stack Number)
+primeFactors _ = zero
+/*
 primeFactors NaN = []
 primeFactors arg
 	| abs arg < inc one || numCeiling arg <> numFloor arg
@@ -84,6 +90,7 @@ primeFactors arg
 	| otherwise
 		# factors = [n \\ n <- [inc one..arg] | arg mod n == Zero && (toBool o isPrime) n]
 		= factors ++ (primeFactors (arg/(prod factors)))
+*/
 conjugate :: !Number -> Number
 conjugate (Im (Fin val)) = (Im (Fin (~val)))
 conjugate (Cx (Fin val=:{im})) = (Cx (Fin {val&im=(~im)}))
@@ -112,155 +119,169 @@ numCombin :: !Number !Number -> Number
 numCombin lhs rhs = (numPermute lhs rhs) / prod [one..rhs]
 logarithm :: !Number !Number -> Number
 logarithm lhs rhs = (ln rhs) / (ln lhs)
-numProduct :: ![Number] -> Number
-numProduct [] = Zero
-numProduct arg = foldl (*) one arg
-numSum :: ![Number] -> Number
-numSum arg = foldl (+) Zero arg
+numProduct :: !(Stack Number) -> Number
+numProduct {stack=[!]} = Zero
+numProduct {bounded=False} = NaN
+numProduct arg = S_reduce (*) one arg//foldl (*) one arg
+numSum :: !(Stack Number) -> Number
+numSum {bounded=False} = NaN
+numSum arg = S_reduce (+) Zero arg//foldl (+) Zero arg
 
 // vectorized ops
-vectorPlus :: ![Number] ![Number] -> [Number]
-vectorPlus lhs rhs = zipWith (+) lhs rhs
-vectorTimes :: ![Number] ![Number] -> [Number]
-vectorTimes lhs rhs = zipWith (*) lhs rhs
-vectorNegate :: ![Number] -> [Number]
-vectorNegate arg = map (~) arg
-vectorAND :: ![Number] ![Number] -> [Number]
-vectorAND lhs rhs = zipWith bitAND lhs rhs
-vectorOR :: ![Number] ![Number] -> [Number]
-vectorOR lhs rhs = zipWith bitOR lhs rhs
-vectorIsEqual :: ![Number] ![Number] -> [Number]
-vectorIsEqual lhs rhs = zipWith isEqualTo lhs rhs
-vectorElementOf :: ![Number] ![Number] -> [Number]
-vectorElementOf lhs rhs = map (\e -> isElementOf e rhs) lhs
-vectorLessThan :: ![Number] ![Number] -> [Number]
-vectorLessThan lhs rhs = zipWith isLessThan lhs rhs
-vectorGreaterThan :: ![Number] ![Number] -> [Number]
-vectorGreaterThan lhs rhs = zipWith isGreaterThan lhs rhs
-vectorLessOrEqual :: ![Number] ![Number] -> [Number]
-vectorLessOrEqual lhs rhs = zipWith isLessOrEqual lhs rhs
-vectorGreaterOrEqual :: ![Number] ![Number] -> [Number]
-vectorGreaterOrEqual lhs rhs = zipWith isGreaterOrEqual lhs rhs
+vectorPlus :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorPlus lhs rhs = S_zipWith (+) lhs rhs
+vectorTimes :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorTimes lhs rhs = S_zipWith (*) lhs rhs
+vectorNegate :: !(Stack Number) -> (Stack Number)
+vectorNegate arg = S_map (~) arg
+vectorAND :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorAND lhs rhs = S_zipWith bitAND lhs rhs
+vectorOR :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorOR lhs rhs = S_zipWith bitOR lhs rhs
+vectorIsEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorIsEqual lhs rhs = S_zipWith isEqualTo lhs rhs
+vectorElementOf :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorElementOf lhs rhs = S_map (\e -> isElementOf e rhs) lhs
+vectorLessThan :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorLessThan lhs rhs = S_zipWith isLessThan lhs rhs
+vectorGreaterThan :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorGreaterThan lhs rhs = S_zipWith isGreaterThan lhs rhs
+vectorLessOrEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorLessOrEqual lhs rhs = S_zipWith isLessOrEqual lhs rhs
+vectorGreaterOrEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorGreaterOrEqual lhs rhs = S_zipWith isGreaterOrEqual lhs rhs
 
 // miscelaneous operators
 toUppercase :: !Number -> Number
 toUppercase arg = fromInt (toUpperUChar (toInt arg))
 toLowercase :: !Number -> Number
 toLowercase arg = fromInt (toLowerUChar (toInt arg))
-splitOnNewlines :: ![Number] -> [[Number]]
-splitOnNewlines [] = []
+splitOnNewlines :: !(Stack Number) -> (Stack Element)
 splitOnNewlines arg
-	# (head, tail) = span (\e -> toInt e <> 10) arg
-	| isEmpty tail
-		= [head]
+	# (head, tail) = S_span (\e -> toInt e == 10) arg
+	| tail == zero
+		= fromSingle (El head)
 	| otherwise
-		= [head:splitOnNewlines (tl tail)]
+		= fromSingle (El head) + splitOnNewlines (tailOf tail)
 
 // "set" operators
-fromLeftStepRight :: !Number !Number -> [Number]
-fromLeftStepRight lhs rhs = [lhs, lhs + rhs..]
-fromOneToMiddle :: !Number -> [Number]
+fromLeftStepRight :: !Number !Number -> (Stack Number)
+fromLeftStepRight lhs rhs = fromStrictList [!lhs, lhs + rhs..] False
+fromOneToMiddle :: !Number -> (Stack Number)
 fromOneToMiddle arg
 	| IS_CPLX arg
-		= [arg]
+		= fromSingle arg
 	# unit = if(IS_IMAG arg) imagUnit id one
 	| arg < Zero
-		= [Zero - unit, Zero - unit - unit..arg]
+		= fromStrictList [!Zero - unit, Zero - unit - unit..arg] True
 	| arg > Zero
-		= [unit, unit + unit..arg]
+		= fromStrictList [!unit, unit + unit..arg] True
 	| otherwise
-		= [arg]
-fromMiddleToZero :: !Number -> [Number]
+		= fromSingle arg
+fromMiddleToZero :: !Number -> (Stack Number)
 fromMiddleToZero arg
 	| IS_CPLX arg
-		= [arg]
+		= fromSingle arg
 	# unit = if(IS_IMAG arg) imagUnit id one
 	| arg < Zero
-		= [arg, arg + unit..Zero]
+		= fromStrictList [!arg, arg + unit..Zero] True
 	| arg > Zero
-		= [arg, arg - unit..Zero]
+		= fromStrictList [!arg, arg - unit..Zero] True
 	| otherwise
-		= [arg]
-fromLeftTimesRight :: !Number !Number -> [Number]
-fromLeftTimesRight lhs rhs = yieldTimesRight lhs
-where yieldTimesRight arg = [arg:yieldTimesRight(arg*rhs)]
-setMinimum :: ![Number] -> Number
-setMinimum [] = NaN
-setMinimum [head:tail] = foldl (min) head tail
-setMaximum :: ![Number] -> Number
-setMaximum [] = NaN
-setMaximum [head:tail] = foldl (max) head tail
-setFilter :: ![Number] ![Number] -> [Number]
-setFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | toBool cond]
-antiFilter :: ![Number] ![Number] -> [Number]
-antiFilter lhs rhs = [el \\ el <- lhs & cond <- rhs | (not o toBool) cond]
-dupesMiddle :: ![Number] -> [Number]
-dupesMiddle arg = [el \\ el <- arg | sum [1 \\ e <- arg | e == el] > 1]
-groupMiddle :: ![Number] -> [[Number]]
-groupMiddle arg = group arg
-setIntersection :: ![Number] ![Number] -> [Number]
-setIntersection lhs rhs = removeDup (filter (\el -> isMember el rhs) lhs)
-setUnion :: ![Number] ![Number] -> [Number]
-setUnion lhs rhs = removeDup (lhs ++ rhs)
-setExclusion :: ![Number] ![Number] -> [Number]
-setExclusion lhs rhs = removeDup ((filter (not o \el -> isMember el rhs) lhs) ++ (filter (not o \el -> isMember el lhs) rhs))
+		= fromSingle arg
+fromLeftTimesRight :: !Number !Number -> (Stack Number)
+fromLeftTimesRight lhs rhs = fromStrictList (yieldTimesRight lhs) False
+where yieldTimesRight arg = [!arg:yieldTimesRight(arg*rhs)]
+setMinimum :: !(Stack Number) -> Number
+setMinimum {stack=[!]} = NaN
+setMinimum arg = S_reduce (min) (headOf arg) (tailOf arg)
+setMaximum :: !(Stack Number) -> Number
+setMaximum {stack=[!]} = NaN
+setMaximum arg = S_reduce (max) (headOf arg) (tailOf arg)
+setFilter :: !(Stack Number) !(Stack Number) -> (Stack Number)
+setFilter lhs rhs = S_filterOn (toBool) lhs rhs
+antiFilter :: !(Stack Number) !(Stack Number) -> (Stack Number)
+antiFilter lhs rhs = S_filterOn (not o toBool) lhs rhs// [el \\ el <- lhs.stack & cond <- rhs.stack | (not o toBool) cond]
+dupesMiddle :: !(Stack Number) -> (Stack Number)
+dupesMiddle arg = S_filterBy (\e -> S_occurrences ((==) e) arg > 1) arg//[el \\ el <- arg | sum [1 \\ e <- arg | e == el] > 1]
+groupMiddle :: !(Stack Number) -> (Stack Element)
+groupMiddle arg=:{bounded}
+	# list = toList arg
+	# groups = map (\e -> (El (fromList e False))) (group list) // TODO: all complete groups are bounded, find a way to implement that
+	= fromList groups bounded
+setIntersection :: !(Stack Number) !(Stack Number) -> (Stack Number)
+setIntersection lhs rhs = S_uniques (S_filterBy (\e -> S_any ((==) e) rhs) lhs)//removeDup (filter (\el -> isMember el rhs) lhs)
+setUnion :: !(Stack Number) !(Stack Number) -> (Stack Number)
+setUnion lhs rhs = abort "TBI"//removeDup (lhs ++ rhs)
+setExclusion :: !(Stack Number) !(Stack Number) -> (Stack Number)
+setExclusion lhs rhs = abort "TBI"//removeDup ((filter (not o \el -> isMember el rhs) lhs) ++ (filter (not o \el -> isMember el lhs) rhs))
 
 
 // special cases
 complexSplit :: !Memory -> Memory
-complexSplit memory=:{left, right, main=[El [top:mid]:other]}
-	= {memory&left=[justReal top:left],right=[justImag top:left],main=[El mid:other]}
+complexSplit memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	= {memory&left=fromSingle (justReal top) + left,right=fromSingle (justImag top) + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
 complexSplit memory = memory
+
 matrixProduct :: !Memory -> Memory // returns multiple
-matrixProduct memory=:{cursor, delims, left, right, main} = let
-		matrix = [El [lhs * rhs \\ rhs <- right] \\ lhs <- left]
-	in {memory&cursor=delims,delims=inc delims,main=matrix++[Delim delims:memory.main]}
+matrixProduct _ = abort "TBI"/*
+matrixProduct memory=:{cursor, delims, left, right, main} = abort "TBI"// let
+//		matrix = [El [lhs * rhs \\ rhs <- right] \\ lhs <- left]
+//	in {memory&cursor=delims,delims=inc delims,main=matrix++[Delim delims:memory.main]}
+*/
 joinWithNewlines :: !Memory -> Memory
-joinWithNewlines memory=:{cursor, main}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
-	= let
-		safeBase = [el \\ (El el) <- base]
-		joined = foldl (\a b -> a ++ [fromInt 10] ++ b) [] safeBase
-	in {memory&main=[El joined:other]}
+joinWithNewlines _ = abort "TBI"
+
 stacksFromCursor :: !Memory -> Memory
-stacksFromCursor memory=:{cursor,main=[El mid:other]} = let
-		base = takeWhile (DELIM_FUNC True ((<>)cursor)) memory.main
-		stacks = sum [1 \\ (El _) <- base]
-	in {memory&main=[El[fromInt stacks:mid]:other]}
+stacksFromCursor memory=:{cursor,main=main`=:{stack=[!El mid`:other]}} = let
+		(base, _) = S_span (DELIM_FUNC False ((==)cursor)) memory.main
+		stacks = S_occurrences (IS_ELEM) base
+	in {memory&main={main`&stack=[!El (fromSingle (fromInt stacks) + mid`):other]}}
+
 transposeFromCursor :: !Memory -> Memory
+transposeFromCursor _ = abort "TBI"/*
 transposeFromCursor memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
 		safeBase = [el \\ (El el) <- base]
 		transposed = [(El el) \\ el <- transpose safeBase]
 	in {memory&main=transposed ++ other}
+*/
 stackJoin :: !Memory -> Memory
 stackJoin memory=:{cursor,main}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
+	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
 	= let
-		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) base
-		flattened = [El (flatten [el \\ (El el) <- part]) \\ part <- grouped | case part of [Delim _] = False; _ = True]
-	in {memory&main=flattened ++ other}
+		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) (toList base)
+		flattened = [!El (fromList (flatten [toList el \\ (El el) <- part]) (all (\e -> case e of (El el) = el.bounded; _ = False) part)) \\ part <- grouped | case part of [Delim _] = False; _ = True]
+	in {memory&main=fromStrictList flattened base.bounded + other}
+
 stackUnjoin :: !Memory -> Memory
-stackUnjoin memory=:{cursor,delims,main=[El mid:other]} = let
-		singles = [El [el] \\ el <- mid]
-	in mergeDelims {memory&cursor=delims,delims=inc delims,main=(if(isEmpty singles) [El []] singles) ++ [Delim delims:other]}
+stackUnjoin memory=:{cursor,delims,main=main`=:{stack=[!El mid`:other]}} = let
+		singles = fromStrictList [!El (fromSingle el) \\ el <- toList mid`] mid`.bounded
+	in mergeDelims {memory&cursor=delims,delims=inc delims,main=(if(case singles.stack of [!] = True; _ = False) (fromSingle (El zero)) singles) + (fromSingle (Delim delims)) + (fromStrictList other main`.bounded)}
+
 removeDupBase :: !Memory -> Memory
+removeDupBase _ = abort "TBI"/*
 removeDupBase memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let 
 		safeBase = [el \\ (El el) <- base]
 		deduped = [El el \\ el <- removeDup safeBase]
 	in {memory&main=deduped ++ other}
+*/
 repeatTopMiddle :: !Memory -> Memory
-repeatTopMiddle memory=:{main=[El []:_]} = memory
-repeatTopMiddle memory=:{delims,main=[El [top:mid]:other]}
-	= {memory&delims=inc delims,main=[El(repeat top),Delim delims,El mid:other]}
+repeatTopMiddle memory=:{delims,main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	= {memory&delims=inc delims,main={main`&stack=[!El (fromList (repeat top) False),Delim delims,El (fromStrictList mid mid`.bounded):other]}}
+repeatTopMiddle memory = memory
+	
 repeatFullMiddle :: !Memory -> Memory
+repeatFullMiddle _ = abort "TBI"/*
 repeatFullMiddle memory=:{cursor, delims, main=[El mid:other]} // handle the infinite-ness
 	# memory = mergeDelims {memory&cursor=delims,delims=inc delims,main=[El mid,Delim delims:other]}
 	= {memory&main=(repeat (El mid))++memory.main}
+*/
 sortBaseline :: !Memory -> Memory
+sortBaseline _ = abort "TBI"/*
 sortBaseline memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
@@ -269,191 +290,210 @@ sortBaseline memory=:{cursor,main}
 	in {memory&main=sorted ++ other}
 	
 // stack manipulations
+*/
 stackReverse :: !StackID !Memory -> Memory
 stackReverse Left memory=:{left}
-	= {memory&left=reverse left}
+	= {memory&left=S_reverse left}
 stackReverse Right memory=:{right}
-	= {memory&right=reverse right}
-stackReverse Middle memory=:{main=[El mid:other]}
-	= {memory&main=[El (reverse mid):other]}
+	= {memory&right=S_reverse right}
+stackReverse Middle memory=:{main=main`=:{stack=[!El mid`:other]}}
+	= {memory&main={main`&stack=[!El (S_reverse mid`):other]}}
 stackReverse Both memory=:{left, right}
-	= {memory&left=reverse left, right=reverse right}
+	= {memory&left=S_reverse left, right=S_reverse right}
 stackReverse Primary memory=:{cursor,main}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
-	= {memory&main=reverseEach base ++ other}
-where
-	reverseEach [] = []
-	reverseEach [El head:tail]
-		= [El (reverse head):reverseEach tail]
-	reverseEach [head:tail]
-		= [head:reverseEach tail]
+	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	= {memory&main=S_map (APPLY_ELEM S_reverse) base + other}
 stackReverse Base memory=:{cursor,main}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
-	= mergeDelims {memory&main=reverse base ++ other}
+	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	= mergeDelims {memory&main=S_reverse base + other}
 		
+
 stackRotate :: !StackID !Memory -> Memory
-stackRotate _ memory=:{main=[El []:_]} = memory
-stackRotate Left memory=:{left, main=[El [top:mid]:other]}
-	= {memory&left=rotateList(toInt top)left,main=[El mid:other]}
-stackRotate Right memory=:{right, main=[El [top:mid]:other]}
-	= {memory&right=rotateList(toInt top)right,main=[El mid:other]}
-stackRotate Both memory=:{left, right, main=[El [top:mid]:other]}
-	= let rotate = rotateList (toInt top)
-	in {memory&left=rotate left,right=rotate right,main=[El mid:other]}
-stackRotate Middle memory=:{main=[El [top:mid]:other]}
-	= let rotate = rotateList (toInt top)
-	in {memory&main=[El(rotate mid):other]}
-stackRotate Primary memory=:{main=[El [top:mid]:other]}
-	= let rotate = rotateList (toInt top)
-	in {memory&main=[El(rotate mid):map(APPLY_ELEM rotate)other]}
-stackRotate Base memory=:{cursor,main=[El [top:mid]:other]}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) [El mid:other]
-	= let rotate = rotateList (toInt top)
-	in mergeDelims {memory&main=rotate base ++ other}
+stackRotate _ memory=:{main={stack=[!El {stack=[!]}:_]}} = memory
+stackRotate Left memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	= {memory&left=S_rotate (toInt top) left,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+stackRotate Right memory=:{right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	= {memory&right=S_rotate (toInt top) right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+stackRotate Both memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	= let rotate = S_rotate (toInt top)
+	in {memory&left=rotate left,right=rotate right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+stackRotate Middle memory=:{main=main`=:{stack=[!El mid`:other]}}
+	= let rotate = S_rotate (toInt (headOf mid`))
+	in {memory&main={main`&stack=[!El (rotate (tailOf mid`)):other]}}
+stackRotate Primary memory=:{cursor, main=main`=:{stack=[!El mid`=:{stack=[!top:_]}:other]}}
+	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El (tailOf mid`):other]}
+	= let rotate = S_rotate (toInt top)
+	in {memory&main=S_map (APPLY_ELEM rotate) base + other}
+stackRotate Base memory=:{cursor,main=main`=:{stack=[!El mid`=:{stack=[!top:_]}:other]}}
+	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El (tailOf mid`):other]}
+	= let rotate = S_rotate (toInt top)
+	in mergeDelims {memory&main=rotate base + other}
+
 
 stackDelete :: !StackID !Memory -> Memory
-stackDelete Left memory = {memory&left=[]}
-stackDelete Right memory = {memory&right=[]}
-stackDelete Middle memory=:{main=[El mid:other]}
-	= {memory&main=other}
-stackDelete Both memory = {memory&left=[],right=[]}
+stackDelete Left memory = {memory&left=zero}
+stackDelete Right memory = {memory&right=zero}
+stackDelete Middle memory=:{main}
+	= {memory&main=tailOf main}
+stackDelete Both memory = {memory&left=zero,right=zero}
 stackDelete Base memory=:{cursor,main}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
+	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
 	= mergeDelims {memory&main=other}
-stackDelete Main memory = {memory&main=[]}
-stackDelete All memory = {memory&left=[],right=[],main=[]}
+stackDelete Main memory = {memory&main=zero}
+stackDelete All memory = {memory&left=zero,right=zero,main=zero}
 
 stackDrop :: !StackID !Memory -> Memory
-stackDrop _ memory=:{main=[El []:_]} = memory
-stackDrop Left memory=:{left, main=[El [top:mid]:other]} = let
+stackDrop _ memory=:{main={stack=[!El {stack=[!]}:_]}} = memory
+stackDrop Left memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}} = let
 		val = toInt top
-		fn = if(val<0) (take(~val)) (drop val)
-	in {memory&left=fn left,main=[El mid:other]}
-stackDrop Right memory=:{right, main=[El [top:mid]:other]} = let
+		fn = if(val<0) (S_take(~val)) (S_drop val)
+	in {memory&left=fn left,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+stackDrop Right memory=:{right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}  = let
 		val = toInt top
-		fn = if(val<0) (take(~val)) (drop val)
-	in {memory&right=fn right,main=[El mid:other]}
-stackDrop Middle memory=:{main=[El [top:mid]:other]} = let
+		fn = if(val<0) (S_take(~val)) (S_drop val)
+	in {memory&right=fn right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+stackDrop Middle memory=:{main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}} = let
 		val = toInt top
-		fn = if(val<0) (take(~val)) (drop val)
-	in {memory&main=[El(fn mid):other]}
-stackDrop Both memory=:{left, right, main=[El [top:mid]:other]} = let
+		fn = if(val<0) (S_take(~val)) (S_drop val)
+	in {memory&main={main`&stack=[!El (fn {mid`&stack=mid}):other]}}
+stackDrop Both memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}} = let
 		val = toInt top
-		fn = if(val<0) (take(~val)) (drop val)
-	in {memory&left=fn left,right=fn right,main=[El mid:other]}
-stackDrop Base memory=:{cursor,main=[El [top:mid]:other]}
-	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) [El mid:other]
+		fn = if(val<0) (S_take(~val)) (S_drop val)
+	in {memory&left=fn left,right=fn right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+stackDrop Base memory=:{cursor, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El {mid`&stack=mid}:other]}
 	= let
 		val = toInt top
-		fn = if(val<0) (take(~val)) (drop val)
-	in mergeDelims {memory&main=fn base ++ other}
+		fn = if(val<0) (S_take(~val)) (S_drop val)
+	in mergeDelims {memory&main=fn base + other}
 	
 cycleTops :: !Rotation !Memory -> Memory
-cycleTops Clockwise memory=:{left, main=[El mid:other], right}
-	= {memory&left=SAFE_HEAD right++SAFE_TAIL left,right=SAFE_HEAD mid++SAFE_TAIL right,main=[El(SAFE_HEAD left++SAFE_TAIL mid):other]}
-cycleTops Anticlockwise memory=:{left, main=[El mid:other], right}
-	= {memory&left=SAFE_HEAD mid++SAFE_TAIL left,right=SAFE_HEAD left++SAFE_TAIL right,main=[El(SAFE_HEAD right++SAFE_TAIL mid):other]}
-	
+//cycleTops Clockwise memory=:{left, main=[El mid:other], right}
+//	= {memory&left=SAFE_HEAD right++SAFE_TAIL left,right=SAFE_HEAD mid++SAFE_TAIL right,main=[El(SAFE_HEAD left++SAFE_TAIL mid):other]}
+cycleTops Anticlockwise memory=:{left, main=main`=:{stack=[!El mid`:other]}, right}
+	= {memory&left=safeHead mid` + safeTail left,right=safeHead left + safeTail right,main={main`&stack=[!El (safeHead right + safeTail mid`):other]}}
+
 cycleStacks :: !Rotation !Memory -> Memory
-cycleStacks Clockwise memory=:{left, main=[El mid:other], right}
-	= {memory&left=right,right=mid,main=[El left:other]}
-cycleStacks Anticlockwise memory=:{left, main=[El mid:other], right}
-	= {memory&left=mid,right=left,main=[El right:other]}
-	
+//cycleStacks Clockwise memory=:{left, main=[El mid:other], right}
+//	= {memory&left=right,right=mid,main=[El left:other]}
+cycleStacks Anticlockwise memory=:{left, main=main`=:{stack=[!El mid`:other]}, right}
+	= {memory&left=mid`,right=left,main={main`&stack=[!El right:other]}}
+
 unpackLeftRight :: !Memory -> Memory
-unpackLeftRight memory=:{left, main=[El[lhs,rhs:mid]:other], right}
-	= {memory&left=[lhs:left],right=[rhs:right],main=[El mid:other]}
-unpackLeftRight memory=:{left, main=[El[lhs]:other]}
-	= {memory&left=[lhs:left],main=[El []:other]}
+unpackLeftRight memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!lhs,rhs:mid]}:other]}, right}
+	= {memory&left=fromSingle lhs + left,right=fromSingle rhs + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+unpackLeftRight memory=:{left, main=main`=:{stack=[!El {stack=[!lhs]}:other]}}
+	= {memory&left=fromSingle lhs + left,main={main`&stack=[!El zero:other]}}
 unpackLeftRight memory = memory
 
 unpackRightLeft :: !Memory -> Memory
-unpackRightLeft memory=:{left, main=[El[rhs,lhs:mid]:other], right}
-	= {memory&left=[lhs:left],right=[rhs:right],main=[El mid:other]}
-unpackRightLeft memory=:{right, main=[El[rhs]:other]}
-	= {memory&right=[rhs:right],main=[El []:other]}
+unpackRightLeft memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!rhs,lhs:mid]}:other]}, right}
+	= {memory&left=fromSingle lhs + left,right=fromSingle rhs + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+unpackRightLeft memory=:{right, main=main`=:{stack=[!El {stack=[!rhs]}:other]}}
+	= {memory&right=fromSingle rhs + right,main={main`&stack=[!El zero:other]}}
 unpackRightLeft memory = memory
 
 swapLeftRight :: !Memory -> Memory
 swapLeftRight memory=:{left, right}
 	= {memory&left=right,right=left}
-	
+
 swapTop :: !Axes !Memory -> Memory
 swapTop Horizontal memory=:{left, right}
-	= {memory&left=SAFE_HEAD right++SAFE_TAIL left,right=SAFE_HEAD left++SAFE_TAIL right}
-swapTop Vertical memory=:{main=[El [top:mid=:[_:_]]:other]}
-	= {memory&main=[El ([last mid:init mid]++[top]):other]}
-swapTop Identity memory=:{main=[El mid:other], right}
-	= {memory&right=SAFE_HEAD mid++SAFE_TAIL right,main=[El(SAFE_HEAD right++SAFE_TAIL mid):other]}
-swapTop Inverse memory=:{left, main=[El mid:other]}
-	= {memory&left=SAFE_HEAD mid++SAFE_TAIL left,main=[El(SAFE_HEAD left++SAFE_TAIL mid):other]}
+	= {memory&left=safeHead right + safeTail left,right=safeHead left + safeTail right}
+swapTop Vertical memory=:{main=main`=:{stack=[!El mid`:other]}}
+	= {memory&main={main`&stack=[!El (safeLast mid` + safeInit mid`):other]}}
+swapTop Identity memory=:{main=main`=:{stack=[!El mid`:other]}, right}
+	= {memory&right=safeHead mid` + safeTail right,main={main`&stack=[!El(safeHead right + safeTail mid`):other]}}
+swapTop Inverse memory=:{main=main`=:{stack=[!El mid`:other]}, left}
+	= {memory&left=safeHead mid` + safeTail left,main={main`&stack=[!El(safeHead left + safeTail mid`):other]}}
 swapTop _ memory = memory	
 
 moveTop :: !Direction !Memory -> Memory
-moveTop East memory=:{left, right=[top:right]}
-	= {memory&left=[top:left],right=right}
-moveTop West memory=:{left=[top:left], right}
-	= {memory&left=left,right=[top:right]}
-moveTop South memory=:{main=[El [top,next:mid]:other]}
-	= {memory&main=[El [next,top:mid]:other]}
-moveTop NorthWest memory=:{left, main=[El [top:mid]:other]}
-	= {memory&left=[top:left],main=[El mid:other]}
-moveTop NorthEast memory=:{right, main=[El [top:mid]:other]}
-	= {memory&right=[top:right],main=[El mid:other]}
-moveTop SouthWest memory=:{right=[top:right], main=[El mid:other]}
-	= {memory&right=right,main=[El[top:mid]:other]}
-moveTop SouthEast memory=:{left=[top:left], main=[El mid:other]}
-	= {memory&left=left,main=[El[top:mid]:other]}
+moveTop East memory=:{left, right}
+	= {memory&left=safeTail left,right=safeHead left + right}
+moveTop West memory=:{left, right}
+	= {memory&left=safeHead right + left,right=safeTail right}
+moveTop South memory=:{main={stack=[!El {stack=[!_,_:_]}:_]}}
+	# (El mid, other) = decons memory.main
+	# (top, next, mid) = decon2 mid
+	= {memory&main=recons (El (recon2 (next, top, mid)), other)}
+moveTop NorthWest memory=:{main={stack=[!El {stack=[!_:_]}:_]}}
+	# (El mid, other) = decons memory.main
+	# (top, mid) = decons mid
+	= {memory&left=recons (top, memory.left),main=recons (El mid, other)}
+moveTop NorthEast memory=:{main={stack=[!El {stack=[!_:_]}:_]}}
+	# (El mid, other) = decons memory.main
+	# (top, mid) = decons mid
+	= {memory&right=recons (top, memory.right),main=recons (El mid, other)}
+moveTop SouthWest memory=:{right={stack=[!_:_]}, main={stack=[!El _:_]}}
+	# (El mid, other) = decons memory.main
+	# (top, right) = decons memory.right
+	= {memory&right=right,main=recons (El (recons (top, mid)), other)}
+moveTop SouthEast memory=:{left={stack=[!_:_]}, main={stack=[!El _:_]}}
+	# (El mid, other) = decons memory.main
+	# (top, left) = decons memory.left
+	= {memory&left=left,main=recons (El (recons (top, mid)), other)}
 moveTop _ memory = memory
-	
+
 copyTop :: !Direction !Memory -> Memory
-copyTop East memory=:{left, right=[top:_]}
-	= {memory&left=[top:left]}
-copyTop West memory=:{left=[top:_], right}
-	= {memory&right=[top:right]}
-copyTop North memory=:{main=[El [top:mid]:other]}
-	= {memory&main=[El [top,top:mid]:other]}
-copyTop NorthWest memory=:{left, main=[El [top:_]:_]}
-	= {memory&left=[top:left]}
-copyTop NorthEast memory=:{right, main=[El [top:_]:_]}
-	= {memory&right=[top:right]}
-copyTop SouthWest memory=:{right=[top:_], main=[El mid:other]}
-	= {memory&main=[El[top:mid]:other]}
-copyTop SouthEast memory=:{left=[top:_], main=[El mid:other]}
-	= {memory&main=[El[top:mid]:other]}
+copyTop East memory
+	= {memory&left=safeHead memory.right + memory.left}
+copyTop West memory
+	= {memory&right=safeHead memory.left + memory.right}
+copyTop North memory=:{main={stack=[!El {stack=[!_:_]}:_]}}
+	# (El mid, other) = decons memory.main
+	# (top, mid) = decons mid
+	= {memory&main=recons (El (recon2 (top, top, mid)), other)}
+copyTop NorthWest memory=:{main={stack=[!El {stack=[!top:_]}:_]}}
+	= {memory&left=recons (top, memory.left)}
+copyTop NorthEast memory=:{main={stack=[!El {stack=[!top:_]}:_]}}
+	= {memory&right=recons (top, memory.right)}
+copyTop SouthWest memory=:{main={stack=[!El _:_]}}
+	# (El mid, other) = decons memory.main
+	= {memory&main=recons (El (safeHead memory.right + mid), other)}
+copyTop SouthEast memory=:{main={stack=[!El _:_]}}
+	# (El mid, other) = decons memory.main
+	= {memory&main=recons (El (safeHead memory.left + mid), other)}
 copyTop _ memory = memory
-	
+
 copyBoth :: !Axes !Memory -> Memory
-copyBoth Horizontal memory=:{left=[lhs:_], right=[rhs:_]}
-	= {memory&left=[rhs:memory.left],right=[lhs:memory.right]}
-copyBoth Vertical memory=:{main=[El (mid=:[_:_]):other]}
-	= {memory&main=[El([last mid:mid]++[hd mid]):other]}
+copyBoth Horizontal memory
+	= {memory&left=safeHead memory.right + memory.left,right=safeHead memory.left + memory.right}
+copyBoth Vertical memory=:{main={stack=[!El _:_]}}
+	# (El mid, other) = decons memory.main
+	= {memory&main=recons (El (safeLast mid + mid + safeHead mid), other)}
 copyBoth _ memory = memory
-	
+
 moveAll :: !Direction !Memory -> Memory
-moveAll NorthWest memory=:{left, main=[El mid:other]}
-	= {memory&left=mid++left,main=other}
-moveAll NorthEast memory=:{right, main=[El mid:other]}
-	= {memory&right=mid++right,main=other}
+moveAll NorthWest memory=:{left, main=main`=:{stack=[!El mid`:other]}}
+	= {memory&left=mid` + left,main={main`&stack=other}}
+moveAll NorthEast memory=:{right, main=main`=:{stack=[!El mid`:other]}}
+	= {memory&right=mid` + right,main={main`&stack=other}}
 moveAll SouthWest memory=:{delims, right, main}
-	= {memory&delims=inc delims,right=[],main=[El right,Delim delims: main]}
+	= {memory&delims=inc delims,right=zero,main=fromStrictList [!El right,Delim delims] True + main}
 moveAll SouthEast memory=:{delims, left, main}
-	= {memory&delims=inc delims,left=[],main=[El left, Delim delims: main]}
-	
+	= {memory&delims=inc delims,left=zero,main=fromStrictList [!El left, Delim delims] True + main}
+
 replicateBase :: !Memory -> Memory
+replicateBase _ = abort "TBI"/*
 replicateBase memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= mergeDelims {memory&cursor= -1,main=base++[Delim -1: main]} // do not touch, this is magic
 	
+*/
 replicateMiddle :: !Memory -> Memory
+replicateMiddle _ = abort "TBI"/*
 replicateMiddle memory=:{delims,main=[El mid:other]}
 	= {memory&delims=inc delims,main=[El mid,Delim delims,El mid:other]}
 	
+*/
 replicateTop :: !Memory -> Memory
-replicateTop memory=:{delims,main=[El mid:other]}
-	= {memory&delims=inc delims,main=[El(SAFE_HEAD mid),Delim delims,El mid:other]}
-	
+replicateTop memory=:{delims,main={stack=[!El {stack=[!top:_]}:_]}}
+	= {memory&delims=inc delims,main=recon2 (El (fromSingle top), Delim delims, memory.main)}
+replicateTop memory = memory
+
 dupesBase :: !Memory -> Memory
+dupesBase _ = abort "TBI"/*
 dupesBase memory=:{cursor,main}
 	# (base, other) = span (DELIM_FUNC True ((<>)cursor)) main
 	= let
@@ -461,39 +501,39 @@ dupesBase memory=:{cursor,main}
 		deduplicated = [El el \\ el <- safeBase | sum [1 \\ e <- safeBase | e == el] > 1]
 	in {memory&main=deduplicated ++ other}
 	
+*/
 shiftCursorDownwards :: !Memory -> Memory
 shiftCursorDownwards memory=:{cursor=0, delims} = {memory&cursor=dec delims}
 shiftCursorDownwards memory=:{cursor} = {memory&cursor=dec cursor}
-		
+
 shiftCursorUpwards :: !Memory -> Memory
 shiftCursorUpwards memory=:{cursor, delims}
 	| inc cursor == delims
 		= {memory&cursor=0}
 	| otherwise
 		= {memory&cursor=inc cursor}
-	
+
 moveCursorForwards :: !Memory -> Memory
 moveCursorForwards memory=:{delims,cursor,main}
-	# (base, [cur:other]) = span (DELIM_FUNC True ((<>)cursor)) main
-	| isEmpty other
-		= mergeDelims {memory&cursor= -1,main=init base ++ [Delim -1, last base, Delim 0]}
-		//= mergeDelims {memory&cursor=1,delims=inc delims,main=(map (APPLY_DELIM inc) (init base)) ++ [Delim -1, last base, Delim 0]}
-	| otherwise
-		= mergeDelims {memory&main=(init base ++ [cur, last base:other])}
-	
+	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	# (cur, other) = decons other
+	= mergeDelims case other.stack of
+		[!]	= {memory&cursor= -1,main=initOf base + fromStrictList [!Delim -1, lastOf base, Delim 0] True}
+		_ = {memory&main=initOf base + recon2 (cur, lastOf base, other)}
+
 moveCursorBackwards :: !Memory -> Memory
 moveCursorBackwards memory=:{delims,cursor,main}
-	# (base, [cur:other]) = span (DELIM_FUNC True ((<>)cursor)) main
-	| isEmpty other
-		= mergeDelims {memory&cursor= -1,main=[hd main,Delim -1:tl main]}
-		//= mergeDelims {memory&cursor=delims,delims=inc delims,main=[hd main,Delim delims:tl main]}
-	| otherwise
-		= mergeDelims {memory&main=(base ++ [hd other, cur:tl other])}
-		
+	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	# (cur, other) = decons other
+	= mergeDelims case other.stack of
+		[!] = {memory&cursor= -1,main=recon2 (headOf main, Delim -1, tailOf main)}
+		_ = {memory&main=base + recon2 (headOf other, cur, tailOf other)}
+
+
 remember :: !Memory -> Memory
-remember memory=:{main=[El [top:mid]:other]}
-	= {memory&main=[El mid:other],note=top}
+remember memory=:{main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+	= {memory&main={main`&stack=[!El {mid`&stack=mid}:other]},note=top}
 
 recall :: !Memory -> Memory
-recall memory=:{main=[El mid:other], note}
-	= {memory&main=[El[note:mid]:other]}
+recall memory=:{main=main`=:{stack=[!El mid`:other]}, note}
+	= {memory&main={main`&stack=[!El (fromSingle note + mid`):other]}}

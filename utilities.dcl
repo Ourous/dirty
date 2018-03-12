@@ -42,11 +42,11 @@ SAFE_TAIL list
 		[_:tail] = tail
 
 // :: [Number] -> Bool
-TO_BOOL stack
+TO_BOOL {stack}
 	:== case stack of
-		[] = False
-		[Zero:_] = False
-		[NaN:_] = False
+		[!] = False
+		[!Zero:_] = False
+		[!NaN:_] = False
 		_ = True
 		
 // :: Element -> Bool

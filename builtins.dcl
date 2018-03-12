@@ -10,13 +10,13 @@ isEqualTo :: !Number !Number -> Number
 isLessOrEqual :: !Number !Number -> Number
 isGreaterOrEqual :: !Number !Number -> Number
 isNotEqual :: !Number !Number -> Number
-isIdentical :: ![Number] ![Number] -> Number
+isIdentical :: !(Stack Number) !(Stack Number) -> Number
 
-isElementOf :: !Number ![Number] -> Number
+isElementOf :: !Number !(Stack Number) -> Number
 
-isImproperSubsetOf :: ![Number] ![Number] -> Number
-isProperSubsetOf :: ![Number] ![Number] -> Number
-isNotSubsetOf :: ![Number] ![Number] -> Number
+isImproperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
+isProperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
+isNotSubsetOf :: !(Stack Number) !(Stack Number) -> Number
 
 isUppercase :: !Number -> Number
 isLowercase :: !Number -> Number
@@ -27,17 +27,17 @@ isInfinite :: !Number -> Number
 
 isPrime :: !Number -> Number
 
-isSorted :: ![Number] -> Number
+isSorted :: !(Stack Number) -> Number
 
-areAnyTrue :: ![Number] -> Number
-areAllTrue :: ![Number] -> Number
+areAnyTrue :: !(Stack Number) -> Number
+areAllTrue :: !(Stack Number) -> Number
 
 // coalescing operators
 logicEquiv :: !Number -> Number
 logicNegate :: !Number -> Number
 
 // remaining math ops
-primeFactors :: !Number -> [Number]
+primeFactors :: !Number -> (Stack Number)
 conjugate :: !Number -> Number
 justReal :: !Number -> Number
 justImag :: !Number -> Number
@@ -46,43 +46,43 @@ imagUnit :: !Number -> Number
 numPermute :: !Number !Number -> Number
 numCombin :: !Number !Number -> Number
 logarithm :: !Number !Number -> Number
-numProduct :: ![Number] -> Number
-numSum :: ![Number] -> Number
+numProduct :: !(Stack Number) -> Number
+numSum :: !(Stack Number) -> Number
 
 // vectorized ops
-vectorPlus :: ![Number] ![Number] -> [Number]
-vectorTimes :: ![Number] ![Number] -> [Number]
-vectorNegate :: ![Number] -> [Number]
-vectorAND :: ![Number] ![Number] -> [Number]
-vectorOR :: ![Number] ![Number] -> [Number]
-vectorIsEqual :: ![Number] ![Number] -> [Number]
-vectorElementOf :: ![Number] ![Number] -> [Number]
-vectorLessThan :: ![Number] ![Number] -> [Number]
-vectorGreaterThan :: ![Number] ![Number] -> [Number]
-vectorLessOrEqual :: ![Number] ![Number] -> [Number]
-vectorGreaterOrEqual :: ![Number] ![Number] -> [Number]
+vectorPlus :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorTimes :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorNegate :: !(Stack Number) -> (Stack Number)
+vectorAND :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorOR :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorIsEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorElementOf :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorLessThan :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorGreaterThan :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorLessOrEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorGreaterOrEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
 
 // miscelaneous operators
 toUppercase :: !Number -> Number
 toLowercase :: !Number -> Number
-splitOnNewlines :: ![Number] -> [[Number]]
+splitOnNewlines :: !(Stack Number) -> (Stack Element)
 //MORE TO COME
 
 // "set" operators
-fromLeftStepRight :: !Number !Number -> [Number]
-fromOneToMiddle :: !Number -> [Number]
-fromMiddleToZero :: !Number -> [Number]
-fromLeftTimesRight :: !Number !Number -> [Number]
-setMinimum :: ![Number] -> Number
-setMaximum :: ![Number] -> Number
-setFilter :: ![Number] ![Number] -> [Number]
-antiFilter :: ![Number] ![Number] -> [Number]
-groupMiddle :: ![Number] -> [[Number]]
-dupesMiddle :: ![Number] -> [Number]
-setIntersection :: ![Number] ![Number] -> [Number]
-setUnion :: ![Number] ![Number] -> [Number]
-setExclusion :: ![Number] ![Number] -> [Number]
-//powerset :: [Number] -> [[Number]]
+fromLeftStepRight :: !Number !Number -> (Stack Number)
+fromOneToMiddle :: !Number -> (Stack Number)
+fromMiddleToZero :: !Number -> (Stack Number)
+fromLeftTimesRight :: !Number !Number -> (Stack Number)
+setMinimum :: !(Stack Number) -> Number
+setMaximum :: !(Stack Number) -> Number
+setFilter :: !(Stack Number) !(Stack Number) -> (Stack Number)
+antiFilter :: !(Stack Number) !(Stack Number) -> (Stack Number)
+groupMiddle :: !(Stack Number) -> (Stack Element)
+dupesMiddle :: !(Stack Number) -> (Stack Number)
+setIntersection :: !(Stack Number) !(Stack Number) -> (Stack Number)
+setUnion :: !(Stack Number) !(Stack Number) -> (Stack Number)
+setExclusion :: !(Stack Number) !(Stack Number) -> (Stack Number)
+//powerset :: (Stack Number) -> (Stack Element)
 
 // special cases
 complexSplit :: !Memory -> Memory

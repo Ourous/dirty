@@ -1,6 +1,6 @@
 implementation module tokeniser
 
-import types, arithmetic, builtins, unicode, StdEnv, StdLib, environment
+import types, arithmetic, builtins, unicode, StdEnv, StdLib, environment, stacks
 
 unicodeToNative :: !Int -> Char
 unicodeToNative char
@@ -340,11 +340,11 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Binary_NN_N True (isEqualTo)))//(Operator (Logic_Equality))
 	,(Operator (Binary_NN_N False (isGreaterThan)))//(Operator (Logic_GreaterThan))
 	,(Operator (IO_ReadOnce))
-	,(Stack (AdjustOffset))
+	,PlaceHolder//(Stack (AdjustOffset))
 	,(Literal (Alphabet Uppercase))
 	,(Operator (Math_ConvertToBase))
 	,(Operator (Unary_N_N (acos)))//(Operator (Math_ArcCoSine))
-	,(Operator (Unary_S_S (removeDup)))//(Stack (Uniques_Middle))
+	,(Operator (Unary_S_S (S_uniques)))//PlaceHolder//(Operator (Unary_S_S (removeDup)))//(Stack (Uniques_Middle))
 	,(Operator (Unary_N_N (exp)))//(Operator (Math_NaturalExponent))
 	,(Operator (Set_Permutations))
 	,(Operator (Binary_NN_N True (gcd)))//(Operator (Math_GreatestCommonDivisor))
@@ -362,7 +362,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Unary_N_N (asin)))//(Operator (Math_ArcSine))
 	,(Operator (Unary_N_N (atan)))//(Operator (Math_ArcTangent))
 	,(Operator (Unary_M_M (stackReverse Middle)))//(Stack (Reverse_Middle))
-	,(Operator (Unary_S_N (avg)))//(Operator (Math_Average))
+	,PlaceHolder//(Operator (Unary_S_N (avg)))//(Operator (Math_Average))
 	,(Operator (Unary_M_M (stackDelete Middle)))//(Stack (Delete_Middle))
 	,(Operator (Unary_N_N (toUppercase)))//(Operator (Chars_ToUppercase))
 	,(Operator (Unary_N_N (isUppercase)))//(Operator (Logic_IsUppercase))
@@ -387,7 +387,7 @@ commandMapping =: // TODO: make this a function in the above ^
 	,(Operator (Unary_N_N (log10)))//(Operator (Math_Base10Logarithm))
 	,(Operator (Binary_NN_N False (numCombin)))//(Operator (Math_Combinations))
 	,(Operator (Unary_S_T (splitOnNewlines)))//(Operator (Chars_SplitOnNewlines))
-	,(Operator (Unary_S_S (sort)))//(Operator (Set_MakeOrdered))
+	,(Operator (Unary_S_S (S_sort)))//(Operator (Unary_S_S (sort)))//(Operator (Set_MakeOrdered))
 	,(Operator (Unary_N_S (primeFactors)))//(Operator (Math_PrimeFactors))
 	,(Variable (History))
 	,(Operator (Unary_N_N (numRound)))//(Operator (Math_Round))

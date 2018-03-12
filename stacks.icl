@@ -105,7 +105,8 @@ S_reduce fn init arg=:{stack, bounded}
 where
 	reduce` acc [!] = acc
 	reduce` acc [!head:tail]
-		= reduce` (fn head acc) tail
+		#! val = fn head acc
+		= reduce` val tail
 		
 S_partition :: !(a -> Bool) !(Stack a) -> (Stack a, Stack a)
 S_partition fn arg=:{stack, bounded}

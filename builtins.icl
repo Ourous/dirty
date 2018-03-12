@@ -252,8 +252,9 @@ stackJoin memory=:{cursor,main}
 	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
 	= let
 		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) (toList base)
-		flattened = [!El (fromList (flatten [toList el \\ (El el) <- part]) (all (\e -> case e of (El el) = el.bounded; _ = False) part)) \\ part <- grouped | case part of [Delim _] = False; _ = True]
-	in {memory&main=fromStrictList flattened base.bounded + other}
+		filtered = filter (all IS_ELEM) grouped
+		joined = map (foldl (\(El a) (El b) -> (El (b + a))) (El zero)) filtered
+	in {memory&main=fromList joined base.bounded + other}
 
 stackUnjoin :: !Memory -> Memory
 stackUnjoin memory=:{cursor,delims,main=main`=:{stack=[!El mid`:other]}} = let

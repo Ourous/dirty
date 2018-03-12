@@ -9,7 +9,6 @@ instance == (Stack Number)
 //fromList :: ![a] !Bool -> (Stack a)
 fromList list bounded :== fromStrictList [!el \\ el <- list] bounded
 fromStrictList list bounded :== {stack=list,bounded=bounded}
-//toList :: !(Stack a) -> [a]
 toList {stack} :== toList` stack
 where
 	toList` [!] = []
@@ -23,6 +22,7 @@ recons (head, arg=:{stack=tail}) :== {arg&stack=[!head:tail]}
 safeDecon arg :== (safeHead arg, safeTail arg)
 decon2 arg=:{stack=[!head,next:tail]} :== (head, next, {arg&stack=tail})
 recon2 (head, next, arg=:{stack=tail}) :== {arg&stack=[!head,next:tail]}
+recon3 (head, next, nexter, arg=:{stack=tail}) :== {arg&stack=[!head,next,nexter:tail]}
 
 tailOf arg=:{stack=[!_:tail]} :== {arg&stack=tail}
 headOf {stack=[!head:_]} :== head
@@ -50,6 +50,7 @@ S_reverse :: !(Stack a) -> (Stack a)
 S_rotate :: !Int !(Stack a) -> (Stack a)
 S_take :: !Int !(Stack a) -> (Stack a)
 S_drop :: !Int !(Stack a) -> (Stack a)
+S_sort :: !(Stack a) -> (Stack a) | Ord a
 
 S_occurrences :: !(a -> Bool) !(Stack a) -> Int
 

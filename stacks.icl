@@ -169,6 +169,10 @@ where
 		| otherwise
 			= list
 
+S_sort :: !(Stack a) -> (Stack a) | Ord a
+S_sort arg
+	= fromList (sort (toList arg)) arg.bounded
+
 S_occurrences :: !(a -> Bool) !(Stack a) -> Int
 S_occurrences fn {stack} = occurrences` 0 stack
 where

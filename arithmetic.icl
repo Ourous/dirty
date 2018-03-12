@@ -405,9 +405,12 @@ instance toString Number where
 	toString (Cx (Inf _ )) = "?CxInf"
 	toString (Cx (Fin {re, im})) = toString re +++ (if(sign im == -1) "-" "+") +++ toString (abs im) +++ "i"
 	
-instance fromInt Number where fromInt val = handle (Re (Fin (Int val)))
+instance fromInt Number where
+	fromInt 0 = Zero
+	fromInt val = (Re (Fin (Int val)))
 
-instance fromReal Number where fromReal val = handle (Re (Fin (Real val)))
+instance fromReal Number where
+	fromReal val = handle (Re (Fin (Real val)))
 
 instance fromBool Number where
 	fromBool True = (Re (Fin (Int -1)))

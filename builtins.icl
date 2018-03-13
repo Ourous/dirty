@@ -310,7 +310,6 @@ stackReverse Primary memory=:{cursor,main}
 stackReverse Base memory=:{cursor,main}
 	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
 	= mergeDelims {memory&main=S_reverse base + other}
-		
 
 stackRotate :: !StackID !Memory -> Memory
 stackRotate _ memory=:{main={stack=[!El {stack=[!]}:_]}} = memory
@@ -452,10 +451,10 @@ copyTop NorthWest memory=:{main={stack=[!El {stack=[!top:_]}:_]}}
 	= {memory&left=recons (top, memory.left)}
 copyTop NorthEast memory=:{main={stack=[!El {stack=[!top:_]}:_]}}
 	= {memory&right=recons (top, memory.right)}
-copyTop SouthWest memory=:{main={stack=[!El _:_]}}
+copyTop SouthWest memory
 	# (El mid, other) = decons memory.main
 	= {memory&main=recons (El (safeHead memory.right + mid), other)}
-copyTop SouthEast memory=:{main={stack=[!El _:_]}}
+copyTop SouthEast memory
 	# (El mid, other) = decons memory.main
 	= {memory&main=recons (El (safeHead memory.left + mid), other)}
 copyTop _ memory = memory

@@ -25,7 +25,7 @@ Start world
 	in (construct program (toFlags flags)) (initialize program args world)
 	
 toFlags flags
-	= {debug = False, dump = isMember "--dump-stacks" flags, nums = isMember "--numeric-output" flags, strict = isMember "--strict-args" flags}
+	= {debug = False, dump = isMember "--dump-stacks" flags, nums = isMember "--numeric-output" flags, strict = isMember "--strict-args" flags, native = isMember "--native-env" flags}
 	
 usage :== foldr ((+++)) ""
 	["Usage: dirty [<config>] [-format] [--flags] <file> [<stack>]\n"
@@ -33,5 +33,6 @@ usage :== foldr ((+++)) ""
 	,"\t--numeric-output: numeric output for write commands\n"
 	,"\t--dump-stacks: show the stacks on termination\n"
 	,"\t--strict-args: never take two arguments from the middle stack\n"
+	,"\t--native-env: take input and give output without translating unicode\n"
 	//,"\t--g: take args greedily"
 	]

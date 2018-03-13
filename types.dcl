@@ -50,7 +50,8 @@ import StdMaybe
 		debug :: !Bool,
 		dump :: !Bool,
 		nums :: !Bool,
-		strict :: !Bool
+		strict :: !Bool,
+		native :: !Bool
 	}
 
 :: Numeric

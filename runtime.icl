@@ -127,17 +127,17 @@ where
 			
 	writeLine :: !(Stack Number) -> (IO ())
 	
-	writeLine stack = putStrLn (if(flags.nums) (STACK_TO_STR stack)  (unicodeToUTF8 (map toInt (toList stack))))
+	writeLine stack = putStrLn (if(flags.nums) (STACK_TO_STR stack)  (if(flags.native) toString unicodeToUTF8 (map toInt (toList stack))))
 	
 	writeChar :: !Number -> (IO ())
 	
-	writeChar char = putStr (if(flags.nums) (char<+"\n") (unicodeToUTF8 [toInt char]))
+	writeChar char = putStr (if(flags.nums) (char<+"\n") (if(flags.native) toString unicodeToUTF8 [toInt char]))
 	
 	readLine :: (*World -> ([Number], *World))
-	readLine => app2 (map fromInt o utf8ToUnicode, id) o evalIO getLine
+	readLine => app2 (map fromInt o if(flags.native) (map fromChar o fromString) utf8ToUnicode, id) o evalIO getLine
 	
 	readChar :: (*World -> (Number, *World))
-	readChar => app2 (hd o map fromInt o utf8ToUnicode, id) o getUTF8 o evalIO getChar
+	readChar => if(flags.native) (app2 (fromInt o fromChar, id) o evalIO getChar)(app2 (hd o map fromInt o utf8ToUnicode, id) o getUTF8 o evalIO getChar)
 	where 
 		
 		getUTF8 :: !(!Char, !*World) -> (String, *World)

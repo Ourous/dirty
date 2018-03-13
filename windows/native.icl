@@ -1,17 +1,23 @@
 implementation module native
-import System._WinDef, _SystemArray
+import System._WinDef, System._WinBase, StdEnv, System.IO
 import code from library "native_library"
 
-:: COORD :== {#Int}
+DEBUG val :== execIO (putStrLn (toString val))
+ERROR :== (\(e, w) -> DEBUG e w) o getLastError
 
 clearConsole :: *World -> *World
 clearConsole world
+	//# world = ERROR world
 	# (handle, world) = getHandle stdOutputHandle world
-	# (_, world) = setCursorPosition handle {#0, 0} world
+	//# world = ERROR world
+	# (bool, world) = setCursorPosition handle "\0\0\0\0" world// setCursorPosition handle {#0, 0} world
+	//# world = ERROR world
 	= world
+		
 
-stdOutputHandle :: Int
-stdOutputHandle =: -11
+stdOutputHandle :== -11
+
+invalidHandle :== -1
 
 getHandle :: !Int !*World -> (!HANDLE, !*World)
 getHandle hID world
@@ -20,7 +26,7 @@ getHandle hID world
 	}
 	
 setCursorPosition :: !HANDLE !COORD !*World -> (!Bool, !*World)
-setCursorPosition hConsole aCoord world = (True, world)
-//	= code {
-//		ccall SetConsoleCursorPosition@4 "PA:V:I"
-//	}
+setCursorPosition hConsole aCoord world //= (True, world)
+	= code {
+		ccall SetConsoleCursorPosition@4 "PIA:I:I" 
+	} // number is probably wrong

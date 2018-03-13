@@ -1,5 +1,5 @@
 kernel32.dll
 GetStdHandle@4
-SetConsoleCursorPosition
 FillConsoleOutputCharacter
 GetConsoleScreenBufferInfo
+SetConsoleCursorPosition@4

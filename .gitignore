@@ -1,7 +1,13 @@
 *.prp
 Clean System Files
+!windows/Clean System Files
 *-sapl
 *-www
+*.abc
+*.o
+*.s
+*.sapl
+*.tcl
 *.exe
 *.hcl
 dirty

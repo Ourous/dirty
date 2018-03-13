@@ -6,6 +6,8 @@ appendStrict lhs [!] = lhs
 appendStrict [!] rhs = rhs
 appendStrict [!l:lhs] rhs = [!l:appendStrict lhs rhs]
 
+instance + [!t] where (+) lhs rhs = appendStrict lhs rhs
+
 appendHyper =: hyperstrict o appendStrict
 
 instance + (Stack t) where

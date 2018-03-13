@@ -80,8 +80,9 @@ antiFilter :: !(Stack Number) !(Stack Number) -> (Stack Number)
 groupMiddle :: !(Stack Number) -> (Stack Element)
 dupesMiddle :: !(Stack Number) -> (Stack Number)
 setIntersection :: !(Stack Number) !(Stack Number) -> (Stack Number)
-setUnion :: !(Stack Number) !(Stack Number) -> (Stack Number)
 setExclusion :: !(Stack Number) !(Stack Number) -> (Stack Number)
+contigSubsets :: !(Stack Number) !(Stack Number) -> Number
+splitContig :: !(Stack Number) !(Stack Number) -> (Stack Element)
 //powerset :: (Stack Number) -> (Stack Element)
 
 // special cases

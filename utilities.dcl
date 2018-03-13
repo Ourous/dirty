@@ -18,6 +18,15 @@ mergeDelims :: !Memory -> Memory
 
 //setWhenLast :: [Element] -> [Element]
 
+STARTS_WITH_DELIM arg :==
+	case arg of
+		{stack=[!head:_]} = IS_DELIM head
+		_ = False
+		
+MERGE_IF arg :== case arg of
+	{stack=[!Delim _:_]} = mergeDelims
+	_ = (\e -> e)
+
 IS_IMAG num :== case num of
 	(Im _) = True
 	_ = False

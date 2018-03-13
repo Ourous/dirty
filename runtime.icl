@@ -563,7 +563,7 @@ where
 			= {memory&main=recons (El val, other)}
 		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
 			#! val = op zero zero
-			= {memory&delims=inc delims,main=recon2 (El val, Delim delims, memory.main)}
+			= (MERGE_IF memory.main) {memory&delims=inc delims,main=recon2 (El val, Delim delims, memory.main)}
 		binary False _ memory=:{left={stack=[!]}, main={stack=[!El{stack=[!_:_]}:_]}, right}
 			# (El mid, other) = decons memory.main
 			#! val = op mid right
@@ -575,6 +575,33 @@ where
 		binary _ _ memory=:{delims, left, main, right}
 			#! val = op left right
 			= {memory&delims=inc delims,main=recon2 (El val, Delim delims, main)}
+			
+	process (Operator (Binary_SS_T inv op)) = app3 (id, binary flags.strict inv, id)
+	where
+		
+		binary :: !Bool !Bool Memory -> Memory
+		binary False True memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!_:_]},El {stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, El oth, other) = decon2 memory.main
+			#! val = op mid oth
+			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}
+		binary False True memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			#! val = op mid zero
+			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}
+		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
+			#! val = op zero zero
+			= {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, memory.main)}
+		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El{stack=[!_:_]}:_]}, right}
+			# (El mid, other) = decons memory.main
+			#! val = op mid right
+			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}
+		binary False _ memory=:{delims, left, main={stack=[!El{stack=[!_:_]}:_]}, right={stack=[!]}}
+			# (El mid, other) = decons memory.main
+			#! val = op left mid
+			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}
+		binary _ _ memory=:{delims, left, main, right}
+			#! val = op left right
+			= {memory&delims=inc delims,main=val + recons (Delim delims, main)}
 			
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where
@@ -626,8 +653,10 @@ where
 	where
 		
 		unary :: Memory -> Memory
-		unary memory=:{cursor, delims, main={stack=[!El mid`:other],bounded}}
-			= mergeDelims {memory&cursor=delims,delims=inc delims,main=(op mid`) + {stack=[!Delim delims: other],bounded=bounded}}
+		unary memory=:{delims, main}
+			# (El mid, other) = decons main
+			#! val = op mid
+			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}
 		
 				
 	process (Operator (Unary_M_M op)) = app3 (id, op, id)

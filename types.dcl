@@ -147,6 +147,7 @@ import StdMaybe
 	| Binary_NS_S (Number (Stack Number) -> (Stack Number))
 	| Binary_SS_N !Bool ((Stack Number) (Stack Number) -> Number)
 	| Binary_SS_S !Bool ((Stack Number) (Stack Number) -> (Stack Number))
+	| Binary_SS_T !Bool ((Stack Number) (Stack Number) -> (Stack Element))
 	| Unary_N_N (Number -> Number)
 	| Unary_N_S (Number -> (Stack Number))
 	| Unary_S_N ((Stack Number) -> Number)

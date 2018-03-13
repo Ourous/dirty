@@ -2,6 +2,8 @@ definition module stacks
 
 import types, _SystemStrictLists, _SystemEnumStrict, StdOverloaded, StdClass
 
+instance + [!t]
+
 instance + (Stack t)
 instance zero (Stack t)
 instance == (Stack Number)
@@ -51,6 +53,7 @@ S_take :: !Int !.(Stack a) -> .(Stack a)
 S_drop :: !Int !.(Stack a) -> .(Stack a)
 S_sort :: !.(Stack a) -> .(Stack a) | Ord a
 
+S_length :== S_reduce (\_ = \b -> inc b) one
 S_occurrences :: !(a -> Bool) !.(Stack a) -> Int
 
 S_all :: !(a -> Bool) !.(Stack a) -> Bool

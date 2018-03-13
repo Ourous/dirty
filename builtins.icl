@@ -211,12 +211,45 @@ groupMiddle arg=:{bounded}
 	= fromList groups bounded
 setIntersection :: !(Stack Number) !(Stack Number) -> (Stack Number)
 setIntersection lhs rhs = S_uniques (S_filterBy (\e -> S_any ((==) e) rhs) lhs)//removeDup (filter (\el -> isMember el rhs) lhs)
-setUnion :: !(Stack Number) !(Stack Number) -> (Stack Number)
-setUnion lhs rhs = abort "TBI"//removeDup (lhs ++ rhs)
 setExclusion :: !(Stack Number) !(Stack Number) -> (Stack Number)
 setExclusion lhs rhs = abort "TBI"//removeDup ((filter (not o \el -> isMember el rhs) lhs) ++ (filter (not o \el -> isMember el lhs) rhs))
-
-
+contigSubsets :: !(Stack Number) !(Stack Number) -> Number
+contigSubsets {bounded=False} {bounded=False} = NaN
+contigSubsets {bounded=False} _ = Zero
+contigSubsets _ {bounded=False} = (Re (Inf Positive))
+contigSubsets {stack=[!]} rhs = S_length rhs
+contigSubsets {stack=lhs} {stack=rhs}
+	= fromInt (numContig lhs rhs)
+where
+	equateAll [!] _ = True
+	equateAll _ [!] = False
+	equateAll [!l:lhs] [!r:rhs] = l == r && equateAll lhs rhs
+	numContig _ [!] = 0
+	numContig lhs [!r:rhs]
+		#! val = if(equateAll lhs [!r:rhs]) 1 0
+		= val + numContig lhs rhs
+splitContig :: !(Stack Number) !(Stack Number) -> (Stack Element)
+splitContig {bounded=False} rhs = fromSingle (El rhs)
+splitContig {stack=[!]} rhs = S_map (\e -> El (fromSingle e)) rhs
+splitContig {stack=lhs} {stack=rhs, bounded}
+	= splitset {zero&bounded=bounded} zero lhs rhs
+where
+	equateAll [!] rhs = (True, rhs)
+	equateAll _ [!] = (False, [!])
+	equateAll [!l:lhs] [!r:rhs]
+		# (eq, st) = equateAll lhs rhs
+		| l == r && eq
+			= (eq, st)
+		| otherwise
+			= (False, [!r:rhs])
+	splitset acc head _ [!] = {acc&bounded=True} + fromSingle (El {head&bounded=True})
+	splitset acc head lhs [!r:rhs]
+		# (eq, st) = equateAll lhs [!r:rhs]
+		| eq
+			= splitset (acc + fromSingle (El {head&bounded=True})) zero lhs st
+		| otherwise
+			= splitset acc (head + fromSingle r) lhs rhs
+			
 // special cases
 complexSplit :: !Memory -> Memory
 complexSplit memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}

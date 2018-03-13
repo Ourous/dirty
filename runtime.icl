@@ -350,6 +350,13 @@ where
 		rand memory=:{main, random=[rng:random]}
 			# (El mid, other) = decons main
 			= {memory&main=recons (El (recons (fromInt rng, mid)), other), random=random}
+			
+	process (Variable (Quine)) = app3 (id, quine, id)
+	where
+		
+		quine memory=:{delims, main} = {memory&cursor=delims,delims=inc delims,main=string + main}
+			
+		string => fromStrictList [!El (fromStrictList [!(fromInt o toInt) char \\ char <-: line] True) \\ line <-: source] True
 	
 	process (Environment env) = environment
 	where

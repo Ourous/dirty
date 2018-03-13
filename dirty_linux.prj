@@ -43,6 +43,7 @@ Global
 	Paths
 		Path:	{Project}
 		Path:	{Application}*Libraries
+		Path:	{Project}*linux
 	OtherPaths
 		Path:	{Application}*lib*Dynamics
 		Path:	{Application}*lib*Platform

@@ -2,10 +2,9 @@ module main
 import types, stacks, runtime, parser
 import StdEnv, StdLib, System.CommandLine, System.IO, System.File, Data.Error
 Start world
-
 	# ([_:args], world)
 		= getCommandLine world
-	//# args = ["-utf8", "--numeric-output", "--dump-stacks", "tests/stack_test_main.txt"]
+	//# args = ["-utf8", "--dump-stacks", "tests/console_test.txt"]
 	| isEmpty args
 		= abort usage
 	# (flags, [file:args])
@@ -22,10 +21,6 @@ Start world
 			(Ok file, world) = (file, world)
 			_ = abort "Cannot open the file specified!"
 
-	//# lhs = {stack=[!1, 2, 3], bounded=True}
-	//# rhs = {stack=[!7, 6, 5], bounded=True}
-	//# val = forEach inc (lhs + rhs + zero)
-	//= reduce (+) zero val
 	= let program = parser file
 	in (construct program (toFlags flags)) (initialize program args world)
 	

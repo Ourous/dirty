@@ -43,6 +43,7 @@ Global
 	Paths
 		Path:	{Project}
 		Path:	{Application}*Libraries
+		Path:	{Project}*windows
 	OtherPaths
 		Path:	{Application}*Libraries*Dynamics
 		Path:	{Application}*Libraries*Platform
@@ -219,6 +220,22 @@ OtherModules
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
 			Fusion:	False
+	Module
+		Name:	native
+		Dir:	{Project}*windows
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+		NeededLibraries
+			Library:	native_library
 	Module
 		Name:	_SystemDynamic
 		Dir:	{Application}*Libraries*Dynamics

@@ -1,6 +1,6 @@
 implementation module runtime
 
-import types, atomics, arithmetic, builtins, utilities, unicode, stacks//, environment
+import types, atomics, arithmetic, builtins, utilities, unicode, stacks, native
 import StdEnv, StdLib, System.IO, System.Time, Math.Random, Text, Data.Func
 from Math.Geometry import pi
 import qualified Data.Generics.GenParse as GenParse
@@ -400,6 +400,8 @@ where
 			# world = execIO (writeChar top) world
 			# (chr, world) = readChar world
 			= (state, {memory&main={main`&stack=[!El {mid`&stack=[!chr:mid]}:other]}}, world)
+			
+	process (Operator (IO_ClearConsole)) = app3 (id, id, clearConsole)
 
 	process (Operator (Binary_NN_N inv op)) = app3 (id, binary flags.strict inv, id)
 	where

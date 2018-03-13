@@ -92,6 +92,24 @@ instance + Number where
 	(+) _ NaN = NaN
 	(+) Zero val = val
 	(+) val Zero = val
+	(+) (Re (Fin lhs)) (Re (Fin rhs))
+		= handle (Re (Fin (lhs + rhs)))
+	(+) (Re (Fin lhs)) (Im (Fin rhs))
+		= (Cx (Fin {re=lhs, im=rhs}))
+	(+) (Im (Fin lhs)) (Re (Fin rhs))
+		= (Cx (Fin {re=rhs, im=lhs}))
+	(+) (Im (Fin lhs)) (Im (Fin rhs))
+		= handle (Im (Fin (lhs + rhs)))
+	(+) (Re (Fin lhs)) (Cx (Fin rhs))
+		= handle (Cx (Fin {rhs& re=lhs+rhs.re}))
+	(+) (Im (Fin lhs)) (Cx (Fin rhs))
+		= handle (Cx (Fin {rhs& im=lhs+rhs.im}))
+	(+) (Cx (Fin lhs)) (Re (Fin rhs))
+		= handle (Cx (Fin {lhs& re=lhs.re+rhs}))
+	(+) (Cx (Fin lhs)) (Im (Fin rhs))
+		= handle (Cx (Fin {lhs& im=lhs.im+rhs}))
+	(+) (Cx (Fin lhs)) (Cx (Fin rhs))
+		= handle (Cx (Fin {re=lhs.re+rhs.re, im=lhs.im+rhs.im}))
 	(+) (Re (Inf lhs)) (Re (Inf rhs))
 		| lhs == rhs = (Re (Inf lhs))
 		| otherwise = NaN
@@ -111,48 +129,11 @@ instance + Number where
 	(+) _ (Im (Inf rhs)) = (Im (Inf rhs))
 	(+) (Re (Inf lhs)) _ = (Re (Inf lhs))
 	(+) _ (Re (Inf rhs)) = (Re (Inf rhs))
-	(+) (Re (Fin lhs)) (Re (Fin rhs))
-		= handle (Re (Fin (lhs + rhs)))
-	(+) (Re (Fin lhs)) (Im (Fin rhs))
-		= (Cx (Fin {re=lhs, im=rhs}))
-	(+) (Im (Fin lhs)) (Re (Fin rhs))
-		= (Cx (Fin {re=rhs, im=lhs}))
-	(+) (Im (Fin lhs)) (Im (Fin rhs))
-		= handle (Im (Fin (lhs + rhs)))
-	(+) (Re (Fin lhs)) (Cx (Fin rhs))
-		= handle (Cx (Fin {rhs& re=lhs+rhs.re}))
-	(+) (Im (Fin lhs)) (Cx (Fin rhs))
-		= handle (Cx (Fin {rhs& im=lhs+rhs.im}))
-	(+) (Cx (Fin lhs)) (Re (Fin rhs))
-		= handle (Cx (Fin {lhs& re=lhs.re+rhs}))
-	(+) (Cx (Fin lhs)) (Im (Fin rhs))
-		= handle (Cx (Fin {lhs& im=lhs.im+rhs}))
-	(+) (Cx (Fin lhs)) (Cx (Fin rhs))
-		= handle (Cx (Fin {re=lhs.re+rhs.re, im=lhs.im+rhs.im}))
 
 instance - Number where
 	(-) NaN _ = NaN
 	(-) _ NaN = NaN
 	(-) lhs Zero = lhs
-	(-) (Re (Inf lhs)) (Re (Inf rhs))
-		| lhs <> rhs = (Re (Inf lhs))
-		| otherwise = NaN
-	(-) (Im (Inf lhs)) (Im (Inf rhs))
-		| lhs <> rhs = (Im (Inf lhs))
-		| otherwise = NaN
-	(-) (Cx (Inf _)) (Cx (Inf _)) = NaN
-	(-) (Cx (Inf _)) (Re (Inf _)) = NaN
-	(-) (Cx (Inf _)) (Im (Inf _)) = NaN
-	(-) (Cx (Inf _)) _ = (Cx (Inf Directed))
-	(-) (Re (Inf _)) (Cx (Inf _)) = NaN
-	(-) (Im (Inf _)) (Cx (Inf _)) = NaN
-	(-) _ (Cx (Inf _)) = (Cx (Inf Directed))
-	(-) (Re (Inf _)) (Im (Inf _)) = (Cx (Inf Directed))
-	(-) (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
-	(-) (Im (Inf lhs)) _ = (Im (Inf lhs))
-	(-) _ (Im (Inf rhs)) = (Im (Inf (~rhs)))
-	(-) (Re (Inf lhs)) _ = (Re (Inf lhs))
-	(-) _ (Re (Inf rhs)) = (Re (Inf (~rhs)))
 	(-) Zero rhs = ~rhs // this is down here for performance
 	(-) (Re (Fin lhs)) (Re (Fin rhs))
 		= handle (Re (Fin (lhs - rhs)))
@@ -172,6 +153,25 @@ instance - Number where
 		= handle (Cx (Fin {lhs& im=lhs.im-rhs}))
 	(-) (Cx (Fin lhs)) (Cx (Fin rhs))
 		= handle (Cx (Fin {re=lhs.re-rhs.re, im=lhs.im-rhs.im}))
+	(-) (Re (Inf lhs)) (Re (Inf rhs))
+		| lhs <> rhs = (Re (Inf lhs))
+		| otherwise = NaN
+	(-) (Im (Inf lhs)) (Im (Inf rhs))
+		| lhs <> rhs = (Im (Inf lhs))
+		| otherwise = NaN
+	(-) (Cx (Inf _)) (Cx (Inf _)) = NaN
+	(-) (Cx (Inf _)) (Re (Inf _)) = NaN
+	(-) (Cx (Inf _)) (Im (Inf _)) = NaN
+	(-) (Cx (Inf _)) _ = (Cx (Inf Directed))
+	(-) (Re (Inf _)) (Cx (Inf _)) = NaN
+	(-) (Im (Inf _)) (Cx (Inf _)) = NaN
+	(-) _ (Cx (Inf _)) = (Cx (Inf Directed))
+	(-) (Re (Inf _)) (Im (Inf _)) = (Cx (Inf Directed))
+	(-) (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
+	(-) (Im (Inf lhs)) _ = (Im (Inf lhs))
+	(-) _ (Im (Inf rhs)) = (Im (Inf (~rhs)))
+	(-) (Re (Inf lhs)) _ = (Re (Inf lhs))
+	(-) _ (Re (Inf rhs)) = (Re (Inf (~rhs)))
 		
 instance zero Number where
 	zero = Zero
@@ -187,8 +187,6 @@ instance * Number where
 	(*) (Re (Inf _)) Zero = NaN
 	(*) (Im (Inf _)) Zero = NaN
 	(*) _ Zero = Zero
-	(*) (Cx (Inf _)) _ = (Cx (Inf Directed))
-	(*) _ (Cx (Inf _)) = (Cx (Inf Directed))
 	(*) (Re (Fin lhs)) (Re (Fin rhs))
 		= handle (Re (Fin (lhs * rhs)))
 	(*) (Re (Fin lhs)) (Im (Fin rhs))
@@ -197,10 +195,6 @@ instance * Number where
 		= handle (Im (Fin (lhs * rhs)))
 	(*) (Im (Fin lhs)) (Im (Fin rhs))
 		= handle (Re (Fin (~(lhs * rhs))))
-	(*) (Re (Inf lhs)) (Re (Inf rhs)) = (Re (Inf (lhs * rhs)))
-	(*) (Re (Inf lhs)) (Im (Inf rhs)) = (Im (Inf (lhs * rhs)))
-	(*) (Im (Inf lhs)) (Re (Inf rhs)) = (Im (Inf (lhs * rhs)))
-	(*) (Im (Inf lhs)) (Im (Inf rhs)) = (Im (Inf (~(lhs * rhs))))
 	(*) (Re (Fin lhs)) (Cx (Fin rhs))
 		= handle (Cx (Fin {re=lhs*rhs.re, im=lhs*rhs.im}))
 	(*) (Im (Fin lhs)) (Cx (Fin rhs))
@@ -211,6 +205,13 @@ instance * Number where
 		= handle (Cx (Fin {re=(~(lhs.im*rhs)), im=lhs.re*rhs}))
 	(*) (Cx (Fin lhs)) (Cx (Fin rhs))
 		= handle (Cx (Fin {re=lhs.re*rhs.re-lhs.im*rhs.im, im=lhs.im*rhs.re+rhs.im*lhs.re}))
+	(*) (Cx _) _ = (Cx (Inf Directed))
+	(*) _ (Cx _) = (Cx (Inf Directed))
+	(*) (Re lhs) (Re rhs) = (Re (Inf (VAL_SIGN lhs * VAL_SIGN rhs)))
+	(*) (Re lhs) (Im rhs) = (Im (Inf (VAL_SIGN lhs * VAL_SIGN rhs)))
+	(*) (Im lhs) (Re rhs) = (Im (Inf (VAL_SIGN lhs * VAL_SIGN rhs)))
+	(*) (Im lhs) (Im rhs) = (Re (Inf (~(VAL_SIGN lhs * VAL_SIGN rhs))))
+	
 		
 instance / Number where
 	(/) NaN _ = NaN
@@ -220,24 +221,6 @@ instance / Number where
 	(/) (Re lhs) Zero = (Re (Inf (VAL_SIGN lhs)))
 	(/) (Im lhs) Zero = (Im (Inf (VAL_SIGN lhs)))
 	(/) (Cx _) Zero = (Cx (Inf Directed))
-	(/) (Re (Inf lhs)) (Re (Fin rhs)) = (Re (Inf (lhs * FIN_SIGN rhs)))
-	(/) (Re (Inf lhs)) (Im (Fin rhs)) = (Im (Inf (~(lhs * FIN_SIGN rhs))))
-	(/) (Im (Inf lhs)) (Re (Fin rhs)) = (Im (Inf (lhs * FIN_SIGN rhs)))
-	(/) (Im (Inf lhs)) (Im (Fin rhs)) = (Re (Inf (lhs * FIN_SIGN rhs)))
-	(/) (Re (Inf _)) (Cx (Fin _)) = (Cx (Inf Directed))
-	(/) (Im (Inf _)) (Cx (Fin _)) = (Cx (Inf Directed))
-	(/) (Cx (Inf _)) (Re (Fin _)) = (Cx (Inf Directed))
-	(/) (Cx (Inf _)) (Im (Fin _)) = (Cx (Inf Directed))
-	(/) (Cx (Inf _)) (Cx (Fin _)) = (Cx (Inf Directed))
-	(/) (Re (Fin _)) (Re (Inf _)) = Zero
-	(/) (Re (Fin _)) (Im (Inf _)) = Zero
-	(/) (Im (Fin _)) (Re (Inf _)) = Zero
-	(/) (Im (Fin _)) (Im (Inf _)) = Zero
-	(/) (Re (Fin _)) (Cx (Inf _)) = Zero
-	(/) (Im (Fin _)) (Cx (Inf _)) = Zero
-	(/) (Cx (Fin _)) (Re (Inf _)) = Zero
-	(/) (Cx (Fin _)) (Im (Inf _)) = Zero
-	(/) (Cx (Fin _)) (Cx (Inf _)) = Zero
 	(/) (Re (Fin lhs)) (Re (Fin rhs))
 		= handle (Re (Fin (lhs / rhs)))
 	(/) (Re (Fin lhs)) (Im (Fin rhs))
@@ -259,6 +242,16 @@ instance / Number where
 	(/) (Cx (Fin lhs)) (Cx (Fin rhs))
 		# denominator = rhs.re * rhs.re + rhs.im * rhs.im
 		= handle (Cx (Fin {re=((lhs.re * rhs.re + lhs.im * rhs.im) / denominator), im=((lhs.im * rhs.re - lhs.re * rhs.im) / denominator)}))
+	(/) (Re (Inf lhs)) (Re (Fin rhs)) = (Re (Inf (lhs * FIN_SIGN rhs)))
+	(/) (Re (Inf lhs)) (Im (Fin rhs)) = (Im (Inf (~(lhs * FIN_SIGN rhs))))
+	(/) (Im (Inf lhs)) (Re (Fin rhs)) = (Im (Inf (lhs * FIN_SIGN rhs)))
+	(/) (Im (Inf lhs)) (Im (Fin rhs)) = (Re (Inf (lhs * FIN_SIGN rhs)))
+	(/) (Cx _) (Re (Fin _)) = (Cx (Inf Directed))
+	(/) (Cx _) (Im (Fin _)) = (Cx (Inf Directed))
+	(/) _ (Cx (Fin _)) = (Cx (Inf Directed))
+	(/) (Re (Fin _)) _ = Zero
+	(/) (Im (Fin _)) _ = Zero
+	(/) (Cx (Fin _)) _ = Zero
 	(/) _ _ = NaN
 	
 instance one Number where
@@ -285,18 +278,18 @@ instance abs Number where
 	abs Zero = Zero
 	abs (Re (Fin val)) = (Re (Fin (abs val)))
 	abs (Im (Fin val)) = (Re (Fin (abs val)))
-	abs (Cx (Fin val)) = (Re (Fin (sqrt(val.re*val.re+val.im*val.im))))
+	abs (Cx (Fin {re, im})) = (Re (Fin (sqrt(re*re+im*im))))
 	abs _ = (Re (Inf Positive))
 	
 instance ~ Number where
 	(~) NaN = NaN
 	(~) Zero = Zero
-	(~) (Re (Inf val)) = (Re (Inf (~val)))
 	(~) (Re (Fin val)) = (Re (Fin (~val)))
-	(~) (Im (Inf val)) = (Im (Inf (~val)))
 	(~) (Im (Fin val)) = (Im (Fin (~val)))
-	(~) (Cx (Inf Directed)) = (Cx (Inf Directed))
-	(~) (Cx (Fin val)) = (Cx (Fin {re=(~val.re), im=(~val.im)}))
+	(~) (Cx (Fin {re, im})) = (Cx (Fin {re= ~re, im= ~im}))
+	(~) (Re (Inf val)) = (Re (Inf (~val)))
+	(~) (Im (Inf val)) = (Im (Inf (~val)))
+	(~) (Cx (Inf _)) = (Cx (Inf Directed))
 	
 instance == Number where
 	(==) Zero Zero = True
@@ -317,7 +310,7 @@ instance < Number where
 	(<) (Im lhs) Zero = VAL_SIGN lhs == Negative
 	(<) (Re (Fin lhs)) (Re (Fin rhs)) = lhs < rhs
 	(<) (Im (Fin lhs)) (Im (Fin rhs)) = lhs < rhs
-	(<) (Cx (Fin lhs)) (Cx (Fin rhs)) = lhs.re < rhs.re && lhs.im < rhs.im
+	(<) lhs=:(Cx (Fin _)) rhs=:(Cx (Fin _)) = toReal lhs < toReal rhs
 
 instance mod Number where
 	(mod) NaN _ = NaN
@@ -372,22 +365,22 @@ instance lcm Number where
 instance toInt Number where
 	toInt NaN = 0
 	toInt Zero = 0
-	toInt (Cx (Inf Directed)) = 0
+	toInt (Re (Fin val)) = toInt val
+	toInt (Im (Fin val)) = toInt val
+	toInt (Cx (Fin {re, im})) = toInt (sqrt (re*re + im*im)) * sign re * sign im
 	toInt (Re (Inf Positive)) = INT_MAX
 	toInt (Re (Inf Negative)) = INT_MIN
 	toInt (Im (Inf Positive)) = INT_MAX
 	toInt (Im (Inf Negative)) = INT_MIN
-	toInt (Re (Fin val)) = toInt val
-	toInt (Im (Fin val)) = toInt val
-	toInt (Cx (Fin {re, im})) = toInt (sqrt (re*re + im*im)) * sign re * sign im
+	toInt (Cx _) = 0
 	
 instance toReal Number where
 	toReal Zero = 0.0
-	toReal (Re (Inf val)) = (toReal (sign val)) / 0.0
 	toReal (Re (Fin val)) = toReal val
-	toReal (Im (Inf val)) = (toReal (sign val)) / 0.0
 	toReal (Im (Fin val)) = toReal val
 	toReal (Cx (Fin {re, im})) = toReal (sqrt (re*re + im*im)) * (toReal (sign re * sign im))
+	toReal (Re (Inf val)) = (toReal (sign val)) / 0.0
+	toReal (Im (Inf val)) = (toReal (sign val)) / 0.0
 	toReal _ = 0.0/0.0
 	
 instance toBool Number where
@@ -398,12 +391,12 @@ instance toBool Number where
 instance toString Number where
 	toString Zero = "0"
 	toString NaN = "NaN"
-	toString (Re (Inf val)) = if(val == Negative) "-ReInf" "ReInf"
 	toString (Re (Fin val)) = toString val
-	toString (Im (Inf val)) = if(val == Negative) "-ImInf" "ImInf"
 	toString (Im (Fin val)) = toString val +++ "i"
-	toString (Cx (Inf _ )) = "?CxInf"
 	toString (Cx (Fin {re, im})) = toString re +++ (if(sign im == -1) "-" "+") +++ toString (abs im) +++ "i"
+	toString (Re (Inf val)) = if(val == Negative) "-ReInf" "ReInf"
+	toString (Im (Inf val)) = if(val == Negative) "-ImInf" "ImInf"
+	toString (Cx _) = "?CxInf"
 	
 instance fromInt Number where
 	fromInt 0 = Zero
@@ -421,6 +414,7 @@ instance ln Number where
 	//ln Infinity = Infinity
 	ln Zero = NaN
 	ln (Re (Fin val)) = handle (Re (Fin (ln val)))
+	ln (Re (Inf Positive)) = (Re (Inf Positive))
 	//ln (Imaginary _) = abort "Unimplemented Operation: ln Im"
 	//ln (Complex _ _) = abort "Unimplemented Operation: ln Cx"
 	
@@ -429,6 +423,7 @@ instance log10 Number where
 	//log10 Infinity = Infinity
 	log10 Zero = NaN
 	log10 (Re (Fin val)) = handle (Re (Fin (log10 val)))
+	log10 (Re (Inf Positive)) = (Re (Inf Positive))
 	//log10 (Imaginary _) = abort "Unimplemented Operation: log10 Im"
 	//log10 (Complex _ _) = abort "Unimplemented Operation: log10 Cx"
 	
@@ -437,6 +432,8 @@ instance exp Number where
 	//exp Infinity = Infinity
 	exp Zero = one
 	exp (Re (Fin val)) = handle (Re (Fin (exp val)))
+	exp (Re (Inf Positive)) = (Re (Inf Positive))
+	exp (Re (Inf Negative)) = Zero
 	//exp (Imaginary _) = abort "Unimplemented Operation: exp Im"
 	//exp (Complex _ _) = abort "Unimplemented Operation: exp Cx"
 	
@@ -457,6 +454,7 @@ instance sin Number where
 	//sin Infinity = NaN
 	sin Zero = Zero
 	sin (Re (Fin val)) = handle (Re (Fin (sin val)))
+	sin (Re _) = NaN
 	//sin (Imaginary _) = abort "Unimplemented Operation: sin Im"
 	//sin (Complex _ _) = abort "Unimplemented Operation: sin Cx"
 	
@@ -465,6 +463,7 @@ instance cos Number where
 	//cos Infinity = NaN
 	cos Zero = one
 	cos (Re (Fin val)) = handle (Re (Fin (cos val)))
+	cos (Re _) = NaN
 	//cos (Imaginary _) = abort "Unimplemented Operation: cos Im"
 	//cos (Complex _ _) = abort "Unimplemented Operation: cos Cx"
 	
@@ -473,6 +472,7 @@ instance tan Number where
 	//tan Infinity = NaN
 	tan Zero = Zero
 	tan (Re (Fin val)) = handle (Re (Fin (tan val)))
+	tan (Re _) = NaN
 	//tan (Imaginary _) = abort "Unimplemented Operation: tan Im"
 	//tan (Complex _ _) = abort "Unimplemented Operation: tan Cx"
 	
@@ -481,14 +481,16 @@ instance asin Number where
 	//asin Infinity = Infinity
 	asin Zero = Zero
 	asin (Re (Fin val)) = handle (Re (Fin (asin val)))
+	asin (Re (Inf val)) = (Im (Inf (~val)))
 	//asin (Imaginary _) = abort "Unimplemented Operation: asin Im"
 	//asin (Complex _ _) = abort "Unimplemented Operation: asin Cx"
 	
 instance acos Number where
 	acos NaN = NaN
-	//acos Infinity = Infinity
 	acos Zero = (Re (Fin (Real (pi/2.0))))
 	acos (Re (Fin val)) = handle (Re (Fin (acos val)))
+	acos (Re val) = (Im val) // inf
+	acos (Im (Inf val)) = (Im (Inf (~val)))
 	//acos (Imaginary _) = abort "Unimplemented Operation: acos Im"
 	//acos (Complex _ _) = abort "Unimplemented Operation: acos Cx"
 	
@@ -497,6 +499,7 @@ instance atan Number where
 	//atan Infinity = (Rational (Real (pi/2.0)))
 	atan Zero = Zero
 	atan (Re (Fin val)) = handle (Re (Fin (atan val)))
+	atan (Re (Inf val)) = fromReal (pi/2.0 * toReal (sign val))
 	//atan (Imaginary _) = abort "Unimplemented Operation: atan Im"
 	//atan (Complex _ _) = abort "Unimplemented Operation: atan Cx"
 	
@@ -512,8 +515,6 @@ bitOR NaN _ = NaN
 bitOR _ NaN = NaN
 bitOR Zero rhs = rhs
 bitOR lhs Zero = lhs
-bitOR (Re (Inf _)) (Im (Inf _)) = (Cx (Inf Directed))
-bitOR (Im (Inf _)) (Re (Inf _)) = (Cx (Inf Directed))
 bitOR (Re (Fin lhs)) (Re (Fin rhs))
 	= handle (Re (Fin (INT_OPER (bitor) lhs rhs)))
 bitOR (Re (Fin lhs)) (Im (Fin rhs))
@@ -532,6 +533,15 @@ bitOR (Cx (Fin lhs)) (Im (Fin rhs))
 	= handle (Cx (Fin {lhs&im=INT_OPER (bitor) lhs.im rhs}))
 bitOR (Cx (Fin lhs)) (Cx (Fin rhs))
 	= handle (Cx (Fin {re=INT_OPER (bitor) lhs.re rhs.re, im=INT_OPER (bitor) lhs.im rhs.im}))
+bitOR (Re _) (Im _) = (Cx (Inf Directed))
+bitOR (Im _) (Re _) = (Cx (Inf Directed))
+bitOR (Re (Fin _)) rhs = rhs
+bitOR (Im (Fin _)) rhs = rhs
+bitOR (Cx (Fin _)) rhs = rhs
+bitOR lhs (Re (Fin _)) = lhs
+bitOR lhs (Im (Fin _)) = lhs
+bitOR lhs (Cx (Fin _)) = lhs
+bitOR _ _ = NaN
 
 bitAND :: !Number !Number -> Number
 bitAND NaN _ = NaN
@@ -554,6 +564,12 @@ bitAND (Cx (Fin lhs)) (Im (Fin rhs))
 	= handle (Im (Fin (INT_OPER (bitand) lhs.im rhs)))
 bitAND (Cx (Fin lhs)) (Cx (Fin rhs))
 	= handle (Cx (Fin {re=INT_OPER (bitand) lhs.re rhs.re, im=INT_OPER (bitand) lhs.im rhs.im}))
+bitAND (Re (Fin _)) _ = Zero
+bitAND (Im (Fin _)) _ = Zero
+bitAND (Cx (Fin _)) _ = Zero
+bitAND _ (Re (Fin _)) = Zero
+bitAND _ (Im (Fin _)) = Zero
+bitAND _ (Cx (Fin _)) = Zero
 bitAND _ _ = NaN
 
 bitXOR :: !Number !Number -> Number
@@ -579,6 +595,9 @@ bitXOR (Cx (Fin lhs)) (Im (Fin rhs))
 	= handle (Cx (Fin {lhs&im=INT_OPER (bitxor) lhs.im rhs}))
 bitXOR (Cx (Fin lhs)) (Cx (Fin rhs))
 	= handle (Cx (Fin {re=INT_OPER (bitxor) lhs.re rhs.re, im=INT_OPER (bitxor) lhs.im rhs.im}))
+bitXOR (Re _) (Im _) = (Cx (Inf Directed))
+bitXOR (Im _) (Re _) = (Cx (Inf Directed))
+bitXOR _ _ = NaN
 
 bitNOT :: !Number -> Number
 bitNOT NaN = NaN
@@ -586,7 +605,7 @@ bitNOT Zero = (Re (Fin (Int -1)))
 bitNOT (Re (Fin val)) = handle (Re (Fin (Int (bitnot (ENTIER val)))))
 bitNOT (Im (Fin val)) = handle (Im (Fin (Int (bitnot (ENTIER val)))))
 bitNOT (Cx (Fin {re, im})) = handle (Cx (Fin {re=(Int(bitnot(ENTIER re))), im=(Int(bitnot(ENTIER im)))}))
-bitNOT _ = NaN
+bitNOT val = ~val
 
 bitLEFT :: !Number !Number -> Number
 bitLEFT NaN _ = NaN

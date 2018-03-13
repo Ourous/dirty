@@ -257,10 +257,13 @@ stackJoin memory=:{cursor,main}
 	in {memory&main=fromList joined base.bounded + other}
 
 stackUnjoin :: !Memory -> Memory
-stackUnjoin memory=:{cursor,delims,main=main`=:{stack=[!El mid`:other]}} = let
-		singles = fromStrictList [!El (fromSingle el) \\ el <- toList mid`] mid`.bounded
-	in mergeDelims {memory&cursor=delims,delims=inc delims,main=(if(case singles.stack of [!] = True; _ = False) (fromSingle (El zero)) singles) + (fromSingle (Delim delims)) + (fromStrictList other main`.bounded)}
-
+stackUnjoin memory=:{cursor, delims, main}
+	# (El mid, other) = decons main
+	# singles = case mid.stack of
+		[!] = fromSingle (El zero)
+		_ = S_map (\el -> (El (fromSingle el))) mid
+	= {memory&cursor=delims,delims=inc delims,main=singles + recons (Delim delims, other)}
+	
 removeDupBase :: !Memory -> Memory
 removeDupBase _ = abort "TBI"/*
 removeDupBase memory=:{cursor,main}

@@ -537,9 +537,14 @@ moveCursorBackwards memory=:{delims,cursor,main}
 
 
 remember :: !Memory -> Memory
-remember memory=:{main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
-	= {memory&main={main`&stack=[!El {mid`&stack=mid}:other]},note=top}
+remember memory=:{main={stack=[!El{stack=[!_:_]}:_]}}
+	# (El mid, other) = decons memory.main
+	# (top, mid) = decons mid
+	= {memory&main=recons (El mid, other),note=top}
+remember memory = memory
 
 recall :: !Memory -> Memory
-recall memory=:{main=main`=:{stack=[!El mid`:other]}, note}
-	= {memory&main={main`&stack=[!El (fromSingle note + mid`):other]}}
+recall memory=:{main, note}
+	# (El mid, other) = decons main
+	#! mid = recons (note, mid)
+	= {memory&main=recons (El mid, other)}

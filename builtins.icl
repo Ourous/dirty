@@ -373,14 +373,19 @@ stackDrop Base memory=:{cursor, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}
 cycleTops :: !Rotation !Memory -> Memory
 //cycleTops Clockwise memory=:{left, main=[El mid:other], right}
 //	= {memory&left=SAFE_HEAD right++SAFE_TAIL left,right=SAFE_HEAD mid++SAFE_TAIL right,main=[El(SAFE_HEAD left++SAFE_TAIL mid):other]}
-cycleTops Anticlockwise memory=:{left, main=main`=:{stack=[!El mid`:other]}, right}
-	= {memory&left=safeHead mid` + safeTail left,right=safeHead left + safeTail right,main={main`&stack=[!El (safeHead right + safeTail mid`):other]}}
+cycleTops Anticlockwise memory=:{left, main, right}
+	# (El mid, other) = decons main
+	# (top, mid) = safeDecon mid
+	# (lhs, left) = safeDecon left
+	# (rhs, right) = safeDecon right
+	= {memory&left=rhs + left,right=mid + right,main=recons (El (lhs + mid), other)}
 
 cycleStacks :: !Rotation !Memory -> Memory
 //cycleStacks Clockwise memory=:{left, main=[El mid:other], right}
 //	= {memory&left=right,right=mid,main=[El left:other]}
-cycleStacks Anticlockwise memory=:{left, main=main`=:{stack=[!El mid`:other]}, right}
-	= {memory&left=mid`,right=left,main={main`&stack=[!El right:other]}}
+cycleStacks Anticlockwise memory=:{left, main, right}
+	# (El mid, other) = decons main
+	= {memory&left=right,right=mid,main=recons (El left, other)}
 
 unpackLeftRight :: !Memory -> Memory
 unpackLeftRight memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!lhs,rhs:mid]}:other]}, right}

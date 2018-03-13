@@ -23,10 +23,10 @@ getHandle :: !Int !*World -> (!HANDLE, !*World)
 getHandle hID world
 	= code {
 		ccall GetStdHandle@4 "PI:I:I"
-	}
+	} // this one works
 	
 setCursorPosition :: !HANDLE !COORD !*World -> (!Bool, !*World)
 setCursorPosition hConsole aCoord world //= (True, world)
 	= code {
 		ccall SetConsoleCursorPosition@4 "PIA:I:I" 
-	} // number is probably wrong
+	} // extern sizeof number is probably wrong

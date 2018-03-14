@@ -284,8 +284,10 @@ where
 	
 // special cases
 complexSplit :: !Memory -> Memory
-complexSplit memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
-	= {memory&left=fromSingle (justReal top) + left,right=fromSingle (justImag top) + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+complexSplit memory=:{left, right, main={stack=[!El {stack=[!_:_]}:_]}}
+	# (El mid, other) = decons memory.main
+	# (top, mid) = decons mid
+	= {memory&left=fromSingle (justReal top) + left,right=fromSingle (justImag top) + right,main=recons (El mid, other)}
 complexSplit memory = memory
 
 matrixProduct :: !Memory -> Memory // returns multiple

@@ -55,17 +55,19 @@ where
 S_partition :: !(a -> Bool) !.(Stack a) -> *(.(Stack a), .(Stack a))
 S_span :: !(a -> Bool) !.(Stack a) ->  *(Stack a, Stack a)
 //S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
-S_uniques arg :== {arg&stack=RemoveDupM arg.stack}
+S_uniques arg :== {arg&stack=RemoveDup arg.stack}
 S_reverse :: !.(Stack a) -> .(Stack a)
 S_rotate :: !Int !.(Stack a) -> .(Stack a)
 S_take :: !Int !.(Stack a) -> .(Stack a)
+//S_take num {stack} :== {zero&stack=Take num stack}
 S_drop :: !Int !.(Stack a) -> .(Stack a)
+//S_drop num arg=:{stack} :== {arg&stack=Drop num stack}
 S_sort :: !.(Stack a) -> .(Stack a) | Ord a
 
 S_length :== S_reduce (\_ = \b -> inc b) Zero
 S_occurrences :: !(a -> Bool) !.(Stack a) -> Int
 
 //S_all :: !(a -> Bool) !.(Stack a) -> Bool
-S_all fn {stack} :== All fn stack
+S_all fn {stack, bounded} :== bounded && All fn stack
 //S_any :: !(a -> Bool) !.(Stack a) -> Bool
-S_any fn {stack} :== Any fn stack
+S_any fn {stack, bounded} :== bounded || Any fn stack

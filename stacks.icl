@@ -110,10 +110,10 @@ where
 S_rotate :: !Int !.(Stack a) -> .(Stack a)
 S_rotate num arg
 	= fromList (rotateList num (toList arg)) arg.bounded
-	
+
 S_take :: !Int !.(Stack a) -> .(Stack a)
-S_take num arg
-	= {stack=take` num arg.stack, bounded=True}
+S_take num {stack}
+	= {zero&stack=take` num stack}
 where
 	take` _ [!] = [!]
 	take` num [!head:tail]
@@ -123,8 +123,8 @@ where
 			= [!]
 			
 S_drop :: !Int !.(Stack a) -> .(Stack a)
-S_drop num arg
-	= {arg&stack=drop` num arg.stack}
+S_drop num arg=:{stack}
+	= {arg&stack=drop` num stack}
 where
 	drop` _ [!] = [!]
 	drop` num list=:[!_:tail]

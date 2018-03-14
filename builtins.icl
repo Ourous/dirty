@@ -126,6 +126,9 @@ numProduct arg = S_reduce (*) one arg//foldl (*) one arg
 numSum :: !(Stack Number) -> Number
 numSum {bounded=False} = NaN
 numSum arg = S_reduce (+) Zero arg//foldl (+) Zero arg
+numAverage :: !(Stack Number) -> Number
+numAverage {bounded=False} = NaN
+numAverage arg = S_reduce (+) Zero (S_map (\e -> e / S_length arg) arg)
 convToBase :: !Number !Number -> (Stack Number)
 convToBase lhs rhs = convToBase` zero lhs
 where
@@ -589,7 +592,32 @@ moveCursorBackwards memory=:{delims,cursor,main}
 		[!] = {memory&cursor= -1,main=recon2 (headOf main, Delim -1, tailOf main)}
 		_ = {memory&main=base + recon2 (headOf other, cur, tailOf other)}
 
+takeStackFrom :: !Memory -> Memory // negative takes from nth below cursor
+takeStackFrom memory=:{main={stack=[!El {stack=[!]}:_]}} = memory
+takeStackFrom memory=:{delims,cursor,main}
+	# (El mid, other) = decons main
+	# (top, mid) = decons mid
+	#! val = toInt top
+	# main = recons (El mid, other)
+	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	| val < zero
+		# (mid, other) = selectAt zero (~val) other
+		= mergeDelims {memory&main=recons (mid, base + other)}
+	| otherwise
+		# (mid, other) = selectAt zero val (S_reverse base)
+		= mergeDelims {memory&main=recons (mid, (S_reverse base) + other)}
+where
+	selectAt acc val arg=:{stack=[!Delim _:_]}
+		# (head, tail) = decons arg
+		= selectAt (acc + fromSingle head) val tail
+	selectAt acc 0 arg=:{stack=[!El _:_]}
+		# (head, tail) = decons arg
+		= (head, acc + tail)
+	selectAt acc val arg
+		# (head, tail) = decons arg
+		= selectAt (acc + fromSingle head) (dec val) tail
 
+// note modifiers
 remember :: !Memory -> Memory
 remember memory=:{main={stack=[!El{stack=[!_:_]}:_]}}
 	# (El mid, other) = decons memory.main

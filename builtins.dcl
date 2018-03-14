@@ -48,6 +48,7 @@ numCombin :: !Number !Number -> Number
 logarithm :: !Number !Number -> Number
 numProduct :: !(Stack Number) -> Number
 numSum :: !(Stack Number) -> Number
+numAverage :: !(Stack Number) -> Number
 convToBase :: !Number !Number -> (Stack Number)
 convFromBase :: !(Stack Number) !Number -> Number
 
@@ -123,6 +124,7 @@ shiftCursorDownwards :: !Memory -> Memory
 shiftCursorUpwards :: !Memory -> Memory
 moveCursorForwards :: !Memory -> Memory
 moveCursorBackwards :: !Memory -> Memory
+takeStackFrom :: !Memory -> Memory
 
 // note modifiers
 remember :: !Memory -> Memory

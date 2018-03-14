@@ -5,5 +5,5 @@
 - Add actually descriptive error messages for when files can't be parsed or runtime errors occur.
 - Move `random` member into `state` instead of `memory`
 - PRIORITY:
-	- fix the stack-overflow bug with loops
+	- unit tests
 	- implement the set operators

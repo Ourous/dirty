@@ -19,21 +19,14 @@ instance + (Stack t) where
 instance zero (Stack t) where
 	zero =: {stack=[!], bounded=True}
 
-instance == (Stack Number) where
+instance == (Stack t) | Eq t where
 	(==) {stack=lhs, bounded=True} {stack=rhs, bounded=True} = lhs == rhs
 	(==) _ _ = False
-
-lastOf :: !(Stack a) -> a
-lastOf {stack} = last` stack
-where
-	last` [!last] = last
-	last` [!_:tail] = last` tail
 	
-initOf :: !(Stack a) -> (Stack a)
-initOf arg = {arg&stack=init` arg.stack}
-where
-	init` [!last] = [!]
-	init` [!head:tail] = [!head:init` tail]
+instance < (Stack t) | Ord t where
+	(<) {bounded=False} {bounded=False} = False
+	(<) {stack=lhs} {stack=rhs} = lhs < rhs
+
 safeLast :: !(Stack a) -> (Stack a)
 safeLast {stack=[!]} = zero
 safeLast arg = fromSingle (lastOf arg)
@@ -66,14 +59,9 @@ where
 		| otherwise
 			= filterOn` lhs rhs
 
-S_zipWith :: !(a a -> b) !.(Stack a) !.(Stack a) -> .(Stack b)
-S_zipWith fn lhs rhs
-	= {stack=withEach` lhs.stack rhs.stack, bounded=lhs.bounded||rhs.bounded}
-where
-	withEach` [!] _ = [!]
-	withEach` _ [!] = [!]
-	withEach` [!l:lhs] [!r:rhs]
-		= [!fn l r:withEach` lhs rhs]
+//S_zipWith :: !(a a -> b) !.(Stack a) !.(Stack a) -> .(Stack b)
+
+
 
 S_partition :: !(a -> Bool) !.(Stack a) -> *(.(Stack a), .(Stack a))
 S_partition fn arg=:{stack, bounded}
@@ -88,8 +76,8 @@ where
 		| otherwise
 			= (l, [!head:r])
 			
-S_span :: !(a -> Bool) !.(Stack a) ->  *(Stack a, Stack a)
-S_span fn arg=:{stack, bounded}
+S_split :: !(a -> Bool) !.(Stack a) ->  *(Stack a, Stack a)
+S_split fn arg=:{stack, bounded}
 	= splitWhen` stack
 where
 	splitWhen` [!] = (zero, zero)

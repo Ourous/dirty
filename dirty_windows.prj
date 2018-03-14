@@ -24,7 +24,7 @@ Global
 			Time:	False
 			Stack:	False
 			Dynamics:	True
-			GenericFusion:	False
+			GenericFusion:	True
 			DescExL:	False
 		Output
 			Output:	NoReturnType
@@ -64,7 +64,7 @@ MainModule
 		Verbose:	True
 		ReadableABC:	False
 		ReuseUniqueNodes:	True
-		Fusion:	False
+		Fusion:	True
 OtherModules
 	Module
 		Name:	arithmetic
@@ -79,7 +79,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	atomics
 		Dir:	{Project}
@@ -93,7 +93,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	builtins
 		Dir:	{Project}
@@ -107,7 +107,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	environment
 		Dir:	{Project}
@@ -121,7 +121,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	parser
 		Dir:	{Project}
@@ -135,7 +135,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	runtime
 		Dir:	{Project}
@@ -149,7 +149,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	stacks
 		Dir:	{Project}
@@ -163,7 +163,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	tokeniser
 		Dir:	{Project}
@@ -177,7 +177,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	types
 		Dir:	{Project}
@@ -205,7 +205,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	utilities
 		Dir:	{Project}
@@ -219,7 +219,7 @@ OtherModules
 			Verbose:	True
 			ReadableABC:	False
 			ReuseUniqueNodes:	True
-			Fusion:	False
+			Fusion:	True
 	Module
 		Name:	native
 		Dir:	{Project}*windows

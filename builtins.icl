@@ -182,7 +182,7 @@ toLowercase :: !Number -> Number
 toLowercase arg = fromInt (toLowerUChar (toInt arg))
 splitOnNewlines :: !(Stack Number) -> (Stack Element)
 splitOnNewlines arg
-	# (head, tail) = S_span (\e -> toInt e == 10) arg
+	# (head, tail) = S_split (\e -> toInt e == 10) arg
 	| tail == zero
 		= fromSingle (El head)
 	| otherwise
@@ -301,7 +301,7 @@ joinWithNewlines _ = abort "TBI"
 
 stacksFromCursor :: !Memory -> Memory
 stacksFromCursor memory=:{cursor,main=main`=:{stack=[!El mid`:other]}} = let
-		(base, _) = S_span (DELIM_FUNC False ((==)cursor)) memory.main
+		(base, _) = S_split (DELIM_FUNC False ((==)cursor)) memory.main
 		stacks = S_occurrences (IS_ELEM) base
 	in {memory&main={main`&stack=[!El (fromSingle (fromInt stacks) + mid`):other]}}
 
@@ -316,7 +316,7 @@ transposeFromCursor memory=:{cursor,main}
 */
 stackJoin :: !Memory -> Memory
 stackJoin memory=:{cursor,main}
-	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
 	= let
 		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) (toList base)
 		filtered = filter (all IS_ELEM) grouped
@@ -372,10 +372,10 @@ stackReverse Middle memory=:{main=main`=:{stack=[!El mid`:other]}}
 stackReverse Both memory=:{left, right}
 	= {memory&left=S_reverse left, right=S_reverse right}
 stackReverse Primary memory=:{cursor,main}
-	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
 	= {memory&main=S_map (APPLY_ELEM S_reverse) base + other}
 stackReverse Base memory=:{cursor,main}
-	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
 	= mergeDelims {memory&main=S_reverse base + other}
 
 stackRotate :: !StackID !Memory -> Memory
@@ -391,11 +391,11 @@ stackRotate Middle memory=:{main=main`=:{stack=[!El mid`:other]}}
 	= let rotate = S_rotate (toInt (headOf mid`))
 	in {memory&main={main`&stack=[!El (rotate (tailOf mid`)):other]}}
 stackRotate Primary memory=:{cursor, main=main`=:{stack=[!El mid`=:{stack=[!top:_]}:other]}}
-	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El (tailOf mid`):other]}
+	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El (tailOf mid`):other]}
 	= let rotate = S_rotate (toInt top)
 	in {memory&main=S_map (APPLY_ELEM rotate) base + other}
 stackRotate Base memory=:{cursor,main=main`=:{stack=[!El mid`=:{stack=[!top:_]}:other]}}
-	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El (tailOf mid`):other]}
+	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El (tailOf mid`):other]}
 	= let rotate = S_rotate (toInt top)
 	in mergeDelims {memory&main=rotate base + other}
 
@@ -407,7 +407,7 @@ stackDelete Middle memory=:{main}
 	= {memory&main=tailOf main}
 stackDelete Both memory = {memory&left=zero,right=zero}
 stackDelete Base memory=:{cursor,main}
-	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
 	= mergeDelims {memory&main=other}
 stackDelete Main memory = {memory&main=zero}
 stackDelete Every memory = {memory&left=zero,right=zero,main=zero}
@@ -431,7 +431,7 @@ stackDrop Both memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:
 		fn = if(val<0) (S_take(~val)) (S_drop val)
 	in {memory&left=fn left,right=fn right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
 stackDrop Base memory=:{cursor, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
-	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El {mid`&stack=mid}:other]}
+	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El {mid`&stack=mid}:other]}
 	= let
 		val = toInt top
 		fn = if(val<0) (S_take(~val)) (S_drop val)
@@ -553,7 +553,7 @@ moveAll SouthEast memory=:{delims, left, main}
 
 replicateBase :: !Memory -> Memory
 replicateBase memory=:{cursor,main}
-	# (base, _) = S_span (DELIM_FUNC False ((==)cursor)) main
+	# (base, _) = S_split (DELIM_FUNC False ((==)cursor)) main
 	= mergeDelims {memory&cursor= -1,main=base + recons (Delim -1, main)} // do not touch, this is magic
 
 replicateMiddle :: !Memory -> Memory
@@ -588,7 +588,7 @@ shiftCursorUpwards memory=:{cursor, delims}
 
 moveCursorForwards :: !Memory -> Memory
 moveCursorForwards memory=:{delims,cursor,main}
-	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
 	# (cur, other) = decons other
 	= mergeDelims case other.stack of
 		[!]	= {memory&cursor= -1,main=initOf base + fromStrictList [!Delim -1, lastOf base, Delim 0] True}
@@ -596,7 +596,7 @@ moveCursorForwards memory=:{delims,cursor,main}
 
 moveCursorBackwards :: !Memory -> Memory
 moveCursorBackwards memory=:{delims,cursor,main}
-	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
 	# (cur, other) = decons other
 	= mergeDelims case other.stack of
 		[!] = {memory&cursor= -1,main=recon2 (headOf main, Delim -1, tailOf main)}
@@ -609,7 +609,7 @@ takeStackFrom memory=:{delims,cursor,main}
 	# (top, mid) = decons mid
 	#! val = toInt top
 	# main = recons (El mid, other)
-	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
+	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
 	| val < zero
 		# (mid, other) = selectAt zero (~val) other
 		= mergeDelims {memory&main=recons (mid, base + other)}

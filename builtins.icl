@@ -311,7 +311,7 @@ stackJoin memory=:{cursor,main}
 		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) (toList base)
 		filtered = filter (all IS_ELEM) grouped
 		joined = map (foldl (\(El a) (El b) -> (El (b + a))) (El zero)) filtered
-	in {memory&main=fromList joined base.bounded + other}
+	in mergeDelims {memory&main=fromList joined base.bounded + other}
 
 stackUnjoin :: !Memory -> Memory
 stackUnjoin memory=:{cursor, delims, main}

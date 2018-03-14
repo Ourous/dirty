@@ -134,7 +134,7 @@ where
 			= (zero, {stack=[!head:tail],bounded=bounded})
 		| otherwise
 			# (l, r) = splitWhen` tail
-			= (l + fromSingle head, r)
+			= (recons (head, l), r)
 
 S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
 S_uniques arg

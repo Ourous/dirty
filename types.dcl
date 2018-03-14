@@ -245,7 +245,7 @@ import StdMaybe
 	| Primary
 	| Base
 	| Main
-	| All
+	| Every
 	
 :: Axes
 	= Reflection

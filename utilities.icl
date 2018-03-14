@@ -21,7 +21,7 @@ instance == StackID where
 	(==) Base Base = True
 	(==) Both Both = True
 	(==) Primary Primary = True
-	(==) All All = True
+	(==) Every Every = True
 	(==) _ _ = False
 
 rotateList :: a u:[b] -> v:[b] | Enum a, [u <= v]

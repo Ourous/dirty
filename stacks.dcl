@@ -1,6 +1,7 @@
 definition module stacks
 
-import types, _SystemStrictLists, _SystemEnumStrict, StdOverloaded, StdClass
+import types, StdOverloadedList, StdOverloaded, StdClass
+from Data.Func import hyperstrict
 
 instance + [!t]
 
@@ -42,11 +43,19 @@ safeInit :: !(Stack a) -> (Stack a)
 S_filterBy :: !(a -> Bool) !.(Stack a) -> .(Stack a)
 S_filterOn :: !(b -> Bool) !.(Stack a) !.(Stack b) -> .(Stack a)
 S_zipWith :: !(a a -> b) !.(Stack a) !.(Stack a) -> .(Stack b)
-S_map :: !(a -> b) !.(Stack a) -> .(Stack b)
-S_reduce :: !(a .b -> .b) !.b !.(Stack a) -> .b
+//S_map :: !(a -> b) !.(Stack a) -> .(Stack b)
+S_map fn arg=:{stack} :== {arg&stack=Map fn stack}
+//S_reduce :: !(.b a -> .b) !.b !.(Stack a) -> .b
+S_reduce fn init {stack} :== reduce` init stack
+where
+	reduce` acc [!] = acc
+	reduce` acc [!head:tail]
+		#! val = fn acc head
+		= reduce` (hyperstrict val) tail
 S_partition :: !(a -> Bool) !.(Stack a) -> *(.(Stack a), .(Stack a))
 S_span :: !(a -> Bool) !.(Stack a) ->  *(Stack a, Stack a)
-S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
+//S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
+S_uniques arg :== {arg&stack=RemoveDupM arg.stack}
 S_reverse :: !.(Stack a) -> .(Stack a)
 S_rotate :: !Int !.(Stack a) -> .(Stack a)
 S_take :: !Int !.(Stack a) -> .(Stack a)
@@ -56,5 +65,7 @@ S_sort :: !.(Stack a) -> .(Stack a) | Ord a
 S_length :== S_reduce (\_ = \b -> inc b) Zero
 S_occurrences :: !(a -> Bool) !.(Stack a) -> Int
 
-S_all :: !(a -> Bool) !.(Stack a) -> Bool
-S_any :: !(a -> Bool) !.(Stack a) -> Bool
+//S_all :: !(a -> Bool) !.(Stack a) -> Bool
+S_all fn {stack} :== All fn stack
+//S_any :: !(a -> Bool) !.(Stack a) -> Bool
+S_any fn {stack} :== Any fn stack

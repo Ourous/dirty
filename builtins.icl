@@ -237,12 +237,12 @@ setIntersection :: !(Stack Number) !(Stack Number) -> (Stack Number)
 setIntersection lhs rhs = S_uniques (S_filterBy (\e -> S_any ((==) e) rhs) lhs)//removeDup (filter (\el -> isMember el rhs) lhs)
 setExclusion :: !(Stack Number) !(Stack Number) -> (Stack Number)
 setExclusion lhs rhs = abort "TBI"//removeDup ((filter (not o \el -> isMember el rhs) lhs) ++ (filter (not o \el -> isMember el lhs) rhs))
-contigSubsets :: !(Stack Number) !(Stack Number) -> Number
-contigSubsets {bounded=False} {bounded=False} = NaN
-contigSubsets {bounded=False} _ = Zero
-contigSubsets _ {bounded=False} = (Re (Inf Positive))
-contigSubsets {stack=[!]} rhs = S_length rhs
-contigSubsets {stack=lhs} {stack=rhs}
+numContigSubsets :: !(Stack Number) !(Stack Number) -> Number
+numContigSubsets {bounded=False} {bounded=False} = NaN
+numContigSubsets {bounded=False} _ = Zero
+numContigSubsets _ {bounded=False} = (Re (Inf Positive))
+numContigSubsets {stack=[!]} rhs = S_length rhs
+numContigSubsets {stack=lhs} {stack=rhs}
 	= fromInt (numContig lhs rhs)
 where
 	equateAll [!] _ = True
@@ -273,7 +273,15 @@ where
 			= splitset (acc + fromSingle (El {head&bounded=True})) zero lhs st
 		| otherwise
 			= splitset acc (head + fromSingle r) lhs rhs
-			
+contigSubsets :: !(Stack Number) -> (Stack Element)
+contigSubsets arg=:{stack=[!]} = fromSingle (El arg)
+contigSubsets arg
+	= initSubsets arg + contigSubsets (tailOf arg)
+where
+	initSubsets arg=:{stack=[!_]} = fromSingle (El arg)
+	initSubsets arg
+		= recons (El arg, initSubsets (initOf arg))
+	
 // special cases
 complexSplit :: !Memory -> Memory
 complexSplit memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
@@ -400,7 +408,7 @@ stackDelete Base memory=:{cursor,main}
 	# (base, other) = S_span (DELIM_FUNC False ((==)cursor)) main
 	= mergeDelims {memory&main=other}
 stackDelete Main memory = {memory&main=zero}
-stackDelete All memory = {memory&left=zero,right=zero,main=zero}
+stackDelete Every memory = {memory&left=zero,right=zero,main=zero}
 
 stackDrop :: !StackID !Memory -> Memory
 stackDrop _ memory=:{main={stack=[!El {stack=[!]}:_]}} = memory

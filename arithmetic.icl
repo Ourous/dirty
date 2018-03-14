@@ -1,6 +1,6 @@
 implementation module arithmetic
 
-import types, atomics, Math.Geometry, StdLib, StdEnv
+import types, atomics, Math.Geometry, StdLib, StdEnv, Data.Func
 
 instance == Sign where
 	(==) Positive Positive = True
@@ -51,7 +51,7 @@ IS_FINITE numeric // Don't use outside of `handle`
 // number implementations
 
 handle number
-	:== case number of
+	:== hyperstrict case number of
 		(Re (Fin val)) = handleRe val
 		(Im (Fin val)) = handleIm val
 		(Cx (Fin {re, im})) = handleCx re im

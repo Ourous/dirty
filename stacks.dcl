@@ -53,7 +53,7 @@ S_take :: !Int !.(Stack a) -> .(Stack a)
 S_drop :: !Int !.(Stack a) -> .(Stack a)
 S_sort :: !.(Stack a) -> .(Stack a) | Ord a
 
-S_length :== S_reduce (\_ = \b -> inc b) one
+S_length :== S_reduce (\_ = \b -> inc b) Zero
 S_occurrences :: !(a -> Bool) !.(Stack a) -> Int
 
 S_all :: !(a -> Bool) !.(Stack a) -> Bool

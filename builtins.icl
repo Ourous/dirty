@@ -144,7 +144,7 @@ convFromBase {bounded=False} _ = NaN
 convFromBase _ Zero = NaN
 convFromBase _ NaN = NaN
 convFromBase lhs rhs
-	= convFromBase` (S_length lhs) lhs.stack
+	= convFromBase` (S_length lhs - one) lhs.stack
 where
 	convFromBase` _ [!] = Zero
 	convFromBase` place [!l:lhs]

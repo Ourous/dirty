@@ -19,7 +19,7 @@ isIdentical :: !(Stack Number) !(Stack Number) -> Number
 isIdentical lhs rhs = fromBool (lhs == rhs)
 
 isElementOf :: !Number !(Stack Number) -> Number
-isElementOf lhs rhs = fromBool (S_any ((==) lhs) rhs)//fromBool (isMember lhs rhs)
+isElementOf lhs {stack=rhs} = fromBool (IsMemberM lhs rhs)//fromBool (S_any ((==) lhs) rhs)//fromBool (isMember lhs rhs)
 isImproperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
 isImproperSubsetOf lhs rhs = fromBool (S_all (\e -> S_occurrences ((==) e) lhs <= S_occurrences ((==) e) rhs) lhs)
 //isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
@@ -128,7 +128,7 @@ numSum {bounded=False} = NaN
 numSum arg = S_reduce (+) Zero arg//foldl (+) Zero arg
 numAverage :: !(Stack Number) -> Number
 numAverage {bounded=False} = NaN
-numAverage arg = S_reduce (+) Zero (S_map (\e -> e / S_length arg) arg)
+numAverage arg = let len = S_length arg in S_reduce (+) Zero (S_map (\e -> e / len) arg)
 convToBase :: !Number !Number -> (Stack Number)
 convToBase lhs rhs = convToBase` zero lhs
 where
@@ -236,7 +236,7 @@ groupMiddle arg=:{bounded}
 setIntersection :: !(Stack Number) !(Stack Number) -> (Stack Number)
 setIntersection lhs rhs = S_uniques (S_filterBy (\e -> S_any ((==) e) rhs) lhs)//removeDup (filter (\el -> isMember el rhs) lhs)
 setExclusion :: !(Stack Number) !(Stack Number) -> (Stack Number)
-setExclusion lhs rhs = abort "TBI"//removeDup ((filter (not o \el -> isMember el rhs) lhs) ++ (filter (not o \el -> isMember el lhs) rhs))
+setExclusion lhs rhs = S_uniques ((S_filterBy (\el -> S_all ((<>)el) rhs) lhs) + (S_filterBy (\el -> S_all ((<>)el) lhs) rhs))
 numContigSubsets :: !(Stack Number) !(Stack Number) -> Number
 numContigSubsets {bounded=False} {bounded=False} = NaN
 numContigSubsets {bounded=False} _ = Zero

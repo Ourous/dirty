@@ -7,3 +7,5 @@
 - PRIORITY:
 	- unit tests
 	- implement the set operators
+	- convert S_span to be sane
+	- use more of StdOverloadedList

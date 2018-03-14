@@ -126,6 +126,27 @@ numProduct arg = S_reduce (*) one arg//foldl (*) one arg
 numSum :: !(Stack Number) -> Number
 numSum {bounded=False} = NaN
 numSum arg = S_reduce (+) Zero arg//foldl (+) Zero arg
+convToBase :: !Number !Number -> (Stack Number)
+convToBase lhs rhs = convToBase` zero lhs
+where
+	convToBase` acc NaN = acc
+	convToBase` acc Zero = acc
+	convToBase` acc val
+		#! digit = val mod rhs
+		#! acc = recons (digit, acc)
+		#! val = (val - digit) / rhs
+		= convToBase` acc val
+convFromBase :: !(Stack Number) !Number -> Number
+convFromBase {bounded=False} _ = NaN
+convFromBase _ Zero = NaN
+convFromBase _ NaN = NaN
+convFromBase lhs rhs
+	= convFromBase` (S_length lhs) lhs.stack
+where
+	convFromBase` _ [!] = Zero
+	convFromBase` place [!l:lhs]
+		#! val = l * rhs ^ place
+		= val + convFromBase` (dec place) lhs
 
 // vectorized ops
 vectorPlus :: !(Stack Number) !(Stack Number) -> (Stack Number)

@@ -48,6 +48,8 @@ numCombin :: !Number !Number -> Number
 logarithm :: !Number !Number -> Number
 numProduct :: !(Stack Number) -> Number
 numSum :: !(Stack Number) -> Number
+convToBase :: !Number !Number -> (Stack Number)
+convFromBase :: !(Stack Number) !Number -> Number
 
 // vectorized ops
 vectorPlus :: !(Stack Number) !(Stack Number) -> (Stack Number)

@@ -1,24 +1,31 @@
 definition module stacks
 
-import types, StdOverloadedList, StdOverloaded, StdClass
+import types, StdOverloadedList
 from Data.Func import hyperstrict
-instance + [!t]
 
-instance + (Stack t)
-instance zero (Stack t)
 instance == (Stack t) | Eq t
+instance +++ (Stack t)
+
+normalize arg=:{init,tail,finite} :== if(finite) {arg&init=init++|Reverse tail,tail=[!]} arg
+sanitize arg :== case arg of
+	{init=[!],tail=[!_:_],finite=True} = {arg&init=[!Last arg.tail],tail=Init arg.tail}
+	_ = arg
 
 //fromList :: ![a] !Bool -> (Stack a)
-fromList list bounded :== fromStrictList [!el \\ el <- list] bounded
-fromStrictList list bounded :== {stack=list,bounded=bounded}
-toList {stack} :== toList` stack
+fromList list finite :== fromStrictList [!el \\ el <- list] finite
+fromStrictList [!head:init] finite :== {head=head,init=init,tail=[!],finite=finite}
+toStrictList {head,init,tail,finite} :== [!head:init] ++| if(finite) (Reverse tail) [!]
+toList arg :== toList` (toStrictList arg)
 where
 	toList` [!] = []
 	toList` [!head:tail] = [head:toList` tail]
 //fromSingle :: !a -> (Stack a)
-fromSingle val :== {stack=[!val],bounded=True}
+fromSingle val :== {head=val,init=[!],tail=[!],finite=True}
 
-decons arg=:{stack=[!head:tail]} :== (head, {arg&stack=tail})
+decons :: !.(Stack a) -> *(!a, !.MStack a)
+recons :: !*(!a, !.(MStack a)) -> .(Stack a)
+
+/*
 recons (head, arg=:{stack=tail}) :== {arg&stack=[!head:tail]}
 safeDecon arg :== (safeHead arg, safeTail arg)
 decon2 arg=:{stack=[!head,next:tail]} :== (head, next, {arg&stack=tail})
@@ -73,9 +80,9 @@ S_rotate :: !Int !.(Stack a) -> .(Stack a)
 S_take :: !Int !.(Stack a) -> .(Stack a)
 S_drop :: !Int !.(Stack a) -> .(Stack a)
 S_sort :: !.(Stack a) -> .(Stack a) | Ord a
-
+S_normalize :: !.(Stack a) -> 
 S_length :== S_reduce (\_ = \b -> inc b) Zero
 S_occurrences :: !(a -> Bool) !.(Stack a) -> Int
 
 S_all fn {stack, bounded} :== bounded && All fn stack
-S_any fn {stack, bounded} :== bounded || Any fn stack
+S_any fn {stack, bounded} :== bounded || Any fn stack*/

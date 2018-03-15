@@ -2,21 +2,15 @@ definition module types
 
 import StdMaybe, StdOverloaded, StdClass
 
-class Nullable con t | zero t where
-	toMaybe :: !con -> (Maybe t)
-instance Nullable (Null t) t
-instance Nullable (Value t) t
-
-:: Null t = Null
-:: Value t = Val !t
-
-:: Stack h t
+:: Stack t
 	= {
-		head :: !(h t),
+		head :: !t,
 		init :: [!t],
 		tail :: [!t],
 		finite :: !Bool
 	}
+	
+:: MStack t :== Maybe (Stack t)
 	
 :: XYPair
 	= {
@@ -45,13 +39,13 @@ instance Nullable (Value t) t
 		note :: !Number,
 		left :: !Element,//![Number],
 		right :: !Element,//![Number],
-		above :: !(Stack Value Region),//![Element],
-		below :: !(Stack Null Region),
+		above :: !Stack Region,//![Element],
+		below :: !MStack Region,
 		random :: ![Int]
 	}
 	
-:: Element :== Stack Null Number
-:: Region :== Stack Value Element
+:: Element :== MStack Number
+:: Region :== Stack Element
 	
 :: Flags
 	= {
@@ -149,19 +143,19 @@ instance Nullable (Value t) t
 	| IO_Backspace
 	| IO_Environment
 	| Binary_NN_N !Bool (Number Number -> Number)
-	| Binary_NN_S !Bool (Number Number -> (Stack Number))
-	| Binary_SN_N ((Stack Number) Number -> Number)
-	| Binary_SN_S ((Stack Number) Number -> (Stack Number))
-	| Binary_NS_N (Number (Stack Number) -> Number)
-	| Binary_NS_S (Number (Stack Number) -> (Stack Number))
-	| Binary_SS_N !Bool ((Stack Number) (Stack Number) -> Number)
-	| Binary_SS_S !Bool ((Stack Number) (Stack Number) -> (Stack Number))
-	| Binary_SS_T !Bool ((Stack Number) (Stack Number) -> (Stack Element))
+	| Binary_NN_E !Bool (Number Number -> Element)
+	| Binary_EN_N (Element Number -> Number)
+	| Binary_EN_E (Element Number -> Element)
+	| Binary_NE_N (Number Element -> Number)
+	| Binary_NE_E (Number Element -> Element)
+	| Binary_EE_N !Bool (Element Element -> Number)
+	| Binary_EE_E !Bool (Element Element -> Element)
+	| Binary_EE_R !Bool (Element Element -> Region)
 	| Unary_N_N (Number -> Number)
-	| Unary_N_S (Number -> (Stack Number))
-	| Unary_S_N ((Stack Number) -> Number)
-	| Unary_S_S ((Stack Number) -> (Stack Number))
-	| Unary_S_T ((Stack Number) -> (Stack Element))
+	| Unary_N_E (Number -> Element)
+	| Unary_E_N (Element -> Number)
+	| Unary_E_E (Element -> Element)
+	| Unary_E_R (Element -> Region)
 	| Unary_M_M (Memory -> Memory)
 	| Math_Logarithm
 	| Math_DotProduct

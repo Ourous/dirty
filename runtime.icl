@@ -5,10 +5,6 @@ import StdEnv, StdLib, System.IO, System.Time, Math.Random, Text
 from Math.Geometry import pi
 import qualified Data.Generics.GenParse as GenParse
 
-instance toString Element where
-	toString (El val) = STACK_TO_STR val
-	toString (Delim cur) = "("<+cur<+")"
-
 unsafe :: !(*World -> *(.a, !*World)) -> .a
 unsafe fn = fst (fn newWorld)
 
@@ -16,12 +12,9 @@ newWorld :: *World
 newWorld = code inline {
 	fillI 65536 0
 }
-
-STACK_TO_STR stack
-	:== if(stack.bounded) ("["+(join","(toList (S_map toString stack)))+"]") ("["<+headOf stack<+"...]")
 	
-MEM_TO_STR memory=:{cursor, note, left, right, main}
-	:== "{cursor="<+cursor<+",note="<+note<+",left="+STACK_TO_STR left+",right="+STACK_TO_STR right+",main="+STACK_TO_STR main+"}"
+MEM_TO_STR memory=:{note, left, right, above, below}
+	:== "{note="<+note<+",left="<+left<+",right="<+right<+",main="<+above<+",base="<+below<+"}"
 
 TRAVERSE_SOME dist state=:{location, direction}
 	:== case direction of
@@ -31,8 +24,6 @@ TRAVERSE_SOME dist state=:{location, direction}
 		South = {state&location={location&y=location.y+dist}}
 
 TRAVERSE_ONE :== TRAVERSE_SOME 1
-		
-GET_MIDDLE :== \[El stack:_] -> stack
 
 evaluate :: ![String] *World -> *(Memory, *World)
 evaluate args world
@@ -108,15 +99,6 @@ where
 		| otherwise
 			=  world
 	
-	execute (state, memory=:{main={stack=[!]}}, world)
-		= execute (state, {memory&main={stack=[!El zero,Delim 0],bounded=True}}, world)
-	execute (state, memory=:{main={stack=[!El mid]}}, world)
-		= execute (state, {memory&main={stack=[!El mid,Delim 0],bounded=True}}, world)
-	execute (state, memory=:{main={stack=[!Delim _]}}, world)
-		= execute (state, {memory&main={stack=[!El zero,Delim 0],bounded=True}}, world)
-	execute (state, memory=:{main=main`=:{stack=[!Delim val:tail]}, cursor, delims}, world)
-		= execute (state, {memory&main={main`&stack=tail},delims=dec delims,cursor=if(cursor==val) dec id cursor}, world)
-	
 	execute smw=:(state=:{location, direction, history}, memory, world)
 		| 0 > location.x || location.x >= dimension.x || 0 > location.y || location.y >= dimension.y = let
 			wrappedLocation = {x=(location.x + dimension.x) rem dimension.x, y=(location.y + dimension.y) rem dimension.y}
@@ -127,7 +109,7 @@ where
 			
 	writeLine :: !(Stack Number) -> (IO ())
 	
-	writeLine stack = putStrLn (if(flags.nums) (STACK_TO_STR stack)  (if(flags.native) toString unicodeToUTF8 (map toInt (toList stack))))
+	writeLine stack = putStrLn (if(flags.nums) (toString stack)  (if(flags.native) toString unicodeToUTF8 (map toInt (toList stack))))
 	
 	writeChar :: !Number -> (IO ())
 	
@@ -204,7 +186,7 @@ where
 	process (Control (Mirror cond axes)) = mirror
 	where
 		
-		mirror (state=:{direction}, memory=:{main={stack=[!El mid:_]}}, world)
+		mirror (state=:{direction}, memory=:{above={head={head=mid}}}, world)
 			| axesCollide direction && (cond || TO_BOOL mid) = let
 					reflector = case axes of
 						Inverse = reflectInverse
@@ -239,7 +221,7 @@ where
 	process (Control (Skip cond)) = skip
 	where
 		
-		skip (state, memory=:{main={stack=[!El mid:_]}}, world)
+		skip (state, memory=:{above={head={head=mid}}}, world)
 			| cond || TO_BOOL mid
 				= (TRAVERSE_ONE state, memory, world)
 			| otherwise
@@ -263,7 +245,7 @@ where
 	process (Control (Loop Left dir (Just loc))) = loop
 	where
 		loop :: (!State, !Memory, !*World) -> (State, Memory, *World)
-		loop smw=:(_, {left={stack=[!]}}, _) = smw
+		loop smw=:(_, {left=Nothing}, _) = smw
 		loop (state=:{direction}, memory, world)
 			| direction == dir
 				= ({state&location=loc}, {memory&left=tailOf memory.left}, world)
@@ -273,7 +255,7 @@ where
 	process (Control (Loop Right dir (Just loc))) = loop
 	where
 		loop :: (!State, !Memory, !*World) -> (State, Memory, *World)
-		loop smw=:(_, {right={stack=[!]}}, _) = smw
+		loop smw=:(_, {right=Nothing}, _) = smw
 		loop (state=:{direction}, memory, world)
 			| direction == dir
 				= ({state&location=loc}, {memory&right=tailOf memory.right}, world)
@@ -283,8 +265,8 @@ where
 	process (Control (Goto dir (Just loc))) = goto
 	where
 		goto :: (!State, !Memory, !*World) -> (State, Memory, *World)
-		goto (state=:{direction}, memory=:{main={stack=[!El mid`:other]}}, world)
-			| direction == dir && TO_BOOL mid`
+		goto (state=:{direction}, memory=:{above={head={head=mid}}}, world)
+			| direction == dir && TO_BOOL mid
 				= ({state&location=loc}, memory, world)
 			| otherwise
 				= (state, memory, world)

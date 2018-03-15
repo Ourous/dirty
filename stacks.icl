@@ -1,6 +1,6 @@
 implementation module stacks
 
-import types, StdOverloadedList, StdEnv, StdLib, Data.Func
+import types, StdOverloadedList, StdEnv, StdLib, Text, Data.Func
 
 instance == (Stack t) | Eq t where
 	(==) lhs rhs = lhs.finite && rhs.finite && (toStrictList lhs == toStrictList rhs)
@@ -8,6 +8,13 @@ instance == (Stack t) | Eq t where
 instance +++ (Stack t) where
 	(+++) lhs=:{finite=False} rhs=:{finite=False}
 		= {lhs&tail=rhs.tail}
+		
+instance toString (Stack t) | toString t where
+	toString {head,finite=False} = "[" <+ head <+ "...]"
+	toString arg = "["+join","(map toString (toList arg))+"]"
+instance toString (MStack t) | toString t where
+	toString Nothing = "[]"
+	toString (Just stack) = toString stack
 		
 decons :: !.(Stack a) -> *(!a, !.MStack a)
 decons arg=:{head,init=[!h:t]} = (head, Just {arg&head=h,init=t})
@@ -20,6 +27,15 @@ decons arg=:{head,init=[!],tail=[!]} = (head, Nothing)
 recons :: !*(!a, !.(MStack a)) -> .(Stack a)
 recons (h, Just arg=:{head,init}) = {arg&head=h,init=[!head:init]}
 recons (h, Nothing) = fromSingle h
+
+tailOf :: !.(Stack a) -> .(MStack a)
+tailOf arg=:{init=[!h:t]} = (Just {arg&head=h,init=t})
+tailOf arg=:{tail=[!_:_]} = (Just {arg&head=Last arg.tail,tail=Init arg.tail})
+tailOf arg=:{init=[!],tail=[!]} = Nothing
+initOf :: !.(Stack a) -> .(MStack a)
+initOf arg=:{tail=[!_:t]} = (Just {arg&tail=t})
+initOf arg=:{init=[!_:_]} = (Just {arg&init=Init arg.init})
+initOf arg=:{init=[!],tail=[!]} = Nothing
 
 S_filterBy :: !(a -> Bool) !.(Stack a) -> .(MStack a)
 S_filterBy fn arg

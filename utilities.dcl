@@ -18,14 +18,6 @@ mergeDelims :: !Memory -> Memory
 
 //setWhenLast :: [Element] -> [Element]
 
-STARTS_WITH_DELIM arg :==
-	case arg of
-		{stack=[!head:_]} = IS_DELIM head
-		_ = False
-		
-MERGE_IF arg :== case arg of
-	{stack=[!Delim _:_]} = mergeDelims
-	_ = (\e -> e)
 
 IS_IMAG num :== case num of
 	(Im _) = True
@@ -50,42 +42,9 @@ SAFE_TAIL list
 		[] = []
 		[_:tail] = tail
 
-// :: [Number] -> Bool
-TO_BOOL {stack}
-	:== case stack of
-		[!] = False
-		[!Zero:_] = False
-		[!NaN:_] = False
-		_ = True
-		
 // :: Element -> Bool
-IS_DELIM element
-	:== case element of
-		(Delim _) = True
-		_ = False
+TO_BOOL arg
+	:== case arg of
+		Nothing = False
+		(Just {head}) = toBool head
 		
-IS_ELEM element
-	:== case element of
-		(El _) = True
-		_ = False
-		
-// :: ([Number] -> [Number]) -> (Element -> Element)
-APPLY_ELEM func
-	:== \elem -> case elem of
-		(El arg) = (El (func arg))
-		else = else
-		
-APPLY_DELIM func
-	:== \elem -> case elem of
-		(Delim arg) = (Delim (func arg))
-		else = else
-		
-DELIM_FUNC default func
-	:== \elem -> case elem of
-		(Delim val) = func val
-		_ = default
-		
-ELEM_FUNC default func
-	:== \elem -> case elem of
-		(El val) = func val
-		_ = default

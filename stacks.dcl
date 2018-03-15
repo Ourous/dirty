@@ -3,18 +3,27 @@ definition module stacks
 import types, StdOverloadedList
 from Data.Func import hyperstrict
 
+reduce fn acc arg :== reduce` acc arg
+where
+	reduce` acc [!head:tail]
+		#! val = fn acc head
+		= reduce` (hyperstrict val) tail
+	reduce` acc _ = acc
+
 instance == (Stack t) | Eq t
 instance +++ (Stack t)
 
-normalize arg=:{init,tail,finite} :== if(finite) {arg&init=init++|Reverse tail,tail=[!]} arg
+normalize arg :== case arg of
+	{tail=[!_:_],finite=True} = {arg&init=arg.init++$ReverseM arg.tail,tail=[!]}
+	_ = arg
 sanitize arg :== case arg of
-	{init=[!],tail=[!_:_],finite=True} = {arg&init=[!Last arg.tail],tail=Init arg.tail}
+	{init=[!],tail=[!_:_],finite=True} = {arg&init=[!LastM arg.tail],tail=InitM arg.tail}
 	_ = arg
 
 //fromList :: ![a] !Bool -> (Stack a)
 fromList list finite :== fromStrictList [!el \\ el <- list] finite
 fromStrictList [!head:init] finite :== {head=head,init=init,tail=[!],finite=finite}
-toStrictList {head,init,tail,finite} :== [!head:init] ++| if(finite) (Reverse tail) [!]
+toStrictList {head,init,tail,finite} :== [!head:init] ++$ if(finite) (ReverseM tail) [!]
 toList arg :== toList` (toStrictList arg)
 where
 	toList` [!] = []
@@ -25,64 +34,28 @@ fromSingle val :== {head=val,init=[!],tail=[!],finite=True}
 decons :: !.(Stack a) -> *(!a, !.MStack a)
 recons :: !*(!a, !.(MStack a)) -> .(Stack a)
 
-/*
-recons (head, arg=:{stack=tail}) :== {arg&stack=[!head:tail]}
-safeDecon arg :== (safeHead arg, safeTail arg)
-decon2 arg=:{stack=[!head,next:tail]} :== (head, next, {arg&stack=tail})
-recon2 (head, next, arg=:{stack=tail}) :== {arg&stack=[!head,next:tail]}
-recon3 (head, next, nexter, arg=:{stack=tail}) :== {arg&stack=[!head,next,nexter:tail]}
-
-tailOf arg=:{stack=[!_:tail]} :== {arg&stack=tail}
-headOf {stack=[!head:_]} :== head
-//lastOf :: !(Stack a) -> a
-lastOf {stack} :== last` stack
+S_filterBy :: !(a -> Bool) !.(Stack a) -> .(MStack a)
+S_filterOn :: !(b -> Bool) !.(Stack a) !.(Stack b) -> .(MStack a)
+//S_zipWith :: !(a b -> c) !.(Stack a) !.(Stack b) -> .(Stack c)
+S_zipWith fn lhs rhs :== S_zipWith` (normalize lhs) (normalize rhs)
 where
-	last` [!last] = last
-	last` [!_:tail] = last` tail
-//initOf :: !(Stack a) -> (Stack a)
-initOf arg=:{stack} :== {arg&stack=init` stack}
-where
-	init` [!head:tail] = [!head:init` tail]
-	init` _ = [!]
-// standard functions
-safeTail arg=:{stack} :== case stack of
-	[!_:tail] = {arg&stack=tail}
-	_ = arg
-safeHead {stack} :== case stack of
-	[!head:_] = {zero&stack=[!head]}
-	_ = zero
-safeLast :: !(Stack a) -> (Stack a)
-safeInit :: !(Stack a) -> (Stack a)
-
-S_filterBy :: !(a -> Bool) !.(Stack a) -> .(Stack a)
-S_filterOn :: !(b -> Bool) !.(Stack a) !.(Stack b) -> .(Stack a)
-//S_zipWith :: !(a a -> b) !.(Stack a) !.(Stack a) -> .(Stack b)
-S_zipWith fn lhs rhs :== {stack=withEach` lhs.stack rhs.stack, bounded=lhs.bounded||rhs.bounded}
-where
-	withEach` [!l:lhs] [!r:rhs]
-		= [!fn l r:withEach` lhs rhs]
-	withEach` _ _ = [!]
-
-//S_map :: !(a -> b) !.(Stack a) -> .(Stack b)
-S_map fn arg=:{stack} :== {arg&stack=Map fn stack}
-//S_reduce :: !(.b a -> .b) !.b !.(Stack a) -> .b
-S_reduce fn init {stack} :== reduce` init stack
-where
-	reduce` acc [!head:tail]
-		#! val = fn acc head
-		= reduce` (hyperstrict val) tail
-	reduce` acc _ = acc
-S_partition :: !(a -> Bool) !.(Stack a) -> *(.(Stack a), .(Stack a))
-S_split :: !(a -> Bool) !.(Stack a) ->  *(Stack a, Stack a)
-S_uniques arg :== {arg&stack=RemoveDup arg.stack}
-S_reverse :: !.(Stack a) -> .(Stack a)
-S_rotate :: !Int !.(Stack a) -> .(Stack a)
-S_take :: !Int !.(Stack a) -> .(Stack a)
-S_drop :: !Int !.(Stack a) -> .(Stack a)
+	zipWith` [!l:lhs] [!r:rhs] = [!fn l r:zipWith` lhs rhs]
+	zipWith` _ _ = [!]
+	S_zipWith` lhs rhs = {head=fn lhs.head rhs.head,init=zipWith` lhs.init rhs.init,tail=zipWith` lhs.tail rhs.tail,finite=lhs.finite||rhs.finite}
+S_map fn arg :== {arg&head=fn arg.head,init=MapM fn arg.init,tail=MapM fn arg.tail}
+S_reduce fn acc arg :== reduce fn acc (toStrictList arg)
+S_collapse fn acc arg :== reduce fn (reduce fn (fn acc arg.head) arg.init) arg.tail
+//S_split :: !(a -> Bool) !.(Stack a) ->  *(MStack a, MStack a)
+//S_reverse :: !.(Stack a) -> .(Stack a)
+S_rotate ::  !Int u:(Stack a) -> v:(Stack a), [u <= v]
+//S_take :: !Int !.(Stack a) -> .(Stack a)
+S_take num arg :== fromStrictList (TakeM num (toStrictList arg)) True
+S_drop num arg :== {(fromStrictList (DropM num (toStrictList arg)) arg.finite)&tail=if(arg.finite)[!]arg.tail}
+//S_drop :: !Int !.(Stack a) -> .(Stack a)
 S_sort :: !.(Stack a) -> .(Stack a) | Ord a
-S_normalize :: !.(Stack a) -> 
-S_length :== S_reduce (\_ = \b -> inc b) Zero
-S_occurrences :: !(a -> Bool) !.(Stack a) -> Int
+S_length arg :== one + (reduce (\_ = \b -> inc b) (reduce (\_ = \b -> inc b) arg.tail) arg.init) 
+//S_occurrences :: !(a -> Bool) !.(Stack a) -> Int
+S_occurrences fn arg :== S_collapse (\a -> \b -> if(fn b) (inc a) a) Zero arg
 
-S_all fn {stack, bounded} :== bounded && All fn stack
-S_any fn {stack, bounded} :== bounded || Any fn stack*/
+S_all fn arg=:{head, finite} :== finite && fn head && All fn arg.init && All fn arg.tail
+S_any fn arg=:{head, finite} :== finite || fn head || Any fn arg.init || Any fn arg.tail

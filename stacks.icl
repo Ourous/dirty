@@ -3,7 +3,7 @@ implementation module stacks
 import types, StdOverloadedList, StdEnv, StdLib, Data.Func
 
 instance == (Stack t) | Eq t where
-	(==) lhs rhs = lhs.finite && rhs.finite
+	(==) lhs rhs = lhs.finite && rhs.finite && (toStrictList lhs == toStrictList rhs)
 	
 instance +++ (Stack t) where
 	(+++) lhs=:{finite=False} rhs=:{finite=False}
@@ -11,9 +11,62 @@ instance +++ (Stack t) where
 		
 decons :: !.(Stack a) -> *(!a, !.MStack a)
 decons arg=:{head,init=[!h:t]} = (head, Just {arg&head=h,init=t})
-decons arg=:{tail=[!_:_]} = decons (normalize arg)
+decons arg=:{tail=[!_:_]}
+	# arg = sanitize arg
+	= let {head, init=[!h:t]} = arg
+	in (head, Just {arg&head=h,init=t})
 decons arg=:{head,init=[!],tail=[!]} = (head, Nothing)
 
 recons :: !*(!a, !.(MStack a)) -> .(Stack a)
 recons (h, Just arg=:{head,init}) = {arg&head=h,init=[!head:init]}
 recons (h, Nothing) = fromSingle h
+
+S_filterBy :: !(a -> Bool) !.(Stack a) -> .(MStack a)
+S_filterBy fn arg
+	| fn arg.head
+		= (Just {arg&init=init`,tail=tail`})
+	| not (IsEmpty init`)
+		= (Just {arg&head=Hd init`,init=Tl init`,tail=tail`})
+	| not (IsEmpty tail`)
+		= (Just {arg&head=Last tail`,init=init`,tail=Init tail`})
+	| otherwise
+		= Nothing
+where
+	init` => Filter fn arg.init
+	tail` => Filter fn arg.tail
+
+S_filterOn :: !(b -> Bool) !.(Stack a) !.(Stack b) -> .(MStack a)
+S_filterOn fn lhs rhs
+	| fn rhs.head
+		= (Just {lhs&init=init`,tail=[!]})
+	| not (IsEmpty init`)
+		= (Just {lhs&head=Hd init`,init=Tl init`,tail=[!]})
+	| otherwise
+		= Nothing
+where
+	init` => (fst o Unzip o Filter (\(_, e) -> fn e)) (Zip2 (toStrictList lhs) (toStrictList rhs))
+	
+S_rotate ::  !Int u:(Stack a) -> v:(Stack a), [u <= v]
+S_rotate num arg=:{finite=False}
+	| num > 0
+		# (head, [!next:t]) = SplitAt (dec num) arg.init
+		= {arg&head=next,init=t,tail=Reverse[!arg.head:head]++|arg.tail}
+	| num < 0
+		# (head, [!next:t]) = SplitAt (dec (abs num)) arg.tail
+		= {arg&head=next,init=Reverse[!arg.head:head]++|arg.init,tail=t}
+	| otherwise
+		= arg
+S_rotate num arg=:{finite=True}
+	= fromStrictList (rotate` num (toStrictList arg)) True
+where
+	rotate` _ [!] = [!]
+	rotate` n list
+		| n > zero
+			= rotate` (dec n) ((Tl list) ++| [!Hd list])
+		| n < zero
+			= rotate` (inc n) [!Last list:Init list]
+		| otherwise
+			= list
+			
+S_sort :: !.(Stack a) -> .(Stack a) | Ord a
+S_sort arg = fromList (sort (toList arg)) arg.finite

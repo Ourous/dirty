@@ -1,13 +1,23 @@
 definition module types
 
-import StdMaybe
+import StdMaybe, StdOverloaded, StdClass
 
-:: Stack t
+class Nullable con t | zero t where
+	toMaybe :: !con -> (Maybe t)
+instance Nullable (Null t) t
+instance Nullable (Value t) t
+
+:: Null t = Null
+:: Value t = Val !t
+
+:: Stack h t
 	= {
-		stack :: [!t],
-		bounded :: !Bool
+		head :: !(h t),
+		init :: [!t],
+		tail :: [!t],
+		finite :: !Bool
 	}
-
+	
 :: XYPair
 	= {
 		x :: !Int,
@@ -33,17 +43,15 @@ import StdMaybe
 :: Memory
 	= {
 		note :: !Number,
-		left :: !Stack Number,//![Number],
-		right :: !Stack Number,//![Number],
-		cursor :: !Int,
-		main :: !Stack Element,//![Element],
-		delims :: !Int,
+		left :: !Element,//![Number],
+		right :: !Element,//![Number],
+		above :: !(Stack Value Region),//![Element],
+		below :: !(Stack Null Region),
 		random :: ![Int]
 	}
 	
-:: Element
-	= El !(Stack Number)
-	| Delim !Int // "is active"
+:: Element :== Stack Null Number
+:: Region :== Stack Value Element
 	
 :: Flags
 	= {

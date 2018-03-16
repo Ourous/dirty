@@ -14,6 +14,8 @@ instance == (Stack t) | Eq t
 instance +++ (Stack t)
 instance toString (Stack t) | toString t
 instance toString (MStack t) | toString t
+instance zero (Stack t) | zero t
+instance zero (MStack t)
 
 normalize arg :== case arg of
 	{tail=[!_:_],finite=True} = {arg&init=arg.init++$ReverseM arg.tail,tail=[!]}
@@ -35,6 +37,9 @@ fromSingle val :== {head=val,init=[!],tail=[!],finite=True}
 
 decons :: !.(Stack a) -> *(!a, !.MStack a)
 recons :: !*(!a, !.(MStack a)) -> .(Stack a)
+fallback arg :== case arg of
+	Nothing = zero
+	(Just val) = val
 
 tailOf :: !.(Stack a) -> .(MStack a)
 initOf :: !.(Stack a) -> .(MStack a)

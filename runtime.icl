@@ -29,12 +29,12 @@ evaluate :: ![String] *World -> *(Memory, *World)
 evaluate args world
 	| isEmpty args
 		# (Timestamp seed, world) = time world
-		= ({note=NaN,left={stack=[!],bounded=True},right={stack=[!],bounded=True},cursor=0,main={stack=[!El {stack=[!],bounded=True},Delim 0],bounded=True},delims=1,random=genRandInt seed}, world)
+		= ({note=NaN,left=zero,right=zero,above=zero,below=zero,random=genRandInt seed}, world)
 	| otherwise
 		# ((seed, world), args) = case (parseInt (hd args), world) of
 			(Just seed, world) = ((seed, world), tl args)
 			(Nothing, world) = ((\(Timestamp seed, world) -> (seed, world))(time world), args)
-		= ({note=NaN,left={stack=[!],bounded=True},right={stack=[!],bounded=True},cursor=0,main=fromList (parseArgs args++[Delim 0]) True,delims=1,random=genRandInt seed}, world)
+		= ({note=NaN,left=zero,right=zero,above=zero,below=zero,random=genRandInt seed}, world)
 where
 
 	parseArgs :: [String] -> [Element]
@@ -45,15 +45,15 @@ where
 			# try = parseString arg
 			| isJust try
 				# (Just try) = try
-				= (El {stack=[!fromInt el \\ el <- utf8ToUnicode try],bounded=True})
+				= fromStrictList [!fromInt el \\ el <- utf8ToUnicode try] True
 			# try = parseInts arg
 			| isJust try
 				# (Just try) = try
-				= (El {stack=[!fromInt el \\ el <- try],bounded=True})
+				= fromStrictList [!fromInt el \\ el <- try] True
 			# try = parseReals arg
 			| isJust try
 				# (Just try) = try
-				= (El {stack=[!fromReal el \\ el <- try],bounded=True})
+				= fromStrictList [!fromReal el \\ el <- try] True
 			| otherwise
 				= abort "Invalid memory arguments!"
 
@@ -246,9 +246,9 @@ where
 	where
 		loop :: (!State, !Memory, !*World) -> (State, Memory, *World)
 		loop smw=:(_, {left=Nothing}, _) = smw
-		loop (state=:{direction}, memory, world)
+		loop (state=:{direction}, memory=:{left=(Just left)}, world)
 			| direction == dir
-				= ({state&location=loc}, {memory&left=tailOf memory.left}, world)
+				= ({state&location=loc}, {memory&left=tailOf left}, world)
 			| otherwise
 				= (state, memory, world)
 		
@@ -256,9 +256,9 @@ where
 	where
 		loop :: (!State, !Memory, !*World) -> (State, Memory, *World)
 		loop smw=:(_, {right=Nothing}, _) = smw
-		loop (state=:{direction}, memory, world)
+		loop (state=:{direction}, memory=:{right=(Just right)}, world)
 			| direction == dir
-				= ({state&location=loc}, {memory&right=tailOf memory.right}, world)
+				= ({state&location=loc}, {memory&right=tailOf right}, world)
 			| otherwise
 				= (state, memory, world)
 	
@@ -274,8 +274,11 @@ where
 	process (Control (String)) = makeString
 	where
 		
-		makeString (state=:{direction, location}, memory=:{main, delims}, world)
-			= (TRAVERSE_SOME (length content + newlineAdjust) state, {memory&delims=inc delims,main=recon2 (El (fromStrictList [!fromInt el \\ el <- content] True), Delim delims, main)}, world)
+		makeString (state=:{direction, location}, memory=:{above}, world)
+			# (main, above) = decons above
+			# main = recons (Just (fromStrictList [!fromInt el \\ el <- content] True), Just main)
+			# above = recons (main, above)
+			= (TRAVERSE_SOME (length content + newlineAdjust) state, {memory&above=above}, world)
 		where
 			
 			delta => case direction of
@@ -298,25 +301,25 @@ where
 			content :: [Int]
 			content => (utf8ToUnicode o toString o takeWhile ((<>)'\'') o drop delta) wrappedLine
 			
-	process (Literal (Pi)) = app3 (id, \memory=:{main={stack=[!El mid:_]}} -> {memory&main=recons (El (recons (fromReal pi, mid)), tailOf memory.main)}, id)
+	process (Literal (Pi)) = app3 (id, \memory=:{above={head={head=mid}}} -> {memory&above={memory.above&head={memory.above.head&head=Just (recons (fromReal pi, mid))}}}, id)
 
-	process (Literal (Quote)) = app3 (id, \memory=:{main={stack=[!El mid:_]}} -> {memory&main=recons (El (recons (fromInt (toInt '\''), mid)), tailOf memory.main)}, id)
+	process (Literal (Quote)) = app3 (id, \memory=:{above={head={head=mid}}} -> {memory&above={memory.above&head={memory.above.head&head=Just (recons (fromInt (toInt '\''), mid))}}}, id)
 
 	process (Literal (Digit val)) = literal
 	where
 	
 		literal :: (!State, !Memory, !*World) -> (State, Memory, *World)
 		
-		literal (state=:{history}, memory=:{main}, world)
+		literal (state=:{history}, memory=:{above}, world)
+			# (main, above) = decons above
+			# (mid, main) = decons main
 			| isDigit history = let
-				[!El mid`=:{stack=[!top:mid]}:base] = main.stack
-				res = top * (fromInt 10) + val
-				in (state, {memory&main={main&stack=[!El {mid`&stack=[!res:mid]}:base]}}, world)
+				res = ((fromJust mid).head) * (fromInt 10) + val
+				in (state, {memory&above=recons (recons (Just (recons (res, mid)), main), above)}, world)
 			| otherwise = let
-				[!El mid`:base] = main.stack
-				in (state, {memory&main={main&stack=[!El (fromSingle val + mid`):base]}}, world)
-						
-	process (Literal (Alphabet lettercase)) = app3 (id, \memory -> {memory&delims=inc memory.delims,main=recon2 (El (fromStrictList literal True), Delim memory.delims, memory.main)}, id)
+				in (state, {memory&above=recons (recons (Just (recons (val, mid)), main), above)}, world)
+			
+	process (Literal (Alphabet lettercase)) = app3 (id, \memory=:{above} -> {memory&above={above&head=recons (Just (fromStrictList literal True), Just above.head)}}, id)
 	where
 	
 		literal :: [!Number]
@@ -324,22 +327,26 @@ where
 			Lowercase = [!fromInt (toInt c) \\ c <-: "abcdefghijklmnopqrstuvwxyz"]
 			Uppercase = [!fromInt (toInt c) \\ c <-: "ABCDEFGHIJKLMNOPQRSTUVWXYZ"]
 
-	process (Literal (EmptySet)) = app3 (id, \memory -> {memory&main=recons (El zero, memory.main)}, id)
+	process (Literal (EmptySet)) = app3 (id, \memory=:{above} -> {memory&above={above&head=recons (Nothing, Just above.head)}}, id)
 				
 	process (Variable (Random)) = app3 (id, rand, id)
 	where
 	
-		rand memory=:{main, random=[rng:random]}
-			# (El mid, other) = decons main
-			= {memory&main=recons (El (recons (fromInt rng, mid)), other), random=random}
-			
+		rand memory=:{above, random=[rng:random]}
+			# (main, above) = decons above
+			# (mid, main) = decons main
+			# mid = Just( recons (fromInt rng, mid))
+			# main = recons (mid, main)
+			# above = recons (main, above)
+			= {memory&above=above, random=random}
+	/*
 	process (Variable (Quine)) = app3 (id, quine, id)
 	where
 		
 		quine memory=:{delims, main} = {memory&cursor=delims,delims=inc delims,main=string + main}
 			
 		string => fromStrictList [!El (fromStrictList [!(fromInt o toInt) char \\ char <-: line] True) \\ line <-: source] True
-	
+	*/
 	process (Environment env) = environment
 	where
 	
@@ -350,10 +357,11 @@ where
 	process (Operator (IO_WriteAll)) = writeAll
 	where
 		
-		writeAll (state, memory=:{main}, world)
-			# (El mid, other) = decons main
-			# world = execIO (writeLine ( mid)) world
-			= (state, {memory&main=other}, world)
+		writeAll (state, memory=:{above}, world)
+			# (main, above) = decons above
+			# (mid, main) = decons main
+			# world = execIO (writeLine (mid)) world
+			= (state, {memory&above=recons (fallback main, above)}, world)
 			
 	process (Operator (IO_ReadAll)) = readAll
 	where
@@ -361,7 +369,7 @@ where
 		readAll (state, memory=:{main, delims}, world)
 			# (str, world) = readLine world
 			= (state, {memory&delims=inc delims,main=recon2 (El (fromList str True), Delim delims, main)}, world)
-			
+	/*		
 	process (Operator (IO_WriteOnce)) = writeOnce
 	where
 	
@@ -645,7 +653,7 @@ where
 		unary memory=:{delims, main}
 			# (El mid, other) = decons main
 			#! val = op mid
-			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}
+			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}*/
 		
 				
 	process (Operator (Unary_M_M op)) = app3 (id, op, id)

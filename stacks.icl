@@ -16,6 +16,11 @@ instance toString (MStack t) | toString t where
 	toString Nothing = "[]"
 	toString (Just stack) = toString stack
 		
+instance zero (Stack t) | zero t where
+	zero = {head=zero,init=[!],tail=[!],finite=True}
+instance zero (MStack t) where
+	zero = Nothing
+		
 decons :: !.(Stack a) -> *(!a, !.MStack a)
 decons arg=:{head,init=[!h:t]} = (head, Just {arg&head=h,init=t})
 decons arg=:{tail=[!_:_]}

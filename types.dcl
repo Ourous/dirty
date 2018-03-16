@@ -37,10 +37,10 @@ import StdMaybe, StdOverloaded, StdClass
 :: Memory
 	= {
 		note :: !Number,
-		left :: !Element,//![Number],
-		right :: !Element,//![Number],
-		above :: !Stack Region,//![Element],
-		below :: !MStack Region,
+		left :: !MStack Number,//![Number],
+		right :: !MStack Number,//![Number],
+		above :: !Stack (Stack (MStack Number)),//![Element],
+		below :: !MStack (Stack (MStack Number)),
 		random :: ![Int]
 	}
 	

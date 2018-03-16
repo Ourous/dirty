@@ -360,33 +360,40 @@ where
 		writeAll (state, memory=:{above}, world)
 			# (main, above) = decons above
 			# (mid, main) = decons main
-			# world = execIO (writeLine (mid)) world
+			# world = execIO (writeLine (fallback mid)) world
 			= (state, {memory&above=recons (fallback main, above)}, world)
 			
 	process (Operator (IO_ReadAll)) = readAll
 	where
 		
-		readAll (state, memory=:{main, delims}, world)
+		readAll (state, memory=:{above}, world)
 			# (str, world) = readLine world
-			= (state, {memory&delims=inc delims,main=recon2 (El (fromList str True), Delim delims, main)}, world)
-	/*		
+			# (main, above) = decons above
+			# main = recons ( Just (fromList str True), Just main)
+			= (state, {memory&above=recons (main, above)}, world)
+		
 	process (Operator (IO_WriteOnce)) = writeOnce
 	where
 	
-		writeOnce (state, memory=:{main={stack=[!El{stack=[!]}:_]}}, world)
+		writeOnce (state, memory=:{above={head={head=Nothing}}}, world)
 			= (state, memory, world)
 			
-		writeOnce (state, memory=:{main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}, world)
+		writeOnce (state, memory=:{above}, world)
+			# (main, above) = decons above
+			# (Just mid, main) = decons main
+			# (top, mid) = decons mid
 			# world = execIO (writeChar top) world
-			= (state, {memory&main={main`&stack=[!El {mid`&stack=mid}:other]}}, world)
-			
+			= (state, {memory&above=recons (recons (mid, main), above)}, world)
+				
 	process (Operator (IO_ReadOnce)) = readOnce
 	where
 	
-		readOnce (state, memory=:{main=main`=:{stack=[!El mid`:other]}}, world)
+		readOnce (state, memory=:{above}, world)
+			# (main, above) = decons above
+			# (mid, main) = decons main
 			# (chr, world) = readChar world
-			= (state, {memory&main={main`&stack=[!El (fromSingle chr + mid`):other]}}, world)
-			
+			= (state, {memory&above=recons (recons (Just (recons (chr, mid)), main), above)}, world)
+	/*		
 	process (Operator (IO_Interrobang)) = interrobang
 	where
 	
@@ -399,45 +406,54 @@ where
 			= (state, {memory&main={main`&stack=[!El {mid`&stack=[!chr:mid]}:other]}}, world)
 			
 	process (Operator (IO_ClearConsole)) = app3 (id, id, clearConsole)
-
+	*/
 	process (Operator (Binary_NN_N inv op)) = app3 (id, binary flags.strict inv, id)
 	where
 		
 		binary :: !Bool !Bool Memory -> Memory
-		binary _ _ memory=:{left={stack=[!lhs:_]}, right={stack=[!rhs:_]}}
-			# (El mid, other) = decons memory.main
+		binary _ _ memory=:{left=Just{head=lhs}, right=Just{head=rhs}}
+			# (main, above) = decons memory.above
+			# (mid, main) = decons main
 			#! val = op lhs rhs
 			#! mid = recons (val, mid)
-			= {memory&main=recons (El mid, other)}
-		binary False _ memory=:{left={stack=[!lhs:_]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
+			= {memory&above=recons (recons (Just mid, main), above)}
+		binary False _ memory=:{left=Just{head=lhs}, above={head={head=Just _}}, right=Nothing}
+			# (main, above) = decons memory.above
+			# (Just mid, main) = decons main
 			# (top, mid) = decons mid
 			#! val = op lhs top
 			#! mid = recons (val, mid)
-			= {memory&main=recons (El mid, other)}
-		binary False _ memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!rhs:_]}}
-			# (El mid, other) = decons memory.main
+			= {memory&above=recons (recons (Just mid, main), above)}
+		binary False _ memory=:{left=Nothing, above={head={head=Just _}}, right=Just{head=rhs}}
+			# (main, above) = decons memory.above
+			# (Just mid, main) = decons main
 			# (top, mid) = decons mid
 			#! val = op top rhs
 			#! mid = recons (val, mid)
-			= {memory&main=recons (El mid, other)}
-		binary False _ memory=:{left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!rhs,lhs:_]}}
+			= {memory&above=recons (recons (Just mid, main), above)}
+		binary False _ memory=:{left=Nothing, above={head={head=Nothing}}, right=Just{head=rhs,init=[!lhs:_]}}
+			# (main, above) = decons memory.above
+			# (mid, main) = decons main
 			#! val = op lhs rhs
-			#! mid = fromSingle val
-			= {memory&main=recons (El mid, tailOf memory.main)}
-		binary False _ memory=:{left={stack=[!lhs,rhs:_]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
+			#! mid = recons (val, mid)
+			= {memory&above=recons (recons (Just mid, main), above)}
+		binary False _ memory=:{left=Just{head=lhs,init=[!rhs:_]}, above={head={head=Nothing}}, right=Nothing}
+			# (main, above) = decons memory.above
+			# (mid, main) = decons main
 			#! val = op lhs rhs
-			#! mid = fromSingle val
-			= {memory&main=recons (El mid, tailOf memory.main)}
-		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_,_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
-			# (arg1, arg2, mid) = decon2 mid
+			#! mid = recons (val, mid)
+			= {memory&above=recons (recons (Just mid, main), above)}
+		binary False True memory=:{left=Nothing, above={head={head=Just{init=[!_:_]}}}, right=Nothing}
+			# (main, above) = decons memory.above
+			# (Just mid, main) = decons main
+			# (arg1, Just mid) = decons mid
+			# (arg2, mid) = decons mid
 			#! val = op arg1 arg2
 			#! mid = recons (val, mid)
-			= {memory&main=recons (El mid, other)}
+			= {memory&above=recons (recons (Just mid, main), above)}
 		binary _ _ memory = memory
 		
-			
+	/*		
 	process (Operator (Binary_NN_S inv op)) = app3 (id, binary flags.strict inv, id)
 	where // productive
 		

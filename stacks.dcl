@@ -21,7 +21,7 @@ normalize arg :== case arg of
 	{tail=[!_:_],finite=True} = {arg&init=arg.init++$ReverseM arg.tail,tail=[!]}
 	_ = arg
 sanitize arg :== case arg of
-	{init=[!],tail=[!_:_],finite=True} = {arg&init=[!LastM arg.tail],tail=InitM arg.tail}
+	(Just arg=:{init=[!],tail=[!_:_],finite=True}) = Just{arg&init=[!LastM arg.tail],tail=InitM arg.tail}
 	_ = arg
 
 //fromList :: ![a] !Bool -> (Stack a)

@@ -22,12 +22,12 @@ instance zero (MStack t) where
 	zero = Nothing
 		
 decons :: !.(Stack a) -> *(!a, !.MStack a)
+decons arg=:{head,init=[!],tail=[!]} = (head, Nothing)
 decons arg=:{head,init=[!h:t]} = (head, Just {arg&head=h,init=t})
 decons arg=:{tail=[!_:_]}
-	# arg = sanitize arg
+	# (Just arg) = sanitize (Just arg)
 	= let {head, init=[!h:t]} = arg
 	in (head, Just {arg&head=h,init=t})
-decons arg=:{head,init=[!],tail=[!]} = (head, Nothing)
 
 recons :: !*(!a, !.(MStack a)) -> .(Stack a)
 recons (h, Just arg=:{head,init}) = {arg&head=h,init=[!head:init]}

@@ -12,6 +12,7 @@ where
 
 instance == (Stack t) | Eq t
 instance +++ (Stack t)
+instance +++ (MStack t)
 instance toString (Stack t) | toString t
 instance toString (MStack t) | toString t
 instance zero (Stack t) | zero t
@@ -21,7 +22,8 @@ normalize arg :== case arg of
 	{tail=[!_:_],finite=True} = {arg&init=arg.init++$ReverseM arg.tail,tail=[!]}
 	_ = arg
 sanitize arg :== case arg of
-	(Just arg=:{init=[!],tail=[!_:_],finite=True}) = Just{arg&init=[!LastM arg.tail],tail=InitM arg.tail}
+	arg=:{init=[!],tail=[!_:_],finite=True} = {arg&init=[!LastM arg.tail],tail=InitM arg.tail}
+	arg=:{init=[!_,_:_],tail=[!],finite=True} = {arg&init=InitM arg.init,tail=[!LastM arg.init]}
 	_ = arg
 
 //fromList :: ![a] !Bool -> (Stack a)
@@ -41,6 +43,7 @@ fallback arg :== case arg of
 	Nothing = zero
 	(Just val) = val
 
+lastOf :: !.(Stack a) -> a
 tailOf :: !.(Stack a) -> .(MStack a)
 initOf :: !.(Stack a) -> .(MStack a)
 
@@ -65,9 +68,9 @@ S_drop num arg :== {(fromStrictList (DropM num (toStrictList arg)) arg.finite)&t
 S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
 S_swap :: !.(MStack a) !.(MStack a) -> *(MStack a, MStack a)
 S_sort :: !.(Stack a) -> .(Stack a) | Ord a
-S_length arg :== one + (reduce (\_ = \b -> inc b) (reduce (\_ = \b -> inc b) arg.tail) arg.init) 
+S_length arg :== one + (reduce (\_ = \b -> inc b) (reduce (\_ = \b -> inc b) zero arg.tail) arg.init) 
 //S_occurrences :: !(a -> Bool) !.(Stack a) -> Int
-S_occurrences fn arg :== S_collapse (\a -> \b -> if(fn b) (inc a) a) Zero arg
+S_occurrences fn arg :== S_collapse (\a -> \b -> if(fn b) (inc a) a) 0 arg
 
 S_all fn arg=:{head, finite} :== finite && fn head && All fn arg.init && All fn arg.tail
 S_any fn arg=:{head, finite} :== finite || fn head || Any fn arg.init || Any fn arg.tail

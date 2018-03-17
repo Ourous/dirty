@@ -8,6 +8,8 @@ instance == (Stack t) | Eq t where
 instance +++ (Stack t) where
 	(+++) lhs=:{finite=False} rhs=:{finite=False}
 		= {lhs&tail=rhs.tail}
+instance +++ (MStack t) where
+	(+++) Nothing Nothing = Nothing
 		
 instance toString (Stack t) | toString t where
 	toString {head,finite=False} = "[" <+ head <+ "...]"
@@ -25,13 +27,18 @@ decons :: !.(Stack a) -> *(!a, !.MStack a)
 decons arg=:{head,init=[!],tail=[!]} = (head, Nothing)
 decons arg=:{head,init=[!h:t]} = (head, Just {arg&head=h,init=t})
 decons arg=:{tail=[!_:_]}
-	# (Just arg) = sanitize (Just arg)
+	# arg = sanitize arg
 	= let {head, init=[!h:t]} = arg
 	in (head, Just {arg&head=h,init=t})
 
 recons :: !*(!a, !.(MStack a)) -> .(Stack a)
 recons (h, Just arg=:{head,init}) = {arg&head=h,init=[!head:init]}
 recons (h, Nothing) = fromSingle h
+
+lastOf :: !.(Stack a) -> a
+lastOf arg=:{tail=[!l:_]} = l
+lastOf arg=:{init=[!]} = arg.head
+lastOf arg = Last arg.init
 
 tailOf :: !.(Stack a) -> .(MStack a)
 tailOf arg=:{init=[!h:t]} = (Just {arg&head=h,init=t})

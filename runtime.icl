@@ -415,9 +415,9 @@ where
 			#! mid = binary` flags.strict inv left` right` mid` 
 			= {memory&left=left`,right=right`,above.head.head=mid}
 		where
-			mid` => sanitize above.head.head
-			left` => sanitize left
-			right` => sanitize right
+			mid` => mapMaybe sanitize above.head.head
+			left` => mapMaybe sanitize left
+			right` => mapMaybe sanitize right
 		
 		binary` :: !Bool !Bool !(MStack Number) !(MStack Number) !(MStack Number) -> (MStack Number)
 		binary` _ _ (Just {head=lhs}) (Just {head=rhs}) mid

@@ -291,8 +291,8 @@ where
 		= val + numContig lhs rhs
 splitContig :: !(MStack Number) !(MStack Number) -> (Stack (MStack Number))
 splitContig (Just {finite=False}) rhs = fromSingle rhs
-splitContig Nothing (Just rhs) = S_map (\e -> fromSingle (Just (fromSingle e))) rhs
-splitContig lhs rhs
+splitContig Nothing (Just rhs) = S_map (\e -> Just (fromSingle e)) rhs
+splitContig (Just lhs) (Just rhs)
 	= splitset {zero&finite=rhs.finite} zero (toStrictList lhs) (toStrictList rhs)
 where
 	equateAll [!] rhs = (True, rhs)
@@ -303,12 +303,11 @@ where
 			= (eq, st)
 		| otherwise
 			= (False, [!r:rhs])
-	splitset Nothing head _ [!] = Just (fromSingle {head&finite=True})
-	splitset (Just acc) head _ [!] = Just ({acc&finite=True} +++  fromSingle {head&finite=True})
+	splitset acc head _ [!] = {acc&finite=True} +++  fromSingle (Just {head&finite=True})
 	splitset acc head lhs [!r:rhs]
 		# (eq, st) = equateAll lhs [!r:rhs]
 		| eq
-			= splitset (acc +++ (Just (fromSingle {head&finite=True}))) zero lhs st
+			= splitset (acc +++ fromSingle (Just {head&finite=True})) zero lhs st
 		| otherwise
 			= splitset acc (head +++ fromSingle r) lhs rhs
 contigSubsets :: !(MStack Number) -> (Stack (MStack Number))

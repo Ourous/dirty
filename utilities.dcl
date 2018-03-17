@@ -18,6 +18,9 @@ mergeDelims :: !Memory -> Memory
 
 //setWhenLast :: [Element] -> [Element]
 
+NUM_FALSE :== Zero
+NUM_TRUE :== (Re (Fin (Int -1)))
+
 
 IS_IMAG num :== case num of
 	(Im _) = True

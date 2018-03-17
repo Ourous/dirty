@@ -67,6 +67,19 @@ S_filterOn fn lhs rhs
 where
 	init` => (fst o Unzip o Filter (\(_, e) -> fn e)) (Zip2 (toStrictList lhs) (toStrictList rhs))
 	
+S_span :: !(a -> Bool) !.(Stack a) ->  *(MStack a, MStack a)
+S_span fn arg
+	# (l, r) = Span fn (toStrictList arg)
+	= (fsl l, fsl r)
+where
+	fsl [!] = Nothing
+	fsl lst = (Just (fromStrictList lst True))
+	
+S_reverse :: u:(Stack a) -> v:(Stack a), [u <= v]
+S_reverse arg=:{init=[!],tail=[!]} = arg
+S_reverse arg=:{head,init,tail=[!h:t]} = {arg&head=h,init=t,tail=[!head:init]}
+S_reverse arg=:{head,init} = {arg&head=Last init,init=[!],tail=Init init}
+	
 S_rotate ::  !Int u:(Stack a) -> v:(Stack a), [u <= v]
 S_rotate num arg=:{finite=False}
 	| num > 0
@@ -88,6 +101,20 @@ where
 			= rotate` (inc n) [!Last list:Init list]
 		| otherwise
 			= list
+			
+S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
+S_uniques arg = fromStrictList (RemoveDup (toStrictList arg)) arg.finite
+			
+S_swap :: !.(MStack a) !.(MStack a) -> *(MStack a, MStack a)
+S_swap Nothing Nothing = (Nothing, Nothing)
+S_swap Nothing (Just rhs)
+	# (r, rhs) = decons rhs
+	= (Just (fromSingle r), rhs)
+S_swap (Just lhs) Nothing
+	# (l, lhs) = decons lhs
+	= (lhs, Just (fromSingle l))
+S_swap (Just lhs) (Just rhs)
+	= (Just {lhs&head=rhs.head}, Just {rhs&head=lhs.head})
 			
 S_sort :: !.(Stack a) -> .(Stack a) | Ord a
 S_sort arg = fromList (sort (toList arg)) arg.finite

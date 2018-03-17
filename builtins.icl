@@ -15,19 +15,31 @@ isGreaterOrEqual :: !Number !Number -> Number
 isGreaterOrEqual lhs rhs = fromBool (lhs >= rhs)
 isNotEqual :: !Number !Number -> Number
 isNotEqual lhs rhs = fromBool (lhs <> rhs)
-isIdentical :: !(Stack Number) !(Stack Number) -> Number
+isIdentical :: !(MStack Number) !(MStack Number) -> Number
 isIdentical lhs rhs = fromBool (lhs == rhs)
 
-isElementOf :: !Number !(Stack Number) -> Number
-isElementOf lhs {stack=rhs} = fromBool (IsMemberM lhs rhs)//fromBool (S_any ((==) lhs) rhs)//fromBool (isMember lhs rhs)
-isImproperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
-isImproperSubsetOf lhs rhs = fromBool (S_all (\e -> S_occurrences ((==) e) lhs <= S_occurrences ((==) e) rhs) lhs)
+isElementOf :: !Number !(MStack Number) -> Number
+isElementOf _ Nothing = NUM_FALSE
+isElementOf _ (Just {finite=False}) = NUM_TRUE
+isElementOf lhs {head,init,tail} = fromBool (lhs == head || (IsMember lhs init) || (IsMember lhs tail))//fromBool (S_any ((==) lhs) rhs)//fromBool (isMember lhs rhs)
+isImproperSubsetOf :: !(MStack Number) !(MStack Number) -> Number
+isImproperSubsetOf Nothing _ = NUM_TRUE
+isImproperSubsetOf (Just {finite=True}) (Just {finite=False}) = NUM_TRUE
+isImproperSubsetOf (Just {finite=False}) _ = NUM_FALSE
+isImproperSubsetOf (Just lhs) (Just rhs) = fromBool (S_all (\e -> S_occurrences ((==) e) lhs <= S_occurrences ((==) e) rhs) lhs)
 //isImproperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs)
-isProperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
-isProperSubsetOf lhs rhs = fromBool (S_all (\e -> S_occurrences ((==) e) lhs <= S_occurrences ((==) e) rhs) lhs && S_any (\e -> S_occurrences ((==) e) lhs < S_occurrences ((==) e) rhs) lhs)
+isProperSubsetOf :: !(MStack Number) !(MStack Number) -> Number
+isProperSubsetOf Nothing Nothing = NUM_FALSE
+isProperSubsetOf Nothing _ = NUM_TRUE
+isProperSubsetOf (Just {finite=True}) (Just {finite=False}) = NUM_TRUE
+isProperSubsetOf (Just {finite=False}) _ = NUM_FALSE
+isProperSubsetOf (Just lhs) (Just rhs) = fromBool (S_all (\e -> S_occurrences ((==) e) lhs <= S_occurrences ((==) e) rhs) lhs && S_any (\e -> S_occurrences ((==) e) lhs < S_occurrences ((==) e) rhs) lhs)
 //isProperSubsetOf lhs rhs = fromBool (all (\e -> [0 \\ i <- lhs | i == e] <= [0 \\ i <- rhs | i == e]) lhs && any (\e -> [0 \\ i <- lhs | i == e] < [0 \\ i <- rhs | i == e]) lhs)
-isNotSubsetOf :: !(Stack Number) !(Stack Number) -> Number
-isNotSubsetOf lhs rhs = fromBool (S_any (\e -> S_occurrences ((==) e) lhs > S_occurrences ((==) e) rhs) lhs)
+isNotSubsetOf :: !(MStack Number) !(MStack Number) -> Number
+isNotSubsetOf Nothing _ = NUM_FALSE
+isNotSubsetOf (Just {finite=True}) (Just {finite=False}) = NUM_FALSE
+isNotSubsetOf (Just {finite=False}) _ = NUM_TRUE
+isNotSubsetOf (Just lhs) (Just rhs) = fromBool (S_any (\e -> S_occurrences ((==) e) lhs > S_occurrences ((==) e) rhs) lhs)
 //isNotSubsetOf lhs rhs = fromBool (any (\e -> [0 \\ i <- lhs | i == e] > [0 \\ i <- rhs | i == e]) lhs)
 
 isUppercase :: !Number -> Number
@@ -57,20 +69,21 @@ isInfinite arg = fromBool case arg of
 isPrime :: !Number -> Number
 isPrime arg
 	| numCeiling arg <> numFloor arg
-		= fromBool False
+		= NUM_FALSE
 	| otherwise
 		= fromBool (all (\e -> arg mod e <> Zero) [inc one..dec arg])
 
-isSorted :: !(Stack Number) -> Number
-isSorted {bounded=False} = Zero
-isSorted {stack} = fromBool (isSorted` stack)
+isSorted :: !(MStack Number) -> Number
+isSorted Nothing = NUM_TRUE
+isSorted (Just {finite=False}) = NUM_FALSE
+isSorted (Just arg) = fromBool (isSorted` (toStrictList arg))
 where
 	isSorted` [!h1:tail=:[!h2:_]] = h1 <= h2 && isSorted` tail
 	isSorted` _ = True
 	
-areAnyTrue :: !(Stack Number) -> Number
+areAnyTrue :: !(MStack Number) -> Number
 areAnyTrue arg = fromBool (S_any toBool arg)
-areAllTrue :: !(Stack Number) -> Number
+areAllTrue :: !(MStack Number) -> Number
 areAllTrue arg = fromBool (S_all toBool arg)
 
 // coalescing operators
@@ -80,7 +93,7 @@ logicNegate :: !Number -> Number
 logicNegate arg = fromBool (not (toBool arg))
 
 // remaining math ops
-primeFactors :: !Number -> (Stack Number)
+primeFactors :: !Number -> (MStack Number)
 primeFactors _ = zero
 /*
 primeFactors NaN = []
@@ -119,17 +132,19 @@ numCombin :: !Number !Number -> Number
 numCombin lhs rhs = (numPermute lhs rhs) / prod [one..rhs]
 logarithm :: !Number !Number -> Number
 logarithm lhs rhs = (ln rhs) / (ln lhs)
-numProduct :: !(Stack Number) -> Number
-numProduct {stack=[!]} = Zero
-numProduct {bounded=False} = NaN
-numProduct arg = S_reduce (*) one arg//foldl (*) one arg
-numSum :: !(Stack Number) -> Number
-numSum {bounded=False} = NaN
-numSum arg = S_reduce (+) Zero arg//foldl (+) Zero arg
-numAverage :: !(Stack Number) -> Number
-numAverage {bounded=False} = NaN
-numAverage arg = let len = S_length arg in S_reduce (+) Zero (S_map (\e -> e / len) arg)
-convToBase :: !Number !Number -> (Stack Number)
+numProduct :: !(MStack Number) -> Number
+numProduct Nothing = Zero
+numProduct (Just {finite=False}) = NaN
+numProduct (Just arg) = S_collapse (*) one arg
+numSum :: !(MStack Number) -> Number
+numSum Nothing = Zero
+numSum (Just {finite=False}) = NaN
+numSum (Just arg) = S_collapse (+) zero arg//foldl (+) Zero arg
+numAverage :: !(MStack Number) -> Number
+numAverage Nothing = Zero
+numAverage (Just {finite=False}) = NaN
+numAverage (Just arg) = let len = S_length arg in S_reduce (+) Zero (S_map (\e -> e / len) arg)
+convToBase :: !Number !Number -> (MStack Number)
 convToBase lhs rhs = convToBase` zero lhs
 where
 	convToBase` acc NaN = acc
@@ -139,12 +154,12 @@ where
 		#! acc = recons (digit, acc)
 		#! val = (val - digit) / rhs
 		= convToBase` acc val
-convFromBase :: !(Stack Number) !Number -> Number
-convFromBase {bounded=False} _ = NaN
+convFromBase :: !(MStack Number) !Number -> Number
+convFromBase (Just {finite=False}) _ = NaN
 convFromBase _ Zero = NaN
 convFromBase _ NaN = NaN
-convFromBase lhs rhs
-	= convFromBase` (S_length lhs - one) lhs.stack
+convFromBase (Just lhs) (Just rhs)
+	= convFromBase` (S_length lhs - one) (toStrictList lhs)
 where
 	convFromBase` _ [!] = Zero
 	convFromBase` place [!l:lhs]
@@ -152,27 +167,27 @@ where
 		= val + convFromBase` (dec place) lhs
 
 // vectorized ops
-vectorPlus :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorPlus :: !(MStack Number) !(MStack Number) -> (MStack Number)
 vectorPlus lhs rhs = S_zipWith (+) lhs rhs
-vectorTimes :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorTimes :: !(MStack Number) !(MStack Number) -> (MStack Number)
 vectorTimes lhs rhs = S_zipWith (*) lhs rhs
-vectorNegate :: !(Stack Number) -> (Stack Number)
+vectorNegate :: !(MStack Number) -> (MStack Number)
 vectorNegate arg = S_map (~) arg
-vectorAND :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorAND :: !(MStack Number) !(MStack Number) -> (MStack Number)
 vectorAND lhs rhs = S_zipWith bitAND lhs rhs
-vectorOR :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorOR :: !(MStack Number) !(MStack Number) -> (MStack Number)
 vectorOR lhs rhs = S_zipWith bitOR lhs rhs
-vectorIsEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorIsEqual :: !(MStack Number) !(MStack Number) -> (MStack Number)
 vectorIsEqual lhs rhs = S_zipWith isEqualTo lhs rhs
-vectorElementOf :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorElementOf :: !(MStack Number) !(MStack Number) -> (MStack Number)
 vectorElementOf lhs rhs = S_map (\e -> isElementOf e rhs) lhs
-vectorLessThan :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorLessThan :: !(MStack Number) !(MStack Number) -> (MStack Number)
 vectorLessThan lhs rhs = S_zipWith isLessThan lhs rhs
-vectorGreaterThan :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorGreaterThan :: !(MStack Number) !(MStack Number) -> (MStack Number)
 vectorGreaterThan lhs rhs = S_zipWith isGreaterThan lhs rhs
-vectorLessOrEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorLessOrEqual :: !(MStack Number) !(MStack Number) -> (MStack Number)
 vectorLessOrEqual lhs rhs = S_zipWith isLessOrEqual lhs rhs
-vectorGreaterOrEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorGreaterOrEqual :: !(MStack Number) !(MStack Number) -> (MStack Number)
 vectorGreaterOrEqual lhs rhs = S_zipWith isGreaterOrEqual lhs rhs
 
 // miscelaneous operators
@@ -180,18 +195,18 @@ toUppercase :: !Number -> Number
 toUppercase arg = fromInt (toUpperUChar (toInt arg))
 toLowercase :: !Number -> Number
 toLowercase arg = fromInt (toLowerUChar (toInt arg))
-splitOnNewlines :: !(Stack Number) -> (Stack Element)
+splitOnNewlines :: !(MStack Number) -> (Stack (MStack Number))
 splitOnNewlines arg
-	# (head, tail) = S_split (\e -> toInt e == 10) arg
-	| tail == zero
-		= fromSingle (El head)
+	# (head, tail) = S_span (\e -> toInt e <> 10) arg
+	| isNothing tail
+		= fromSingle head
 	| otherwise
-		= fromSingle (El head) + splitOnNewlines (tailOf tail)
+		= recons (head, splitOnNewlines (tailOf tail))
 
 // "set" operators
-fromLeftStepRight :: !Number !Number -> (Stack Number)
+fromLeftStepRight :: !Number !Number -> (MStack Number)
 fromLeftStepRight lhs rhs = fromStrictList [!lhs, lhs + rhs..] False
-fromOneToMiddle :: !Number -> (Stack Number)
+fromOneToMiddle :: !Number -> (MStack Number)
 fromOneToMiddle arg
 	| IS_CPLX arg
 		= fromSingle arg
@@ -202,7 +217,7 @@ fromOneToMiddle arg
 		= fromStrictList [!unit, unit + unit..arg] True
 	| otherwise
 		= fromSingle arg
-fromMiddleToZero :: !Number -> (Stack Number)
+fromMiddleToZero :: !Number -> (MStack Number)
 fromMiddleToZero arg
 	| IS_CPLX arg
 		= fromSingle arg
@@ -213,37 +228,40 @@ fromMiddleToZero arg
 		= fromStrictList [!arg, arg - unit..Zero] True
 	| otherwise
 		= fromSingle arg
-fromLeftTimesRight :: !Number !Number -> (Stack Number)
+fromLeftTimesRight :: !Number !Number -> (MStack Number)
 fromLeftTimesRight lhs rhs = fromStrictList (yieldTimesRight lhs) False
 where yieldTimesRight arg = [!arg:yieldTimesRight(arg*rhs)]
-setMinimum :: !(Stack Number) -> Number
-setMinimum {stack=[!]} = NaN
-setMinimum arg = S_reduce (min) (headOf arg) (tailOf arg)
-setMaximum :: !(Stack Number) -> Number
-setMaximum {stack=[!]} = NaN
-setMaximum arg = S_reduce (max) (headOf arg) (tailOf arg)
-setFilter :: !(Stack Number) !(Stack Number) -> (Stack Number)
+setMinimum :: !(MStack Number) -> Number
+setMinimum Nothing = NaN
+setMinimum (Just arg) = S_collapse min arg.head arg
+setMaximum :: !(MStack Number) -> Number
+setMaximum Nothing = NaN
+setMaximum (Just arg) = S_collapse max arg.head arg
+setFilter :: !(MStack Number) !(MStack Number) -> (MStack Number)
 setFilter lhs rhs = S_filterOn (toBool) lhs rhs
-antiFilter :: !(Stack Number) !(Stack Number) -> (Stack Number)
+antiFilter :: !(MStack Number) !(MStack Number) -> (MStack Number)
 antiFilter lhs rhs = S_filterOn (not o toBool) lhs rhs// [el \\ el <- lhs.stack & cond <- rhs.stack | (not o toBool) cond]
-dupesMiddle :: !(Stack Number) -> (Stack Number)
+dupesMiddle :: !(MStack Number) -> (MStack Number)
 dupesMiddle arg = S_filterBy (\e -> S_occurrences ((==) e) arg > 1) arg//[el \\ el <- arg | sum [1 \\ e <- arg | e == el] > 1]
-groupMiddle :: !(Stack Number) -> (Stack Element)
-groupMiddle arg=:{bounded}
+groupMiddle :: !(MStack Number) -> (Stack (MStack Number))
+groupMiddle arg=:{finite}
 	# list = toList arg
-	# groups = map (\e -> (El (fromList e False))) (group list) // TODO: all complete groups are bounded, find a way to implement that
-	= fromList groups bounded
-setIntersection :: !(Stack Number) !(Stack Number) -> (Stack Number)
-setIntersection lhs rhs = S_uniques (S_filterBy (\e -> S_any ((==) e) rhs) lhs)//removeDup (filter (\el -> isMember el rhs) lhs)
-setExclusion :: !(Stack Number) !(Stack Number) -> (Stack Number)
+	# groups = map (\e -> (Just (fromList e False))) (group list) // TODO: all complete groups are finite, find a way to implement that
+	= fromList groups finite
+setIntersection :: !(MStack Number) !(MStack Number) -> (MStack Number)
+setIntersection (Just lhs) (Just rhs) = S_uniques (S_filterBy (\e -> S_any ((==) e) rhs) lhs)
+	
+setExclusion :: !(MStack Number) !(MStack Number) -> (MStack Number)
 setExclusion lhs rhs = S_uniques ((S_filterBy (\el -> S_all ((<>)el) rhs) lhs) + (S_filterBy (\el -> S_all ((<>)el) lhs) rhs))
-numContigSubsets :: !(Stack Number) !(Stack Number) -> Number
-numContigSubsets {bounded=False} {bounded=False} = NaN
-numContigSubsets {bounded=False} _ = Zero
-numContigSubsets _ {bounded=False} = (Re (Inf Positive))
-numContigSubsets {stack=[!]} rhs = S_length rhs
-numContigSubsets {stack=lhs} {stack=rhs}
-	= fromInt (numContig lhs rhs)
+numContigSubsets :: !(MStack Number) !(MStack Number) -> Number
+numContigSubsets Nothing Nothing = one
+numContigSubsets _ Nothing = Zero
+numContigSubsets (Just {finite=False}) (Just {finite=False}) = NaN
+numContigSubsets (Just {finite=False}) _ = Zero
+numContigSubsets _ (Just {finite=False}) = (Re (Inf Positive))
+numContigSubsets Nothing (Just rhs) = S_length rhs
+numContigSubsets (Just lhs) (Just rhs)
+	= fromInt (numContig (toStrictList lhs) (toStrictList rhs))
 where
 	equateAll [!] _ = True
 	equateAll _ [!] = False
@@ -252,11 +270,11 @@ where
 	numContig lhs [!r:rhs]
 		#! val = if(equateAll lhs [!r:rhs]) 1 0
 		= val + numContig lhs rhs
-splitContig :: !(Stack Number) !(Stack Number) -> (Stack Element)
-splitContig {bounded=False} rhs = fromSingle (El rhs)
-splitContig {stack=[!]} rhs = S_map (\e -> El (fromSingle e)) rhs
-splitContig {stack=lhs} {stack=rhs, bounded}
-	= splitset {zero&bounded=bounded} zero lhs rhs
+splitContig :: !(MStack Number) !(MStack Number) -> (Stack (MStack Number))
+splitContig (Just {finite=False}) rhs = fromSingle rhs
+splitContig Nothing (Just rhs) = S_map (\e -> fromSingle (Just (fromSingle e))) rhs
+splitContig lhs rhs
+	= splitset {zero&finite=rhs.finite} zero (toStrictList lhs) (toStrictList rhs)
 where
 	equateAll [!] rhs = (True, rhs)
 	equateAll _ [!] = (False, [!])
@@ -266,28 +284,29 @@ where
 			= (eq, st)
 		| otherwise
 			= (False, [!r:rhs])
-	splitset acc head _ [!] = {acc&bounded=True} + fromSingle (El {head&bounded=True})
+	splitset acc head _ [!] = {acc&finite=True} +++ fromSingle {head&finite=True}
 	splitset acc head lhs [!r:rhs]
 		# (eq, st) = equateAll lhs [!r:rhs]
 		| eq
-			= splitset (acc + fromSingle (El {head&bounded=True})) zero lhs st
+			= splitset (acc +++ fromSingle {head&finite=True}) zero lhs st
 		| otherwise
-			= splitset acc (head + fromSingle r) lhs rhs
-contigSubsets :: !(Stack Number) -> (Stack Element)
-contigSubsets arg=:{stack=[!]} = fromSingle (El arg)
-contigSubsets arg
+			= splitset acc (head +++ fromSingle r) lhs rhs
+contigSubsets :: !(MStack Number) -> (Stack (MStack Number))
+contigSubsets Nothing = fromSingle Nothing
+contigSubsets (Just arg)
 	= initSubsets arg + contigSubsets (tailOf arg)
 where
-	initSubsets arg=:{stack=[!_]} = fromSingle (El arg)
+	initSubsets arg=:{init=[!],tail=[!]} = fromSingle arg
 	initSubsets arg
-		= recons (El arg, initSubsets (initOf arg))
+		= recons (arg, initSubsets (initOf arg))
 	
 // special cases
 complexSplit :: !Memory -> Memory
-complexSplit memory=:{left, right, main={stack=[!El {stack=[!_:_]}:_]}}
-	# (El mid, other) = decons memory.main
+complexSplit memory=:{left, right, above={head={head=Just _}}}
+	# (main, above) = decons memory.above
+	# (Just mid, main) = decons main
 	# (top, mid) = decons mid
-	= {memory&left=fromSingle (justReal top) + left,right=fromSingle (justImag top) + right,main=recons (El mid, other)}
+	= {memory&left=recons (justReal top, left),right=recons (justImag top, right),above.head.head=mid}
 complexSplit memory = memory
 
 matrixProduct :: !Memory -> Memory // returns multiple
@@ -300,10 +319,9 @@ joinWithNewlines :: !Memory -> Memory
 joinWithNewlines _ = abort "TBI"
 
 stacksFromCursor :: !Memory -> Memory
-stacksFromCursor memory=:{cursor,main=main`=:{stack=[!El mid`:other]}} = let
-		(base, _) = S_split (DELIM_FUNC False ((==)cursor)) memory.main
-		stacks = S_occurrences (IS_ELEM) base
-	in {memory&main={main`&stack=[!El (fromSingle (fromInt stacks) + mid`):other]}}
+stacksFromCursor memory=:{above}
+	# stacks = S_collapse (+) Zero (S_map S_length above)
+	= {memory&above.head.head=recons (stacks, above.head.head)}
 
 transposeFromCursor :: !Memory -> Memory
 transposeFromCursor _ = abort "TBI"/*
@@ -315,21 +333,15 @@ transposeFromCursor memory=:{cursor,main}
 	in {memory&main=transposed ++ other}
 */
 stackJoin :: !Memory -> Memory
-stackJoin memory=:{cursor,main}
-	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
-	= let
-		grouped = groupBy (\a b -> IS_DELIM a == IS_DELIM b) (toList base)
-		filtered = filter (all IS_ELEM) grouped
-		joined = map (foldl (\(El a) (El b) -> (El (b + a))) (El zero)) filtered
-	in mergeDelims {memory&main=fromList joined base.bounded + other}
+stackJoin memory=:{above}
+	# above = fromSingle (S_reduce (+++) zero (S_map (S_reduce (+++) zero)) above)
+	= {memory&above=above}
 
 stackUnjoin :: !Memory -> Memory
-stackUnjoin memory=:{cursor, delims, main}
-	# (El mid, other) = decons main
-	# singles = case mid.stack of
-		[!] = fromSingle (El zero)
-		_ = S_map (\el -> (El (fromSingle el))) mid
-	= {memory&cursor=delims,delims=inc delims,main=singles + recons (Delim delims, other)}
+stackUnjoin memory=:{above}
+	# main = S_map fromSingle above.head
+	= {memory&above=main+++(fallback (tailOf above))}
+	
 	
 removeDupBase :: !Memory -> Memory
 removeDupBase _ = abort "TBI"/*
@@ -341,8 +353,11 @@ removeDupBase memory=:{cursor,main}
 	in {memory&main=deduped ++ other}
 */
 repeatTopMiddle :: !Memory -> Memory
-repeatTopMiddle memory=:{delims,main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
-	= {memory&delims=inc delims,main={main`&stack=[!El (fromList (repeat top) False),Delim delims,El (fromStrictList mid mid`.bounded):other]}}
+repeatTopMiddle memory=:{above={head={head=Just mid}}}
+	# (top, mid) = decons mid
+	# rep = {head=top,init=Repeat top,tail=Repeat top,finite=False}
+	# above = let main = memory.above.head in {memory.above&head={main&head=Just rep,init=[!mid:main.init]}}
+	= {memory&above=above}
 repeatTopMiddle memory = memory
 	
 repeatFullMiddle :: !Memory -> Memory
@@ -364,55 +379,65 @@ sortBaseline memory=:{cursor,main}
 */
 stackReverse :: !StackID !Memory -> Memory
 stackReverse Left memory=:{left}
-	= {memory&left=S_reverse left}
+	= {memory&left=mapMaybe S_reverse left}
 stackReverse Right memory=:{right}
-	= {memory&right=S_reverse right}
-stackReverse Middle memory=:{main=main`=:{stack=[!El mid`:other]}}
-	= {memory&main={main`&stack=[!El (S_reverse mid`):other]}}
+	= {memory&right=mapMaybe S_reverse right}
+stackReverse Middle memory=:{above={head={head=mid}}}
+	= {memory&above.head.head=mapMaybe S_reverse mid}
 stackReverse Both memory=:{left, right}
-	= {memory&left=S_reverse left, right=S_reverse right}
-stackReverse Primary memory=:{cursor,main}
-	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
-	= {memory&main=S_map (APPLY_ELEM S_reverse) base + other}
-stackReverse Base memory=:{cursor,main}
-	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
-	= mergeDelims {memory&main=S_reverse base + other}
+	= {memory&left=mapMaybe S_reverse left, right=mapMaybe S_reverse right}
+stackReverse Primary memory=:{above}
+	= {memory&above=S_map (S_map (mapMaybe o S_reverse)) above}
+stackReverse Base memory=:{above}
+	= {memory&above=S_map S_reverse above}
 
 stackRotate :: !StackID !Memory -> Memory
-stackRotate _ memory=:{main={stack=[!El {stack=[!]}:_]}} = memory
-stackRotate Left memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
-	= {memory&left=S_rotate (toInt top) left,main={main`&stack=[!El {mid`&stack=mid}:other]}}
-stackRotate Right memory=:{right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
-	= {memory&right=S_rotate (toInt top) right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
-stackRotate Both memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
+stackRotate _ memory=:{above={head={head=Nothing}}} = memory
+stackRotate Left memory=:{left, above}
+	# (top, mid) = decons (fromJust above.head.head)
+	= {memory&left=mapMaybe (S_rotate (toInt top)) left,above.head.head=mid}
+stackRotate Right memory=:{right, above}
+	# (top, mid) = decons (fromJust above.head.head)
+	= {memory&right=mapMaybe (S_rotate (toInt top)) right,above.head.head=mid}
+stackRotate Both memory=:{left, right, above}
+	# (top, mid) = decons (fromJust above.head.head)
+	= let rotate = mapMaybe (S_rotate (toInt top))
+	in {memory&left=rotate left,right=rotate right,above.head.head=mid}
+stackRotate Middle memory=:{above}
+	# (top, mid) = decons (fromJust above.head.head)
+	= let rotate = mapMaybe (S_rotate (toInt top))
+	in {memory&above.head.head=rotate mid}
+stackRotate Primary memory=:{above}
+	# (top, mid) = decons (fromJust above.head.head)
+	= let rotate = mapMaybe (S_rotate (toInt top))
+	in {memory&above=S_map (S_map rotate) {above&head.head=mid}}
+stackRotate Base memory=:{above}
+	# (top, mid) = decons (fromJust above.head.head)
 	= let rotate = S_rotate (toInt top)
-	in {memory&left=rotate left,right=rotate right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
-stackRotate Middle memory=:{main=main`=:{stack=[!El mid`:other]}}
-	= let rotate = S_rotate (toInt (headOf mid`))
-	in {memory&main={main`&stack=[!El (rotate (tailOf mid`)):other]}}
-stackRotate Primary memory=:{cursor, main=main`=:{stack=[!El mid`=:{stack=[!top:_]}:other]}}
-	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El (tailOf mid`):other]}
-	= let rotate = S_rotate (toInt top)
-	in {memory&main=S_map (APPLY_ELEM rotate) base + other}
-stackRotate Base memory=:{cursor,main=main`=:{stack=[!El mid`=:{stack=[!top:_]}:other]}}
-	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El (tailOf mid`):other]}
-	= let rotate = S_rotate (toInt top)
-	in mergeDelims {memory&main=rotate base + other}
-
+	in {memory&above=S_map rotate {above&head.head=mid}}
 
 stackDelete :: !StackID !Memory -> Memory
 stackDelete Left memory = {memory&left=zero}
 stackDelete Right memory = {memory&right=zero}
-stackDelete Middle memory=:{main}
-	= {memory&main=tailOf main}
+stackDelete Middle memory=:{above}
+	# (main, above) = decons above
+	# main = tailOf main
+	| isNothing main
+		= {memory&above=fallback above}
+	| otherwise
+		= {memory&above=recons (fallback main, above)}
 stackDelete Both memory = {memory&left=zero,right=zero}
-stackDelete Base memory=:{cursor,main}
-	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
-	= mergeDelims {memory&main=other}
-stackDelete Main memory = {memory&main=zero}
-stackDelete Every memory = {memory&left=zero,right=zero,main=zero}
+stackDelete Base memory=:{above, below}
+	| isNothing below
+		= {memory&above=zero}
+	| otherwise
+		# (main, below) = decons (fromJust below)
+		= {memory&above=fromSingle main,below=below}
+stackDelete Main memory = {memory&above=zero,below=zero}
+stackDelete Every memory = {memory&left=zero,right=zero,above=zero,below=zero}
 
 stackDrop :: !StackID !Memory -> Memory
+stackDrop _ mem = mem /*
 stackDrop _ memory=:{main={stack=[!El {stack=[!]}:_]}} = memory
 stackDrop Left memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}} = let
 		val = toInt top
@@ -436,36 +461,32 @@ stackDrop Base memory=:{cursor, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}
 		val = toInt top
 		fn = if(val<0) (S_take(~val)) (S_drop val)
 	in mergeDelims {memory&main=fn base + other}
-	
+	*/
 cycleTops :: !Rotation !Memory -> Memory
-//cycleTops Clockwise memory=:{left, main=[El mid:other], right}
-//	= {memory&left=SAFE_HEAD right++SAFE_TAIL left,right=SAFE_HEAD mid++SAFE_TAIL right,main=[El(SAFE_HEAD left++SAFE_TAIL mid):other]}
-cycleTops Anticlockwise memory=:{left, main, right}
+cycleTops _ mem = mem
+/*cycleTops Anticlockwise memory=:{left, above, right}
 	# (El mid, other) = decons main
 	# (top, mid) = safeDecon mid
 	# (lhs, left) = safeDecon left
 	# (rhs, right) = safeDecon right
-	= {memory&left=rhs + left,right=mid + right,main=recons (El (lhs + mid), other)}
+	= {memory&left=rhs + left,right=mid + right,main=recons (El (lhs + mid), other)}*/
 
 cycleStacks :: !Rotation !Memory -> Memory
-//cycleStacks Clockwise memory=:{left, main=[El mid:other], right}
-//	= {memory&left=right,right=mid,main=[El left:other]}
-cycleStacks Anticlockwise memory=:{left, main, right}
-	# (El mid, other) = decons main
-	= {memory&left=right,right=mid,main=recons (El left, other)}
+cycleStacks Anticlockwise memory=:{left, right, above}
+	= {memory&left=right,right=above.head.head,above.head.head=left}
 
 unpackLeftRight :: !Memory -> Memory
-unpackLeftRight memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!lhs,rhs:mid]}:other]}, right}
-	= {memory&left=fromSingle lhs + left,right=fromSingle rhs + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
-unpackLeftRight memory=:{left, main=main`=:{stack=[!El {stack=[!lhs]}:other]}}
-	= {memory&left=fromSingle lhs + left,main={main`&stack=[!El zero:other]}}
+//unpackLeftRight memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!lhs,rhs:mid]}:other]}, right}
+//	= {memory&left=fromSingle lhs + left,right=fromSingle rhs + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+//unpackLeftRight memory=:{left, main=main`=:{stack=[!El {stack=[!lhs]}:other]}}
+//	= {memory&left=fromSingle lhs + left,main={main`&stack=[!El zero:other]}}
 unpackLeftRight memory = memory
 
 unpackRightLeft :: !Memory -> Memory
-unpackRightLeft memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!rhs,lhs:mid]}:other]}, right}
-	= {memory&left=fromSingle lhs + left,right=fromSingle rhs + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
-unpackRightLeft memory=:{right, main=main`=:{stack=[!El {stack=[!rhs]}:other]}}
-	= {memory&right=fromSingle rhs + right,main={main`&stack=[!El zero:other]}}
+//unpackRightLeft memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!rhs,lhs:mid]}:other]}, right}
+//	= {memory&left=fromSingle lhs + left,right=fromSingle rhs + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
+//unpackRightLeft memory=:{right, main=main`=:{stack=[!El {stack=[!rhs]}:other]}}
+//	= {memory&right=fromSingle rhs + right,main={main`&stack=[!El zero:other]}}
 unpackRightLeft memory = memory
 
 swapLeftRight :: !Memory -> Memory
@@ -473,62 +494,62 @@ swapLeftRight memory=:{left, right}
 	= {memory&left=right,right=left}
 
 swapTop :: !Axes !Memory -> Memory
-swapTop Horizontal memory=:{left, right}
-	= {memory&left=safeHead right + safeTail left,right=safeHead left + safeTail right}
-swapTop Vertical memory=:{main=main`=:{stack=[!El mid`:other]}}
-	= {memory&main={main`&stack=[!El (safeLast mid` + safeInit mid`):other]}}
-swapTop Identity memory=:{main=main`=:{stack=[!El mid`:other]}, right}
-	= {memory&right=safeHead mid` + safeTail right,main={main`&stack=[!El(safeHead right + safeTail mid`):other]}}
-swapTop Inverse memory=:{main=main`=:{stack=[!El mid`:other]}, left}
-	= {memory&left=safeHead mid` + safeTail left,main={main`&stack=[!El(safeHead left + safeTail mid`):other]}}
+swapTop Horizontal memory=:{left, right} = let
+		(left`, right`) = S_swap left right
+	in {memory&left=left`, right=right`}
+swapTop Vertical _  = abort "TBI"
+//swapTop Vertical memory=:{main=main`=:{stack=[!El mid`:other]}}
+//	= {memory&main={main`&stack=[!El (safeLast mid` + safeInit mid`):other]}}
+swapTop Identity memory=:{right, above} = let
+		(right`, mid`) = S_swap right above.head.head
+	in {memory&right=right`,above.head.head=mid`}
+swapTop Inverse memory=:{left, above} = let
+		(left`, mid`) = S_swap left above.head.head
+	in {memory&left=left`,above.head.head=mid`}
 swapTop _ memory = memory	
 
 moveTop :: !Direction !Memory -> Memory
-moveTop East memory=:{left, right}
-	= {memory&left=safeTail left,right=safeHead left + right}
-moveTop West memory=:{left, right}
-	= {memory&left=safeHead right + left,right=safeTail right}
-moveTop South memory=:{main={stack=[!El {stack=[!_,_:_]}:_]}}
-	# (El mid, other) = decons memory.main
-	# (top, next, mid) = decon2 mid
-	= {memory&main=recons (El (recon2 (next, top, mid)), other)}
-moveTop NorthWest memory=:{main={stack=[!El {stack=[!_:_]}:_]}}
-	# (El mid, other) = decons memory.main
+moveTop East memory=:{left=(Just left), right}
+	# (lhs, left) = decons left
+	= {memory&left=left,right=recons (lhs, right)}
+moveTop West memory=:{left, right=(Just right)}
+	# (rhs, right) = decons right
+	= {memory&left=recons (rhs, left),right=right}
+moveTop South memory=:{above={head={head=Just _}}}
+	# mid = sanitize (fromJust memory.above.head.head)
+	| IsEmpty mid.init
+		= {memory&above.head.head=Just mid}
+	| otherwise
+		= {memory&above.head.head=Just{mid&head=Hd mid.init,init=[!mid.head:Tl mid.init]}}
+moveTop NorthWest memory=:{left, above={head={head=Just mid}}}
 	# (top, mid) = decons mid
-	= {memory&left=recons (top, memory.left),main=recons (El mid, other)}
-moveTop NorthEast memory=:{main={stack=[!El {stack=[!_:_]}:_]}}
-	# (El mid, other) = decons memory.main
+	= {memory&left=recons (top, left),above.head.head=mid}
+moveTop NorthEast memory=:{right, above={head={head=Just mid}}}
 	# (top, mid) = decons mid
-	= {memory&right=recons (top, memory.right),main=recons (El mid, other)}
-moveTop SouthWest memory=:{right={stack=[!_:_]}, main={stack=[!El _:_]}}
-	# (El mid, other) = decons memory.main
-	# (top, right) = decons memory.right
-	= {memory&right=right,main=recons (El (recons (top, mid)), other)}
-moveTop SouthEast memory=:{left={stack=[!_:_]}, main={stack=[!El _:_]}}
-	# (El mid, other) = decons memory.main
-	# (top, left) = decons memory.left
-	= {memory&left=left,main=recons (El (recons (top, mid)), other)}
+	= {memory&right=recons (top, right),above.head.head=mid}
+moveTop SouthWest memory=:{right=(Just right), above}
+	# (rhs, right) = decons right
+	= {memory&right=right,above.head.head=Just (recons (rhs, above.head.head))}
+moveTop SouthEast memory=:{left=(Just left), above}
+	# (lhs, left) = decons left
+	= {memory&left=left,above.head.head=Just (recons (lhs, above.head.head))}
 moveTop _ memory = memory
 
 copyTop :: !Direction !Memory -> Memory
-copyTop East memory
-	= {memory&left=safeHead memory.right + memory.left}
-copyTop West memory
-	= {memory&right=safeHead memory.left + memory.right}
-copyTop North memory=:{main={stack=[!El {stack=[!_:_]}:_]}}
-	# (El mid, other) = decons memory.main
-	# (top, mid) = decons mid
-	= {memory&main=recons (El (recon2 (top, top, mid)), other)}
-copyTop NorthWest memory=:{main={stack=[!El {stack=[!top:_]}:_]}}
-	= {memory&left=recons (top, memory.left)}
-copyTop NorthEast memory=:{main={stack=[!El {stack=[!top:_]}:_]}}
-	= {memory&right=recons (top, memory.right)}
-copyTop SouthWest memory
-	# (El mid, other) = decons memory.main
-	= {memory&main=recons (El (safeHead memory.right + mid), other)}
-copyTop SouthEast memory
-	# (El mid, other) = decons memory.main
-	= {memory&main=recons (El (safeHead memory.left + mid), other)}
+copyTop East memory=:{left=(Just {head}), right}
+	= {memory&right=Just (recons (head, right))}
+copyTop West memory=:{left, right=(Just {head})}
+	= {memory&left=Just (recons (head, left))}
+copyTop North memory=:{above={head={head=Just{head}}}}
+	= {memory&above.head.head=Just (recons (head, memory.above.head.head))}
+copyTop NorthWest memory=:{left, above={head={head=Just{head}}}}
+	= {memory&left=Just (recons (head, left))}
+copyTop NorthEast memory=:{right, above={head={head=Just{head}}}}
+	= {memory&right=Just (recons (head, right))}
+copyTop SouthWest memory=:{right=Just{head}, above}
+	= {memory&above.head.head=Just (recons (head, above.head.head))}
+copyTop SouthEast memory=:{left=Just{head}, above}
+	= {memory&above.head.head=Just (recons (head, above.head.head))}
 copyTop _ memory = memory
 
 copyBoth :: !Axes !Memory -> Memory

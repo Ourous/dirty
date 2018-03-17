@@ -55,13 +55,15 @@ where
 S_map fn arg :== {arg&head=fn arg.head,init=MapM fn arg.init,tail=MapM fn arg.tail}
 S_reduce fn acc arg :== reduce fn acc (toStrictList arg)
 S_collapse fn acc arg :== reduce fn (reduce fn (fn acc arg.head) arg.init) arg.tail
-//S_split :: !(a -> Bool) !.(Stack a) ->  *(MStack a, MStack a)
-//S_reverse :: !.(Stack a) -> .(Stack a)
+S_span :: !(a -> Bool) !.(Stack a) ->  *(MStack a, MStack a)
+S_reverse ::  u:(Stack a) -> v:(Stack a), [u <= v]
 S_rotate ::  !Int u:(Stack a) -> v:(Stack a), [u <= v]
 //S_take :: !Int !.(Stack a) -> .(Stack a)
 S_take num arg :== fromStrictList (TakeM num (toStrictList arg)) True
 S_drop num arg :== {(fromStrictList (DropM num (toStrictList arg)) arg.finite)&tail=if(arg.finite)[!]arg.tail}
 //S_drop :: !Int !.(Stack a) -> .(Stack a)
+S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
+S_swap :: !.(MStack a) !.(MStack a) -> *(MStack a, MStack a)
 S_sort :: !.(Stack a) -> .(Stack a) | Ord a
 S_length arg :== one + (reduce (\_ = \b -> inc b) (reduce (\_ = \b -> inc b) arg.tail) arg.init) 
 //S_occurrences :: !(a -> Bool) !.(Stack a) -> Int

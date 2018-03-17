@@ -10,13 +10,13 @@ isEqualTo :: !Number !Number -> Number
 isLessOrEqual :: !Number !Number -> Number
 isGreaterOrEqual :: !Number !Number -> Number
 isNotEqual :: !Number !Number -> Number
-isIdentical :: !(Stack Number) !(Stack Number) -> Number
+isIdentical :: !(MStack Number) !(MStack Number) -> Number
 
-isElementOf :: !Number !(Stack Number) -> Number
+isElementOf :: !Number !(MStack Number) -> Number
 
-isImproperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
-isProperSubsetOf :: !(Stack Number) !(Stack Number) -> Number
-isNotSubsetOf :: !(Stack Number) !(Stack Number) -> Number
+isImproperSubsetOf :: !(MStack Number) !(MStack Number) -> Number
+isProperSubsetOf :: !(MStack Number) !(MStack Number) -> Number
+isNotSubsetOf :: !(MStack Number) !(MStack Number) -> Number
 
 isUppercase :: !Number -> Number
 isLowercase :: !Number -> Number
@@ -27,17 +27,17 @@ isInfinite :: !Number -> Number
 
 isPrime :: !Number -> Number
 
-isSorted :: !(Stack Number) -> Number
+isSorted :: !(MStack Number) -> Number
 
-areAnyTrue :: !(Stack Number) -> Number
-areAllTrue :: !(Stack Number) -> Number
+areAnyTrue :: !(MStack Number) -> Number
+areAllTrue :: !(MStack Number) -> Number
 
 // coalescing operators
 logicEquiv :: !Number -> Number
 logicNegate :: !Number -> Number
 
 // remaining math ops
-primeFactors :: !Number -> (Stack Number)
+primeFactors :: !Number -> (MStack Number)
 conjugate :: !Number -> Number
 justReal :: !Number -> Number
 justImag :: !Number -> Number
@@ -46,48 +46,48 @@ imagUnit :: !Number -> Number
 numPermute :: !Number !Number -> Number
 numCombin :: !Number !Number -> Number
 logarithm :: !Number !Number -> Number
-numProduct :: !(Stack Number) -> Number
-numSum :: !(Stack Number) -> Number
-numAverage :: !(Stack Number) -> Number
-convToBase :: !Number !Number -> (Stack Number)
-convFromBase :: !(Stack Number) !Number -> Number
+numProduct :: !(MStack Number) -> Number
+numSum :: !(MStack Number) -> Number
+numAverage :: !(MStack Number) -> Number
+convToBase :: !Number !Number -> (MStack Number)
+convFromBase :: !(MStack Number) !Number -> Number
 
 // vectorized ops
-vectorPlus :: !(Stack Number) !(Stack Number) -> (Stack Number)
-vectorTimes :: !(Stack Number) !(Stack Number) -> (Stack Number)
-vectorNegate :: !(Stack Number) -> (Stack Number)
-vectorAND :: !(Stack Number) !(Stack Number) -> (Stack Number)
-vectorOR :: !(Stack Number) !(Stack Number) -> (Stack Number)
-vectorIsEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
-vectorElementOf :: !(Stack Number) !(Stack Number) -> (Stack Number)
-vectorLessThan :: !(Stack Number) !(Stack Number) -> (Stack Number)
-vectorGreaterThan :: !(Stack Number) !(Stack Number) -> (Stack Number)
-vectorLessOrEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
-vectorGreaterOrEqual :: !(Stack Number) !(Stack Number) -> (Stack Number)
+vectorPlus :: !(MStack Number) !(MStack Number) -> (MStack Number)
+vectorTimes :: !(MStack Number) !(MStack Number) -> (MStack Number)
+vectorNegate :: !(MStack Number) -> (MStack Number)
+vectorAND :: !(MStack Number) !(MStack Number) -> (MStack Number)
+vectorOR :: !(MStack Number) !(MStack Number) -> (MStack Number)
+vectorIsEqual :: !(MStack Number) !(MStack Number) -> (MStack Number)
+vectorElementOf :: !(MStack Number) !(MStack Number) -> (MStack Number)
+vectorLessThan :: !(MStack Number) !(MStack Number) -> (MStack Number)
+vectorGreaterThan :: !(MStack Number) !(MStack Number) -> (MStack Number)
+vectorLessOrEqual :: !(MStack Number) !(MStack Number) -> (MStack Number)
+vectorGreaterOrEqual :: !(MStack Number) !(MStack Number) -> (MStack Number)
 
 // miscelaneous operators
 toUppercase :: !Number -> Number
 toLowercase :: !Number -> Number
-splitOnNewlines :: !(Stack Number) -> (Stack Element)
+splitOnNewlines :: !(MStack Number) -> (Stack (MStack Number))
 //MORE TO COME
 
 // "set" operators
-fromLeftStepRight :: !Number !Number -> (Stack Number)
-fromOneToMiddle :: !Number -> (Stack Number)
-fromMiddleToZero :: !Number -> (Stack Number)
-fromLeftTimesRight :: !Number !Number -> (Stack Number)
-setMinimum :: !(Stack Number) -> Number
-setMaximum :: !(Stack Number) -> Number
-setFilter :: !(Stack Number) !(Stack Number) -> (Stack Number)
-antiFilter :: !(Stack Number) !(Stack Number) -> (Stack Number)
-groupMiddle :: !(Stack Number) -> (Stack Element)
-dupesMiddle :: !(Stack Number) -> (Stack Number)
-setIntersection :: !(Stack Number) !(Stack Number) -> (Stack Number)
-setExclusion :: !(Stack Number) !(Stack Number) -> (Stack Number)
-numContigSubsets :: !(Stack Number) !(Stack Number) -> Number
-splitContig :: !(Stack Number) !(Stack Number) -> (Stack Element)
-contigSubsets :: !(Stack Number) -> (Stack Element)
-//powerset :: (Stack Number) -> (Stack Element)
+fromLeftStepRight :: !Number !Number -> (MStack Number)
+fromOneToMiddle :: !Number -> (MStack Number)
+fromMiddleToZero :: !Number -> (MStack Number)
+fromLeftTimesRight :: !Number !Number -> (MStack Number)
+setMinimum :: !(MStack Number) -> Number
+setMaximum :: !(MStack Number) -> Number
+setFilter :: !(MStack Number) !(MStack Number) -> (MStack Number)
+antiFilter :: !(MStack Number) !(MStack Number) -> (MStack Number)
+groupMiddle :: !(MStack Number) -> (Stack (MStack Number))
+dupesMiddle :: !(MStack Number) -> (MStack Number)
+setIntersection :: !(MStack Number) !(MStack Number) -> (MStack Number)
+setExclusion :: !(MStack Number) !(MStack Number) -> (MStack Number)
+numContigSubsets :: !(MStack Number) !(MStack Number) -> Number
+splitContig :: !(MStack Number) !(MStack Number) -> (Stack (MStack Number))
+contigSubsets :: !(MStack Number) -> (Stack (MStack Number))
+//powerset :: (MStack Number) -> (Stack (MStack Number))
 
 // special cases
 complexSplit :: !Memory -> Memory

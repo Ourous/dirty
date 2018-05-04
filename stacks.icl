@@ -8,73 +8,53 @@ instance == (Stack t) | Eq t where
 instance +++ (Stack t) where
 	(+++) lhs=:{finite=False} rhs=:{finite=False}
 		= {lhs&tail=rhs.tail}
-instance +++ (MStack t) where
-	(+++) Nothing Nothing = Nothing
 		
 instance toString (Stack t) | toString t where
-	toString {head,finite=False} = "[" <+ head <+ "...]"
+	toString {head=[!h:_],tail=[!t:_],finite=False} = "[" <+ h <+ "..." <+ t <+ "]"
+	toString {head=[!h:_],finite=False} = "[" <+ h <+ "...]"
+	toString {tail=[!t:_],finite=False} = "[..." <+ t <+ "]"
 	toString arg = "["+join","(map toString (toList arg))+"]"
-instance toString (MStack t) | toString t where
-	toString Nothing = "[]"
-	toString (Just stack) = toString stack
 		
-instance zero (Stack t) | zero t where
-	zero = {head=zero,init=[!],tail=[!],finite=True}
-instance zero (MStack t) where
-	zero = Nothing
+instance zero (Stack t) where
+	zero = {head=[!],tail=[!],finite=True}
+	
+normalize :: !.(Stack a) -> .(Stack a)
+normalize arg=:{head=[!_:_],tail=[!_:_]} = arg
+normalize arg=:{finite=False} = arg
+normalize arg=:{head=head=:[!_,_:_],tail=[!],finite=True}
+	# (head, tail) = splitAt_strict (((LengthM head)+1)/2) head
+	= {arg&head=head,tail=ReverseM tail}
+normalize arg=:{head=[!],tail=tail=:[!_:_],finite=True}
+	# (tail, head) = splitAt_strict ((LengthM tail)/2) tail
+	= {arg&head=ReverseM head,tail=tail}
 		
-decons :: !.(Stack a) -> *(!a, !.MStack a)
-decons arg=:{head,init=[!],tail=[!]} = (head, Nothing)
-decons arg=:{head,init=[!h:t]} = (head, Just {arg&head=h,init=t})
+decons :: !.(Stack a) -> *(!Maybe a, !.Stack a)
+decons arg=:{head=[!],tail=[!]} = (Nothing, arg)
+decons arg=:{head=[!h:t]} = (Just head, {arg&head=t})
 decons arg=:{tail=[!_:_]}
-	# arg = sanitize arg
-	= let {head, init=[!h:t]} = arg
-	in (head, Just {arg&head=h,init=t})
+	# arg = normalize arg
+	= let {head=[!h:t]} = arg
+	in (Just h, {arg&head=t})
 
-recons :: !*(!a, !.(MStack a)) -> .(Stack a)
-recons (h, Just arg=:{head,init}) = {arg&head=h,init=[!head:init]}
-recons (h, Nothing) = fromSingle h
+recons :: !*(!a, !.(Stack a)) -> .(Stack a)
+recons (val, arg=:{head}) = {arg&head=[!val:head]}
 
-lastOf :: !.(Stack a) -> a
-lastOf arg=:{tail=[!l:_]} = l
-lastOf arg=:{init=[!]} = arg.head
-lastOf arg = Last arg.init
 
-tailOf :: !.(Stack a) -> .(MStack a)
-tailOf arg=:{init=[!h:t]} = (Just {arg&head=h,init=t})
-tailOf arg=:{tail=[!_:_]} = (Just {arg&head=Last arg.tail,tail=Init arg.tail})
-tailOf arg=:{init=[!],tail=[!]} = Nothing
-initOf :: !.(Stack a) -> .(MStack a)
-initOf arg=:{tail=[!_:t]} = (Just {arg&tail=t})
-initOf arg=:{init=[!_:_]} = (Just {arg&init=Init arg.init})
-initOf arg=:{init=[!],tail=[!]} = Nothing
-
-S_filterBy :: !(a -> Bool) !.(Stack a) -> .(MStack a)
+S_filterBy :: !(a -> Bool) !.(Stack a) -> .(Stack a)
 S_filterBy fn arg
-	| fn arg.head
-		= (Just {arg&init=init`,tail=tail`})
-	| not (IsEmpty init`)
-		= (Just {arg&head=Hd init`,init=Tl init`,tail=tail`})
-	| not (IsEmpty tail`)
-		= (Just {arg&head=Last tail`,init=init`,tail=Init tail`})
-	| otherwise
-		= Nothing
+	= {arg&head=Filter fn arg.head,tail=Filter fn arg.tail}
 where
-	init` => Filter fn arg.init
+	head` => Filter fn arg.head
 	tail` => Filter fn arg.tail
 
-S_filterOn :: !(b -> Bool) !.(Stack a) !.(Stack b) -> .(MStack a)
+S_filterOn :: !(b -> Bool) !.(Stack a) !.(Stack b) -> .(Stack a)
 S_filterOn fn lhs rhs
-	| fn rhs.head
-		= (Just {lhs&init=init`,tail=[!]})
-	| not (IsEmpty init`)
-		= (Just {lhs&head=Hd init`,init=Tl init`,tail=[!]})
-	| otherwise
-		= Nothing
+	= {lhs`&head=[!el\\el<-lhs`.head&cond<-rhs`.head|fn cond]}
 where
-	init` => (fst o Unzip o Filter (\(_, e) -> fn e)) (Zip2 (toStrictList lhs) (toStrictList rhs))
+	lhs` = forceHead lhs
+	rhs` = forceHead rhs
 	
-S_span :: !(a -> Bool) !.(Stack a) ->  *(MStack a, MStack a)
+S_span :: !(a -> Bool) !.(Stack a) ->  *(Stack a, Stack a)
 S_span fn arg
 	# (l, r) = Span fn (toStrictList arg)
 	= (fsl l, fsl r)

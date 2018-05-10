@@ -312,20 +312,21 @@ where
 			= splitset acc (head +++ fromSingle r) lhs rhs
 contigSubsets :: !(MStack Number) -> (Stack (MStack Number))
 contigSubsets Nothing = fromSingle Nothing
+/*
 contigSubsets (Just arg)
 	= initSubsets arg + contigSubsets (tailOf arg)
 where
 	initSubsets arg=:{init=[!],tail=[!]} = fromSingle arg
 	initSubsets arg
 		= recons (arg, initSubsets (initOf arg))
-	
+*/
 // special cases
 complexSplit :: !Memory -> Memory
 complexSplit memory=:{left, right, above={head={head=Just _}}}
 	# (main, above) = decons memory.above
 	# (Just mid, main) = decons main
 	# (top, mid) = decons mid
-	= {memory&left=recons (justReal top, left),right=recons (justImag top, right),above.head.head=mid}
+	= {memory&left=Just (recons (justReal top, left)),right=Just (recons (justImag top, right)),above.head.head=mid}
 complexSplit memory = memory
 
 matrixProduct :: !Memory -> Memory // returns multiple
@@ -339,8 +340,12 @@ joinWithNewlines _ = abort "TBI"
 
 stacksFromCursor :: !Memory -> Memory
 stacksFromCursor memory=:{above}
-	# stacks = S_collapse (+) Zero (S_map S_length above)
-	= {memory&above.head.head=recons (stacks, above.head.head)}
+	= {memory&above.head.head=Just (recons (stacks, above.head.head))}
+where
+	lengths :: (Stack  Number)
+	lengths = S_map ((S_collapse (+) zero) o S_map (S_length o fallback)) above
+	stacks :: Number
+	stacks = S_collapse (+) zero lengths
 
 transposeFromCursor :: !Memory -> Memory
 transposeFromCursor _ = abort "TBI"/*
@@ -352,9 +357,7 @@ transposeFromCursor memory=:{cursor,main}
 	in {memory&main=transposed ++ other}
 */
 stackJoin :: !Memory -> Memory
-stackJoin memory=:{above}
-	# above = fromSingle (S_reduce (+++) zero (S_map (S_reduce (+++) zero)) above)
-	= {memory&above=above}
+stackJoin _ = abort "TODO: joining with proper partitioning"
 
 stackUnjoin :: !Memory -> Memory
 stackUnjoin memory=:{above}
@@ -406,7 +409,7 @@ stackReverse Middle memory=:{above={head={head=mid}}}
 stackReverse Both memory=:{left, right}
 	= {memory&left=mapMaybe S_reverse left, right=mapMaybe S_reverse right}
 stackReverse Primary memory=:{above}
-	= {memory&above=S_map (S_map (mapMaybe o S_reverse)) above}
+	= {memory&above=S_map (S_map (mapMaybe S_reverse)) above}
 stackReverse Base memory=:{above}
 	= {memory&above=S_map S_reverse above}
 
@@ -530,10 +533,10 @@ swapTop _ memory = memory
 moveTop :: !Direction !Memory -> Memory
 moveTop East memory=:{left=(Just left), right}
 	# (lhs, left) = decons left
-	= {memory&left=left,right=recons (lhs, right)}
+	= {memory&left=left,right=Just (recons (lhs, right))}
 moveTop West memory=:{left, right=(Just right)}
 	# (rhs, right) = decons right
-	= {memory&left=recons (rhs, left),right=right}
+	= {memory&left=Just (recons (rhs, left)),right=right}
 moveTop South memory=:{above={head={head=Just _}}}
 	# mid = sanitize (fromJust memory.above.head.head)
 	| IsEmpty mid.init
@@ -542,10 +545,10 @@ moveTop South memory=:{above={head={head=Just _}}}
 		= {memory&above.head.head=Just{mid&head=Hd mid.init,init=[!mid.head:Tl mid.init]}}
 moveTop NorthWest memory=:{left, above={head={head=Just mid}}}
 	# (top, mid) = decons mid
-	= {memory&left=recons (top, left),above.head.head=mid}
+	= {memory&left=Just (recons (top, left)),above.head.head=mid}
 moveTop NorthEast memory=:{right, above={head={head=Just mid}}}
 	# (top, mid) = decons mid
-	= {memory&right=recons (top, right),above.head.head=mid}
+	= {memory&right=Just (recons (top, right)),above.head.head=mid}
 moveTop SouthWest memory=:{right=(Just right), above}
 	# (rhs, right) = decons right
 	= {memory&right=right,above.head.head=Just (recons (rhs, above.head.head))}
@@ -573,7 +576,7 @@ copyTop _ memory = memory
 
 copyBoth :: !Axes !Memory -> Memory
 copyBoth Horizontal memory=:{left=(Just left), right=(Just right)}
-	= {memory&left=Just (recons (right.head, left)),right=Just (recons (left.head,right))}
+	= {memory&left=Just (recons (right.head, Just left)),right=Just (recons (left.head, Just right))}
 copyBoth Horizontal memory=:{left=Nothing, right=(Just right)}
 	= {memory&left=Just (fromSingle right.head)}
 copyBoth Horizontal memory=:{left=(Just left), right=Nothing}
@@ -609,12 +612,12 @@ moveAll SouthEast memory=:{left, above}
 	= {memory&left=zero,above.head=fromSingle left +++ above.head}
 
 replicateBase :: !Memory -> Memory
-replicateBase memory=:{above, below=Nothing} = {memory&below=above}
-replicateBase memory=:{above, below=(Just below)} = {memory&below=above+++below}
+replicateBase memory=:{above, below=Nothing} = {memory&below=Just above}
+replicateBase memory=:{above, below=(Just below)} = {memory&below=Just (above+++below)}
 
 replicateMiddle :: !Memory -> Memory
 replicateMiddle memory=:{above}
-	= {memory&above.head = recons (above.head.head, above.head)}
+	= {memory&above.head = recons (above.head.head, Just above.head)}
 
 replicateTop :: !Memory -> Memory
 replicateTop memory=:{above={head={head=Just mid}}}

@@ -10,8 +10,6 @@ instance == StackID
 
 rotateList :: a u:[b] -> v:[b] | Enum a, [u <= v]
 
-mergeDelims :: !Memory -> Memory
-
 //isLastDelim :: [Element] -> Bool
 
 //setAllFalse :: [Element] -> [Element]

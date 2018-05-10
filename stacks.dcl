@@ -9,6 +9,15 @@ where
 		#! val = fn acc head
 		= reduce` (hyperstrict val) tail
 	reduce` acc _ = acc
+	
+splitAt_strict ind arg :== splitAt` ind [!] arg
+where
+	splitAt` _ acc [!] = (acc, [!])
+	splitAt` ind acc arg=:[!h:t]
+		| ind < one
+			= (acc, arg)
+		| otherwise
+			= splitAt` (dec ind) (acc ++$ [!h]) t
 
 instance == (Stack t) | Eq t
 instance +++ (Stack t)
@@ -18,7 +27,7 @@ instance zero (Stack t)
 forceHead arg=:{head,tail,finite} :== {arg&head=head ++$ if(finite) (ReverseM tail) [!],tail=[!]}
 forceTail arg=:{head,tail,finite} :== {arg&head=[!],tail=tail ++$ if(finite) (ReverseM head) [!]}
 
-normalize :: u:(Stack a) -> v:(Stack a), [u <= v]
+normalize :: !.(Stack a) -> .(Stack a)
 
 //fromList :: ![a] !Bool -> (Stack a)
 fromList list finite :== fromStrictList [!el \\ el <- list] finite
@@ -31,11 +40,8 @@ where
 //fromSingle :: !a -> (Stack a)
 fromSingle val :== {head=[!val],tail=[!],finite=True}
 
-decons :: u:(Stack (v:[.a] -> .a)) -> *(Maybe (v:[.a] -> .a),w:(Stack (v:[.a] -> .a))), [u <= w]
+decons :: !.(Stack a) -> *(!Maybe a, !.Stack a)
 recons :: !*(!a, !.(Stack a)) -> .(Stack a)
-M_recons (val, stack) :== case val of
-	Nothing = stack
-	(Just something) = recons (something, stack)
 fallback arg :== case arg of
 	Nothing = zero
 	(Just val) = val
@@ -55,7 +61,7 @@ S_take num arg :== fromStrictList (TakeM num (toStrictList arg)) True
 S_drop num arg :== {(fromStrictList (DropM num (toStrictList arg)) arg.finite)&tail=if(arg.finite)[!]arg.tail}
 //S_drop :: !Int !.(Stack a) -> .(Stack a)
 S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
-S_swap :: .(Stack (u:[.a] -> .a)) .(Stack (u:[.a] -> .a)) -> *(Stack (u:[.a] -> .a),Stack (u:[.a] -> .a))
+S_swap :: !.(Stack a) !.(Stack a) -> *(Stack a, Stack a)
 S_sort :: !.(Stack a) -> .(Stack a) | Ord a
 S_length arg :== (reduce_strict (\_ = \b -> inc b) (reduce_strict (\_ = \b -> inc b) zero arg.head) arg.tail) 
 //S_occurrences :: !(a -> Bool) !.(Stack a) -> Int

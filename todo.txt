@@ -5,6 +5,7 @@
 - Add actually descriptive error messages for when files can't be parsed or runtime errors occur.
 - Move `random` member into `state` instead of `memory`
 - PRIORITY:
-	- automatically fill infinite stacks based on the first repeated value (ensure that an infinite stack *always* has two infinite list-members)
 	- unit tests
 	- implement the set operators
+	- convert S_span to be sane
+	- use more of StdOverloadedList

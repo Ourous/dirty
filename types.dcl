@@ -4,10 +4,13 @@ import StdMaybe, StdOverloaded, StdClass
 
 :: Stack t
 	= {
-		head :: [!t],
+		head :: !t,
+		init :: [!t],
 		tail :: [!t],
 		finite :: !Bool
 	}
+	
+:: MStack t :== Maybe (Stack t)
 	
 :: XYPair
 	= {
@@ -34,14 +37,14 @@ import StdMaybe, StdOverloaded, StdClass
 :: Memory
 	= {
 		note :: !Number,
-		left :: !Stack Number,//![Number],
-		right :: !Stack Number,//![Number],
-		above :: !Stack (Stack (Stack Number)),//![Element],
-		below :: !Stack (Stack (Stack Number)),
+		left :: !MStack Number,//![Number],
+		right :: !MStack Number,//![Number],
+		above :: !Stack (Stack (MStack Number)),//![Element],
+		below :: !MStack (Stack (MStack Number)),
 		random :: ![Int]
 	}
 	
-:: Element :== Stack Number
+:: Element :== MStack Number
 :: Region :== Stack Element
 	
 :: Flags

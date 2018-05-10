@@ -312,21 +312,20 @@ where
 			= splitset acc (head +++ fromSingle r) lhs rhs
 contigSubsets :: !(MStack Number) -> (Stack (MStack Number))
 contigSubsets Nothing = fromSingle Nothing
-/*
 contigSubsets (Just arg)
 	= initSubsets arg + contigSubsets (tailOf arg)
 where
 	initSubsets arg=:{init=[!],tail=[!]} = fromSingle arg
 	initSubsets arg
 		= recons (arg, initSubsets (initOf arg))
-*/
+	
 // special cases
 complexSplit :: !Memory -> Memory
 complexSplit memory=:{left, right, above={head={head=Just _}}}
 	# (main, above) = decons memory.above
 	# (Just mid, main) = decons main
 	# (top, mid) = decons mid
-	= {memory&left=Just(recons (justReal top, left)),right=Just(recons (justImag top, right)),above.head.head=mid}
+	= {memory&left=recons (justReal top, left),right=recons (justImag top, right),above.head.head=mid}
 complexSplit memory = memory
 
 matrixProduct :: !Memory -> Memory // returns multiple
@@ -340,10 +339,8 @@ joinWithNewlines _ = abort "TBI"
 
 stacksFromCursor :: !Memory -> Memory
 stacksFromCursor memory=:{above}
-	# lengths = S_map (S_map S_length) above
-	# lengths = S_map (S_collapse (+) zero) lengths
-	# stacks = S_collapse (+) zero lengths
-	= {memory&above.head.head=Just (recons (stacks, above.head.head))}
+	# stacks = S_collapse (+) Zero (S_map S_length above)
+	= {memory&above.head.head=recons (stacks, above.head.head)}
 
 transposeFromCursor :: !Memory -> Memory
 transposeFromCursor _ = abort "TBI"/*

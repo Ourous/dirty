@@ -2,7 +2,6 @@ definition module builtins
 
 import types
 
-
 // "boolean" functions, returning -1 for True and 0 for False
 isLessThan :: !Number !Number -> Number
 isGreaterThan :: !Number !Number -> Number

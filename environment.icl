@@ -5,18 +5,20 @@ import StdEnv, StdLib, System.Environment, System.Time
 
 getEnvVariable :: *(!Memory, *World) -> *(Memory, *World)
 getEnvVariable (memory, world)
-	# (El mid, other) = decons memory.main
+	# (main, above) = decons memory.above
+	# (Just mid, main) = decons main
 	# envName = unicodeToUTF8 (map toInt (toList mid))
 	# (envVal, world) = getEnvironmentVariable envName world
 	| isNothing envVal
-		= ({memory&main=recons (El zero, other)}, world)
+		= ({memory&above=recons(fallback main, above)}, world)
 	| otherwise
 		# envStr = [!fromInt el \\ el <- utf8ToUnicode (fromJust envVal)]
-		= ({memory&main=recons (El (fromStrictList envStr True), other)}, world)
+		= ({memory&above=recons (recons (Just (fromStrictList envStr True), main), above)}, world)
 
 CLOCK_FACTOR =: CLK_PER_SEC / 100
 		
 sleepFor :: *(!Memory, *World) -> *(Memory, *World)
+sleepFor  arg = arg/*
 sleepFor mw=:({main={stack=[!El{stack=[!]}:_]}},_) = mw
 sleepFor (memory, world)
 	# (El mid, other) = decons memory.main
@@ -31,4 +33,4 @@ where
 		| current >= target
 			= world
 		| otherwise
-			= sleepUntil target world
+			= sleepUntil target world*/

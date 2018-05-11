@@ -419,7 +419,7 @@ where
 			left` => mapMaybe sanitize left
 			right` => mapMaybe sanitize right
 		
-		binary` :: !Bool !Bool !(MStack Number) !(MStack Number) !(MStack Number) -> (MStack Number)
+		binary` :: !Bool !Bool !Element !Element !Element -> Element
 		binary` _ _ (Just {head=lhs}) (Just {head=rhs}) mid
 			#! val = op lhs rhs
 			= (Just (recons (val, mid)))
@@ -440,142 +440,167 @@ where
 			= (Just {mid&head=val,init=t})
 		binary` _ _ _ _ mid = mid
 		
-		/*
-	process (Operator (Binary_NN_S inv op)) = app3 (id, binary flags.strict inv, id)
+		
+	process (Operator (Binary_NN_E inv op)) = app3 (id, binary, id)
 	where // productive
 		
-		binary :: !Bool !Bool Memory -> Memory
-		binary _ _ memory=:{delims, left={stack=[!lhs:_]}, right={stack=[!rhs:_]}}
+		binary :: !Memory -> Memory
+		binary memory=:{left, right, above}
+			#! main = binary` flags.strict inv left` right` main` 
+			= {memory&left=left`,right=right`,above.head=main}
+		where
+			main` => {above.head&head=mapMaybe sanitize above.head.head}
+			left` => mapMaybe sanitize left
+			right` => mapMaybe sanitize right
+			
+		binary` :: !Bool !Bool !Element !Element !Region -> Region
+		binary` _ _ (Just {head=lhs}) (Just {head=rhs}) main
 			#! val = op lhs rhs
-			= {memory&delims=inc delims,main=recon2 (El val, Delim delims, memory.main)}
-		binary False _ memory=:{delims, left={stack=[!lhs:_]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
+			= recons (val, Just main)
+		binary` False _ (Just {head=lhs}) Nothing main=:{head=Just mid}
 			# (top, mid) = decons mid
 			#! val = op lhs top
-			= {memory&delims=inc delims,main=recon3 (El val, Delim delims, El mid, other)}
-		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!rhs:_]}}
-			# (El mid, other) = decons memory.main
+			= recons (val, Just (recons (mid, Just main)))
+		binary` False _ Nothing (Just {head=rhs}) main=:{head=Just mid}
 			# (top, mid) = decons mid
 			#! val = op top rhs
-			= {memory&delims=inc delims,main=recon3 (El val, Delim delims, El mid, other)}
-		binary False _ memory=:{delims, left={stack=[!lhs,rhs:_]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
+			= recons (val, Just (recons (mid, Just main)))
+		binary` False _ (Just {head=lhs,tail=[!rhs:_]}) Nothing main=:{head=Nothing}
 			#! val = op lhs rhs
-			= {memory&delims=inc delims,main=recon2 (El val, Delim delims, memory.main)}
-		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!rhs,lhs:_]}}
+			= recons (val, Just main)
+		binary` False _ Nothing (Just {head=rhs,tail=[!lhs:_]}) main=:{head=Nothing}
 			#! val = op lhs rhs
-			= {memory&delims=inc delims,main=recon2 (El val, Delim delims, memory.main)}
-		binary False True memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!_,_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
-			# (arg1, arg2, mid) = decon2 mid
+			= recons (val, Just main)
+		binary` False True Nothing Nothing main=:{head=Just (mid=:{tail=[!_:_]})}
+			# (arg1, Just mid) = decons mid
+			# (arg2, mid) = decons mid
 			#! val = op arg1 arg2
-			= {memory&delims=inc delims,main=recon3 (El val, Delim delims, El mid, other)}
-		binary _ _ memory = memory
+			= recons (val, Just (recons (mid, Just main)))
+		binary` _ _ _ _ main = main
 		
-	process (Operator (Binary_SN_N op)) = app3 (id, binary flags.strict, id)
+		
+	process (Operator (Binary_EN_N op)) = app3 (id, binary, id)
 	where
 	
-		binary :: !Bool Memory -> Memory
-		binary False memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!rhs:_]}}
-			# (El mid, other) = decons memory.main
-			#! val = op mid rhs
-			#! mid = fromSingle val
-			= {memory&main=recons (El mid, other)}
-		binary _ memory=:{left, right={stack=[!rhs:_]}}
-			# (El mid, other) = decons memory.main
-			#! val = op left rhs
-			#! mid = recons (val, mid)
-			= {memory&main=recons (El mid, other)}
-		binary False memory=:{left, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
-			# (top, mid) = decons mid
-			#! val = op left top
-			#! mid = recons (val, mid)
-			= {memory&main=recons (El mid, other)}
-		binary _ memory = memory
-		
-	process (Operator (Binary_NS_N op)) = app3 (id, binary flags.strict, id)
-	where
-	
-		binary :: !Bool Memory -> Memory
-		binary False memory=:{left={stack=[!lhs:_]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
-			#! val = op lhs mid
-			#! mid = fromSingle val
-			= {memory&main=recons (El mid, other)}
-		binary _ memory=:{left={stack=[!lhs:_]}, right}
-			# (El mid, other) = decons memory.main
-			#! val = op lhs right
-			#! mid = recons (val, mid)
-			= {memory&main=recons (El mid, other)}
-		binary False memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right}
-			# (El mid, other) = decons memory.main
-			# (top, mid) = decons mid
-			#! val = op top right
-			#! mid = recons (val, mid)
-			= {memory&main=recons (El mid, other)}
-		binary _ memory = memory
-		
-	process (Operator (Binary_SS_N inv op)) = app3 (id, binary flags.strict inv, id)
-	where
-	
-		binary :: !Bool !Bool Memory -> Memory
-		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]},El {stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, El oth, other) = decon2 memory.main
-			#! val = op mid oth
-			#! mid = fromSingle val
-			= {memory&main=recons (El mid, other)}
-		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
-			#! val = op mid zero
-			#! mid = fromSingle val
-			= {memory&main=recons (El mid, other)}
-		binary False _ memory=:{left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
-			#! val = op zero zero
-			#! mid = fromSingle val
-			= {memory&main=recons (El mid, memory.main)}
-		binary False _ memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right}
-			# (El mid, other) = decons memory.main
-			#! val = op mid right
-			#! mid = fromSingle val
-			= {memory&main=recons (El mid, other)}
-		binary False _ memory=:{left, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
-			#! val = op left mid
-			#! mid = fromSingle val
-			= {memory&main=recons (El mid, other)}
-		binary _ _ memory=:{left, main, right}
-			# (El mid, other) = decons memory.main
-			#! val = op left right
-			#! mid = recons (val, mid)
-			= {memory&main=recons (El mid, other)}
-		
-	process (Operator (Binary_SS_S inv op)) = app3 (id, binary flags.strict inv, id)
-	where
-	
-		binary :: !Bool !Bool Memory -> Memory
-		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]},El {stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, El oth, other) = decon2 memory.main
-			#! val = op mid oth
-			= {memory&main=recons (El val, other)}
-		binary False True memory=:{left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
-			#! val = op mid zero
-			= {memory&main=recons (El val, other)}
-		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
-			#! val = op zero zero
-			= (MERGE_IF memory.main) {memory&delims=inc delims,main=recon2 (El val, Delim delims, memory.main)}
-		binary False _ memory=:{left={stack=[!]}, main={stack=[!El{stack=[!_:_]}:_]}, right}
-			# (El mid, other) = decons memory.main
-			#! val = op mid right
-			= {memory&main=recons (El val, other)}
-		binary False _ memory=:{left, main={stack=[!El{stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
-			#! val = op left mid
-			= {memory&main=recons (El val, other)}
-		binary _ _ memory=:{delims, left, main, right}
-			#! val = op left right
-			= {memory&delims=inc delims,main=recon2 (El val, Delim delims, main)}
+		binary :: !Memory -> Memory
+		binary memory=:{left, right, above}
+			#! main = binary` flags.strict left right` main` 
+			= {memory&right=right`,above.head=main}
+		where
+			main` => {above.head&head=mapMaybe sanitize above.head.head}
+			right` => mapMaybe sanitize right
 			
+		binary` :: !Bool !Element !Element !Region -> Region
+		binary` False Nothing (Just {head=rhs}) main
+			# (mid, main) = decons main
+			#! val = op mid rhs
+			= recons (Just (fromSingle val), main)
+		binary` _ left (Just {head=rhs}) main
+			#! val = op left rhs
+			= {main&head=Just (recons (val, main.head))}
+		binary` False left Nothing main=:{head=Just(mid=:{head=top})}
+			#! val = op left top
+			= {main&head=Just{mid&head=val}}
+		binary` _ _ _ main = main
+	
+	
+	process (Operator (Binary_NE_N op)) = app3 (id, binary, id)
+	where
+	
+		binary :: !Memory -> Memory
+		binary memory=:{left, right, above}
+			#! main = binary` flags.strict left` right main` 
+			= {memory&left=left`,above.head=main}
+		where
+			main` => {above.head&head=mapMaybe sanitize above.head.head}
+			left` => mapMaybe sanitize left
+			
+		binary` :: !Bool !Element !Element !Region -> Region
+		binary` False (Just {head=lhs}) Nothing main
+			# (mid, main) = decons main
+			#! val = op lhs mid
+			= recons (Just (fromSingle val), main)
+		binary` _ (Just {head=lhs}) right main
+			#! val = op lhs right
+			= {main&head=Just (recons (val, main.head))}
+		binary` False Nothing right main=:{head=Just(mid=:{head=top})}
+			#! val = op top right
+			= {main&head=Just{mid&head=val}}
+		binary` _ _ _ main = main
+
+	process (Operator (Binary_EE_N inv op)) = app3 (id, binary, id)
+	where
+		
+		binary :: !Memory -> Memory
+		binary memory=:{left, right, above}
+			#! main = binary` flags.strict inv left right main`
+			= {memory&above.head=main}
+		where
+			main` = sanitize above.head
+		
+		binary` :: !Bool !Bool !Element !Element !Region -> Region
+		binary` False True Nothing Nothing main=:{tail=[!Just _:_]}
+			# (arg1, Just main) = decons main
+			# (arg2, main) = decons main
+			#! val = op arg1 arg2
+			#! mid = fromSingle val
+			= recons (Just mid, main)
+		binary` False True Nothing Nothing main=:{head=Just _}
+			# (mid, main) = decons main
+			#! val = op mid zero
+			#! mid = fromSingle val
+			= recons (Just mid, main)
+		binary` _ _ Nothing Nothing main=:{head=Nothing}
+			#! val = op zero zero
+			#! mid = fromSingle val
+			= recons (Just mid, Just main)
+		binary` False _ Nothing right main=:{head=mid=:(Just _)}
+			#! val = op mid right
+			#! mid = fromSingle val
+			= {main&head=Just mid}
+		binary` False _ left Nothing main=:{head=mid=:(Just _)}
+			#! val = op left mid
+			#! mid = fromSingle val
+			= {main&head=Just mid}
+		binary` _ _ left right main
+			#! val = op left right
+			#! mid = fromSingle val
+			= recons (Just mid, Just main)
+		
+	
+	process (Operator (Binary_EE_E inv op)) = app3 (id, binary, id)
+	where
+	
+		binary :: !Memory -> Memory
+		binary memory=:{left, right, above}
+			#! main = binary` flags.strict inv left right main`
+			= {memory&above.head=main}
+		where
+			main` = sanitize above.head
+			
+		binary` :: !Bool !Bool !Element !Element !Region -> Region
+		binary` False True Nothing Nothing main=:{tail=[!Just _:_]}
+			# (arg1, Just main) = decons main
+			# (arg2, main) = decons main
+			#! val = op arg1 arg2
+			= recons (val, main)
+		binary` False True Nothing Nothing main=:{head=mid=:(Just _)}
+			#! val = op mid Nothing
+			= {main&head=val}
+		binary` _ _ Nothing Nothing main=:{head=Nothing}
+			#! val = op Nothing Nothing
+			= recons (val, Just main)
+		binary` False _ Nothing right main=:{head=mid=:(Just _)}
+			#! val = op mid right
+			= {main&head=val}
+		binary` False _ left Nothing main=:{head=mid=:(Just _)}
+			#! val = op left mid
+			= {main&head=val}
+		binary` _ _ left right main
+			#! val = op left right
+			= recons (val, Just main)
+
+	/*		
 	process (Operator (Binary_SS_T inv op)) = app3 (id, binary flags.strict inv, id)
 	where
 		

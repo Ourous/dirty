@@ -3,7 +3,7 @@ implementation module runtime
 import types, atomics, arithmetic, builtins, utilities, unicode, stacks, native
 import StdEnv, StdLib, System.IO, System.Time, Math.Random, Text
 from Math.Geometry import pi
-import qualified Data.Generics.GenParse as GenParse
+import qualified GenParse as GenParse
 
 unsafe :: !(*World -> *(.a, !*World)) -> .a
 unsafe fn = fst (fn newWorld)
@@ -313,9 +313,10 @@ where
 		literal (state=:{history}, memory=:{above}, world)
 			# (main, above) = decons above
 			# (mid, main) = decons main
-			| isDigit history = let
-				res = ((fromJust mid).head) * (fromInt 10) + val
-				in (state, {memory&above=recons (recons (Just (recons (res, mid)), main), above)}, world)
+			| isDigit history
+				# (Just mid) = mid
+				= let res = mid.head * (fromInt 10) + val
+				in (state, {memory&above=recons (recons (Just {mid&head=res}, main), above)}, world)
 			| otherwise = let
 				in (state, {memory&above=recons (recons (Just (recons (val, mid)), main), above)}, world)
 			
@@ -465,13 +466,13 @@ where
 			# (top, mid) = decons mid
 			#! val = op top rhs
 			= recons (val, Just (recons (mid, Just main)))
-		binary` False _ (Just {head=lhs,tail=[!rhs:_]}) Nothing main=:{head=Nothing}
+		binary` False _ (Just {head=lhs,init=[!rhs:_]}) Nothing main=:{head=Nothing}
 			#! val = op lhs rhs
 			= recons (val, Just main)
-		binary` False _ Nothing (Just {head=rhs,tail=[!lhs:_]}) main=:{head=Nothing}
+		binary` False _ Nothing (Just {head=rhs,init=[!lhs:_]}) main=:{head=Nothing}
 			#! val = op lhs rhs
 			= recons (val, Just main)
-		binary` False True Nothing Nothing main=:{head=Just (mid=:{tail=[!_:_]})}
+		binary` False True Nothing Nothing main=:{head=Just (mid=:{init=[!_:_]})}
 			# (arg1, Just mid) = decons mid
 			# (arg2, mid) = decons mid
 			#! val = op arg1 arg2
@@ -539,7 +540,7 @@ where
 			main` = sanitize above.head
 		
 		binary` :: !Bool !Bool !Element !Element !Region -> Region
-		binary` False True Nothing Nothing main=:{tail=[!Just _:_]}
+		binary` False True Nothing Nothing main=:{init=[!Just _:_]}
 			# (arg1, Just main) = decons main
 			# (arg2, main) = decons main
 			#! val = op arg1 arg2
@@ -579,7 +580,7 @@ where
 			main` = sanitize above.head
 			
 		binary` :: !Bool !Bool !Element !Element !Region -> Region
-		binary` False True Nothing Nothing main=:{tail=[!Just _:_]}
+		binary` False True Nothing Nothing main=:{init=[!Just _:_]}
 			# (arg1, Just main) = decons main
 			# (arg2, main) = decons main
 			#! val = op arg1 arg2
@@ -600,89 +601,94 @@ where
 			#! val = op left right
 			= recons (val, Just main)
 
-	/*		
-	process (Operator (Binary_SS_T inv op)) = app3 (id, binary flags.strict inv, id)
+			
+	process (Operator (Binary_EE_R inv op)) = app3 (id, binary, id)
 	where
 		
-		binary :: !Bool !Bool Memory -> Memory
-		binary False True memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!_:_]},El {stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, El oth, other) = decon2 memory.main
-			#! val = op mid oth
-			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}
-		binary False True memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
-			#! val = op mid zero
-			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}
-		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El {stack=[!]}:_]}, right={stack=[!]}}
-			#! val = op zero zero
-			= {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, memory.main)}
-		binary False _ memory=:{delims, left={stack=[!]}, main={stack=[!El{stack=[!_:_]}:_]}, right}
-			# (El mid, other) = decons memory.main
+		binary :: !Memory -> Memory
+		binary memory=:{left, right, above, below}
+			#! (newMain, main) = binary` flags.strict inv left right main`
+			= {memory&above=fromSingle newMain,below=case main of (Just main) = Just (recons (main, below`)); Nothing = below`}
+		where
+			main` = sanitize above.head
+			below` = case below of (Just below) = (Just (memory.above +++ below)); Nothing = (Just memory.above)
+		
+		binary` :: !Bool !Bool !Element !Element !Region -> *(Region, Maybe Region)
+		binary` False True Nothing Nothing main=:{init=[!(Just _):_]}
+			# (arg1, Just main) = decons main
+			# (arg2, main) = decons main
+			#! val = op arg1 arg2
+			= (val, main)
+		binary` False True Nothing Nothing main=:{head=(Just _)}
+			# (arg1, main) = decons main
+			#! val = op arg1 Nothing
+			= (val, main)
+		binary` False _ Nothing Nothing main=:{head=Nothing}
+			#! val = op Nothing Nothing
+			= (val, Just main)
+		binary` False _ Nothing right main=:{head=(Just _)}
+			# (mid, main) = decons main
 			#! val = op mid right
-			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}
-		binary False _ memory=:{delims, left, main={stack=[!El{stack=[!_:_]}:_]}, right={stack=[!]}}
-			# (El mid, other) = decons memory.main
+			= (val, main)
+		binary` False _ left Nothing main=:{head=(Just _)}
+			# (mid, main) = decons main
 			#! val = op left mid
-			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}
-		binary _ _ memory=:{delims, left, main, right}
+			= (val, main)
+		binary` _ _ left right main
 			#! val = op left right
-			= {memory&delims=inc delims,main=val + recons (Delim delims, main)}
+			= (val, Just main)
 			
+		
 	process (Operator (Unary_N_N op)) = app3 (id, unary, id)
 	where
 		
-		unary :: Memory -> Memory
-		unary memory=:{main={stack=[!El {stack=[!_:_]}:_]}}
-			# (El mid, other) = decons memory.main
-			# (arg, mid) = decons mid
-			#! val = op arg
-			#! mid = recons (val, mid)
-			= {memory&main=recons (El mid, other)}
+		unary :: !Memory -> Memory
+		unary memory=:{above={head={head=Just mid=:{head=top}}}}
+			#! val = op top
+			= {memory&above.head.head=Just {mid&head=val}}
 		unary memory = memory
 		
-	process (Operator (Unary_N_S op)) = app3 (id, unary, id)
+	
+	process (Operator (Unary_N_E op)) = app3 (id, unary, id)
 	where
 		
-		unary :: Memory -> Memory
-		//unary memory=:{delims, main=[El [arg]:other]}
-		//	= {memory&delims=inc delims,main=[El (op arg),Delim delims: other]}
-		unary memory=:{delims, main={stack=[!El {stack=[!_:_]}:_]}}
-			# (El mid, other) = decons memory.main
-			# (arg, mid) = decons mid
-			#! val = op arg
-			= {memory&delims=inc delims,main=recon3 (El val, Delim delims, El mid, other)}
+		unary :: !Memory -> Memory
+		unary memory=:{above={head=main=:{head=Just _}}}
+			# (Just mid, main) = decons main
+			# (top, mid) = decons mid
+			#! val = op top
+			= {memory&above.head=recons (val, Just (recons (mid, main)))}
 		unary memory = memory
 		
-	process (Operator (Unary_S_N op)) = app3 (id, unary, id)
+	
+	process (Operator (Unary_E_N op)) = app3 (id, unary, id)
 	where
 	
-		unary :: Memory -> Memory
-		unary memory
-			# (El mid, other) = decons memory.main
+		unary :: !Memory -> Memory
+		unary memory=:{above={head={head=mid}}}
 			#! val = op mid
-			#! mid = fromSingle val
-			= {memory&main=recons (El mid, other)}
-		//unary memory = memory
-		
-	process (Operator (Unary_S_S op)) = app3 (id, unary, id)
-	where
-		
-		unary :: Memory -> Memory
-		unary memory
-			# (El mid, other) = decons memory.main
-			#! mid = op mid
-			= {memory&main=recons (El mid, other)}
+			= {memory&above.head.head=Just (fromSingle val)}
 		//unary memory = memory
 	
-	process (Operator (Unary_S_T op)) = app3 (id, unary, id)
+	process (Operator (Unary_E_E op)) = app3 (id, unary, id)
 	where
 		
-		unary :: Memory -> Memory
-		unary memory=:{delims, main}
-			# (El mid, other) = decons main
+		unary :: !Memory -> Memory
+		unary memory=:{above={head={head=mid}}}
 			#! val = op mid
-			= (MERGE_IF other) {memory&cursor=delims,delims=inc delims,main=val + recons (Delim delims, other)}*/
+			= {memory&above.head.head=val}
+		//unary memory = memory
+	
+	process (Operator (Unary_E_R op)) = app3 (id, unary, id)
+	where
 		
+		unary :: !Memory -> Memory
+		unary memory=:{above={head=main},below}
+			# (mid, main) = decons main
+			#! val = op mid
+			= {memory&above=fromSingle val,below=case main of (Just main) = Just (recons (main, below`)); Nothing = below`}
+		where
+			below` = case below of (Just below) = (Just (memory.above +++ below)); Nothing = (Just memory.above)
 				
 	process (Operator (Unary_M_M op)) = app3 (id, op, id)
 			

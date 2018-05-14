@@ -8,8 +8,17 @@ instance == (Stack t) | Eq t where
 instance +++ (Stack t) where
 	(+++) lhs=:{finite=False} rhs=:{finite=False}
 		= {lhs&tail=rhs.tail}
+	(+++) lhs=:{finite=False} rhs=:{finite=True}
+		= {lhs&tail=rhs.tail ++| (Reverse [!rhs.head:rhs.init]) ++| lhs.tail}
+	(+++) lhs=:{finite=True} rhs=:{finite=False}
+		= {rhs&head=rhs.head,init=rhs.init ++| (Reverse rhs.tail) ++| [!lhs.head:lhs.init]}
+	(+++) lhs rhs
+		= {head=lhs.head,init=lhs.init ++| (Reverse lhs.tail),tail=(Reverse [!rhs.head:rhs.init]) ++| rhs.tail,finite=True}
 instance +++ (MStack t) where
 	(+++) Nothing Nothing = Nothing
+	(+++) Nothing rhs = rhs
+	(+++) lhs Nothing = lhs
+	(+++) (Just lhs) (Just rhs) = Just (lhs +++ rhs)
 		
 instance toString (Stack t) | toString t where
 	toString {head,finite=False} = "[" <+ head <+ "...]"

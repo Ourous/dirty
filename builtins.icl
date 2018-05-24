@@ -459,39 +459,29 @@ stackDelete Main memory = {memory&above=zero,below=zero}
 stackDelete Every memory = {memory&left=zero,right=zero,above=zero,below=zero}
 
 stackDrop :: !StackID !Memory -> Memory
-stackDrop _ mem = mem /*
-stackDrop _ memory=:{main={stack=[!El {stack=[!]}:_]}} = memory
-stackDrop Left memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}} = let
-		val = toInt top
-		fn = if(val<0) (S_take(~val)) (S_drop val)
-	in {memory&left=fn left,main={main`&stack=[!El {mid`&stack=mid}:other]}}
-stackDrop Right memory=:{right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}  = let
-		val = toInt top
-		fn = if(val<0) (S_take(~val)) (S_drop val)
-	in {memory&right=fn right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
-stackDrop Middle memory=:{main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}} = let
-		val = toInt top
-		fn = if(val<0) (S_take(~val)) (S_drop val)
-	in {memory&main={main`&stack=[!El (fn {mid`&stack=mid}):other]}}
-stackDrop Both memory=:{left, right, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}} = let
-		val = toInt top
-		fn = if(val<0) (S_take(~val)) (S_drop val)
-	in {memory&left=fn left,right=fn right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
-stackDrop Base memory=:{cursor, main=main`=:{stack=[!El mid`=:{stack=[!top:mid]}:other]}}
-	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) {main`&stack=[!El {mid`&stack=mid}:other]}
-	= let
-		val = toInt top
-		fn = if(val<0) (S_take(~val)) (S_drop val)
-	in mergeDelims {memory&main=fn base + other}
-	*/
+stackDrop _ memory=:{above={head={head=Nothing}}} = memory
+stackDrop stackID memory=:{above={head={head=Just mid}}}
+	# (top, mid) = decons mid
+	# fn = let val = toInt top in if(val<0) (S_take(~val)) (S_drop val)
+	# memory & above.head.head = mid
+	= case stackID of
+		Left = {memory&left=foldMaybe fn memory.left}
+		Right = {memory&right=foldMaybe fn memory.right}
+		Middle = {memory&above.head.head=foldMaybe fn memory.above.head.head}
+		Both = {memory&left=foldMaybe fn memory.left,right=foldMaybe fn memory.right}
+		Base = abort "Behaviour for command `stackDrop Base _` undecided"
+	
 cycleTops :: !Rotation !Memory -> Memory
-cycleTops _ mem = mem
-/*cycleTops Anticlockwise memory=:{left, above, right}
-	# (El mid, other) = decons main
-	# (top, mid) = safeDecon mid
-	# (lhs, left) = safeDecon left
-	# (rhs, right) = safeDecon right
-	= {memory&left=rhs + left,right=mid + right,main=recons (El (lhs + mid), other)}*/
+cycleTops Anticlockwise memory=:{left, above={head={head=mid}}, right}
+	# (top, mid) = safeDecons mid
+	# (lhs, left) = safeDecons left
+	# (rhs, right) = safeDecons right
+	= {memory&left=rhs + left,right=top + right,above.head.head=lhs+mid}
+where
+	safeDecons Nothing = (Nothing, Nothing)
+	safeDecons (Just arg)
+		= let (val, other) = decons arg
+		in (Just (fromSingle val), other)
 
 cycleStacks :: !Rotation !Memory -> Memory
 cycleStacks Anticlockwise memory=:{left, right, above}

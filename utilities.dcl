@@ -10,6 +10,10 @@ instance == StackID
 
 rotateList :: a u:[b] -> v:[b] | Enum a, [u <= v]
 
+foldMaybe fn arg :== case arg of
+	Nothing = Nothing
+	Just val = fn val
+
 //isLastDelim :: [Element] -> Bool
 
 //setAllFalse :: [Element] -> [Element]

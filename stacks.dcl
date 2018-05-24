@@ -60,10 +60,8 @@ S_collapse fn acc arg :== reduce fn (reduce fn (fn acc arg.head) arg.init) arg.t
 S_span :: !(a -> Bool) !.(Stack a) ->  *(MStack a, MStack a)
 S_reverse ::  u:(Stack a) -> v:(Stack a), [u <= v]
 S_rotate ::  !Int u:(Stack a) -> v:(Stack a), [u <= v]
-//S_take :: !Int !.(Stack a) -> .(Stack a)
-S_take num arg :== fromStrictList (TakeM num (toStrictList arg)) True
-S_drop num arg :== {(fromStrictList (DropM num (toStrictList arg)) arg.finite)&tail=if(arg.finite)[!]arg.tail}
-//S_drop :: !Int !.(Stack a) -> .(Stack a)
+S_take :: !Int !.(Stack a) -> .(MStack a)
+S_drop :: !Int !.(Stack a) -> .(MStack a)
 S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
 S_swap :: !.(MStack a) !.(MStack a) -> *(MStack a, MStack a)
 S_sort :: !.(Stack a) -> .(Stack a) | Ord a

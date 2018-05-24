@@ -118,6 +118,30 @@ where
 		| otherwise
 			= list
 			
+S_take :: !Int !.(Stack a) -> .(MStack a)
+S_take 0 _ = Nothing
+S_take n {head, init, finite=False}
+	= Just {head=head,init=Take (n-1) init,tail=[!],finite=True}
+S_take n arg=:{head, init, tail}
+	| n > (1 + Length init)
+		= Just {head=head,init=init ++| (Take (n - 1 - Length init) (Reverse tail)),tail=[!],finite=True}
+	| otherwise
+		= Just {head=head,init=Take (n-1) init,tail=[!],finite=True}
+
+S_drop :: !Int !.(Stack a) -> .(MStack a)
+S_drop 0 arg = Just arg
+S_drop n arg=:{head, init, finite=False}
+	= let [!head`:init`] = Drop (n-1) init
+	in Just {arg&head=head`,init=init`}
+S_drop n arg=:{head, init, tail}
+	| n > (1 + Length init)
+		= let [!head`:init`] = Drop (n-1-Length init) (Reverse tail)
+		in Just {head=head`,init=init`,tail=[!],finite=True}
+	| otherwise
+		= let [!head`:init`] = Drop (n-1) init
+		in Just {arg&head=head`,init=init`}
+			
+			
 S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
 S_uniques arg = fromStrictList (RemoveDup (toStrictList arg)) arg.finite
 			

@@ -1,3 +1,3 @@
 implementation module types
 
-from StdMaybe import ::Maybe
+import StdMaybe, StdOverloaded, StdClass

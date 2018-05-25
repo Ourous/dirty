@@ -1,13 +1,17 @@
 definition module types
 
-import StdMaybe
+import StdMaybe, StdOverloaded, StdClass
 
 :: Stack t
 	= {
-		stack :: [!t],
-		bounded :: !Bool
+		head :: !t,
+		init :: [!t],
+		tail :: [!t],
+		finite :: !Bool
 	}
-
+	
+:: MStack t :== Maybe (Stack t)
+	
 :: XYPair
 	= {
 		x :: !Int,
@@ -33,17 +37,15 @@ import StdMaybe
 :: Memory
 	= {
 		note :: !Number,
-		left :: !Stack Number,//![Number],
-		right :: !Stack Number,//![Number],
-		cursor :: !Int,
-		main :: !Stack Element,//![Element],
-		delims :: !Int,
+		left :: !MStack Number,//![Number],
+		right :: !MStack Number,//![Number],
+		above :: !Stack (Stack (MStack Number)),//![Element],
+		below :: !MStack (Stack (MStack Number)),
 		random :: ![Int]
 	}
 	
-:: Element
-	= El !(Stack Number)
-	| Delim !Int // "is active"
+:: Element :== MStack Number
+:: Region :== Stack Element
 	
 :: Flags
 	= {
@@ -141,19 +143,19 @@ import StdMaybe
 	| IO_Backspace
 	| IO_Environment
 	| Binary_NN_N !Bool (Number Number -> Number)
-	| Binary_NN_S !Bool (Number Number -> (Stack Number))
-	| Binary_SN_N ((Stack Number) Number -> Number)
-	| Binary_SN_S ((Stack Number) Number -> (Stack Number))
-	| Binary_NS_N (Number (Stack Number) -> Number)
-	| Binary_NS_S (Number (Stack Number) -> (Stack Number))
-	| Binary_SS_N !Bool ((Stack Number) (Stack Number) -> Number)
-	| Binary_SS_S !Bool ((Stack Number) (Stack Number) -> (Stack Number))
-	| Binary_SS_T !Bool ((Stack Number) (Stack Number) -> (Stack Element))
+	| Binary_NN_E !Bool (Number Number -> (MStack Number))
+	| Binary_EN_N ((MStack Number) Number -> Number)
+	| Binary_EN_E ((MStack Number) Number -> (MStack Number))
+	| Binary_NE_N (Number (MStack Number) -> Number)
+	| Binary_NE_E (Number (MStack Number) -> (MStack Number))
+	| Binary_EE_N !Bool ((MStack Number) (MStack Number) -> Number)
+	| Binary_EE_E !Bool ((MStack Number) (MStack Number) -> (MStack Number))
+	| Binary_EE_R !Bool ((MStack Number) (MStack Number) -> (Stack (MStack Number)))
 	| Unary_N_N (Number -> Number)
-	| Unary_N_S (Number -> (Stack Number))
-	| Unary_S_N ((Stack Number) -> Number)
-	| Unary_S_S ((Stack Number) -> (Stack Number))
-	| Unary_S_T ((Stack Number) -> (Stack Element))
+	| Unary_N_E (Number -> (MStack Number))
+	| Unary_E_N ((MStack Number) -> Number)
+	| Unary_E_E ((MStack Number) -> (MStack Number))
+	| Unary_E_R ((MStack Number) -> (Stack (MStack Number)))
 	| Unary_M_M (Memory -> Memory)
 	| Math_Logarithm
 	| Math_DotProduct

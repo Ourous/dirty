@@ -20,7 +20,6 @@ Start world
 		= case (readFile file world) of
 			(Ok file, world) = (file, world)
 			_ = abort "Cannot open the file specified!"
-
 	= let program = parser file
 	in (construct program (toFlags flags)) (initialize program args world)
 	

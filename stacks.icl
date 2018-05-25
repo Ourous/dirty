@@ -1,136 +1,160 @@
 implementation module stacks
 
-import types, StdOverloadedList, StdEnv, StdLib, Data.Func, arithmetic, utilities
-
-appendStrict lhs [!] = lhs
-appendStrict [!] rhs = rhs
-appendStrict [!l:lhs] rhs = [!l:appendStrict lhs rhs]
-
-instance + [!t] where (+) lhs rhs = appendStrict lhs rhs
-
-appendHyper =: hyperstrict o appendStrict
-
-instance + (Stack t) where
-	(+) {stack=lhs, bounded=True} {stack=rhs, bounded=True}
-		= {stack=appendStrict lhs rhs, bounded=True}
-	(+) {stack=lhs} {stack=rhs}
-		= {stack=appendStrict lhs rhs, bounded=False}
-		
-instance zero (Stack t) where
-	zero =: {stack=[!], bounded=True}
+import types, StdOverloadedList, StdEnv, StdLib, Text, Data.Func
 
 instance == (Stack t) | Eq t where
-	(==) {stack=lhs, bounded=True} {stack=rhs, bounded=True} = lhs == rhs
-	(==) _ _ = False
+	(==) lhs rhs = lhs.finite && rhs.finite && (toStrictList lhs == toStrictList rhs)
 	
-instance < (Stack t) | Ord t where
-	(<) {bounded=False} {bounded=False} = False
-	(<) {stack=lhs} {stack=rhs} = lhs < rhs
+instance +++ (Stack t) where
+	(+++) lhs=:{finite=False} rhs=:{finite=False}
+		= {lhs&tail=rhs.tail}
+	(+++) lhs=:{finite=False} rhs=:{finite=True}
+		= {lhs&tail=rhs.tail ++| (Reverse [!rhs.head:rhs.init]) ++| lhs.tail}
+	(+++) lhs=:{finite=True} rhs=:{finite=False}
+		= {rhs&head=rhs.head,init=rhs.init ++| (Reverse rhs.tail) ++| [!lhs.head:lhs.init]}
+	(+++) lhs rhs
+		= {head=lhs.head,init=lhs.init ++| (Reverse lhs.tail),tail=(Reverse [!rhs.head:rhs.init]) ++| rhs.tail,finite=True}
+instance +++ (MStack t) where
+	(+++) Nothing Nothing = Nothing
+	(+++) Nothing rhs = rhs
+	(+++) lhs Nothing = lhs
+	(+++) (Just lhs) (Just rhs) = Just (lhs +++ rhs)
+		
+instance toString (Stack t) | toString t where
+	toString {head,finite=False} = "[" <+ head <+ "...]"
+	toString arg = "["+join","(map toString (toList arg))+"]"
+instance toString (MStack t) | toString t where
+	toString Nothing = "[]"
+	toString (Just stack) = toString stack
+		
+instance zero (Stack t) | zero t where
+	zero = {head=zero,init=[!],tail=[!],finite=True}
+instance zero (MStack t) where
+	zero = Nothing
+		
+decons :: !.(Stack a) -> *(!a, !.MStack a)
+decons arg=:{head,init=[!],tail=[!]} = (head, Nothing)
+decons arg=:{head,init=[!h:t]} = (head, Just {arg&head=h,init=t})
+decons arg=:{tail=[!_:_]}
+	# arg = sanitize arg
+	= let {head, init=[!h:t]} = arg
+	in (head, Just {arg&head=h,init=t})
 
-safeLast :: !(Stack a) -> (Stack a)
-safeLast {stack=[!]} = zero
-safeLast arg = fromSingle (lastOf arg)
-safeInit :: !(Stack a) -> (Stack a)
-safeInit arg = {arg&stack=init` arg.stack}
-where
-	init` [!head:tail] = [!head:init` tail]
-	init` _ = [!]
+recons :: !*(!a, !.(MStack a)) -> .(Stack a)
+recons (h, Just arg=:{head,init}) = {arg&head=h,init=[!head:init]}
+recons (h, Nothing) = fromSingle h
 
-S_filterBy :: !(a -> Bool) !.(Stack a) -> .(Stack a)
-S_filterBy fn {stack, bounded}
-	= {stack=S_filterBy` stack, bounded=bounded}
+lastOf :: !.(Stack a) -> a
+lastOf arg=:{tail=[!l:_]} = l
+lastOf arg=:{init=[!]} = arg.head
+lastOf arg = Last arg.init
+
+tailOf :: !.(Stack a) -> .(MStack a)
+tailOf arg=:{init=[!h:t]} = (Just {arg&head=h,init=t})
+tailOf arg=:{tail=[!_:_]} = (Just {arg&head=Last arg.tail,tail=Init arg.tail})
+tailOf arg=:{init=[!],tail=[!]} = Nothing
+initOf :: !.(Stack a) -> .(MStack a)
+initOf arg=:{tail=[!_:t]} = (Just {arg&tail=t})
+initOf arg=:{init=[!_:_]} = (Just {arg&init=Init arg.init})
+initOf arg=:{init=[!],tail=[!]} = Nothing
+
+S_filterBy :: !(a -> Bool) !.(Stack a) -> .(MStack a)
+S_filterBy fn arg
+	| fn arg.head
+		= (Just {arg&init=init`,tail=tail`})
+	| not (IsEmpty init`)
+		= (Just {arg&head=Hd init`,init=Tl init`,tail=tail`})
+	| not (IsEmpty tail`)
+		= (Just {arg&head=Last tail`,init=init`,tail=Init tail`})
+	| otherwise
+		= Nothing
 where
-	S_filterBy` [!] = [!]
-	S_filterBy` [!head:tail]
-		| fn head
-			= [!head:S_filterBy` tail]
-		| otherwise
-			= S_filterBy` tail
-			
-S_filterOn :: !(b -> Bool) !.(Stack a) !.(Stack b) -> .(Stack a)
+	init` => Filter fn arg.init
+	tail` => Filter fn arg.tail
+
+S_filterOn :: !(b -> Bool) !.(Stack a) !.(Stack b) -> .(MStack a)
 S_filterOn fn lhs rhs
-	= {stack=filterOn` lhs.stack rhs.stack, bounded=lhs.bounded||rhs.bounded}
+	| fn rhs.head
+		= (Just {lhs&init=init`,tail=[!]})
+	| not (IsEmpty init`)
+		= (Just {lhs&head=Hd init`,init=Tl init`,tail=[!]})
+	| otherwise
+		= Nothing
 where
-	filterOn` [!] _ = [!]
-	filterOn` _ [!] = [!]
-	filterOn` [!l:lhs] [!r:rhs]
-		| fn r
-			= [!l:filterOn` lhs rhs]
-		| otherwise
-			= filterOn` lhs rhs
-
-//S_zipWith :: !(a a -> b) !.(Stack a) !.(Stack a) -> .(Stack b)
-
-
-
-S_partition :: !(a -> Bool) !.(Stack a) -> *(.(Stack a), .(Stack a))
-S_partition fn arg=:{stack, bounded}
-	# (l, r) = categorize` stack
-	= ({stack=l,bounded=bounded}, {stack=r,bounded=bounded})
-where
-	categorize` [!] = ([!], [!])
-	categorize` [!head:tail]
-		# (l, r) = categorize` tail
-		| fn head
-			= ([!head:l], r)
-		| otherwise
-			= (l, [!head:r])
-			
-S_split :: !(a -> Bool) !.(Stack a) ->  *(Stack a, Stack a)
-S_split fn arg=:{stack, bounded}
-	= splitWhen` stack
-where
-	splitWhen` [!] = (zero, zero)
-	splitWhen` [!head:tail]
-		| fn head
-			= (zero, {stack=[!head:tail],bounded=bounded})
-		| otherwise
-			# (l, r) = splitWhen` tail
-			= (recons (head, l), r)
-
-S_reverse :: !.(Stack a) -> .(Stack a)
-S_reverse {stack, bounded}
-	= {stack=reversed` [!] stack, bounded=bounded}
-where
-	reversed` rev [!] = rev
-	reversed` rev [!head:tail] = reversed` [!head:rev] tail
+	init` => (fst o Unzip o Filter (\(_, e) -> fn e)) (Zip2 (toStrictList lhs) (toStrictList rhs))
 	
-S_rotate :: !Int !.(Stack a) -> .(Stack a)
-S_rotate num arg
-	= fromList (rotateList num (toList arg)) arg.bounded
-
-S_take :: !Int !.(Stack a) -> .(Stack a)
-S_take num {stack}
-	= {zero&stack=take` num stack}
+S_span :: !(a -> Bool) !.(Stack a) ->  *(MStack a, MStack a)
+S_span fn arg
+	# (l, r) = Span fn (toStrictList arg)
+	= (fsl l, fsl r)
 where
-	take` _ [!] = [!]
-	take` num [!head:tail]
-		| num > 0
-			= [!head:take`(dec num)tail]
-		| otherwise
-			= [!]
-			
-S_drop :: !Int !.(Stack a) -> .(Stack a)
-S_drop num arg=:{stack}
-	= {arg&stack=drop` num stack}
+	fsl [!] = Nothing
+	fsl lst = (Just (fromStrictList lst True))
+	
+S_reverse :: u:(Stack a) -> v:(Stack a), [u <= v]
+S_reverse arg=:{init=[!],tail=[!]} = arg
+S_reverse arg=:{head,init,tail=[!h:t]} = {arg&head=h,init=t,tail=[!head:init]}
+S_reverse arg=:{head,init} = {arg&head=Last init,init=[!],tail=Init init}
+	
+S_rotate ::  !Int u:(Stack a) -> v:(Stack a), [u <= v]
+S_rotate num arg=:{finite=False}
+	| num > 0
+		# (head, [!next:t]) = SplitAt (dec num) arg.init
+		= {arg&head=next,init=t,tail=Reverse[!arg.head:head]++|arg.tail}
+	| num < 0
+		# (head, [!next:t]) = SplitAt (dec (abs num)) arg.tail
+		= {arg&head=next,init=Reverse[!arg.head:head]++|arg.init,tail=t}
+	| otherwise
+		= arg
+S_rotate num arg=:{finite=True}
+	= fromStrictList (rotate` num (toStrictList arg)) True
 where
-	drop` _ [!] = [!]
-	drop` num list=:[!_:tail]
-		| num > 0
-			= drop`(dec num)tail
+	rotate` _ [!] = [!]
+	rotate` n list
+		| n > zero
+			= rotate` (dec n) ((Tl list) ++| [!Hd list])
+		| n < zero
+			= rotate` (inc n) [!Last list:Init list]
 		| otherwise
 			= list
+			
+S_take :: !Int !.(Stack a) -> .(MStack a)
+S_take 0 _ = Nothing
+S_take n {head, init, finite=False}
+	= Just {head=head,init=Take (n-1) init,tail=[!],finite=True}
+S_take n arg=:{head, init, tail}
+	| n > (1 + Length init)
+		= Just {head=head,init=init ++| (Take (n - 1 - Length init) (Reverse tail)),tail=[!],finite=True}
+	| otherwise
+		= Just {head=head,init=Take (n-1) init,tail=[!],finite=True}
 
+S_drop :: !Int !.(Stack a) -> .(MStack a)
+S_drop 0 arg = Just arg
+S_drop n arg=:{head, init, finite=False}
+	= let [!head`:init`] = Drop (n-1) init
+	in Just {arg&head=head`,init=init`}
+S_drop n arg=:{head, init, tail}
+	| n > (1 + Length init)
+		= let [!head`:init`] = Drop (n-1-Length init) (Reverse tail)
+		in Just {head=head`,init=init`,tail=[!],finite=True}
+	| otherwise
+		= let [!head`:init`] = Drop (n-1) init
+		in Just {arg&head=head`,init=init`}
+			
+			
+S_uniques :: !.(Stack a) -> .(Stack a) | Eq a
+S_uniques arg = fromStrictList (RemoveDup (toStrictList arg)) arg.finite
+			
+S_swap :: !.(MStack a) !.(MStack a) -> *(MStack a, MStack a)
+S_swap Nothing Nothing = (Nothing, Nothing)
+S_swap Nothing (Just rhs)
+	# (r, rhs) = decons rhs
+	= (Just (fromSingle r), rhs)
+S_swap (Just lhs) Nothing
+	# (l, lhs) = decons lhs
+	= (lhs, Just (fromSingle l))
+S_swap (Just lhs) (Just rhs)
+	= (Just {lhs&head=rhs.head}, Just {rhs&head=lhs.head})
+			
 S_sort :: !.(Stack a) -> .(Stack a) | Ord a
-S_sort arg
-	= fromList (sort (toList arg)) arg.bounded
-
-S_occurrences :: !(a -> Bool) !.(Stack a) -> Int
-S_occurrences fn {stack} = occurrences` 0 stack
-where
-	occurrences` acc [!] = acc
-	occurrences` acc [!head:tail]
-		| fn head
-			= occurrences` (inc acc) tail
-		| otherwise
-			= occurrences` acc tail
+S_sort arg = fromList (sort (toList arg)) arg.finite

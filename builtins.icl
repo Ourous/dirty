@@ -1,6 +1,6 @@
 implementation module builtins
 
-import types, atomics, arithmetic, utilities, StdEnv, StdLib, unicode, stacks
+import types, atomics, arithmetic, utilities, StdEnv, StdLib, unicode, stacks, Data.List
 
 // "boolean" functions
 isLessThan :: !Number !Number -> Number
@@ -312,14 +312,11 @@ where
 			= splitset acc (head +++ fromSingle r) lhs rhs
 contigSubsets :: !(MStack Number) -> (Stack (MStack Number))
 contigSubsets Nothing = fromSingle Nothing
-/*
-contigSubsets (Just arg)
-	= initSubsets arg + contigSubsets (tailOf arg)
-where
-	initSubsets arg=:{init=[!],tail=[!]} = fromSingle arg
-	initSubsets arg
-		= recons (arg, initSubsets (initOf arg))
-*/
+contigSubsets (Just arg) // TODO this but less hacky
+	# list = toList arg
+	# subsets = [Just (fromList subset True) \\ subset <- subsequences list]
+	= fromList subsets True
+
 // special cases
 complexSplit :: !Memory -> Memory
 complexSplit memory=:{left, right, above={head={head=Just _}}}
@@ -476,7 +473,7 @@ cycleTops Anticlockwise memory=:{left, above={head={head=mid}}, right}
 	# (top, mid) = safeDecons mid
 	# (lhs, left) = safeDecons left
 	# (rhs, right) = safeDecons right
-	= {memory&left=rhs + left,right=top + right,above.head.head=lhs+mid}
+	= {memory&left=rhs +++ left,right=top +++ right,above.head.head=lhs +++ mid}
 where
 	safeDecons Nothing = (Nothing, Nothing)
 	safeDecons (Just arg)
@@ -488,18 +485,24 @@ cycleStacks Anticlockwise memory=:{left, right, above}
 	= {memory&left=right,right=above.head.head,above.head.head=left}
 
 unpackLeftRight :: !Memory -> Memory
-//unpackLeftRight memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!lhs,rhs:mid]}:other]}, right}
-//	= {memory&left=fromSingle lhs + left,right=fromSingle rhs + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
-//unpackLeftRight memory=:{left, main=main`=:{stack=[!El {stack=[!lhs]}:other]}}
-//	= {memory&left=fromSingle lhs + left,main={main`&stack=[!El zero:other]}}
-unpackLeftRight memory = memory
+unpackLeftRight memory=:{above={head={head=Nothing}}} = memory
+unpackLeftRight memory=:{right, left, above={head={head=Just mid}}}
+	# (lhs, mid) = decons mid
+	| isNothing mid
+		= {memory&left=Just(recons(lhs,left)),above.head.head=Nothing}
+	# (rhs, mid) = decons (fromJust mid)
+	| otherwise
+		= {memory&right=Just(recons(rhs,right)),left=Just(recons(lhs,left)),above.head.head=mid}
 
 unpackRightLeft :: !Memory -> Memory
-//unpackRightLeft memory=:{left, main=main`=:{stack=[!El mid`=:{stack=[!rhs,lhs:mid]}:other]}, right}
-//	= {memory&left=fromSingle lhs + left,right=fromSingle rhs + right,main={main`&stack=[!El {mid`&stack=mid}:other]}}
-//unpackRightLeft memory=:{right, main=main`=:{stack=[!El {stack=[!rhs]}:other]}}
-//	= {memory&right=fromSingle rhs + right,main={main`&stack=[!El zero:other]}}
-unpackRightLeft memory = memory
+unpackRightLeft memory=:{above={head={head=Nothing}}} = memory
+unpackRightLeft memory=:{right, left, above={head={head=Just mid}}}
+	# (rhs, mid) = decons mid
+	| isNothing mid
+		= {memory&right=Just(recons(rhs,right)),above.head.head=Nothing}
+	# (lhs, mid) = decons (fromJust mid)
+	| otherwise
+		= {memory&right=Just(recons(rhs,right)),left=Just(recons(lhs,left)),above.head.head=mid}
 
 swapLeftRight :: !Memory -> Memory
 swapLeftRight memory=:{left, right}
@@ -509,7 +512,7 @@ swapTop :: !Axes !Memory -> Memory
 swapTop Horizontal memory=:{left, right} = let
 		(left`, right`) = S_swap left right
 	in {memory&left=left`, right=right`}
-swapTop Vertical _  = abort "TBI"
+swapTop Vertical _  = abort "behaviour for `swapTop Vertical _` is TBD"
 //swapTop Vertical memory=:{main=main`=:{stack=[!El mid`:other]}}
 //	= {memory&main={main`&stack=[!El (safeLast mid` + safeInit mid`):other]}}
 swapTop Identity memory=:{right, above} = let
@@ -641,25 +644,21 @@ shiftCursorUpwards memory=:{above, below}
 		= {memory&above=fromJust above,below=Just (recons (base, below))}
 
 moveCursorForwards :: !Memory -> Memory
-moveCursorForwards m = m
-//moveCursorForwards memory=:{delims,cursor,main}
-//	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
-//	# (cur, other) = decons other
-//	= mergeDelims case other.stack of
-//		[!]	= {memory&cursor= -1,main=initOf base + fromStrictList [!Delim -1, lastOf base, Delim 0] True}
-//		_ = {memory&main=initOf base + recon2 (cur, lastOf base, other)}
+moveCursorForwards memory=:{above={init=[!],tail=[!]}} = memory
+moveCursorForwards memory=:{above, below}
+	# (above, lastElement) = case above of
+		{tail=[!lastElement:tail`]} = ({above&tail=tail`}, lastElement)
+		{init} = ({above&init=Init init}, Last init)
+	= {memory&above=above,below=Just (recons (lastElement, below))}
 
 moveCursorBackwards :: !Memory -> Memory
-moveCursorBackwards m = m
-//moveCursorBackwards memory=:{delims,cursor,main}
-//	# (base, other) = S_split (DELIM_FUNC False ((==)cursor)) main
-//	# (cur, other) = decons other
-//	= mergeDelims case other.stack of
-//		[!] = {memory&cursor= -1,main=recon2 (headOf main, Delim -1, tailOf main)}
-//		_ = {memory&main=base + recon2 (headOf other, cur, tailOf other)}
+moveCursorBackwards memory=:{below=Nothing} = memory
+moveCursorBackwards memory=:{above, below=Just below}
+	# (top, other) = decons below
+	= {memory&above=above +++ (fromSingle top), below=other}
 
 takeStackFrom :: !Memory -> Memory // negative takes from nth below cursor
-takeStackFrom memory = memory
+takeStackFrom _ = abort "takeStackFrom is TBI"
 
 // note modifiers
 remember :: !Memory -> Memory

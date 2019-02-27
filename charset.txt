@@ -1,256 +1,168 @@
-⇨ // start, going right
-⇦ // start, going left
-⇧ // start, going up
-⇩ // start, going down
-⇢ OR ⭬ // move current baseline up 1
-⇠ OR ⭪ // move current baseline down 1
-⇡ OR ⭫ // go to next baseline, if none, create new baseline at the end of <main>
-🔔 // bell character
-␈ // delete the last console char
-⇣ OR ⭭ // go to last baseline, if none, go to index 0
-\n // newline
-⭮ // rotate counterclockwise
-⭯ // rotate clockwise
-⮕ // move right arrow
-⬅ // move left arrow
-⬆ // move up arrow
-⬇ // move down arrow
-⬌ // horizontal dual arrow
-⬍ // vertical dual arrow
-⏜ // loop left top
-⏝ // loop left bottom
-⎴ // goto middle top
-⎵ // goto middle bottom
-⏞ // loop right top
-⏟ // loop right bottom
-⋮ // vertical conditional mirror
-⋯ // horizontal conditional mirror
-␛ // exit the program (escape)
-⋰ // identity-line conditional mirror
-⋱ // inverse-line conditional mirror
-⬄ // start random horizontal
-⇳ // start random vertical
+■ OR \0 OR \0 pictorial (␀) // (black square) end program
+\1 // RESERVED
+\2 // RESERVED
+\3 // RESERVED
+\4 // RESERVED
+\5 OR \5 pictorial (␅) // (enquiry) TODO
+\6 OR \6 pictorial (␆) // (acknowledge) TODO
+🔔 OR \7 OR \7 pictorial (␇) // (bell) make a beep
+\8 OR \8 pictorial (␈) // (backspace) TODO
+\t OR \t pictorial (␉) // (h-tab) move to random h-tab in same row
+¶ OR \n OR \n pictorial (␊␤) // (line feed) row delimiter
+\11 OR \11 pictorial (␋) // (v-tab) move to random v-tab in same column
+\12 OR \12 pictorial (␌) // (form feed) TODO
+\r OR \r pictorial (␍) // (carriage return) TODO
+△ // (white up triangle) start going up
+▷ // (white right triangle) start going right
+▽ // (white down triangle) start going down
+◁ // (white left triangle) start going left
+◇ // (white diamond) start in any direction
+﹇ // (top bracket) conditional goto
+﹈ // (bottom bracket) conditional goto
+\21 OR \21 pictorial (␕) // (negative ACK) TODO
+︵ // (top parenthesis) always loop
+︶ // (bottom parenthesis) always loop
+\24 OR \24 pictorial (␘) // (cancel) TODO
+︷ // (top brace) conditional loop
+︸ // (bottom brace) contidional loop
+\27 OR \27 pictorial (␛) // (escape) TODO
+⟨ OR 〈 OR 〈 // (left angle) always goto
+⟩ OR 〉 OR 〉 // (right angle) always goto
+︿ // (top angle) always goto
+﹀ // (bottom angle) always goto
   // no-op
-! // output top of <mid>
-" // literal '
-# // random
-$ // get environment variable with name of <mid>
-% // modulo
-& // join from <baseline>
-' // start and end a string
-( // loop if <left> is true or empty
-) // loop if <left> is true or empty
+! // TODO ?? print to console
+" // literal quote
+# // random number
+$ // get environment variable
+% // modulo division
+& // TODO
+' // start and end string
+( // always loop
+) // always loop
 * // dot product
-+ // plus
-, // from <left>, in steps of <right>
-- // minus
-. // from zero to <mid>, in steps of 1
-/ // reflection around SW->NE
-0 // multiply <mid> by 10
-1 // multiply <mid> by 10, add 1
-2 // multiply <mid> by 10, add 2
-3 // multiply <mid> by 10, add 3
-4 // multiply <mid> by 10, add 4
-5 // multiply <mid> by 10, add 5
-6 // multiply <mid> by 10, add 6
-7 // multiply <mid> by 10, add 7
-8 // multiply <mid> by 10, add 8
-9 // multiply <mid> by 10, add 9
-: // from <mid> away from zero in steps of 1
-; // from <left>, in magnitudes of <right>
-< // less-than
-= // top-equals
-> // greater-than
-? // get single char of input, store in <mid>
-@ // move the <mid>th stack from the cursor to the top
-A // uppercase alphabet
-B // convert <left> to a bunch of digits, in the base of <right>
-C // arc-cosine
-D // remove duplicates from <mid>
-E // e^x
-F // permutations of <mid>
-G // greatest-common-divisor
-H // maximum of <mid>
-I // just the imaginary part
-J // just the real part
-K // keep from <left> where not <right>
-L // log <left> in base of <right>
-M // combinations of <mid>
-N // join <main> with newlines
-O // is ordered
-P // is prime
-Q // do a quine
-R // is a finite real number
-S // arc-sine
-T // arc-tangent
-U // upend the mid stack
-V // average
-W // wipe the mid stack
-X // to uppercase
-Y // is uppercase
-Z // is a finite number
-[ // goto if <mid> is true
-\ // reflection around NW->SE
-] // goto if <mid> is true
-^ // exponentiate
-_ // floor
-` // restart the program. If the start was random, choose another start accordingly.
-a // lowercase alphabet
-b // convert <left> stack to an integer, assuming it's in the base of <right>
-c // cosine
-d // retain only duplicates from <mid>
-e // natural logarithm
-f // integer permutation using top of <left> and <right>
-g // least-common-multiple
-h // minimum of <mid>
-i // multiply <mid> by imaginary unit
-j // split an imaginary number into re <left>, im <right>
-k // keep from <left> where <right>
-l // base-10 log of <mid>
-m // integer combinations using top of <left> and <right>
-n // split <mid> on newlines
-o // order
-p // prime factorization
-q // every instruction traversed so far, in order
-r // round
-s // sine
-t // tangent
-u // rotate the mid stack by <mid>
-v // absolute value
-w // remove the <nth> elements from the <mid> stack
-x // to lowercase
-y // is lowercase
-z // conjugate
-{ // loop if <right> is true or empty
-| // reflection around the vertical
-} // loop if <right> is true or empty
-~ // negate
-␡ // clear the console
-‼ // output all of <mid>
-⁇ // get all input, put into <mid>
-⁈ // output <right>, read into <left>
-⁉ // output <left>, read into <right>
-‽ // output and pop <mid>, read into <mid>
++ // addition
+, // flatten
+- // subtraction
+. // decimal separator
+/ // reflection
+0 // zero
+1 // one
+2 // two
+3 // three
+4 // four
+5 // five
+6 // six
+7 // seven
+8 // eight
+9 // nine
+: // fraction separator
+; // un-flatten
+< // less-than (vectorizes)
+= // equal to (vectorizes)
+> // greater-than (vectorizes)
+? // TODO ?? read from console
+@ // TODO
+A // uppercase alphabet (constant)
+B // TODO
+C // arc-cosine (maps)
+D // TODO
+E // TODO
+F // TODO
+G // TODO
+H // TODO
+I // imaginary part (maps)
+J // real part (maps)
+K // TODO
+L // TODO
+M // TODO
+N // TODO
+O // is sorted
+P // is a prime (maps)
+Q // TODO
+R // is a real number (maps)
+S // arc-sine (maps)
+T // arc-tangent (maps)
+U // TODO
+V // TODO
+W // TODO
+X // TODO
+Y // TODO
+Z // TODO
+[ // conditional goto
+\ // reflection
+] // conditional goto
+^ // power (vectorizes, zips)
+_ // floor (maps)
+` // TODO
+a // lowercase alphabet (constant)
+b // TODO
+c // cosine (maps)
+d // TODO
+e // eulers constant (constant)
+f // TODO
+g // TODO
+h // TODO
+i // imaginary constant (constant)
+j // split a complex number (maps)
+k // TODO
+l // TODO
+m // TODO
+n // TODO
+o // sort
+p // all primes (constant)
+q // TODO
+r // TODO
+s // sine (maps)
+t // tangent (maps)
+u // TODO
+v // TODO
+w // TODO
+x // TODO
+y // TODO
+z // TODO
+{ // conditional loop
+| // reflection
+} // conditonal loop
+~ // negation (maps)
+\127 OR \127 pictorial (␡) // (delete) clear console
 × // multiply
-⨰ // vectorized multiplication
 ÷ // divide
-∔ // vectorized plus
-⸞ // vectorized negation
-√ // square root
-⅟ // reciprocal
-∞ // is a non-finite number, and not NaN
-∨ // or
-⩒ // vectorized or
-∧ // and
-⩑ // vectorized and
-⊻ // xor
-¬ // not
-⊨ // coalesce to truthy/falsey
-⊭ // logical negation
-∩ // intersection
-∪ // exclusion
-∁ // go-to-end (symbol is placeholder)
-∈ // element of
-⋵ // vectorized element-of
-⋖ // vectorized less-than
-⋗ // vectorized greater-than
-≐ // vectorized equals
-⩽ // less or equals
-⩿ // vectorized less-or-equals
-⩾ // greater or equals
-⪀ // vectorized greater-or-equals
-≠ // not equals
-≡ // identical to (stack equals)
-⊊ // subset but not equal
-⊆ // subset or equal
-⊈ // not subset nor equal
-å // radians to angle
-Å // angle to radians
-¯ // ceiling
-« // left-shift
-» // right-shift
-⌛ // hourglass symbol (sleep)
-⌚ // watch symbol (timestamp)
-π // pi
-⇔ // swap the left and right stacks
-⇖ // move the <mid> stack onto the <left> stack
-⇗ // move the <mid> stack onto the <right> stack
-⇘ // move the <left> stack into the <mid> stack
-⇙ // move the <right> stack into the <mid> stack
-Ù // upend the left stack
-Ú // upend the right stack
-Ü // upend the left and right stacks
-Ū // upend the primary stack
-Ụ // upend from baseline
-ù // rotate left stack by <mid>
-ú // rotate right stack by <mid>
-ü // rotate left and right stacks by <mid>
-ū // rotate primary stack
-ụ // rotate from baseline by <mid>
-¡ // remember <mid> for later
-¿ // recall from memory
-Ẁ // wipe the left stack
-Ẃ // wipe the right stack
-Ẅ // wipe the left and right stacks
-Ẉ // wipe from baseline
-Ẇ // wipe the main stack
-Ŵ // wipe every substack
-ẁ // remove the <mid-th> elements from the left stack
-ẃ // remove the <mid-th> elements from the right stack
-ẅ // remove the <mid-th> elements from the left and right stacks
-ẉ // remove the <mid-th> elements from baseline stack
-⅋ // un-join the middle stack
-⤱ // mid -> right, mid -> left
-⤲ // mid -> left, mid -> right
-⤡ // swap top of left and mid
-⤢ // swap top of right and mid
-⭤ // swap top of right and left
-⭥ // swap top and bottom of mid
-⭢ // move top of left to right
-⭠ // move top of right to left
-⭣ // move top of mid down one (swap top two)
-⭦ // move top of mid to left
-⭧ // move top of mid to right
-⭨ // move top of left to mid
-⭩ // move top of right to mid
-⭲ // copy top of left to right
-⭰ // copy top of right to left
-⭱ OR ⤒ // copy top of mid
-⭶ // copy top of mid to left
-⭷ // copy top of mid to right
-⭸ // copy top of left to mid
-⭹ // copy top of right to mid
-⭾ // copy top of left and right to eachother
-⭿ // copy top and bottom of mid to eachother
-⮑ // rotate stacks counterclockwise
-⮓ // rotate tops of stacks counterclockwise
-⊑ // how many contiguous subsets are in.. (returns -1 if equal)
-⊔ // split on contiguous subsets
-ọ // sort the baseline
-№ // number of stacks from the cursor upwards
-Ⱦ // transpose from cursor upwards
+√ // square root (maps)
+⅟ // reciprocal (maps)
+∞ // is a non-finite number, and not NaN (maps)
+π // pi (constant)
+∅ // (empty set) push empty list
 ∏ // product
 ∑ // sum
-∃ // any
-∀ // all
-𝒫 // power set
-𝒮 // ordered subsets
-⬈ // bounce NE
-⬉ // bounce NW
-⬊ // bounce SE
-⬋ // bounce SW
-⬜ // universal reflect
-⬚ // conditional universal reflect
-○ // jump over next instruction
-◌ // conditional jump over next instruction
-⩸ // group by equality
-∅ // the empty set
-Ḍ // remove duplicates from <baseline>
-ḍ // retain only duplicates from <baseline>
-⤔ // copy from <baseline> onto end of <main>
-↣ // duplicate top element of <mid> into a new stack
-⤖ // duplciate <mid>
-↦ // repeat top element of <mid> forever
-⤅ // repeat <mid> forever
-Ḧ // maximum of tops of <left> and <right>
-ḧ // minimum of tops of <left> and <right>
+« // (left angle quotes) left shift (vectorizes, zips)
+» // (right angle quotes) right shift (vectorizes, zips)
+∨ // or (folds)
+∧ // and (folds)
+⊻ // xor (folds)
+¬ // not (maps)
+⊨ // coalesce to truthy/falsey (maps)
+⊭ // logical negation (maps)
+≠ // not equals (vectorizes)
+∈ // element of (or subset of)
+≤ // less or equals (vectorizes)
+≥ // greater or equals (vectorizes)
+≈ // (approx equal) within distance one of
+≡ // (identical to) identical to
+≢ // (not identical to) not identical to
+← // (left arrow) move top of right stack to top of left stack
+→ // (right arrow) move top of left stack to top of right stack
+↔ // (left-right arrow) swap top of stacks
+⇐ // (double left arrow) prepend right stack to left stack
+⇒ // (double right arrow) prepend left stack to right stack
+⇔ // (left-right double arrow) swap left and right stacks
+— OR ‒ OR – OR ―// (em-dash) reflection
+↺ OR ↶ // (anticlockwise arrow) turn anticlockwise
+↻ OR ↷ // (clockwise arrow) turn clockwise
+▲ // (black up triangle) move up
+▶ // (black right triangle) move right
+▼ // (black down triangle) move down
+◀ // (black left triangle) move left
+◆ // (black diamond) random direction
+▣ // (black square containing white square) restart program from last start location
+□ // (white square) restart program from random start location

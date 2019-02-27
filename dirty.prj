@@ -1,18 +1,21 @@
 Version: 1.4
 Global
 	ProjectRoot:	.
-	Target:	iTasks
-	Exec:	{Project}/dirty
+	Target:	StdEnv
+	Exec:	{Project}\dirty.exe
+	ByteCode:	
 	CodeGen
 		CheckStacks:	False
 		CheckIndexes:	True
+		OptimiseABC:	False
+		GenerateByteCode:	False
 	Application
-		HeapSize:	1048576000
-		StackSize:	52428800
-		ExtraMemory:	8192
-		IntialHeapSize:	102400
-		HeapSizeMultiplier:	640
-		ShowExecutionTime:	True
+		HeapSize:	2097152000
+		StackSize:	5242880
+		ExtraMemory:	81920
+		IntialHeapSize:	204800
+		HeapSizeMultiplier:	4096
+		ShowExecutionTime:	False
 		ShowGC:	False
 		ShowStackSize:	False
 		MarkingCollector:	False
@@ -27,8 +30,8 @@ Global
 			GenericFusion:	True
 			DescExL:	False
 		Output
-			Output:	NoReturnType
-			Font:	Monaco
+			Output:	ShowConstructors
+			Font:	Courier
 			FontSize:	9
 			WriteStdErr:	False
 	Link
@@ -40,15 +43,13 @@ Global
 		ResourceSource:	
 		GenerateDLL:	False
 		ExportedNames:	
+		StripByteCode:	False
 	Paths
 		Path:	{Project}
-		Path:	{Application}*Libraries
-		Path:	{Project}*linux
+		Path:	{Application}*Libraries*Platform
+		Path:	{Application}*Libraries*Dynamics
 	OtherPaths
-		Path:	{Application}*lib*Dynamics
-		Path:	{Application}*lib*Platform
-		Path:	{Application}*lib*Platform*Deprecated*StdLib
-		Path:	{Application}*lib*StdEnv
+		Path:	{Application}*Libraries*StdEnv
 	Precompile:	
 	Postlink:	
 MainModule
@@ -56,7 +57,7 @@ MainModule
 	Dir:	{Project}
 	Compiler
 		NeverMemoryProfile:	False
-		NeverTimeProfile:	True
+		NeverTimeProfile:	False
 		StrictnessAnalysis:	True
 		ListTypes:	StrictExportTypes
 		ListAttributes:	True
@@ -64,179 +65,11 @@ MainModule
 		Verbose:	True
 		ReadableABC:	False
 		ReuseUniqueNodes:	True
-		Fusion:	True
+		Fusion:	False
 OtherModules
 	Module
-		Name:	arithmetic
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	True
-	Module
-		Name:	atomics
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	True
-	Module
-		Name:	builtins
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	True
-	Module
-		Name:	environment
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	True
-	Module
-		Name:	parser
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	True
-	Module
-		Name:	runtime
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	True
-	Module
-		Name:	stacks
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	True
-	Module
-		Name:	tokeniser
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	True
-	Module
-		Name:	types
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	unicode
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	utilities
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	True
-	Module
-		Name:	_SystemDynamic
-		Dir:	{Application}*lib*Dynamics
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
 		Name:	Control.Applicative
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -250,7 +83,21 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Control.Monad
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Control.Monad.Trans
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -264,21 +111,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Data.Bifunctor
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Either
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -292,7 +125,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Data.Error
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -306,7 +139,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Data.Foldable
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -320,7 +153,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Data.Func
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -334,7 +167,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Data.Functor
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -347,22 +180,8 @@ OtherModules
 			ReuseUniqueNodes:	True
 			Fusion:	False
 	Module
-		Name:	Data.Generics.GenEq
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Generics.GenParse
-		Dir:	{Application}*lib*Platform
+		Name:	Data.GenEq
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -376,7 +195,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Data.List
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -390,7 +209,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Data.Maybe
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -404,7 +223,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Data.Monoid
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -418,7 +237,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Data.Traversable
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -432,49 +251,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Data.Tuple
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Word8
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Math.Geometry
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Math.Random
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -488,35 +265,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	System.CommandLine
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System.Environment
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System.File
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -530,7 +279,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	System.IO
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -544,7 +293,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	System.OS
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -557,22 +306,8 @@ OtherModules
 			ReuseUniqueNodes:	True
 			Fusion:	False
 	Module
-		Name:	System.OSError
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System.Time
-		Dir:	{Application}*lib*Platform
+		Name:	System.Options
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -586,21 +321,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	System._Pointer
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System._Posix
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -614,7 +335,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	Text
-		Dir:	{Application}*lib*Platform
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -627,8 +348,8 @@ OtherModules
 			ReuseUniqueNodes:	True
 			Fusion:	False
 	Module
-		Name:	Text.Unicode
-		Dir:	{Application}*lib*Platform
+		Name:	Text.GenPrint
+		Dir:	{Application}*Libraries*Platform
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -641,95 +362,8 @@ OtherModules
 			ReuseUniqueNodes:	True
 			Fusion:	False
 	Module
-		Name:	Text.Unicode.Encodings.UTF8
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Text.Unicode.UChar
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-		NeededObjFiles
-			ObjectFile:	WCsubst.
-			ObjectFile:	bsearch.
-	Module
-		Name:	StdArrayExtensions
-		Dir:	{Application}*lib*Platform*Deprecated*StdLib
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdLib
-		Dir:	{Application}*lib*Platform*Deprecated*StdLib
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdLibMisc
-		Dir:	{Application}*lib*Platform*Deprecated*StdLib
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdListExtensions
-		Dir:	{Application}*lib*Platform*Deprecated*StdLib
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdMaybe
-		Dir:	{Application}*lib*Platform*Deprecated*StdLib
+		Name:	_SystemDynamic
+		Dir:	{Application}*Libraries*Dynamics
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -743,7 +377,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdArray
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -757,7 +391,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdBool
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -771,7 +405,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdChar
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -785,7 +419,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdCharList
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -799,7 +433,21 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdClass
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	StdDebug
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -813,7 +461,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdEnum
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -827,7 +475,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdEnv
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -841,7 +489,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdFile
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -855,7 +503,21 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdFunc
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	StdFunctions
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -869,7 +531,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdGeneric
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -883,7 +545,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdInt
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -897,7 +559,21 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdList
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	StdMaybe
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -911,7 +587,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdMisc
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -925,7 +601,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdOrdList
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -939,7 +615,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdOverloaded
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -953,7 +629,21 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdReal
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	StdStrictLists
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -967,7 +657,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdString
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -981,7 +671,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	StdTuple
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -995,7 +685,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	_SystemArray
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -1009,7 +699,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	_SystemEnum
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -1023,7 +713,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	_SystemEnumStrict
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False
@@ -1037,7 +727,7 @@ OtherModules
 			Fusion:	False
 	Module
 		Name:	_SystemStrictLists
-		Dir:	{Application}*lib*StdEnv
+		Dir:	{Application}*Libraries*StdEnv
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False

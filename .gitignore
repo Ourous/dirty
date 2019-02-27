@@ -11,3 +11,4 @@ Clean System Files
 *.exe
 *.hcl
 dirty
+!dirty/

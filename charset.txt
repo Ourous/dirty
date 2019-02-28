@@ -31,7 +31,7 @@
 ︿ // 0xFE3F // (top angle) always goto
 ﹀ // 0xFE40 // (bottom angle) always goto
   // no-op
-! // print as a char
+! // print once
 " // literal quote
 # // hash
 $ // get environment variable
@@ -61,7 +61,7 @@ $ // get environment variable
 < // less-than (vectorizes)
 = // equal to (vectorizes)
 > // greater-than (vectorizes)
-? // read as a char
+? // read once
 @ // item at index (maps)
 A // uppercase alphabet (constant)
 B // from binary
@@ -76,10 +76,10 @@ J // real part (maps)
 K // drop
 L // is a list
 M // maximum
-N // print as a list
+N // TODO
 O // is sorted
 P // is a prime (maps)
-Q // read bytes till null
+Q // TODO
 R // is a real number (maps)
 S // arc-sine (maps)
 T // arc-tangent (maps)
@@ -104,14 +104,14 @@ f // takeWhile
 g // group by equality
 h // head
 i // imaginary constant (constant)
-j // split a complex number (maps)
+j // TODO
 k // keep
 l // length
 m // minimum
-n // print a number
+n // TODO
 o // sort
 p // all primes (constant)
-q // read a byte
+q // TODO
 r // round (maps)
 s // sine (maps)
 t // tangent (maps)
@@ -120,7 +120,7 @@ v // convert to string
 w // wipe both stacks
 x // cross product
 y // join on right
-z // entier floor (maps)
+z // integer part (maps)
 { // conditional loop
 | // reflection
 } // conditonal loop
@@ -136,7 +136,8 @@ z // entier floor (maps)
 ÷ // 0x00F7 // divide (vectorizes)
 √ // 0x221A // square root (maps)
 ⅟ // 0x215F // reciprocal (maps)
-∞ // 0x221E // is a non-finite number, and not NaN (maps)
+∞ // 0x221E // literal infinity
+∝ // 0x221D // is a non-finite number, and not NaN (maps)
 π // 0x03C0 // pi (constant)
 ∅ // 0x2205 // (empty set) push empty list
 ∏ // 0x220F // product
@@ -193,47 +194,50 @@ z // entier floor (maps)
 ◆ // (black diamond) random direction
 ⎕ // (apl quad) restart program from last start location
 ⍰ // (apl quad question mark) restart program from random start location
-‼ // 0x203C // print as string
-⁇ // 0x2047 // input chars till null
+‼ // 0x203C // print a bunch
+⁇ // 0x2047 // input till null
   // transpose
-  // capitalize
-  // lower case
-  // title case
-  // isLetter
-  // isMark
-  // isNumber
-  // isPunctuation
-  // isSymbol
-  // isSeparator
-  // isAscii
-  // isLower
-  // isUpper
-  // isSpace
-  // isControl
-  // isPrint
-  // range to
-  // range from to
-  // range from
-  // range from step
-  // range from mul
-  // permutations
-  // combinations
+ĉ // 0x0109 // capitalize
+č // 0x010D // lower case
+Ṫ // 0x1E6A // title case 
+Ä // 0x00C4 // isLetter
+Ṁ // 0x1E40 // isMark
+Ṅ // 0x1E44 // isNumber
+Ṗ // 0x1E56 // isPunctuation
+Ṡ // 0x1E60 // isSymbol
+Ẅ // 0x1E84 // isSeparator
+Č // 0x010C // isLower
+Ĉ // 0x0108 // isUpper
+Ẇ // 0x1E86 // isSpace
+Ċ // 0x010A // isControl
+Ṗ // 0x1E56 // isPrint
+Ḋ // 0x1E0A // isDigit
+Ȧ // 0x0226 // isAlpha
+∫ // 0x222B // range to
+∬ // 0x222C // range from step
+∭ // 0x222D // range from mult
+ℙ // 0x2119 // permutations
+ℂ // 0x2102 // combinations
 ∇ // 0x2207 // levenshtein distance
-  // execute system command, maybe return file descriptor for pipe to read?
-  // cycle
-  // rotate
-  // limit
-  // store
-  // recall
+‽ // 0x203D // execute system command, maybe return file descriptor for pipe to read?
+ċ // 0x010B // cycle
+ṙ // 0x1E59 // rotate
+≐ // 0x2250 // limit
+↘ // 0x2198 // store left
+↖ // 0x2196 // recall left
+↙ // 0x2199 // store right
+↗ // 0x2197 // recall right
   // get the time
 ¿ // 0x00BF // read file
 ¡ // 0x00A1 // write file
 № // 0x2116 // random number
   // sleep
-  // conjugate
+≂ // 0x2242 // conjugate
   // repeat
   // occurrences
   // uncompress a string
   // compress a string
   // bytes to UTF8
   // UTF8 to bytes
+ĳ // 0x0133 // join a complex number
+Ĳ // 0x0133 // split a complex number

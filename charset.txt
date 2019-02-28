@@ -33,7 +33,7 @@
   // no-op
 ! // print as a char
 " // literal quote
-# // random number
+# // hash
 $ // get environment variable
 % // modulo division
 & // concatenate
@@ -68,12 +68,12 @@ B // from binary
 C // arc-cosine (maps)
 D // contains duplicates
 E // natural logarithm
-F // TODO
+F // dropWhile
 G // get-where [filter]
-H // TODO
+H // tail
 I // imaginary part (maps)
 J // real part (maps)
-K // TODO
+K // drop
 L // is a list
 M // maximum
 N // print as a list
@@ -94,18 +94,18 @@ Z // is an integer (maps)
 ] // conditional goto
 ^ // power (vectorizes, zips)
 _ // flatten
-` // TODO
+` // push literal newline
 a // lowercase alphabet (constant)
 b // to binary
 c // cosine (maps)
 d // remove duplicates
 e // eulers constant (constant)
-f // TODO
+f // takeWhile
 g // group by equality
-h // TODO
+h // head
 i // imaginary constant (constant)
 j // split a complex number (maps)
-k // TODO
+k // keep
 l // length
 m // minimum
 n // print a number
@@ -211,14 +211,14 @@ z // entier floor (maps)
   // isSpace
   // isControl
   // isPrint
+  // range to
   // range from to
   // range from
-  // range to
   // range from step
   // range from mul
   // permutations
   // combinations
-  // levenshtein distance
+∇ // 0x2207 // levenshtein distance
   // execute system command, maybe return file descriptor for pipe to read?
   // cycle
   // rotate
@@ -226,15 +226,14 @@ z // entier floor (maps)
   // store
   // recall
   // get the time
-  // read file
-  // write file
-  // hash
+¿ // 0x00BF // read file
+¡ // 0x00A1 // write file
+№ // 0x2116 // random number
   // sleep
   // conjugate
-  // take
-  // drop
   // repeat
   // occurrences
   // uncompress a string
+  // compress a string
   // bytes to UTF8
   // UTF8 to bytes

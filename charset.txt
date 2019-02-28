@@ -76,7 +76,7 @@ J // real part (maps)
 K // drop
 L // is a list
 M // maximum
-N // TODO
+N // is a number
 O // is sorted
 P // is a prime (maps)
 Q // TODO
@@ -108,7 +108,7 @@ j // TODO
 k // keep
 l // length
 m // minimum
-n // TODO
+n // random number
 o // sort
 p // all primes (constant)
 q // TODO
@@ -196,10 +196,23 @@ z // integer part (maps)
 ⍰ // (apl quad question mark) restart program from random start location
 ‼ // 0x203C // print a bunch
 ⁇ // 0x2047 // input till null
-  // transpose
+¿ // 0x00BF // read file
+¡ // 0x00A1 // write file
+‽ // 0x203D // execute system command, maybe return file descriptor for pipe to read?
+  // sleep
+≂ // 0x2242 // conjugate
+ṙ // 0x1E59 // repeat
+  // occurrences
+ŝ // 0x015D // uncompress a string
+š // 0x0161 // compress a string
+Ḃ // 0x1E02 // bytes to UTF8
+ḃ // 0x1E03 // UTF8 to bytes
+ĳ // 0x0133 // join a complex number
+Ĳ // 0x0133 // split a complex number
+ⱦ // 0x2C66 // transpose
 ĉ // 0x0109 // capitalize
 č // 0x010D // lower case
-Ṫ // 0x1E6A // title case 
+ṫ // 0x1E6B // title case 
 Ä // 0x00C4 // isLetter
 Ṁ // 0x1E40 // isMark
 Ṅ // 0x1E44 // isNumber
@@ -219,7 +232,6 @@ z // integer part (maps)
 ℙ // 0x2119 // permutations
 ℂ // 0x2102 // combinations
 ∇ // 0x2207 // levenshtein distance
-‽ // 0x203D // execute system command, maybe return file descriptor for pipe to read?
 ċ // 0x010B // cycle
 ṙ // 0x1E59 // rotate
 ≐ // 0x2250 // limit
@@ -227,17 +239,4 @@ z // integer part (maps)
 ↖ // 0x2196 // recall left
 ↙ // 0x2199 // store right
 ↗ // 0x2197 // recall right
-  // get the time
-¿ // 0x00BF // read file
-¡ // 0x00A1 // write file
-№ // 0x2116 // random number
-  // sleep
-≂ // 0x2242 // conjugate
-  // repeat
-  // occurrences
-  // uncompress a string
-  // compress a string
-  // bytes to UTF8
-  // UTF8 to bytes
-ĳ // 0x0133 // join a complex number
-Ĳ // 0x0133 // split a complex number
+™ // 0x2122 // get the time

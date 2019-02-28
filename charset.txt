@@ -1,37 +1,37 @@
-■ OR \0 OR \0 pictorial (␀) // (black square) end program
+■ OR \0 OR \0 pictorial (␀) // 0x25a0 // (black square) end program
 \1 // RESERVED
 \2 // RESERVED
 \3 // RESERVED
 \4 // RESERVED
 \5 OR \5 pictorial (␅) // (enquiry) TODO
 \6 OR \6 pictorial (␆) // (acknowledge) TODO
-🔔 OR \7 OR \7 pictorial (␇) // (bell) make a beep
+🔔 OR \7 OR \7 pictorial (␇) // 0x1f514 // (bell) make a beep
 \8 OR \8 pictorial (␈) // (backspace) TODO
 \t OR \t pictorial (␉) // (h-tab) move to random h-tab in same row
 ¶ OR \n OR \n pictorial (␊␤) // (line feed) row delimiter
 \11 OR \11 pictorial (␋) // (v-tab) move to random v-tab in same column
 \12 OR \12 pictorial (␌) // (form feed) TODO
 \r OR \r pictorial (␍) // (carriage return) TODO
-⍃ // (apl less than quad) start left
-⍄ // (apl more than quad) start right
-⍌ // (apl quad down caret) start down
-⍓ // (apl quad up caret) start up
-⌺ // (apl quad diamond) start random
-﹇ // (top bracket) conditional goto
-﹈ // (bottom bracket) conditional goto
+⍃ // 0x2343 // (apl less than quad) start left
+⍄ // 0x2344 // (apl more than quad) start right
+⍌ // 0x234C // (apl quad down caret) start down
+⍓ // 0x2353 // (apl quad up caret) start up
+⌺ // 0x233A // (apl quad diamond) start random
+﹇ // 0xFE47 // (top bracket) conditional goto
+﹈ // 0xFE48 // (bottom bracket) conditional goto
 \21 OR \21 pictorial (␕) // (negative ACK) TODO
-︵ // (top parenthesis) always loop
-︶ // (bottom parenthesis) always loop
+︵ // 0xFE35 // (top parenthesis) always loop
+︶ // 0xFE36 // (bottom parenthesis) always loop
 \24 OR \24 pictorial (␘) // (cancel) TODO
-︷ // (top brace) conditional loop
-︸ // (bottom brace) contidional loop
+︷ // 0xFE37 // (top brace) conditional loop
+︸ // 0xFE38 // (bottom brace) contidional loop
 \27 OR \27 pictorial (␛) // (escape) TODO
-⟨ OR 〈 OR 〈 // (left angle) always goto
-⟩ OR 〉 OR 〉 // (right angle) always goto
-︿ // (top angle) always goto
-﹀ // (bottom angle) always goto
+⟨ OR 〈 OR 〈 // 0x27E8 0x3008 0x2329 // (left angle) always goto
+⟩ OR 〉 OR 〉 // 0x27E9 0x3009 0x232A // (right angle) always goto
+︿ // 0xFE3F // (top angle) always goto
+﹀ // 0xFE40 // (bottom angle) always goto
   // no-op
-! // TODO ?? print to console
+! // print as a char
 " // literal quote
 # // random number
 $ // get environment variable
@@ -61,7 +61,7 @@ $ // get environment variable
 < // less-than (vectorizes)
 = // equal to (vectorizes)
 > // greater-than (vectorizes)
-? // TODO ?? read from console
+? // read as a char
 @ // item at index (maps)
 A // uppercase alphabet (constant)
 B // from binary
@@ -69,22 +69,22 @@ C // arc-cosine (maps)
 D // contains duplicates
 E // natural logarithm
 F // TODO
-G // TODO
+G // get-where [filter]
 H // TODO
 I // imaginary part (maps)
 J // real part (maps)
 K // TODO
 L // is a list
 M // maximum
-N // TODO
+N // print as a list
 O // is sorted
 P // is a prime (maps)
-Q // TODO
+Q // read bytes till null
 R // is a real number (maps)
 S // arc-sine (maps)
 T // arc-tangent (maps)
 U // is a palindrome
-V // TODO
+V // eval
 W // is either stack empty
 X // diagonalize with
 Y // split on right
@@ -108,15 +108,15 @@ j // split a complex number (maps)
 k // TODO
 l // length
 m // minimum
-n // numbers from zero to left
+n // print a number
 o // sort
 p // all primes (constant)
-q // TODO
+q // read a byte
 r // round (maps)
 s // sine (maps)
 t // tangent (maps)
 u // upend [reverse]
-v // TODO
+v // convert to string
 w // wipe both stacks
 x // cross product
 y // join on right
@@ -126,26 +126,31 @@ z // entier floor (maps)
 } // conditonal loop
 ~ // negation (maps)
 \127 OR \127 pictorial (␡) // (delete) clear console
-× // multiply (vectorizes)
-÷ // divide (vectorizes)
-√ // square root (maps)
-⅟ // reciprocal (maps)
-∞ // is a non-finite number, and not NaN (maps)
-π // pi (constant)
-∅ // (empty set) push empty list
-∏ // product
-∑ // sum
-« // (left angle quotes) left shift (vectorizes, zips)
-» // (right angle quotes) right shift (vectorizes, zips)
-∩ // intersection
-∪ // union
-∆ // symmetric difference
-℘ // power set (subsequences)
-∨ // or (folds)
-∃ // any
-∧ // and (folds)
-∀ // all
-⊻ // xor (folds)
+Ẁ // 0x1E80 // (capital w with grave) is left stack empty
+ẁ // 0x1E81 // (lower w with grave) wipe left stack
+Ẃ // 0x1E82 // (capital w with acute) is right stack empty
+ẃ // 0x1E83 // (lower w with acute) wipe right stack
+Å // 0x00C5 // (capital a with ring) convert to radians
+å // 0x00E5 // (lower a with ring) convert to degrees
+× // 0x00D7 // multiply (vectorizes)
+÷ // 0x00F7 // divide (vectorizes)
+√ // 0x221A // square root (maps)
+⅟ // 0x215F // reciprocal (maps)
+∞ // 0x221E // is a non-finite number, and not NaN (maps)
+π // 0x03C0 // pi (constant)
+∅ // 0x2205 // (empty set) push empty list
+∏ // 0x220F // product
+∑ // 0x2211 // sum
+« // 0x00AB // (left angle quotes) left shift (vectorizes, zips)
+» // 0x00BB // (right angle quotes) right shift (vectorizes, zips)
+∩ // 0x2229 // intersection
+∪ // 0x222A // union
+∆ // 0x2206 // symmetric difference
+∨ // 0x2228 // or (vectorizes)
+∃ // 0x2203 // any
+∧ // 0x2227 // and (vectorizes)
+∀ // 0x2200 // all
+⊻ // 0x22BB // xor (vectorizes)
 ¬ // not (maps)
 ⊨ // coalesce to truthy/falsey (maps)
 ⊭ // logical negation (maps)
@@ -188,10 +193,48 @@ z // entier floor (maps)
 ◆ // (black diamond) random direction
 ⎕ // (apl quad) restart program from last start location
 ⍰ // (apl quad question mark) restart program from random start location
-Ẁ // (capital w with grave) is left stack empty
-ẁ // (lower w with grave) wipe left stack
-Ẃ // (capital w with acute) is right stack empty
-ẃ // (lower w with acute) wipe right stack
-Å // (capital a with ring) convert to radians
-å // (lower a with ring) convert to degrees
-ṯ // (lower t with stroke) transpose
+‼ // 0x203C // print as string
+⁇ // 0x2047 // input chars till null
+  // transpose
+  // capitalize
+  // lower case
+  // title case
+  // isLetter
+  // isMark
+  // isNumber
+  // isPunctuation
+  // isSymbol
+  // isSeparator
+  // isAscii
+  // isLower
+  // isUpper
+  // isSpace
+  // isControl
+  // isPrint
+  // range from to
+  // range from
+  // range to
+  // range from step
+  // range from mul
+  // permutations
+  // combinations
+  // levenshtein distance
+  // execute system command, maybe return file descriptor for pipe to read?
+  // cycle
+  // rotate
+  // limit
+  // store
+  // recall
+  // get the time
+  // read file
+  // write file
+  // hash
+  // sleep
+  // conjugate
+  // take
+  // drop
+  // repeat
+  // occurrences
+  // uncompress a string
+  // bytes to UTF8
+  // UTF8 to bytes

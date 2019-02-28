@@ -1,17 +1,17 @@
 ■ OR \0 OR \0 pictorial (␀) // 0x25a0 // (black square) end program
-\1 // RESERVED
-\2 // RESERVED
-\3 // RESERVED
-\4 // RESERVED
-\5 OR \5 pictorial (␅) // (enquiry) TODO
-\6 OR \6 pictorial (␆) // (acknowledge) TODO
+\1 //  // RESERVED
+\2 //  // RESERVED
+\3 //  // RESERVED
+\4 //  // RESERVED
+\5 OR \5 pictorial (␅) //  // (enquiry) TODO
+\6 OR \6 pictorial (␆) //  // (acknowledge) TODO
 🔔 OR \7 OR \7 pictorial (␇) // 0x1f514 // (bell) make a beep
-\8 OR \8 pictorial (␈) // (backspace) TODO
-\t OR \t pictorial (␉) // (h-tab) move to random h-tab in same row
-¶ OR \n OR \n pictorial (␊␤) // (line feed) row delimiter
-\11 OR \11 pictorial (␋) // (v-tab) move to random v-tab in same column
-\12 OR \12 pictorial (␌) // (form feed) TODO
-\r OR \r pictorial (␍) // (carriage return) TODO
+\8 OR \8 pictorial (␈) //  // (backspace) TODO
+\t OR \t pictorial (␉) //  // (h-tab) move to random h-tab in same row
+¶ OR \n OR \n pictorial (␊␤) //  // (line feed) row delimiter
+\11 OR \11 pictorial (␋) //  // (v-tab) move to random v-tab in same column
+\12 OR \12 pictorial (␌) //  // (form feed) TODO
+\r OR \r pictorial (␍) //  // (carriage return) TODO
 ⍃ // 0x2343 // (apl less than quad) start left
 ⍄ // 0x2344 // (apl more than quad) start right
 ⍌ // 0x234C // (apl quad down caret) start down
@@ -19,200 +19,215 @@
 ⌺ // 0x233A // (apl quad diamond) start random
 ﹇ // 0xFE47 // (top bracket) conditional goto
 ﹈ // 0xFE48 // (bottom bracket) conditional goto
-\21 OR \21 pictorial (␕) // (negative ACK) TODO
+\21 OR \21 pictorial (␕) //  // (negative ACK) TODO
 ︵ // 0xFE35 // (top parenthesis) always loop
 ︶ // 0xFE36 // (bottom parenthesis) always loop
-\24 OR \24 pictorial (␘) // (cancel) TODO
+\24 OR \24 pictorial (␘) //  // (cancel) TODO
 ︷ // 0xFE37 // (top brace) conditional loop
 ︸ // 0xFE38 // (bottom brace) contidional loop
-\27 OR \27 pictorial (␛) // (escape) TODO
+\27 OR \27 pictorial (␛) //  // (escape) TODO
 ⟨ OR 〈 OR 〈 // 0x27E8 0x3008 0x2329 // (left angle) always goto
 ⟩ OR 〉 OR 〉 // 0x27E9 0x3009 0x232A // (right angle) always goto
 ︿ // 0xFE3F // (top angle) always goto
 ﹀ // 0xFE40 // (bottom angle) always goto
-  // no-op
-! // print once
-" // literal quote
-# // hash
-$ // get environment variable
-% // modulo division
-& // concatenate
-' // start and end string
-( // always loop
-) // always loop
-* // dot product
-+ // addition
-, // separate into singleton
-- // subtraction
-. // decimal separator
-/ // reflection
-0 // zero
-1 // one
-2 // two
-3 // three
-4 // four
-5 // five
-6 // six
-7 // seven
-8 // eight
-9 // nine
-: // fraction separator
-; // singleton of entire left
-< // less-than (vectorizes)
-= // equal to (vectorizes)
-> // greater-than (vectorizes)
-? // read once
-@ // item at index (maps)
-A // uppercase alphabet (constant)
-B // from binary
-C // arc-cosine (maps)
-D // contains duplicates
-E // natural logarithm
-F // dropWhile
-G // get-where [filter]
-H // tail
-I // imaginary part (maps)
-J // real part (maps)
-K // drop
-L // is a list
-M // maximum
-N // is a number
-O // is sorted
-P // is a prime (maps)
-Q // TODO
-R // is a real number (maps)
-S // arc-sine (maps)
-T // arc-tangent (maps)
-U // is a palindrome
-V // eval
-W // is either stack empty
-X // diagonalize with
-Y // split on right
-Z // is an integer (maps)
-[ // conditional goto
-\ // reflection
-] // conditional goto
-^ // power (vectorizes, zips)
-_ // flatten
-` // push literal newline
-a // lowercase alphabet (constant)
-b // to binary
-c // cosine (maps)
-d // remove duplicates
-e // eulers constant (constant)
-f // takeWhile
-g // group by equality
-h // head
-i // imaginary constant (constant)
-j // TODO
-k // keep
-l // length
-m // minimum
-n // random number
-o // sort
-p // all primes (constant)
-q // TODO
-r // round (maps)
-s // sine (maps)
-t // tangent (maps)
-u // upend [reverse]
-v // convert to string
-w // wipe both stacks
-x // cross product
-y // join on right
-z // integer part (maps)
-{ // conditional loop
-| // reflection
-} // conditonal loop
-~ // negation (maps)
-\127 OR \127 pictorial (␡) // (delete) clear console
+  //  // no-op
+! //  // print once
+" //  // literal quote
+# //  // hash
+$ //  // get environment variable
+% //  // modulo division
+& //  // concatenate
+' //  // start and end string
+( //  // always loop
+) //  // always loop
+* //  // dot product
++ //  // addition
+, //  // separate into singleton
+- //  // subtraction
+. //  // decimal separator
+/ //  // reflection
+0 //  // zero
+1 //  // one
+2 //  // two
+3 //  // three
+4 //  // four
+5 //  // five
+6 //  // six
+7 //  // seven
+8 //  // eight
+9 //  // nine
+: //  // fraction separator
+; //  // singleton of entire left
+< //  // less-than (vectorizes)
+= //  // equal to (vectorizes)
+> //  // greater-than (vectorizes)
+? //  // read once
+@ //  // item at index (maps)
+A //  // uppercase alphabet (constant)
+B //  // from binary
+C //  // arc-cosine (maps)
+D //  // contains duplicates
+E //  // natural logarithm
+F //  // is a palindrome
+G //  // get-where [filter]
+H //  // tail
+I //  // imaginary part (maps)
+J //  // real part (maps)
+K //  // drop
+L //  // is a list
+M //  // maximum
+N //  // is a number
+O //  // is sorted
+P //  // is a prime (maps)
+Q //  // is a rational number (maps)
+R //  // repeats [count occurrences] (does not vectorize)
+S //  // arc-sine (maps)
+T //  // arc-tangent (maps)
+U //  // uniform [expand stacks to unify shape]
+V //  // eval
+W //  // drop while
+X //  // diagonalize with
+Y //  // split on right
+Z //  // is an integer (maps)
+[ //  // conditional goto
+\ //  // reflection
+] //  // conditional goto
+^ //  // power (vectorizes, zips)
+_ //  // flatten
+` //  // push literal newline
+a //  // lowercase alphabet (constant)
+b //  // to binary
+c //  // cosine (maps)
+d //  // remove duplicates
+e //  // eulers constant (constant)
+f //  // flip [reverse]
+g //  // group by equality
+h //  // head
+i //  // imaginary constant (constant)
+j //  // TODO
+k //  // keep
+l //  // length
+m //  // minimum
+n //  // random number
+o //  // sort
+p //  // all primes (constant)
+q //  // absolute value
+r //  // repeat
+s //  // sine (maps)
+t //  // tangent (maps)
+u //  // uniform [join stacks to unify shape]
+v //  // convert to string [repr]
+w //  // take while
+x //  // cross product
+y //  // join on right
+z //  // round (maps)
+{ //  // conditional loop
+| //  // reflection
+} //  // conditonal loop
+~ //  // negation (maps)
+\127 OR \127 pictorial (␡) //  // (delete) clear console
+‼ // 0x203C // print a bunch
+⁇ // 0x2047 // input till null
+‽ // 0x203D // execute system command, maybe return file descriptor for pipe to read?
+¡ // 0x00A1 // write file
+¿ // 0x00BF // read file
+⎕ // 0x2395 // (apl quad) restart program from last start location
+⍰ // 0x2370 // (apl quad question mark) restart program from random start location
+— OR ‒ OR – OR ― // 0x2012 0x2013 0x2014 0x2015 // (em-dash) reflection
+↺ OR ↶ // 0x21BA  // (anticlockwise arrow) turn anticlockwise
+↻ OR ↷ // 0x21BB // (clockwise arrow) turn clockwise
+△ // 0x25B3 // (white up triangle) conditional up
+▷ // 0x25B7 // (white right triangle) conditional right
+▽ // 0x25BD // (white down triangle) conditional down
+◁ // 0x25C1 // (white left triangle) conditional left
+◇ // 0x25C7 // (white diamond) conditional any direction
+▲ // 0x25B2 // (black up triangle) move up
+▶ // 0x25B6 // (black right triangle) move right
+▼ // 0x25BC // (black down triangle) move down
+◀ // 0x25C0 // (black left triangle) move left
+◆ // 0x25C6 // (black diamond) random direction
+◿ // 0x25FF // (SE white triangle) conditional bounce SE
+◺ // 0x25FA // (SW white triangle) conditional bounce SW
+◸ // 0x25F8 // (NW white triangle) conditional bounce NW
+◹ // 0x25F9 // (NE white triangle) conditional bounce NE
+◢ // 0x25E2 // (SE black triangle) bounce south east
+◣ // 0x25E3 // (SW black triangle) bounce south west
+◤ // 0x25E4 // (NW black triangle) bounce north west
+◥ // 0x25E5 // (NE black triangle) bounce north east
+○ // 0x25CC // (white circle) conditional jump over next instruction
+● // 0x25CF // (black circle) jump over next instruction
+← // 0x2190 // (left arrow) move top of right stack to top of left stack
+→ // 0x2192 // (right arrow) move top of left stack to top of right stack
+↔ // 0x2194 // (left-right arrow) swap top of stacks
+⇐ // 0x21D0 // (double left arrow) prepend right stack to left stack
+⇒ // 0x21D2 // (double right arrow) prepend left stack to right stack
+⇔ // 0x21D4 // (left-right double arrow) swap left and right stacks
+↘ // 0x2198 // store left
+↖ // 0x2196 // recall left
+↙ // 0x2199 // store right
+↗ // 0x2197 // recall right
 Ẁ // 0x1E80 // (capital w with grave) is left stack empty
 ẁ // 0x1E81 // (lower w with grave) wipe left stack
 Ẃ // 0x1E82 // (capital w with acute) is right stack empty
 ẃ // 0x1E83 // (lower w with acute) wipe right stack
-Å // 0x00C5 // (capital a with ring) convert to radians
-å // 0x00E5 // (lower a with ring) convert to degrees
-× // 0x00D7 // multiply (vectorizes)
-÷ // 0x00F7 // divide (vectorizes)
-√ // 0x221A // square root (maps)
-⅟ // 0x215F // reciprocal (maps)
 ∞ // 0x221E // literal infinity
 ∝ // 0x221D // is a non-finite number, and not NaN (maps)
-π // 0x03C0 // pi (constant)
 ∅ // 0x2205 // (empty set) push empty list
-∏ // 0x220F // product
+× // 0x00D7 // multiply (vectorizes)
+÷ // 0x00F7 // divide (vectorizes)
+⅟ // 0x215F // reciprocal (maps)
+√ // 0x221A // square root (maps)
 ∑ // 0x2211 // sum
+∏ // 0x220F // product
+ž // 0x017E // floor 
+ẑ // 0x1E91 // ceiling
+ĳ // 0x0133 // join a complex number
+Ĳ // 0x0133 // split a complex number
+≂ // 0x2242 // conjugate
+¬ // 0x00AC // not (maps)
 « // 0x00AB // (left angle quotes) left shift (vectorizes, zips)
 » // 0x00BB // (right angle quotes) right shift (vectorizes, zips)
-∩ // 0x2229 // intersection
-∪ // 0x222A // union
-∆ // 0x2206 // symmetric difference
 ∨ // 0x2228 // or (vectorizes)
 ∃ // 0x2203 // any
 ∧ // 0x2227 // and (vectorizes)
 ∀ // 0x2200 // all
 ⊻ // 0x22BB // xor (vectorizes)
-¬ // not (maps)
-⊨ // coalesce to truthy/falsey (maps)
-⊭ // logical negation (maps)
-≠ // not equals (vectorizes)
-∋ // contains as member
-⊃ // is superset of
-≤ // less or equals (vectorizes)
-≥ // greater or equals (vectorizes)
-≈ // (approx equal) within distance one of
-≡ // (identical to) identical to
-≢ // (not identical to) not identical to
-← // (left arrow) move top of right stack to top of left stack
-→ // (right arrow) move top of left stack to top of right stack
-↔ // (left-right arrow) swap top of stacks
-⇐ // (double left arrow) prepend right stack to left stack
-⇒ // (double right arrow) prepend left stack to right stack
-⇔ // (left-right double arrow) swap left and right stacks
-— OR ‒ OR – OR ―// (em-dash) reflection
-↺ OR ↶ // (anticlockwise arrow) turn anticlockwise
-↻ OR ↷ // (clockwise arrow) turn clockwise
-△ // (white up triangle) conditional up
-▷ // (white right triangle) conditional right
-▽ // (white down triangle) conditional down
-◁ // (white left triangle) conditional left
-◇ // (white diamond) conditional any direction
-◢ // (SE black triangle) bounce south east
-◣ // (SW black triangle) bounce south west
-◤ // (NW black triangle) bounce north west
-◥ // (NE black triangle) bounce north east
-◸ // (NW white triangle) conditional bounce NW
-◹ // (NE white triangle) conditional bounce NE
-◺ // (SW white triangle) conditional bounce SW
-◿ // (SE white triangle) conditional bounce SE
-● // (black circle) jump over next instruction
-○ // (white circle) conditional jump over next instruction
-▲ // (black up triangle) move up
-▶ // (black right triangle) move right
-▼ // (black down triangle) move down
-◀ // (black left triangle) move left
-◆ // (black diamond) random direction
-⎕ // (apl quad) restart program from last start location
-⍰ // (apl quad question mark) restart program from random start location
-‼ // 0x203C // print a bunch
-⁇ // 0x2047 // input till null
-¿ // 0x00BF // read file
-¡ // 0x00A1 // write file
-‽ // 0x203D // execute system command, maybe return file descriptor for pipe to read?
-  // sleep
-≂ // 0x2242 // conjugate
-ṙ // 0x1E59 // repeat
-  // occurrences
-ŝ // 0x015D // uncompress a string
-š // 0x0161 // compress a string
+⊨ // 0x22A8 // coalesce to truthy/falsey (maps)
+⊭ // 0x22AD // logical negation (maps)
+≈ // 0x2248 // (approx equal) within distance one of
+≠ // 0x2260 // not equals (vectorizes)
+≤ // 0x2264 // less or equals (vectorizes)
+≥ // 0x2265 // greater or equals (vectorizes)
+≡ // 0x2261 // (identical to) identical to
+≢ // 0x2262 // (not identical to) not identical to
+∩ // 0x2229 // intersection
+∪ // 0x222A // union
+∆ // 0x2206 // symmetric difference
+∋ // 0x220B // contains as member
+⊃ // 0x2283 // is superset of
+∫ // 0x222B // range to
+∬ // 0x222C // range from step
+∭ // 0x222D // range from mult
+ℙ // 0x2119 // permutations
+ℂ // 0x2102 // combinations
+∇ // 0x2207 // levenshtein distance
+ċ // 0x010B // cycle
+ṙ // 0x1E59 // rotate
+≐ // 0x2250 // limit
+ḟ // 0x1E1F // flip [reverse] (recurses)
+ⱦ // 0x2C66 // transpose
+Ṙ // 0x1E58 // repeats [count occurrences] (vectorizes)
+π // 0x03C0 // pi (constant)
+Å // 0x00C5 // (capital a with ring) convert to radians
+å // 0x00E5 // (lower a with ring) convert to degrees
 Ḃ // 0x1E02 // bytes to UTF8
 ḃ // 0x1E03 // UTF8 to bytes
-ĳ // 0x0133 // join a complex number
-Ĳ // 0x0133 // split a complex number
-ⱦ // 0x2C66 // transpose
+ŝ // 0x015D // uncompress a string
+š // 0x0161 // compress a string
 ĉ // 0x0109 // capitalize
 č // 0x010D // lower case
 ṫ // 0x1E6B // title case 
+Ȧ // 0x0226 // isAlpha
 Ä // 0x00C4 // isLetter
 Ṁ // 0x1E40 // isMark
 Ṅ // 0x1E44 // isNumber
@@ -225,18 +240,17 @@ z // integer part (maps)
 Ċ // 0x010A // isControl
 Ṗ // 0x1E56 // isPrint
 Ḋ // 0x1E0A // isDigit
-Ȧ // 0x0226 // isAlpha
-∫ // 0x222B // range to
-∬ // 0x222C // range from step
-∭ // 0x222D // range from mult
-ℙ // 0x2119 // permutations
-ℂ // 0x2102 // combinations
-∇ // 0x2207 // levenshtein distance
-ċ // 0x010B // cycle
-ṙ // 0x1E59 // rotate
-≐ // 0x2250 // limit
-↘ // 0x2198 // store left
-↖ // 0x2196 // recall left
-↙ // 0x2199 // store right
-↗ // 0x2197 // recall right
+  //  // 
+  //  // 
+  //  // 
+  //  // 
+  //  // 
+  //  // 
+  //  // 
+  //  // 
+  //  // 
+  //  // 
+  //  // 
+  //  // 
+  //  // 
 ™ // 0x2122 // get the time

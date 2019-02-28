@@ -12,11 +12,11 @@
 \11 OR \11 pictorial (␋) // (v-tab) move to random v-tab in same column
 \12 OR \12 pictorial (␌) // (form feed) TODO
 \r OR \r pictorial (␍) // (carriage return) TODO
-△ // (white up triangle) start going up
-▷ // (white right triangle) start going right
-▽ // (white down triangle) start going down
-◁ // (white left triangle) start going left
-◇ // (white diamond) start in any direction
+⍃ // (apl less than quad) start left
+⍄ // (apl more than quad) start right
+⍌ // (apl quad down caret) start down
+⍓ // (apl quad up caret) start up
+⌺ // (apl quad diamond) start random
 ﹇ // (top bracket) conditional goto
 ﹈ // (bottom bracket) conditional goto
 \21 OR \21 pictorial (␕) // (negative ACK) TODO
@@ -36,13 +36,13 @@
 # // random number
 $ // get environment variable
 % // modulo division
-& // TODO
+& // concatenate
 ' // start and end string
 ( // always loop
 ) // always loop
 * // dot product
 + // addition
-, // flatten
+, // separate into singleton
 - // subtraction
 . // decimal separator
 / // reflection
@@ -57,25 +57,25 @@ $ // get environment variable
 8 // eight
 9 // nine
 : // fraction separator
-; // un-flatten
+; // singleton of entire left
 < // less-than (vectorizes)
 = // equal to (vectorizes)
 > // greater-than (vectorizes)
 ? // TODO ?? read from console
-@ // TODO
+@ // item at index (maps)
 A // uppercase alphabet (constant)
-B // TODO
+B // from binary
 C // arc-cosine (maps)
-D // TODO
-E // TODO
+D // contains duplicates
+E // natural logarithm
 F // TODO
 G // TODO
 H // TODO
 I // imaginary part (maps)
 J // real part (maps)
 K // TODO
-L // TODO
-M // TODO
+L // is a list
+M // maximum
 N // TODO
 O // is sorted
 P // is a prime (maps)
@@ -83,51 +83,51 @@ Q // TODO
 R // is a real number (maps)
 S // arc-sine (maps)
 T // arc-tangent (maps)
-U // TODO
+U // is a palindrome
 V // TODO
-W // TODO
-X // TODO
-Y // TODO
-Z // TODO
+W // is either stack empty
+X // diagonalize with
+Y // split on right
+Z // is an integer (maps)
 [ // conditional goto
 \ // reflection
 ] // conditional goto
 ^ // power (vectorizes, zips)
-_ // floor (maps)
+_ // flatten
 ` // TODO
 a // lowercase alphabet (constant)
-b // TODO
+b // to binary
 c // cosine (maps)
-d // TODO
+d // remove duplicates
 e // eulers constant (constant)
 f // TODO
-g // TODO
+g // group by equality
 h // TODO
 i // imaginary constant (constant)
 j // split a complex number (maps)
 k // TODO
-l // TODO
-m // TODO
-n // TODO
+l // length
+m // minimum
+n // numbers from zero to left
 o // sort
 p // all primes (constant)
 q // TODO
-r // TODO
+r // round (maps)
 s // sine (maps)
 t // tangent (maps)
-u // TODO
+u // upend [reverse]
 v // TODO
-w // TODO
-x // TODO
-y // TODO
-z // TODO
+w // wipe both stacks
+x // cross product
+y // join on right
+z // entier floor (maps)
 { // conditional loop
 | // reflection
 } // conditonal loop
 ~ // negation (maps)
 \127 OR \127 pictorial (␡) // (delete) clear console
-× // multiply
-÷ // divide
+× // multiply (vectorizes)
+÷ // divide (vectorizes)
 √ // square root (maps)
 ⅟ // reciprocal (maps)
 ∞ // is a non-finite number, and not NaN (maps)
@@ -137,14 +137,21 @@ z // TODO
 ∑ // sum
 « // (left angle quotes) left shift (vectorizes, zips)
 » // (right angle quotes) right shift (vectorizes, zips)
+∩ // intersection
+∪ // union
+∆ // symmetric difference
+℘ // power set (subsequences)
 ∨ // or (folds)
+∃ // any
 ∧ // and (folds)
+∀ // all
 ⊻ // xor (folds)
 ¬ // not (maps)
 ⊨ // coalesce to truthy/falsey (maps)
 ⊭ // logical negation (maps)
 ≠ // not equals (vectorizes)
-∈ // element of (or subset of)
+∋ // contains as member
+⊃ // is superset of
 ≤ // less or equals (vectorizes)
 ≥ // greater or equals (vectorizes)
 ≈ // (approx equal) within distance one of
@@ -159,10 +166,32 @@ z // TODO
 — OR ‒ OR – OR ―// (em-dash) reflection
 ↺ OR ↶ // (anticlockwise arrow) turn anticlockwise
 ↻ OR ↷ // (clockwise arrow) turn clockwise
+△ // (white up triangle) conditional up
+▷ // (white right triangle) conditional right
+▽ // (white down triangle) conditional down
+◁ // (white left triangle) conditional left
+◇ // (white diamond) conditional any direction
+◢ // (SE black triangle) bounce south east
+◣ // (SW black triangle) bounce south west
+◤ // (NW black triangle) bounce north west
+◥ // (NE black triangle) bounce north east
+◸ // (NW white triangle) conditional bounce NW
+◹ // (NE white triangle) conditional bounce NE
+◺ // (SW white triangle) conditional bounce SW
+◿ // (SE white triangle) conditional bounce SE
+● // (black circle) jump over next instruction
+○ // (white circle) conditional jump over next instruction
 ▲ // (black up triangle) move up
 ▶ // (black right triangle) move right
 ▼ // (black down triangle) move down
 ◀ // (black left triangle) move left
 ◆ // (black diamond) random direction
-▣ // (black square containing white square) restart program from last start location
-□ // (white square) restart program from random start location
+⎕ // (apl quad) restart program from last start location
+⍰ // (apl quad question mark) restart program from random start location
+Ẁ // (capital w with grave) is left stack empty
+ẁ // (lower w with grave) wipe left stack
+Ẃ // (capital w with acute) is right stack empty
+ẃ // (lower w with acute) wipe right stack
+Å // (capital a with ring) convert to radians
+å // (lower a with ring) convert to degrees
+ṯ // (lower t with stroke) transpose

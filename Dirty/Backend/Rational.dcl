@@ -1,4 +1,4 @@
-definition module Dirty.Rational
+definition module Dirty.Backend.Rational
 
 from StdOverloaded import class +, class -, class *, class /, class ^, class ~,
                           class ==, class <, class one, class abs,

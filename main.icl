@@ -1,17 +1,23 @@
 module main
 
-import System.IO, System.Options, System.CommandLine
-import Data.Error, Data.Maybe
-import StdDebug
-import Text.GenPrint
+import System.IO, System.File
+import Data.Error, Data.Maybe, Data.Func
+import StdEnv, StdDebug
+import Dirty.Frontend.Arguments, Dirty.Frontend.Preprocessor
+import Text
 
-Start :: *World -> [String]
-Start w
-	# ([_:args], w) = getCommandLine w
-	# result = parseOptions cliOptions args []
-	| isOk result
-		= fromOk result
+Start world
+	# (opts, world) = parseArguments world
+	| isError opts
+		= abort (join "\n" [usage:fromError opts])
+	# (flags, file, stack) = fromOk opts
+	//DEBUGGING
+	# (file, world)
+		= case (readFile file world) of
+			(Ok file, world) = (if(flags.unicode) preprocessUTF8 id file, world)
+			(Error err, _) = abort (usage + "\n" <+ err <+ file)
+	# source = preprocessFile file
+	= source
 	
-	// apply with OptParser instead of Option
 	
-cliOptions = Flag "-h" (\opts | trace_tn (printToString opts) = Ok opts ) "Pass -h please"
+usage :== "usage: dirty [config] [options] <file> [<args>...]"

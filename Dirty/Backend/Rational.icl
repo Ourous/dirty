@@ -1,4 +1,4 @@
-implementation module Dirty.Rational
+implementation module Dirty.Backend.Rational
 
 import StdEnv
 

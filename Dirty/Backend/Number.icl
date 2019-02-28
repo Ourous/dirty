@@ -1,6 +1,6 @@
-implementation module Dirty.Number
+implementation module Dirty.Backend.Number
 
-import Dirty.Rational, Math.Geometry, StdEnv, Data.Func
+import Dirty.Backend.Rational, Math.Geometry, StdEnv, Data.Func
 
 :: Number
 	= Zero
@@ -398,7 +398,7 @@ instance toReal Number where
 	toReal (Cx (Fin {re, im})) = toReal (sqrt (re*re + im*im)) * (toReal (sign re * sign im))
 	toReal (Re (Inf val)) = (toReal (sign val)) / 0.0
 	toReal (Im (Inf val)) = (toReal (sign val)) / 0.0
-	toReal _ = 0.0/0.0
+	toReal _ = NaN//0.0/0.0
 	
 instance toBool Number where
 	toBool Zero = False
@@ -427,6 +427,9 @@ instance fromReal Number where
 instance fromBool Number where
 	fromBool True = (Re (Fin (~one)))
 	fromBool False = Zero
+
+instance fromString Number where
+	fromString str = fromReal (toReal str)
 
 instance ln Number where
 	ln Invalid = Invalid
@@ -673,3 +676,22 @@ toDegrees (Re (Fin val)) = handle (Re (Fin (RAD_TO_DEG val)))
 toDegrees (Im (Fin val)) = handle (Im (Fin (RAD_TO_DEG val)))
 toDegrees (Cx (Fin {re, im})) = handle (Cx (Fin {re=RAD_TO_DEG re, im=RAD_TO_DEG im}))
 toDegrees val = val
+
+
+isInfinite :: !Number -> Bool
+isInfinite (Re (Inf _)) = True
+isInfinite (Im (Inf _)) = True
+isInfinite (Cx (Inf _)) = True
+isInfinite _ = False
+isComplex :: !Number -> Bool
+isComplex (Cx _) = True
+isComplex _ = False
+isReal :: !Number -> Bool
+isReal (Re _) = True
+isReal _ = False
+isImaginary :: !Number -> Bool
+isImaginary (Im _) = True
+isImaginary _ = False
+isInvalid :: !Number -> Bool
+isInvalid Invalid = True
+isInvalid _ = False

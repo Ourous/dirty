@@ -1,12 +1,12 @@
-definition module Dirty.Number
+definition module Dirty.Backend.Number
 
-from Dirty.Rational import ::Rational
+from Dirty.Backend.Rational import ::Rational
 
 from StdOverloaded import class +, class -, class *, class /, class ^, class ~,
                           class ==, class <, class zero, class one, class abs,
                           class mod, class gcd, class lcm, class toInt,
                           class toReal, class toBool, class toString,
-                          class fromInt, class fromReal, class fromBool,
+                          class fromInt, class fromReal, class fromBool, class fromString,
                           class ln, class log10, class exp, class sqrt,
                           class sin, class cos, class tan, class asin,
                           class acos, class atan
@@ -37,6 +37,7 @@ instance toString Number
 instance fromInt Number
 instance fromReal Number
 instance fromBool Number
+instance fromString Number
 
 instance ln Number
 instance log10 Number
@@ -64,3 +65,8 @@ numRound :: !Number -> Number
 toRadians :: !Number -> Number
 toDegrees :: !Number -> Number
 
+isInfinite :: !Number -> Bool
+isComplex :: !Number -> Bool
+isReal :: !Number -> Bool
+isImaginary :: !Number -> Bool
+isInvalid :: !Number -> Bool

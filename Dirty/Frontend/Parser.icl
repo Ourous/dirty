@@ -16,6 +16,9 @@ parseFile m = ({{parse c {x=x,y=y} \\ c <-: r & x <- [0..]} \\ r <-: m & y <- [0
 where
 	start = {{x=x,y=y} \\ r <-: m & y <- [0..], c <-: r & x <- [0..] | isMember c START_CHARS}
 	
+	// "^(-?\\d*\\.?\\d*(?:(?::\\d*\\.*\\d*)?(?:i-?\\d*\\.?\\d*(?::\\d*\\.*\\d*)?)?)?)" should match valid numeric literals
+	// will have to be manually constructed from smaller parse sections
+	
 	parse_literal_number pos // . associates first, then : and i in the order they appear (i multiplies whatever is in front of it by `i`, adjacency behind adds, : behind divides)
 		= I_LITERAL_REGION (toValue n_num, n_end) (toValue e_num, e_end) (toValue s_num, s_end) (toValue w_num, w_end)
 	where
@@ -32,6 +35,8 @@ where
 		s_end = {pos&y=(abs(pos.y + length s_str)) rem (rows m)}
 		w_end = {pos&x=(abs(pos.x - length w_str)) rem (cols m)}
 		//handle_colons str = foldr (/) one [fromString (toString e) \\ e <- split [':'] str]
+		handle_imag = join ['i'] o map handle_colon o take 2 o split ['i']
+		handle_colon = join [':'] o map handle_minu
 		sub_parse_number :: [Char] -> Number
 		sub_parse_number str = fromString (toString str) // TODO
 		n_num = sub_parse_number n_str

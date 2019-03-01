@@ -277,7 +277,7 @@ instance one Number where
 instance ^ Number where
 	(^) Invalid _ = Invalid
 	(^) _ Invalid = Invalid
-	(^) _ Zero = one
+	(^) _ Zero = Zero
 	(^) Zero _ = Zero
 	(^) (Re (Fin lhs)) (Re (Fin rhs))
 		= handle (Re (Fin (lhs ^ rhs)))
@@ -410,7 +410,7 @@ instance toString Number where
 	toString Invalid = "NaN"
 	toString (Re (Fin val)) = toString val
 	toString (Im (Fin val)) = toString val +++ "i"
-	toString (Cx (Fin {re, im})) = toString re +++ (if(sign im == -1) "-" "+") +++ toString (abs im) +++ "i"
+	toString (Cx (Fin {re, im})) = toString im +++ "i" +++ toString re
 	toString (Re (Inf val)) = if(val == Negative) "-ReInf" "ReInf"
 	toString (Im (Inf val)) = if(val == Negative) "-ImInf" "ImInf"
 	toString (Cx _) = "?CxInf"
@@ -431,17 +431,21 @@ instance fromBool Number where
 instance fromString Number where
 	fromString "0" = Zero
 	fromString "i" = (Im (Fin one))
+	fromString "-" = (Re (Fin (~one)))
+	fromString "-i" = (Im (Fin (~one)))
 	fromString "NaN" = Invalid
 	fromString "?CxInf" = (Cx (Inf Directed))
 	fromString "-ReInf" = (Re (Inf Negative))
-	fromString "+ReInf" = (Re (Inf Positive))
+	fromString "ReInf" = (Re (Inf Positive))
 	fromString "-ImInf" = (Im (Inf Negative))
-	fromString "+ImInf" = (Im (Inf Positive))
+	fromString "ImInf" = (Im (Inf Positive))
 	fromString str
-		| lastIndexOf "i" str == size str - 1
-			= handle (Im (Fin (fromString (str%(0,size str-2)))))
-		| otherwise
-			= handle (Re (Fin (fromString str)))
+		= handle case split "i" str of
+			[re] = (Re (Fin (fromString re)))
+			[im, ""] = (Im (Fin (fromString im)))
+			[im, "-"] = (Cx (Fin {re= ~one, im=fromString im}))
+			[im, re] = (Cx (Fin {re=fromString re, im=fromString im}))
+			_ = abort ("Bad string format for number: '"+++str+++"'")
 
 instance ln Number where
 	ln Invalid = Invalid

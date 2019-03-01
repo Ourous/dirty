@@ -43,7 +43,7 @@ $ //  // get environment variable
 * //  // dot product
 + //  // addition
 , //  // separate into singleton
-- //  // subtraction
+- //  // negation in literal
 . //  // decimal separator
 / //  // reflection
 0 //  // zero
@@ -166,13 +166,14 @@ z //  // round (maps)
 ↖ // 0x2196 // recall left
 ↙ // 0x2199 // store right
 ↗ // 0x2197 // recall right
+∅ // 0x2205 // (empty set) push empty list
 Ẁ // 0x1E80 // (capital w with grave) is left stack empty
 ẁ // 0x1E81 // (lower w with grave) wipe left stack
 Ẃ // 0x1E82 // (capital w with acute) is right stack empty
 ẃ // 0x1E83 // (lower w with acute) wipe right stack
 ∞ // 0x221E // literal infinity
 ∝ // 0x221D // is a non-finite number, and not NaN (maps)
-∅ // 0x2205 // (empty set) push empty list
+− // 0x2212 // subtract
 × // 0x00D7 // multiply (vectorizes)
 ÷ // 0x00F7 // divide (vectorizes)
 ⅟ // 0x215F // reciprocal (maps)
@@ -242,7 +243,6 @@ z //  // round (maps)
 Ḋ // 0x1E0A // isDigit
 ẗ // 0x1E97 // title case (does not map)
 Ṫ // 0x1E6A // is title case
-  //  // 
   //  // 
   //  // 
   //  // 

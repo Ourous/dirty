@@ -171,7 +171,8 @@ instance fromReal Rational where
 	
 instance fromString Rational where
 	fromString str
-		| and [isDigit c \\ c <-: str]
+		| str == "-" = one
+		| and [isDigit c \\ c <-: if(str%(0,0) == "-") (str%(1,size str)) str]
 			= Int (toInt str)
 		| otherwise
 			= Real (toReal str)

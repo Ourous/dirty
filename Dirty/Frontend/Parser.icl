@@ -9,7 +9,7 @@ import Text
 import StdEnv
 
 START_CHARS :== ['\016\017\020\021\022']
-NUMBER_CHARS :== ['0123456789.:i']
+NUMBER_CHARS :== ['0123456789.:i-']
 
 parseFile :: (Matrix Char) -> (Matrix Instruction, Vector Point)
 parseFile m = ({{parse c {x=x,y=y} \\ c <-: r & x <- [0..]} \\ r <-: m & y <- [0..]}, start)
@@ -20,24 +20,24 @@ where
 		= I_LITERAL_REGION (toValue n_num, n_end) (toValue e_num, e_end) (toValue s_num, s_end) (toValue w_num, w_end)
 	where
 		n_str = let base_num = reverse [m.[y,pos.x] \\ y <- [pos.y..rows m-1] ++ [0..pos.y-1]]
-		in reverse (takeWhile (\e = e == ' ' || isMember e NUMBER_CHARS) base_num)
+		in reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num)
 		e_str = let base_num = [m.[pos.y,x] \\ x <- [pos.x..cols m-1] ++ [0..pos.x-1]]
-		in reverse (takeWhile (\e = e == ' ' || isMember e NUMBER_CHARS) base_num)
+		in reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num)
 		s_str = let base_num = [m.[y,pos.x] \\ y <- [pos.y..rows m-1] ++ [0..pos.y-1]]
-		in reverse (takeWhile (\e = e == ' ' || isMember e NUMBER_CHARS) base_num)
+		in reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num)
 		w_str = let base_num = reverse [m.[pos.y,x] \\ x <- [pos.x..cols m-1] ++ [0..pos.x-1]]
-		in reverse (takeWhile (\e = e == ' ' || isMember e NUMBER_CHARS) base_num)
+		in reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num)
 		n_end = {pos&y=(abs(pos.y - length n_str)) rem (rows m)}
 		e_end = {pos&x=(abs(pos.x + length e_str)) rem (cols m)}
 		s_end = {pos&y=(abs(pos.y + length s_str)) rem (rows m)}
 		w_end = {pos&x=(abs(pos.x - length w_str)) rem (cols m)}
-		handle_spaces :: [Char] -> Number
-		handle_spaces str = sum [handle_colons e \\ e <- split [' '] str]
-		handle_colons str = foldr (/) one [fromString (toString e) \\ e <- split [':'] str]
-		n_num = handle_spaces n_str
-		e_num = handle_spaces e_str
-		s_num = handle_spaces s_str
-		w_num = handle_spaces w_str
+		//handle_colons str = foldr (/) one [fromString (toString e) \\ e <- split [':'] str]
+		sub_parse_number :: [Char] -> Number
+		sub_parse_number str = fromString (toString str) // TODO
+		n_num = sub_parse_number n_str
+		e_num = sub_parse_number e_str
+		s_num = sub_parse_number s_str
+		w_num = sub_parse_number w_str
 
 	parse '\000' pos = undef
 	
@@ -95,9 +95,8 @@ where
 	parse '\052' pos = undef
 	parse '\053' pos = undef
 	parse '\054' pos = undef
-	parse '\055' pos = undef
 	
-	//decimal point
+	parse '\055' pos = parse_literal_number pos
 	parse '\056' pos = parse_literal_number pos
 	
 	parse '\057' pos = undef // slash

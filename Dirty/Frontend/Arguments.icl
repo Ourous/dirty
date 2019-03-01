@@ -4,7 +4,7 @@ import Dirty.Backend.Stack, Dirty.Backend.Value
 import StdEnv
 import Data.Maybe, Data.Error
 import System.IO, System.CommandLine, System.Options
-import Text.GenParse
+import Text, Text.GenParse
 
 defaultFlags =: {
 	frontend={
@@ -54,7 +54,7 @@ debugFlag = Flag "--debug" update "[options] display debugging information"
 where update (flags, file, stack) = Ok ({flags&runtime.debug=True}, file, stack)
 debugShorthand = Shorthand "-d" "--debug" debugFlag
 
-inputFile = Operand True update "<file>" "file to read code from"
+inputFile = Operand False update "<file>" "file to read code from"
 where
 	update meta (flags, file, stack)
 		| file <> ""

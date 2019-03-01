@@ -3,7 +3,7 @@ module main
 import System.IO, System.File
 import Data.Error, Data.Maybe, Data.Func
 import StdEnv, StdDebug
-import Dirty.Frontend.Arguments, Dirty.Frontend.Preprocessor
+import Dirty.Frontend.Arguments, Dirty.Frontend.Preprocessor, Dirty.Runtime.Instruction
 import Text
 
 Start world
@@ -14,7 +14,7 @@ Start world
 	//DEBUGGING
 	# (file, world)
 		= case (readFile file world) of
-			(Ok file, world) = (if(flags.unicode) preprocessUTF8 id file, world)
+			(Ok file, world) = (if(flags.frontend.unicode) preprocessUTF8 id file, world)
 			(Error err, _) = abort (usage + "\n" <+ err <+ file)
 	# source = preprocessFile file
 	= source

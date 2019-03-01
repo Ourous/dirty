@@ -12,10 +12,10 @@
 \11 OR \11 pictorial (␋) //  // (v-tab) move to random v-tab in same column
 \12 OR \12 pictorial (␌) //  // (form feed) TODO
 \r OR \r pictorial (␍) //  // (carriage return) TODO
-⍃ // 0x2343 // (apl less than quad) start left
+⍓ // 0x2353 // (apl quad up caret) start up
 ⍄ // 0x2344 // (apl more than quad) start right
 ⍌ // 0x234C // (apl quad down caret) start down
-⍓ // 0x2353 // (apl quad up caret) start up
+⍃ // 0x2343 // (apl less than quad) start left
 ⌺ // 0x233A // (apl quad diamond) start random
 ﹇ // 0xFE47 // (top bracket) conditional goto
 ﹈ // 0xFE48 // (bottom bracket) conditional goto
@@ -182,7 +182,7 @@ z //  // round (maps)
 ž // 0x017E // floor 
 ẑ // 0x1E91 // ceiling
 ĳ // 0x0133 // join a complex number
-Ĳ // 0x0133 // split a complex number
+Ĳ // 0x0132 // split a complex number
 ≂ // 0x2242 // conjugate
 ¬ // 0x00AC // not (maps)
 « // 0x00AB // (left angle quotes) left shift (vectorizes, zips)
@@ -226,22 +226,22 @@ z //  // round (maps)
 š // 0x0161 // compress a string
 ĉ // 0x0109 // capitalize
 č // 0x010D // lower case
-ṫ // 0x1E6B // title case 
+ṫ // 0x1E6B // title case (maps)
 Ȧ // 0x0226 // isAlpha
 Ä // 0x00C4 // isLetter
 Ṁ // 0x1E40 // isMark
 Ṅ // 0x1E44 // isNumber
-Ṗ // 0x1E56 // isPunctuation
+Ṗ // 0x1E56 // isPunctuation [*T*ypographical]
 Ṡ // 0x1E60 // isSymbol
 Ẅ // 0x1E84 // isSeparator
 Č // 0x010C // isLower
 Ĉ // 0x0108 // isUpper
 Ẇ // 0x1E86 // isSpace
 Ċ // 0x010A // isControl
-Ṗ // 0x1E56 // isPrint
+Ȼ // 0x023B // isPrint
 Ḋ // 0x1E0A // isDigit
-  //  // 
-  //  // 
+ẗ // 0x1E97 // title case (does not map)
+Ṫ // 0x1E6A // is title case
   //  // 
   //  // 
   //  // 

@@ -6,18 +6,21 @@ import Data.Maybe, Data.Error
 import System.IO, System.CommandLine, System.Options
 import Text.GenParse
 
-instance zero Flags
-where zero = {
-		unicode=False,
+defaultFlags =: {
+	frontend={
+		unicode=False
+		},
+	runtime={
 		warnings=False,
 		logging=False,
 		debug=False
 		}
+	}
 
 parseArguments :: *World -> *(MaybeError [String] (Flags, String, Stack), *World)
 parseArguments w
 	# ([_:args], w) = getCommandLine w
-	# options = case parseOptions (WithHelp False allOptions) args (zero, "", zero) of
+	# options = case parseOptions (WithHelp False allOptions) args (defaultFlags, "", zero) of
 		Ok (_, "", _) = Error ["No input file specified"]
 		options = options
 	= (options, w)
@@ -36,19 +39,19 @@ allOptions = Options [
 	:compilerOptions]
 	
 unicodeFlag = Flag "--utf8" update "[options] use the utf8 pre-processor"
-where update (flags, file, stack) = Ok ({flags&unicode=True}, file, stack)
+where update (flags, file, stack) = Ok ({flags&frontend.unicode=True}, file, stack)
 unicodeShorthand = Shorthand "-u" "--utf8" unicodeFlag
 
 warningFlag = Flag "--warn" update "[options] display warnings"
-where update (flags, file, stack) = Ok ({flags&warnings=True}, file, stack)
+where update (flags, file, stack) = Ok ({flags&runtime.warnings=True}, file, stack)
 warningShorthand = Shorthand "-w" "--warn" warningFlag
 
 loggingFlag = Flag "--log" update "[options] enable state logging"
-where update (flags, file, stack) = Ok ({flags&logging=True}, file, stack)
+where update (flags, file, stack) = Ok ({flags&runtime.logging=True}, file, stack)
 loggingShorthand = Shorthand "-l" "--log" loggingFlag
 
 debugFlag = Flag "--debug" update "[options] display debugging information"
-where update (flags, file, stack) = Ok ({flags&debug=True}, file, stack)
+where update (flags, file, stack) = Ok ({flags&runtime.debug=True}, file, stack)
 debugShorthand = Shorthand "-d" "--debug" debugFlag
 
 inputFile = Operand True update "<file>" "file to read code from"

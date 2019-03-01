@@ -4,7 +4,7 @@ from StdOverloaded import class +, class -, class *, class /, class ^, class ~,
                           class ==, class <, class one, class abs,
                           class sign, class mod, class gcd, class lcm,
                           class toInt, class toReal, class toString,
-                          class fromInt, class fromReal,
+                          class fromInt, class fromReal, class fromString,
                           class ln, class log10, class exp, class sqrt,
                           class sin, class cos, class tan, class asin,
                           class acos, class atan, class zero
@@ -30,6 +30,7 @@ instance toString Rational
 
 instance fromInt Rational
 instance fromReal Rational
+instance fromString Rational
 
 instance mod Rational
 instance gcd Rational

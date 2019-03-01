@@ -2,7 +2,7 @@ implementation module Dirty.Backend.Rational
 
 import StdEnv
 
-:: Rational 
+:: Rational
 	= Int !Int
 	| Real !Real
 
@@ -168,6 +168,13 @@ instance fromInt Rational where
 
 instance fromReal Rational where
 	fromReal real = Real real
+	
+instance fromString Rational where
+	fromString str
+		| and [isDigit c \\ c <-: str]
+			= Int (toInt str)
+		| otherwise
+			= Real (toReal str)
 	
 instance one Rational where one = (Int 1)
 

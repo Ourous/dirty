@@ -8,4 +8,4 @@ from Dirty.Runtime import ::State
 from Data.Matrix import ::Matrix, ::Vector
 from Dirty.Types import ::Point
 
-parse :: (Matrix Char) -> (Matrix Instruction, Vector Point)
+parseFile :: (Matrix Char) -> (Matrix Instruction, Vector Point)

@@ -65,8 +65,14 @@ numRound :: !Number -> Number
 toRadians :: !Number -> Number
 toDegrees :: !Number -> Number
 
-isInfinite :: !Number -> Bool
-isComplex :: !Number -> Bool
-isReal :: !Number -> Bool
-isImaginary :: !Number -> Bool
-isInvalid :: !Number -> Bool
+class isInfinite a :: a -> Bool
+class isComplex a :: a -> Bool
+class isRational a :: a -> Bool
+class isImaginary a :: a -> Bool
+class isInvalid a :: a -> Bool
+
+instance isInfinite Number
+instance isComplex Number
+instance isRational Number
+instance isImaginary Number
+instance isInvalid Number

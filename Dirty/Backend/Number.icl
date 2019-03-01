@@ -1,6 +1,6 @@
 implementation module Dirty.Backend.Number
 
-import Dirty.Backend.Rational, Math.Geometry, StdEnv, Data.Func
+import Dirty.Backend.Rational, Math.Geometry, StdEnv, Data.Func, Text
 
 :: Number
 	= Zero
@@ -407,7 +407,7 @@ instance toBool Number where
 	
 instance toString Number where
 	toString Zero = "0"
-	toString Invalid = "Invalid"
+	toString Invalid = "NaN"
 	toString (Re (Fin val)) = toString val
 	toString (Im (Fin val)) = toString val +++ "i"
 	toString (Cx (Fin {re, im})) = toString re +++ (if(sign im == -1) "-" "+") +++ toString (abs im) +++ "i"
@@ -429,7 +429,19 @@ instance fromBool Number where
 	fromBool False = Zero
 
 instance fromString Number where
-	fromString str = fromReal (toReal str)
+	fromString "0" = Zero
+	fromString "i" = (Im (Fin one))
+	fromString "NaN" = Invalid
+	fromString "?CxInf" = (Cx (Inf Directed))
+	fromString "-ReInf" = (Re (Inf Negative))
+	fromString "+ReInf" = (Re (Inf Positive))
+	fromString "-ImInf" = (Im (Inf Negative))
+	fromString "+ImInf" = (Im (Inf Positive))
+	fromString str
+		| lastIndexOf "i" str == size str - 1
+			= handle (Im (Fin (fromString (str%(0,size str-2)))))
+		| otherwise
+			= handle (Re (Fin (fromString str)))
 
 instance ln Number where
 	ln Invalid = Invalid
@@ -677,21 +689,25 @@ toDegrees (Im (Fin val)) = handle (Im (Fin (RAD_TO_DEG val)))
 toDegrees (Cx (Fin {re, im})) = handle (Cx (Fin {re=RAD_TO_DEG re, im=RAD_TO_DEG im}))
 toDegrees val = val
 
-
-isInfinite :: !Number -> Bool
-isInfinite (Re (Inf _)) = True
-isInfinite (Im (Inf _)) = True
-isInfinite (Cx (Inf _)) = True
-isInfinite _ = False
-isComplex :: !Number -> Bool
-isComplex (Cx _) = True
-isComplex _ = False
-isReal :: !Number -> Bool
-isReal (Re _) = True
-isReal _ = False
-isImaginary :: !Number -> Bool
-isImaginary (Im _) = True
-isImaginary _ = False
-isInvalid :: !Number -> Bool
-isInvalid Invalid = True
-isInvalid _ = False
+instance isInfinite Number
+where
+	isInfinite (Re (Inf _)) = True
+	isInfinite (Im (Inf _)) = True
+	isInfinite (Cx (Inf _)) = True
+	isInfinite _ = False
+instance isComplex Number
+where
+	isComplex (Cx _) = True
+	isComplex _ = False
+instance isRational Number
+where
+	isRational (Re _) = True
+	isRational _ = False
+instance isImaginary Number
+where
+	isImaginary (Im _) = True
+	isImaginary _ = False
+instance isInvalid Number
+where
+	isInvalid Invalid = True
+	isInvalid _ = False

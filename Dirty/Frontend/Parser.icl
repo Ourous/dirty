@@ -7,9 +7,11 @@ from Dirty.Types import ::Point(..)
 import Data.Matrix
 import Text
 import StdEnv
+import Regex
 
 START_CHARS :== ['\016\017\020\021\022']
 NUMBER_CHARS :== ['0123456789.:i-']
+NUMBER_REGEX :== regex "^(-?\\d*\\.?\\d*(?:(?::\\d*\\.*\\d*)?(?:i-?\\d*\\.?\\d*(?::\\d*\\.*\\d*)?)?)?)"
 
 parseFile :: (Matrix Char) -> (Matrix Instruction, Vector Point)
 parseFile m = ({{parse c {x=x,y=y} \\ c <-: r & x <- [0..]} \\ r <-: m & y <- [0..]}, start)
@@ -35,8 +37,8 @@ where
 		s_end = {pos&y=(abs(pos.y + length s_str)) rem (rows m)}
 		w_end = {pos&x=(abs(pos.x - length w_str)) rem (cols m)}
 		//handle_colons str = foldr (/) one [fromString (toString e) \\ e <- split [':'] str]
-		handle_imag = join ['i'] o map handle_colon o take 2 o split ['i']
-		handle_colon = join [':'] o map handle_minu
+		//handle_imag = join ['i'] o map handle_colon o take 2 o split ['i']
+		//handle_colon = join [':'] o map handle_minus
 		sub_parse_number :: [Char] -> Number
 		sub_parse_number str = fromString (toString str) // TODO
 		n_num = sub_parse_number n_str

@@ -5,6 +5,7 @@ import Data.Error, Data.Maybe, Data.Func
 import StdEnv, StdDebug
 import Dirty.Frontend.Arguments, Dirty.Frontend.Preprocessor, Dirty.Runtime.Instruction
 import Text
+import Regex
 
 Start world
 	# (opts, world) = parseArguments world
@@ -17,7 +18,7 @@ Start world
 			(Ok file, world) = (if(flags.frontend.unicode) preprocessUTF8 id file, world)
 			(Error err, _) = abort (usage + "\n" <+ err <+ file)
 	# source = preprocessFile file
-	= source
+	= source//hd (match (regex "^(-?)") ['3.99i:.4i'])
 	
 	
 usage :== "usage: dirty [config] [options] <file> [<args>...]"

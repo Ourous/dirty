@@ -48,6 +48,7 @@ Global
 		Path:	{Project}
 		Path:	{Application}*Libraries*Platform
 		Path:	{Application}*Libraries*Dynamics
+		Path:	{Application}*Libraries*CleanRegex
 	OtherPaths
 		Path:	{Application}*Libraries*StdEnv
 	Precompile:	
@@ -763,6 +764,76 @@ OtherModules
 	Module
 		Name:	_SystemDynamic
 		Dir:	{Application}*Libraries*Dynamics
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Regex
+		Dir:	{Application}*Libraries*CleanRegex
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Regex.Match
+		Dir:	{Application}*Libraries*CleanRegex
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Regex.Parse
+		Dir:	{Application}*Libraries*CleanRegex
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Regex.Print
+		Dir:	{Application}*Libraries*CleanRegex
+		Compiler
+			NeverMemoryProfile:	False
+			NeverTimeProfile:	False
+			StrictnessAnalysis:	True
+			ListTypes:	StrictExportTypes
+			ListAttributes:	True
+			Warnings:	True
+			Verbose:	True
+			ReadableABC:	False
+			ReuseUniqueNodes:	True
+			Fusion:	False
+	Module
+		Name:	Regex.Util
+		Dir:	{Application}*Libraries*CleanRegex
 		Compiler
 			NeverMemoryProfile:	False
 			NeverTimeProfile:	False

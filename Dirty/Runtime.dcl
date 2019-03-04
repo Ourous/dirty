@@ -14,6 +14,7 @@ from System.IO import ::IO
 	}
 
 :: State = {
+	end :: Bool,
 	ini :: Maybe Point,
 	mem :: Memory,
 	dir :: Direction,

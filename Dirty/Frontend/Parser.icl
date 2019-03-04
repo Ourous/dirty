@@ -4,14 +4,15 @@ import Dirty.Backend.Value, Dirty.Backend.Stack, Dirty.Backend.Number
 import Dirty.Frontend.Arguments
 import Dirty.Runtime.Instruction
 from Dirty.Types import ::Point(..)
-import Data.Matrix
+import Data.Matrix, Data.List
 import Text
 import StdEnv
 import Regex
 
 START_CHARS :== ['\016\017\020\021\022']
 NUMBER_CHARS :== ['0123456789.:i-']
-NUMBER_REGEX :== regex "^(-?\\d*\\.?\\d*(?:(?::\\d*\\.*\\d*)?(?:i-?\\d*\\.?\\d*(?::\\d*\\.*\\d*)?)?)?)"
+NUMBER_REGEX :== regex "^-?\\d*\\.?\\d*(?::\\d*\\.?\\d*)?(?:i(?:-?\\d*\\.?\\d*(?::\\d*\\.?\\d*)?)?)?"
+
 
 parseFile :: (Matrix Char) -> (Matrix Instruction, Vector Point)
 parseFile m = ({{parse c {x=x,y=y} \\ c <-: r & x <- [0..]} \\ r <-: m & y <- [0..]}, start)
@@ -21,32 +22,37 @@ where
 	// "^(-?\\d*\\.?\\d*(?:(?::\\d*\\.*\\d*)?(?:i-?\\d*\\.?\\d*(?::\\d*\\.*\\d*)?)?)?)" should match valid numeric literals
 	// will have to be manually constructed from smaller parse sections
 	
+	from_position_north pos = reverse [m.[y,pos.x] \\ y <- [pos.y..rows m-1] ++ [0..pos.y-1]]
+	from_position_east pos = [m.[pos.y,x] \\ x <- [pos.x..cols m-1] ++ [0..pos.x-1]]
+	from_position_south pos = [m.[y,pos.x] \\ y <- [pos.y..rows m-1] ++ [0..pos.y-1]]
+	from_position_west pos = reverse [m.[pos.y,x] \\ x <- [pos.x..cols m-1] ++ [0..pos.x-1]]
+	
 	parse_literal_number pos // . associates first, then : and i in the order they appear (i multiplies whatever is in front of it by `i`, adjacency behind adds, : behind divides)
 		= I_LITERAL_REGION (toValue n_num, n_end) (toValue e_num, e_end) (toValue s_num, s_end) (toValue w_num, w_end)
 	where
-		n_str = let base_num = reverse [m.[y,pos.x] \\ y <- [pos.y..rows m-1] ++ [0..pos.y-1]]
-		in reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num)
-		e_str = let base_num = [m.[pos.y,x] \\ x <- [pos.x..cols m-1] ++ [0..pos.x-1]]
-		in reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num)
-		s_str = let base_num = [m.[y,pos.x] \\ y <- [pos.y..rows m-1] ++ [0..pos.y-1]]
-		in reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num)
-		w_str = let base_num = reverse [m.[pos.y,x] \\ x <- [pos.x..cols m-1] ++ [0..pos.x-1]]
-		in reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num)
-		n_end = {pos&y=(abs(pos.y - length n_str)) rem (rows m)}
-		e_end = {pos&x=(abs(pos.x + length e_str)) rem (cols m)}
-		s_end = {pos&y=(abs(pos.y + length s_str)) rem (rows m)}
-		w_end = {pos&x=(abs(pos.x - length w_str)) rem (cols m)}
-		//handle_colons str = foldr (/) one [fromString (toString e) \\ e <- split [':'] str]
-		//handle_imag = join ['i'] o map handle_colon o take 2 o split ['i']
-		//handle_colon = join [':'] o map handle_minus
+		n_str = let base_num = from_position_north pos
+		in snd3 (hd (match NUMBER_REGEX (reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num))))
+		e_str = let base_num = from_position_east pos
+		in snd3 (hd (match NUMBER_REGEX (reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num))))
+		s_str = let base_num = from_position_south pos
+		in snd3 (hd (match NUMBER_REGEX (reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num))))
+		w_str = let base_num = from_position_west pos
+		in snd3 (hd (match NUMBER_REGEX (reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num))))
+		n_end = {pos&y=(rows m + pos.y - length n_str) rem (rows m)}
+		e_end = {pos&x=(pos.x + length e_str) rem (cols m)}
+		s_end = {pos&y=(pos.y + length s_str) rem (rows m)}
+		w_end = {pos&x=(cols m + pos.x - length w_str) rem (cols m)}
 		sub_parse_number :: [Char] -> Number
-		sub_parse_number str = fromString (toString str) // TODO
+		sub_parse_number str = fromString (toString str)
 		n_num = sub_parse_number n_str
 		e_num = sub_parse_number e_str
 		s_num = sub_parse_number s_str
 		w_num = sub_parse_number w_str
+		
+	find_matching_pair_dist str this other
+		= sum [1 \\ _ <- takeWhile (\e = sum[1 \\ c <- e | c == this] > sum[1 \\ c <- e | c == other]) (drop 2 (inits str))] 
 
-	parse '\000' pos = undef
+	parse '\000' pos = I_TERMINATE
 	
 	parse '\007' pos = undef
 	
@@ -56,19 +62,55 @@ where
 	parse '\021' pos = I_START_WEST pos
 	parse '\022' pos = I_START_RANDOM pos
 	
-	parse '\023' pos = I_MAYBE_GOTO_NORTH undef // TODO: bracket matching
-	parse '\024' pos = I_MAYBE_GOTO_SOUTH undef
+	parse '\023' pos = I_MAYBE_GOTO_NORTH other
+	where
+		dist = sum [1 \\ _ <- takeWhile (\e = e <> '\024' /* && e <> '\036' */) (from_position_south pos)]
+		other = {pos&y=(pos.y + dist) rem (rows m)}
+		
+	parse '\024' pos = I_MAYBE_GOTO_SOUTH other
+	where
+		dist = sum [1 \\ _ <- takeWhile (\e = e <> '\023' /* && e <> '\034' */) (from_position_north pos)]
+		other = {pos&y=(rows m + pos.y - dist) rem (rows m)}
 	
-	parse '\026' pos = I_ALWAYS_LOOP_NORTH undef
-	parse '\027' pos = I_ALWAYS_LOOP_SOUTH undef
+	parse '\026' pos = I_ALWAYS_LOOP_NORTH other
+	where
+		dist = find_matching_pair_dist (from_position_south pos) '\026' '\027'
+		other = {pos&y=(pos.y + dist) rem (rows m)}
+		
+	parse '\027' pos = I_ALWAYS_LOOP_SOUTH other
+	where
+		dist = find_matching_pair_dist (from_position_north pos) '\027' '\026'
+		other = {pos&y=(rows m + pos.y - dist) rem (rows m)}
 	
-	parse '\031' pos = I_MAYBE_LOOP_NORTH undef
-	parse '\032' pos = I_MAYBE_LOOP_SOUTH undef
+	parse '\031' pos = I_MAYBE_LOOP_NORTH other
+	where
+		dist = find_matching_pair_dist (from_position_south pos) '\031' '\032'
+		other = {pos&y=(pos.y + dist) rem (rows m)}
 	
-	parse '\034' pos = I_ALWAYS_GOTO_NORTH undef
-	parse '\035' pos = I_ALWAYS_GOTO_EAST undef
-	parse '\036' pos = I_ALWAYS_GOTO_SOUTH undef
-	parse '\037' pos = I_ALWAYS_GOTO_WEST undef
+	parse '\032' pos = I_MAYBE_LOOP_SOUTH other
+	where
+		dist = find_matching_pair_dist (from_position_north pos) '\032' '\031'
+		other = {pos&y=(rows m + pos.y - dist) rem (rows m)}
+	
+	parse '\034' pos = I_ALWAYS_GOTO_NORTH other
+	where
+		dist = sum [1 \\ _ <- takeWhile (\e = /* e <> '\024' && */ e <> '\036') (from_position_south pos)]
+		other = {pos&y=(pos.y + dist) rem (rows m)}
+		
+	parse '\035' pos = I_ALWAYS_GOTO_EAST other
+	where
+		dist = sum [1 \\ _ <- takeWhile (\e = /* e <> '\133' && */ e <> '\037') (from_position_west pos)]
+		other = {pos&x=(cols m + pos.x - dist) rem (cols m)}
+		
+	parse '\036' pos = I_ALWAYS_GOTO_SOUTH other
+	where
+		dist = sum [1 \\ _ <- takeWhile (\e = /* e <> '\023' && */ e <> '\034') (from_position_north pos)]
+		other = {pos&y=(rows m + pos.y - dist) rem (rows m)}
+		
+	parse '\037' pos = I_ALWAYS_GOTO_WEST other
+	where
+		dist = sum [1 \\ _ <- takeWhile (\e = /* e <> '\135' && */ e <> '\035') (from_position_east pos)]
+		other = {pos&x=(pos.x + dist) rem (cols m)}
 	
 	parse '\040' pos = undef
 	parse '\041' pos = undef
@@ -80,25 +122,25 @@ where
 	parse '\047' pos // string
 		= I_LITERAL_REGION (toValue (toStack n_str), n_end) (toValue (toStack e_str), e_end) (toValue (toStack s_str), s_end) (toValue (toStack w_str), w_end)
 	where
-		n_str = let
-			base_str = reverse [m.[y,pos.x] \\ y <- [pos.y..rows m-1] ++ [0..pos.y-1]]
-		in takeWhile ((<>) '\047') base_str
-		e_str = let
-			base_str = [m.[pos.y,x] \\ x <- [pos.x..cols m-1] ++ [0..pos.x-1]]
-		in takeWhile ((<>) '\047') base_str
-		s_str = let
-			base_str = [m.[y,pos.x] \\ y <- [pos.y..rows m-1] ++ [0..pos.y-1]]
-		in takeWhile ((<>) '\047') base_str
-		w_str = let
-			base_str = reverse [m.[pos.y,x] \\ x <- [pos.x..cols m-1] ++ [0..pos.x-1]]
-		in takeWhile ((<>) '\047') base_str
+		n_str = takeWhile ((<>) '\047') (from_position_north pos)
+		e_str = takeWhile ((<>) '\047') (from_position_east pos)
+		s_str = takeWhile ((<>) '\047') (from_position_south pos)
+		w_str = takeWhile ((<>) '\047') (from_position_west pos)
 		n_end = {pos&y=(abs(pos.y - length n_str)) rem (rows m)}
 		e_end = {pos&x=(abs(pos.x + length e_str)) rem (cols m)}
 		s_end = {pos&y=(abs(pos.y + length s_str)) rem (rows m)}
 		w_end = {pos&x=(abs(pos.x - length w_str)) rem (cols m)}
 		
-	parse '\050' pos = undef
-	parse '\051' pos = undef
+	parse '\050' pos = I_ALWAYS_LOOP_WEST other
+	where
+		dist = find_matching_pair_dist (from_position_east pos) '\050' '\051'
+		other = {pos&x=(pos.x + dist) rem (cols m)}
+		
+	parse '\051' pos = I_ALWAYS_LOOP_EAST other
+	where
+		dist = find_matching_pair_dist (from_position_east pos) '\051' '\050'
+		other = {pos&x=(cols m + pos.x - dist) rem (cols m)}
+		
 	parse '\052' pos = undef
 	parse '\053' pos = undef
 	parse '\054' pos = undef
@@ -106,7 +148,7 @@ where
 	parse '\055' pos = parse_literal_number pos
 	parse '\056' pos = parse_literal_number pos
 	
-	parse '\057' pos = undef // slash
+	parse '\057' pos = I_REFLECT_IDENTITY
 	
 	parse '\060' pos = parse_literal_number pos
 	parse '\061' pos = parse_literal_number pos
@@ -152,10 +194,21 @@ where
 	parse '\130' pos = undef
 	parse '\131' pos = undef
 	parse '\132' pos = undef
-	parse '\133' pos = undef
-	parse '\134' pos = undef
-	parse '\135' pos = undef
+	
+	parse '\133' pos = I_MAYBE_GOTO_WEST other
+	where
+		dist = sum [1 \\ _ <- takeWhile (\e = e <> '\135' /* && e <> '\035' */) (from_position_east pos)]
+		other = {pos&x=(pos.x + dist) rem (cols m)}
+	
+	parse '\134' pos = I_REFLECT_INVERSE
+	
+	parse '\135' pos = I_MAYBE_GOTO_EAST other
+	where
+		dist = sum [1 \\ _ <- takeWhile (\e = e <> '\133' /* && e <> '\037' */) (from_position_west pos)]
+		other = {pos&x=(cols m + pos.x - dist) rem (cols m)}
+		
 	parse '\136' pos = undef
+	
 	parse '\137' pos = undef
 	parse '\140' pos = undef
 	parse '\141' pos = undef
@@ -184,9 +237,19 @@ where
 	parse '\170' pos = undef
 	parse '\171' pos = undef
 	parse '\172' pos = undef
-	parse '\173' pos = undef
-	parse '\174' pos = undef
-	parse '\175' pos = undef
+	
+	parse '\173' pos = I_MAYBE_LOOP_WEST other
+	where
+		dist = find_matching_pair_dist (from_position_east pos) '\173' '\175'
+		other = {pos&x=(pos.x + dist) rem (cols m)}
+	
+	parse '\174' pos = I_REFLECT_VERTICAL
+	
+	parse '\175' pos = I_MAYBE_LOOP_EAST other
+	where
+		dist = find_matching_pair_dist (from_position_east pos) '\175' '\173'
+		other = {pos&x=(cols m + pos.x - dist) rem (cols m)}
+		
 	parse '\176' pos = undef
 	parse '\177' pos = undef
 	parse '\200' pos = undef
@@ -196,29 +259,29 @@ where
 	parse '\204' pos = undef
 	parse '\205' pos = undef
 	parse '\206' pos = undef
-	parse '\207' pos = undef
+	parse '\207' pos = I_REFLECT_HORIZONTAL
 	parse '\210' pos = undef
 	parse '\211' pos = undef
-	parse '\212' pos = undef
-	parse '\213' pos = undef
-	parse '\214' pos = undef
-	parse '\215' pos = undef
-	parse '\216' pos = undef
-	parse '\217' pos = undef
-	parse '\220' pos = undef
-	parse '\221' pos = undef
-	parse '\222' pos = undef
-	parse '\223' pos = undef
-	parse '\224' pos = undef
-	parse '\225' pos = undef
-	parse '\226' pos = undef
-	parse '\227' pos = undef
-	parse '\230' pos = undef
-	parse '\231' pos = undef
-	parse '\232' pos = undef
-	parse '\233' pos = undef
-	parse '\234' pos = undef
-	parse '\235' pos = undef
+	parse '\212' pos = I_MAYBE_MOVE_NORTH
+	parse '\213' pos = I_MAYBE_MOVE_EAST
+	parse '\214' pos = I_MAYBE_MOVE_SOUTH
+	parse '\215' pos = I_MAYBE_MOVE_WEST
+	parse '\216' pos = I_MAYBE_MOVE_RANDOM
+	parse '\217' pos = I_ALWAYS_MOVE_NORTH
+	parse '\220' pos = I_ALWAYS_MOVE_EAST
+	parse '\221' pos = I_ALWAYS_MOVE_SOUTH
+	parse '\222' pos = I_ALWAYS_MOVE_WEST
+	parse '\223' pos = I_ALWAYS_MOVE_RANDOM
+	parse '\224' pos = I_MAYBE_JUMP_SE
+	parse '\225' pos = I_MAYBE_JUMP_SW
+	parse '\226' pos = I_MAYBE_JUMP_NW
+	parse '\227' pos = I_MAYBE_JUMP_NE
+	parse '\230' pos = I_ALWAYS_JUMP_SE
+	parse '\231' pos = I_ALWAYS_JUMP_SW
+	parse '\232' pos = I_ALWAYS_JUMP_NW
+	parse '\233' pos = I_ALWAYS_JUMP_NE
+	parse '\234' pos = I_MAYBE_SKIP_NEXT
+	parse '\235' pos = I_ALWAYS_SKIP_NEXT
 	parse '\236' pos = undef
 	parse '\237' pos = undef
 	parse '\240' pos = undef

@@ -4,11 +4,12 @@ from Dirty.Backend.Number import ::Number
 from Dirty.Backend.Value import ::Value, class toValue
 from StdOverloaded import class zero, class +++, class toBool, class fromString
 	
-:: Stack = {
-	length :: Number,
-	attrs :: StackAttrs,
-	list :: [!Value]
-	}
+// TODO: make stack cons-list when not infinite, so element removal can update attributes
+	
+:: Stack
+	= Head Value Stack
+	| Lazy [!Value] StackAttrs
+	| Null
 	
 :: StackAttrs = {
 	hasStacks :: Bool,
@@ -30,4 +31,8 @@ instance toStack [Char]
 
 fromValue :: Value -> Stack
 
-prepend :: Value Stack -> Stack
+push :: Value Stack -> Stack
+
+pop :: Stack -> (Value, Stack)
+
+peek :: Stack -> Value

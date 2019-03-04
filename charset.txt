@@ -1,9 +1,9 @@
-■ OR \0 OR \0 pictorial (␀) // 0x25a0 // (black square) end program
+■ OR \0 OR \0 pictorial (␀) // 0x25a0 // 000 // (black square) end program
 \1 //  // RESERVED
 \2 //  // RESERVED
 \3 //  // RESERVED
 \4 //  // RESERVED
-\5 OR \5 pictorial (␅) //  // (enquiry) TODO
+\5 OR \5 pictorial (␅) // // 005 // (enquiry) TODO
 \6 OR \6 pictorial (␆) //  // (acknowledge) TODO
 🔔 OR \7 OR \7 pictorial (␇) // 0x1f514 // (bell) make a beep
 \8 OR \8 pictorial (␈) //  // (backspace) TODO
@@ -87,7 +87,7 @@ U //  // uniform [expand stacks to unify shape]
 V //  // eval
 W //  // drop while
 X //  // diagonalize with
-Y //  // split on right
+Y //  // join on right
 Z //  // is an integer (maps)
 [ //  // conditional goto
 \ //  // reflection
@@ -119,7 +119,7 @@ u //  // uniform [join stacks to unify shape]
 v //  // convert to string [repr]
 w //  // take while
 x //  // cross product
-y //  // join on right
+y //  // split on right
 z //  // round (maps)
 { //  // conditional loop
 | //  // reflection
@@ -168,9 +168,9 @@ z //  // round (maps)
 ↗ // 0x2197 // recall right
 ∅ // 0x2205 // (empty set) push empty list
 Ẁ // 0x1E80 // (capital w with grave) is left stack empty
-ẁ // 0x1E81 // (lower w with grave) wipe left stack
+ẁ // 0x1E81 // (lower w with grave) pop left stack
 Ẃ // 0x1E82 // (capital w with acute) is right stack empty
-ẃ // 0x1E83 // (lower w with acute) wipe right stack
+ẃ // 0x1E83 // (lower w with acute) pop right stack
 ∞ // 0x221E // literal infinity
 ∝ // 0x221D // is a non-finite number, and not NaN (maps)
 − // 0x2212 // subtract
@@ -232,7 +232,7 @@ z //  // round (maps)
 Ä // 0x00C4 // isLetter
 Ṁ // 0x1E40 // isMark
 Ṅ // 0x1E44 // isNumber
-Ṗ // 0x1E56 // isPunctuation [*T*ypographical]
+Ṗ // 0x1E56 // isPunctuation
 Ṡ // 0x1E60 // isSymbol
 Ẅ // 0x1E84 // isSeparator
 Č // 0x010C // isLower
@@ -243,9 +243,9 @@ z //  // round (maps)
 Ḋ // 0x1E0A // isDigit
 ẗ // 0x1E97 // title case (does not map)
 Ṫ // 0x1E6A // is title case
-  //  // 
-  //  // 
-  //  // 
+ṟ // 0x1E5F // duplicate right stack top
+ḻ // 0x1E3B // duplicate left stack top
+ẏ // 0x1E8F // TODO (something with slicing)
   //  // 
   //  // 
   //  // 

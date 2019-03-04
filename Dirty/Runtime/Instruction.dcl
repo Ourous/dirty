@@ -66,4 +66,36 @@ I_RESTART_LAST :: Instruction
 // terminate
 I_TERMINATE :: Instruction
 
+// reflections
+I_REFLECT_VERTICAL :: Instruction
+I_REFLECT_HORIZONTAL :: Instruction
+I_REFLECT_IDENTITY :: Instruction
+I_REFLECT_INVERSE :: Instruction
 
+// skips
+I_MAYBE_SKIP_NEXT :: Instruction
+I_ALWAYS_SKIP_NEXT :: Instruction
+
+// jumps
+I_MAYBE_JUMP_SE :: Instruction
+I_MAYBE_JUMP_SW :: Instruction
+I_MAYBE_JUMP_NW :: Instruction
+I_MAYBE_JUMP_NE :: Instruction
+
+I_ALWAYS_JUMP_SE :: Instruction
+I_ALWAYS_JUMP_SW :: Instruction
+I_ALWAYS_JUMP_NW :: Instruction
+I_ALWAYS_JUMP_NE :: Instruction
+
+// direction swaps
+I_MAYBE_MOVE_NORTH :: Instruction
+I_MAYBE_MOVE_EAST :: Instruction
+I_MAYBE_MOVE_SOUTH :: Instruction
+I_MAYBE_MOVE_WEST :: Instruction
+I_MAYBE_MOVE_RANDOM :: Instruction
+
+I_ALWAYS_MOVE_NORTH :: Instruction
+I_ALWAYS_MOVE_EAST :: Instruction
+I_ALWAYS_MOVE_SOUTH :: Instruction
+I_ALWAYS_MOVE_WEST :: Instruction
+I_ALWAYS_MOVE_RANDOM :: Instruction

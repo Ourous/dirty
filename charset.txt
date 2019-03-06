@@ -6,7 +6,7 @@
 \5 OR \5 pictorial (␅) // // 005 // (enquiry) TODO
 \6 OR \6 pictorial (␆) //  // (acknowledge) TODO
 🔔 OR \7 OR \7 pictorial (␇) // 0x1f514 // (bell) make a beep
-\8 OR \8 pictorial (␈) //  // (backspace) TODO
+\8 OR \8 pictorial (␈) //  // (backspace) TODO [jump back 1?]
 \t OR \t pictorial (␉) //  // (h-tab) move to random h-tab in same row
 ¶ OR \n OR \n pictorial (␊␤) //  // (line feed) row delimiter
 \11 OR \11 pictorial (␋) //  // (v-tab) move to random v-tab in same column
@@ -36,13 +36,13 @@
 # //  // hash
 $ //  // get environment variable
 % //  // modulo division
-& //  // concatenate
+& //  // pair
 ' //  // start and end string
 ( //  // always loop
 ) //  // always loop
 * //  // dot product
 + //  // addition
-, //  // separate into singleton
+, //  // concatenate
 - //  // negation in literal
 . //  // decimal separator
 / //  // reflection
@@ -62,7 +62,7 @@ $ //  // get environment variable
 = //  // equal to (vectorizes)
 > //  // greater-than (vectorizes)
 ? //  // read once
-@ //  // item at index (maps)
+@ //  // regex (right side is regex)
 A //  // uppercase alphabet (constant)
 B //  // from binary
 C //  // arc-cosine (maps)
@@ -104,7 +104,7 @@ f //  // flip [reverse]
 g //  // group by equality
 h //  // head
 i //  // imaginary constant (constant)
-j //  // TODO
+j //  // jump to the position (left, right) [relative to direction of travel?]
 k //  // keep
 l //  // length
 m //  // minimum
@@ -156,6 +156,7 @@ z //  // round (maps)
 ◥ // 0x25E5 // (NE black triangle) bounce north east
 ○ // 0x25CC // (white circle) conditional jump over next instruction
 ● // 0x25CF // (black circle) jump over next instruction
+↑ // 0x2191 // duplicate top of left stack
 ← // 0x2190 // (left arrow) move top of right stack to top of left stack
 → // 0x2192 // (right arrow) move top of left stack to top of right stack
 ↔ // 0x2194 // (left-right arrow) swap top of stacks
@@ -167,9 +168,13 @@ z //  // round (maps)
 ↙ // 0x2199 // store right
 ↗ // 0x2197 // recall right
 ∅ // 0x2205 // (empty set) push empty list
-Ẁ // 0x1E80 // (capital w with grave) is left stack empty
+ļ // 0x013C // enlist top of left
+ŗ // 0x0157 // enlist top of right
+ḻ // 0x1E3B // swap top of left stack
+ṟ // 0x1E5F // swap top of right stack
+Ẁ // 0x1E80 // (capital w with grave) wipe entire left stack
 ẁ // 0x1E81 // (lower w with grave) pop left stack
-Ẃ // 0x1E82 // (capital w with acute) is right stack empty
+Ẃ // 0x1E82 // (capital w with acute) wipe entire right stack
 ẃ // 0x1E83 // (lower w with acute) pop right stack
 ∞ // 0x221E // literal infinity
 ∝ // 0x221D // is a non-finite number, and not NaN (maps)
@@ -204,8 +209,8 @@ z //  // round (maps)
 ∩ // 0x2229 // intersection
 ∪ // 0x222A // union
 ∆ // 0x2206 // symmetric difference
-∋ // 0x220B // contains as member
-⊃ // 0x2283 // is superset of
+∈ // 0x2208 // is element of
+⊂ // 0x2282 // is subset of
 ∫ // 0x222B // range to
 ∬ // 0x222C // range from step
 ∭ // 0x222D // range from mult
@@ -243,14 +248,9 @@ z //  // round (maps)
 Ḋ // 0x1E0A // isDigit
 ẗ // 0x1E97 // title case (does not map)
 Ṫ // 0x1E6A // is title case
-ṟ // 0x1E5F // duplicate right stack top
-ḻ // 0x1E3B // duplicate left stack top
-ẏ // 0x1E8F // TODO (something with slicing)
-  //  // 
-  //  // 
-  //  // 
-  //  // 
-  //  // 
-  //  // 
-  //  // 
+ẏ // 0x1E8F // slice left python-style
+ė // 0x0117 // index at (vectorizes)
+ë // 0x00EB // index at (multidimensional)
+ï // 0x00EF // indexes of (always multidimensional)?
+Ẏ // 0x1E8E // left contains right as infix
 ™ // 0x2122 // get the time

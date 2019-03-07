@@ -1,5 +1,7 @@
 definition module Dirty.Backend.Rational
 
+from Dirty.Backend.Number import class toNumber
+
 from StdOverloaded import class +, class -, class *, class /, class ^, class ~,
                           class ==, class <, class one, class abs,
                           class sign, class mod, class gcd, class lcm,
@@ -9,7 +11,12 @@ from StdOverloaded import class +, class -, class *, class /, class ^, class ~,
                           class sin, class cos, class tan, class asin,
                           class acos, class atan, class zero
 
+//:: Rational// (:== Rational_) // do not do this, ends up being far too slow
+// potentially combine this module into Number later
 :: Rational
+	= Int !Int
+	| Real !Real
+
 
 instance + Rational
 instance - Rational
@@ -45,3 +52,7 @@ instance tan Rational
 instance asin Rational
 instance acos Rational
 instance atan Rational
+
+RATIONAL_IS_FINITE :: !Rational -> Bool
+RATIONAL_IS_ZERO :: !Rational -> Bool
+RATIONAL_IS_NAN :: !Rational -> Bool

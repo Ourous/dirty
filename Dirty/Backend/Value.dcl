@@ -4,7 +4,7 @@ from Dirty.Backend.Number import ::Number, class isInfinite, class isRational,
                                  class isImaginary, class isInvalid
 from Dirty.Backend.Stack import ::Stack, class toStack
 from Data.Maybe import ::Maybe
-from StdOverloaded import class toBool
+from StdOverloaded import class toBool, class <, class ==
 
 //:: Item :== Number
 :: Value
@@ -14,6 +14,8 @@ from StdOverloaded import class toBool
 tryParseValue :: String -> Maybe Value
 
 instance toBool Value
+instance < Value
+instance == Value
 
 //instance isInfinite Value
 //instance isRational Value

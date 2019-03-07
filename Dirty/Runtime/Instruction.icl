@@ -363,3 +363,7 @@ I_ALWAYS_MOVE_RANDOM = op
 where
 	op _ st=:{rng=[num:rng]} w
 		= ({st&dir=case num rem 4 of 0 = North; 1 = East; 2 = South; 3 = West,rng=rng}, w)
+		
+// reposition
+I_REPOSITION :: Instruction
+I_REPOSITION = undef

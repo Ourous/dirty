@@ -99,3 +99,6 @@ I_ALWAYS_MOVE_EAST :: Instruction
 I_ALWAYS_MOVE_SOUTH :: Instruction
 I_ALWAYS_MOVE_WEST :: Instruction
 I_ALWAYS_MOVE_RANDOM :: Instruction
+
+// reposition
+I_REPOSITION :: Instruction

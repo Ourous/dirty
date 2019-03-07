@@ -11,7 +11,7 @@ import Dirty.Backend.Rational, Math.Geometry, StdEnv, Data.Func, Text
 
 :: Magnitude inf fin
 	= Fin !fin
-	| Inf inf
+	| Inf !inf
 	
 :: Sign
 	= Positive
@@ -67,19 +67,18 @@ IS_FINITE atomic // Don't use outside of `handle`
 
 // number implementations
 
-handle number
-	:== hyperstrict case number of
+handle number //:== number
+	:== case number of
 		(Re (Fin val)) = handleRe val
 		(Im (Fin val)) = handleIm val
 		(Cx (Fin {re, im})) = handleCx re im
-		val = val
+		_ = number
 where
 	handleRe val
-		| IS_FINITE val
-			| IS_ZERO val = Zero
-			| otherwise = (Re (Fin val))
-		| IS_NOT_NAN val = (Re (Inf (FIN_SIGN val)))
-		| otherwise = Invalid
+		| RATIONAL_IS_ZERO val = Zero
+		| RATIONAL_IS_FINITE val = (Re (Fin val))
+		| RATIONAL_IS_NAN val = Invalid
+		| otherwise = (Re (Inf (FIN_SIGN val)))
 	handleIm val
 		| IS_FINITE val
 			| IS_ZERO val = Zero
@@ -109,7 +108,7 @@ instance + Number where
 	(+) _ Invalid = Invalid
 	(+) Zero val = val
 	(+) val Zero = val
-	(+) (Re (Fin lhs)) (Re (Fin rhs))
+	(+) (Re (Fin lhs)) (Re (Fin rhs)) // TODO merge Rational into this module because it'll literally double the speed
 		= handle (Re (Fin (lhs + rhs)))
 	(+) (Re (Fin lhs)) (Im (Fin rhs))
 		= (Cx (Fin {re=lhs, im=rhs}))
@@ -715,3 +714,14 @@ instance isInvalid Number
 where
 	isInvalid Invalid = True
 	isInvalid _ = False
+	
+	
+class toNumber a :: a -> Number
+instance toNumber Int
+where toNumber i = fromInt i
+instance toNumber Real
+where toNumber r = fromReal r
+instance toNumber Bool
+where toNumber b = fromBool b
+instance toNumber String
+where toNumber s = fromString s

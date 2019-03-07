@@ -3,7 +3,7 @@ implementation module Dirty.Backend.Value
 import Dirty.Backend.Number, Dirty.Backend.Stack
 import Data.Maybe
 import Text.GenParse
-import StdEnv
+import StdClass, StdOverloaded, StdBool, StdInt, StdReal
 
 instance fromInt Value
 where fromInt val = Num (fromInt val)
@@ -30,6 +30,14 @@ instance toBool Value
 where
 	toBool (Num num) = toBool num
 	toBool (Stk grp) = toBool grp
+	
+instance < Value
+where
+	(<) (Num lhs) (Num rhs) = lhs < rhs
+	
+instance == Value
+where
+	(==) (Num lhs) (Num rhs) = lhs == rhs
 	
 instance isInfinite Value
 where

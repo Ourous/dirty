@@ -1,10 +1,10 @@
 implementation module Dirty.Frontend.Arguments
 
 import Dirty.Backend.Stack, Dirty.Backend.Value
-import StdEnv
+import StdClass, StdBool, StdOverloaded, StdString
 import Data.Maybe, Data.Error
 import System.IO, System.CommandLine, System.Options
-import Text, Text.GenParse
+//import Text, Text.GenParse
 
 defaultFlags =: {
 	frontend={

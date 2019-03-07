@@ -1,11 +1,12 @@
 implementation module Dirty.Frontend.Parser
 
-import Dirty.Backend.Value, Dirty.Backend.Stack, Dirty.Backend.Number
+//import Dirty.Backend.Value, Dirty.Backend.Stack, Dirty.Backend.Number
+import Dirty.Backend
 import Dirty.Frontend.Arguments
 import Dirty.Runtime.Instruction
 from Dirty.Types import ::Point(..)
 import Data.Matrix, Data.List
-import Text
+//import Text
 import StdEnv
 import Regex
 

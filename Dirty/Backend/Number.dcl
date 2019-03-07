@@ -14,6 +14,7 @@ from StdOverloaded import class +, class -, class *, class /, class ^, class ~,
 
 :: Number
 
+
 instance + Number
 instance - Number
 instance zero Number
@@ -71,8 +72,15 @@ class isRational a :: a -> Bool
 class isImaginary a :: a -> Bool
 class isInvalid a :: a -> Bool
 
+
 instance isInfinite Number
 instance isComplex Number
 instance isRational Number
 instance isImaginary Number
 instance isInvalid Number
+
+class toNumber a :: a -> Number
+instance toNumber Int
+instance toNumber Real
+instance toNumber Bool
+instance toNumber String

@@ -1,6 +1,6 @@
 implementation module Dirty.Backend.Rational
 
-import StdEnv
+import StdEnv, Data.Func
 
 :: Rational
 	= Int !Int
@@ -29,15 +29,17 @@ applyUnaryInt op conv val
 			(Real val) = op (conv val)
 		))
 	
-applyBinaryReal :: !(Real Real -> Real) !(Int -> Real) !Rational !Rational -> Rational
-applyBinaryReal op conv (Real lhs) (Real rhs)
-	= (Real (op lhs rhs))
-applyBinaryReal op conv (Real lhs) (Int rhs)
-	= (Real (op lhs (conv rhs)))
-applyBinaryReal op conv (Int lhs) (Real rhs)
-	= (Real (op (conv lhs) rhs))
-applyBinaryReal op conv (Int lhs) (Int rhs)
-	= (Real (op (conv lhs) (conv rhs)))
+applyBinaryReal :: !(Real Real -> Real) !(Int -> Real) -> (!Rational !Rational -> Rational)
+applyBinaryReal op conv = hyperstrict applyBinaryReal`
+where
+	applyBinaryReal`  (Real lhs) (Real rhs)
+		= (Real (op lhs rhs))
+	applyBinaryReal`  (Real lhs) (Int rhs)
+		= (Real (op lhs (conv rhs)))
+	applyBinaryReal`  (Int lhs) (Real rhs)
+		= (Real (op (conv lhs) rhs))
+	applyBinaryReal`  (Int lhs) (Int rhs)
+		= (Real (op (conv lhs) (conv rhs)))
 		
 applyBinaryInt :: !(Int Int -> Int) !(Real -> Int) !Rational !Rational -> Rational
 applyBinaryInt op conv (Int lhs) (Int rhs)
@@ -51,36 +53,28 @@ applyBinaryInt op conv (Real lhs) (Real rhs)
 
 // Rational implementations
 
-instance + Rational where (+) lhs rhs = applyBinaryReal (+) (toReal) lhs rhs
-	/*
+instance + Rational where
 	(+) :: !Rational !Rational -> Rational
 	(+) (Int lhs) (Int rhs)
-		= IF_INT_64_OR_32
-			(Int (lhs + rhs))
-			(Real (toReal lhs + toReal rhs))
+		= (Real (toReal lhs + toReal rhs))
 	(+) (Int lhs) (Real rhs)
 		= (Real (toReal lhs + rhs))
 	(+) (Real lhs) (Int rhs)
 		= (Real (lhs + toReal rhs))
 	(+) (Real lhs) (Real rhs)
 		= (Real (lhs + rhs))
-	*/
 	
-instance - Rational where (-) lhs rhs = applyBinaryReal (-) (toReal) lhs rhs
-/*
+instance - Rational where
 	(-) (Int lhs) (Int rhs)
-		= IF_INT_64_OR_32
-			 (Int (lhs - rhs))
-			 (Real (toReal lhs - toReal rhs))
+		= (Real (toReal lhs - toReal rhs))
 	(-) (Int lhs) (Real rhs)
 		= (Real (toReal lhs - rhs))
 	(-) (Real lhs) (Int rhs)
 		= (Real (lhs - toReal rhs))
 	(-) (Real lhs) (Real rhs)
 		= (Real (lhs - rhs))
-*/
-instance * Rational where (*) lhs rhs = applyBinaryReal (*) (toReal) lhs rhs
-/*
+
+instance * Rational where
 	(*) (Int lhs) (Int rhs)
 		= (Real (toReal lhs * toReal rhs))
 	(*) (Int lhs) (Real rhs)
@@ -89,9 +83,8 @@ instance * Rational where (*) lhs rhs = applyBinaryReal (*) (toReal) lhs rhs
 		= (Real (lhs * toReal rhs))
 	(*) (Real lhs) (Real rhs)
 		= (Real (lhs * rhs))
-*/
-instance / Rational where (/) lhs rhs = applyBinaryReal (/) (toReal) lhs rhs
-/*
+
+instance / Rational where
 	(/) (Int lhs) (Int rhs)
 		= if(lhs rem rhs == 0) (Int (lhs / rhs)) (Real (toReal lhs / toReal rhs))
 	(/) (Int lhs) (Real rhs)
@@ -100,9 +93,8 @@ instance / Rational where (/) lhs rhs = applyBinaryReal (/) (toReal) lhs rhs
 		= (Real (lhs / toReal rhs))
 	(/) (Real lhs) (Real rhs)
 		= (Real (lhs / rhs))
-*/
-instance ^ Rational where (^) lhs rhs = applyBinaryReal (^) (toReal) lhs rhs
-/*
+
+instance ^ Rational where
 	(^) (Int lhs) (Int rhs)
 		= (Real (toReal lhs ^ toReal rhs))
 	(^) (Int lhs) (Real rhs)
@@ -111,7 +103,7 @@ instance ^ Rational where (^) lhs rhs = applyBinaryReal (^) (toReal) lhs rhs
 		= (Real (lhs ^ toReal rhs))
 	(^) (Real lhs) (Real rhs)
 		= (Real (lhs ^ rhs))
-*/
+		
 instance abs Rational where
 	abs (Int val)
 		= (Int (abs val))
@@ -206,3 +198,17 @@ instance asin Rational where asin val = applyUnaryReal asin (toReal) val
 instance acos Rational where acos val = applyUnaryReal acos (toReal) val
 
 instance atan Rational where atan val = applyUnaryReal atan (toReal) val
+
+
+
+RATIONAL_IS_FINITE :: !Rational -> Bool
+RATIONAL_IS_FINITE (Real r) = isFinite r
+RATIONAL_IS_FINITE _ = True
+RATIONAL_IS_ZERO :: !Rational -> Bool
+RATIONAL_IS_ZERO (Real 0.0) = True
+RATIONAL_IS_ZERO (Real -0.0) = True
+RATIONAL_IS_ZERO (Int 0) = True
+RATIONAL_IS_ZERO _ = False
+RATIONAL_IS_NAN :: !Rational -> Bool
+RATIONAL_IS_NAN (Real v) = isNaN v
+RATIONAL_IS_NAN _ = False

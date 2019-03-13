@@ -36,8 +36,26 @@ where
 instance toBool Stack
 where
 	toBool Null = False
-	toBool stack = toBool (peek stack)
+	toBool stack = maybe False toBool (peek stack)
 	
+instance < Stack
+where
+	(<) Null _ = True
+	(<) _ Null = False
+	(<) (Head lh lt) (Head rh rt)
+		= lh < rh && lt < rt
+	
+instance == Stack
+where
+	(==) Null Null = True
+	(==) _ Null = False
+	(==) Null _ = False
+	(==) (Head lh lt) (Head rh rt)
+		= lh == rh && lt == rt // TODO revise for lazy stacks
+
+instance toString Stack
+where
+	toString Null = ""
 
 instance fromString Stack
 where
@@ -65,6 +83,10 @@ where
 instance toStack Value
 where
 	toStack v = (Head v Null)
+	
+instance toStack Number
+where
+	toStack v = (Head (toValue v) Null)
 /*	
 instance toStack [!a] | toValue a
 where
@@ -77,13 +99,18 @@ fromValue val = (Head val Null)
 push :: Value Stack -> Stack
 push val stack = (Head val stack)
 		
-pop :: Stack -> (Value, Stack)
-pop Null = abort "Fatal: cannot pop null"
-pop (Head val stack) = (val, stack)
+pop :: Stack -> (Maybe Value, Stack)
+pop Null = (Nothing, Null)//abort "Fatal: cannot pop null"
+pop (Head val stack) = (Just val, stack)
 
-peek :: Stack -> Value
-peek Null = abort "Fatal: cannot peek null"
-peek (Head val _) = val
+peek :: Stack -> Maybe Value
+peek Null = Nothing//abort "Fatal: cannot peek null"
+peek (Head val _) = Just val
+
+appH :: (Value -> Value) Stack -> Stack
+appH _ Null = Null
+appH fn (Head val stack) = (Head (fn val) stack)
+
 
 // misc builtins
 S_sort :: Stack -> Stack
@@ -98,7 +125,12 @@ S_sort h=:(Head a t=:(Head b c))
 //sort stack=:(More _ Null) = stack
 //sort (Loop loop Null) = Foldr (\a b = (More a b)) Null loop
 
+S_isEmpty :: Stack -> Bool
+S_isEmpty Null = True
+S_isEmpty _ = False
+
 S_isSorted :: Stack -> Bool
+S_isSorted Null = True
 S_isSorted _ = undef
 
 S_reduce :: (Value -> Value -> Value) Value Stack -> Value
@@ -114,8 +146,61 @@ S_map f (Head h t) = (Head (f h) (S_map f t))
 S_map f (Loop h t) = (Loop (Map f h) (S_map f t))
 S_map f (Lazy h _ t) = (Lazy (Map f h) zero (trace_n "Error: access past end of infinite list" t))
 //reverse :: Stack -> Stack
+
 S_indexOf :: Stack Value -> Value
 S_indexOf _ _ = undef
+
 S_valueAt :: Stack Value -> Value
 S_valueAt _ _ = undef
+
+S_length :: Stack -> Int
+S_length Null = 0
+S_length (Head _ stack) = 1 + S_length stack
+
+S_takeWhile :: Stack Stack -> Stack // cond, list
+S_takeWhile Null _ = Null
+S_takeWhile _ Null = Null
+S_takeWhile (Head lh lt) (Head rh rt)
+	| toBool lh
+		= (Head rh (S_takeWhile lt rt))
+	| otherwise
+		= Null
+
+S_dropWhile :: Stack Stack -> Stack
+S_dropWhile Null rhs = rhs
+S_dropWhile _ Null = Null
+S_dropWhile (Head lh lt) rhs=:(Head _ rt)
+	| toBool lh
+		= S_dropWhile lt rt
+	| otherwise
+		= rhs
+
+S_repeat :: Int Value -> Stack
+S_repeat 0 _ = Null
+S_repeat n v
+	| n < 0
+		= trace_n "Warning: behaviour for repeating negative ammounts is TBD, yielding Null" Null
+	| otherwise
+		= (Head v (S_repeat (dec n) v))
+
+S_zipWith :: (Value Value -> Value) Stack Stack -> Stack
+S_zipWith _ Null _ = Null
+S_zipWith _ _ Null = Null
+S_zipWith fn (Head lh lt) (Head rh rt)
+	= (Head (fn lh rh) (S_zipWith fn lt rt))
+
+S_removeDup :: Stack -> Stack
+S_removeDup Null = Null
+S_removeDup stack = removeDup` stack []
+where
+	removeDup` (Head h t) seen // TODO use ordered list to make this faster
+		| any ((==)h) seen
+			= removeDup` t seen
+		| otherwise
+			= (Head h (removeDup` t [h:seen]))		
+
+S_countDup :: Stack -> Int
+S_countDup _ = undef
+
+
 

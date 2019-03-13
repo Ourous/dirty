@@ -15,7 +15,7 @@ Global
 		ExtraMemory:	81920
 		IntialHeapSize:	204800
 		HeapSizeMultiplier:	4096
-		ShowExecutionTime:	True
+		ShowExecutionTime:	False
 		ShowGC:	False
 		ShowStackSize:	False
 		MarkingCollector:	False

@@ -14,6 +14,7 @@ from StdOverloaded import class +, class -, class *, class /, class ^, class ~,
 
 :: Number
 
+one_i :: Number
 
 instance + Number
 instance - Number
@@ -71,7 +72,6 @@ class isComplex a :: a -> Bool
 class isRational a :: a -> Bool
 class isImaginary a :: a -> Bool
 class isInvalid a :: a -> Bool
-
 
 instance isInfinite Number
 instance isComplex Number

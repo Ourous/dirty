@@ -26,6 +26,9 @@ import Dirty.Backend.Rational, Math.Geometry, StdEnv, Data.Func, Text
 :: Directed
 	= Directed
 
+one_i :: Number
+one_i =: (Im (Fin one))
+
 instance == Sign where
 	(==) Positive Positive = True
 	(==) Negative Negative = True

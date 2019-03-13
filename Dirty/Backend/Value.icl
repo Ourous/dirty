@@ -3,7 +3,7 @@ implementation module Dirty.Backend.Value
 import Dirty.Backend.Number, Dirty.Backend.Stack
 import Data.Maybe
 import Text.GenParse
-import StdClass, StdOverloaded, StdBool, StdInt, StdReal
+import StdClass, StdOverloaded, StdBool, StdInt, StdReal, StdEnv
 
 instance fromInt Value
 where fromInt val = Num (fromInt val)
@@ -34,6 +34,9 @@ where
 instance < Value
 where
 	(<) (Num lhs) (Num rhs) = lhs < rhs
+	(<) (Num _) (Stk _) = False
+	(<) (Stk _) (Num _) = True
+	(<) (Stk lhs) (Stk rhs) = lhs < rhs
 	
 instance == Value
 where
@@ -67,5 +70,32 @@ instance toValue Number
 where toValue val = Num val
 instance toValue Stack
 where toValue val = Stk val
+instance toValue Value
+where toValue val = val
 //instance toValue a
 //where toValue val = Group (toStack val)
+
+instance repr Value
+
+vectorizeLeft :: (Number Value -> a) -> (Value Value -> Value) | toValue a
+vectorizeLeft fn = op
+where
+	op (Num lhs) rhs = toValue (fn lhs rhs)
+	op (Stk lhs) rhs = toValue (S_map (flip op rhs) lhs)
+
+vectorizeRight :: (Value Number -> a) -> (Value Value -> Value) | toValue a
+vectorizeRight fn = op
+where
+	op lhs (Num rhs) = toValue (fn lhs rhs)
+	op lhs (Stk rhs) = toValue (S_map (op lhs) rhs)
+	
+vectorizeFull :: (Number Number -> a) -> (Value Value -> Value) | toValue a
+vectorizeFull fn = op
+where
+	op (Num lhs) (Num rhs) = toValue (fn lhs rhs)
+	op lhs=:(Num _) (Stk rhs) = toValue (S_map (op lhs) rhs)
+	op (Stk lhs) rhs=:(Num _) = toValue (S_map (flip op rhs) lhs)
+	op (Stk lhs) (Stk rhs) = toValue (S_zipWith op lhs rhs)
+
+
+

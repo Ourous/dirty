@@ -10,7 +10,7 @@ from System.IO import ::IO
 :: Memory = {
 	lhs :: Stack,
 	rhs :: Stack,
-	tmp :: Value
+	tmp :: Maybe Value
 	}
 
 :: State = {

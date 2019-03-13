@@ -21,6 +21,7 @@ finalizeProgram :: RuntimeFlags (Matrix Instruction) -> Matrix Operation
 
 // region literals
 I_LITERAL_REGION :: (Value, Point) (Value, Point) (Value, Point) (Value, Point) -> Instruction
+I_LITERAL_SINGLE :: Value -> Instruction
 
 // tab swapping
 I_HORIZONTAL_TAB_SWAP :: (Vector Point) -> Instruction
@@ -102,3 +103,123 @@ I_ALWAYS_MOVE_RANDOM :: Instruction
 
 // reposition
 I_REPOSITION :: Instruction
+
+// rotations
+I_TURN_ANTICLOCKWISE :: Instruction
+I_TURN_CLOCKWISE :: Instruction
+
+// io
+I_WRITE_SHORT :: Instruction
+I_WRITE_LONG :: Instruction
+I_WRITE_FILE :: Instruction
+I_READ_SHORT :: Instruction
+I_READ_LONG :: Instruction
+I_READ_FILE :: Instruction
+I_DELETE_FILE :: Instruction
+I_GET_TIME :: Instruction
+I_GET_ENV_VAR :: Instruction
+I_SYSTEM_COMMAND :: Instruction
+I_BEEP :: Instruction
+I_CLEAR_CONSOLE :: Instruction
+
+// memory stuff
+I_STORE_LEFT :: Instruction
+I_RECALL_LEFT :: Instruction
+I_STORE_RIGHT :: Instruction
+I_RECALL_RIGHT :: Instruction
+I_DUPLICATE_TOP :: Instruction
+I_TOP_RIGHT_TO_LEFT :: Instruction
+I_TOP_LEFT_TO_RIGHT :: Instruction
+I_SWAP_STACK_TOPS :: Instruction
+I_PREPEND_RIGHT_TO_LEFT :: Instruction
+I_PREPEND_LEFT_TO_RIGHT :: Instruction
+I_SWAP_FULL_STACKS :: Instruction
+
+// no-op
+I_NO_OP :: Instruction
+
+// number stuff
+I_ADD :: Instruction
+I_SUBTRACT :: Instruction
+I_DIVIDE :: Instruction
+I_MULTIPLY :: Instruction
+I_RECIPROCAL :: Instruction
+I_SQUARE_ROOT :: Instruction
+I_MODULUS :: Instruction
+I_NEGATE :: Instruction
+I_OR :: Instruction
+I_AND :: Instruction
+I_XOR :: Instruction
+I_NOT :: Instruction
+I_SHIFT_LEFT :: Instruction
+I_SHIFT_RIGHT :: Instruction
+I_ARC_SINE :: Instruction
+I_SINE :: Instruction
+I_ARC_COSINE :: Instruction
+I_COSINE :: Instruction
+I_ARC_TANGENT :: Instruction
+I_TANGENT :: Instruction
+I_TO_BINARY :: Instruction
+I_FROM_BINARY :: Instruction
+I_ABSOLUTE :: Instruction
+I_PRIMES :: Instruction
+I_IS_PRIME :: Instruction
+I_RANDOM :: Instruction
+I_LOGARITHM :: Instruction
+I_EXPONENTIATE :: Instruction
+I_ROUND :: Instruction
+I_IS_INTEGER :: Instruction
+I_IS_NUMBER :: Instruction
+I_IS_RATIONAL :: Instruction
+I_REAL_PART :: Instruction
+I_IMAGINARY_PART :: Instruction
+I_JOIN_COMPLEX :: Instruction
+I_SPLIT_COMPLEX :: Instruction
+I_CONJUGATE :: Instruction
+
+
+// list stuff
+I_CROSS_PRODUCT :: Instruction
+I_DOT_PRODUCT :: Instruction
+I_DIAGONALIZE :: Instruction
+I_UNIFORM_COLLAPSE :: Instruction
+I_UNIFORM_EXPAND :: Instruction
+I_REPEAT :: Instruction
+I_COUNT_REPEATS :: Instruction
+I_PAIR :: Instruction
+I_SPLIT :: Instruction
+I_JOIN :: Instruction
+I_TAKE :: Instruction
+I_TAKE_WHILE :: Instruction
+I_DROP :: Instruction
+I_DROP_WHILE :: Instruction
+I_SORT :: Instruction
+I_IS_SORTED :: Instruction
+I_MINIMUM :: Instruction
+I_MAXIMUM :: Instruction
+I_LENGTH :: Instruction
+I_IS_LIST :: Instruction
+I_REMOVE_DUPLICATES :: Instruction
+I_HAS_DUPLICATES :: Instruction
+I_HEAD :: Instruction
+I_TAIL :: Instruction
+I_GROUP :: Instruction
+I_REVERSE :: Instruction
+I_IS_PALINDROME :: Instruction
+I_FLATTEN :: Instruction
+I_UNFLATTEN :: Instruction
+I_CONCATENATE :: Instruction
+I_FILTER :: Instruction
+
+
+
+// string stuff
+I_TO_STRING :: Instruction
+I_REGEX :: Instruction
+
+// other stuff
+I_EQUAL_TO :: Instruction
+I_LESS_THAN :: Instruction
+I_MORE_THAN :: Instruction
+I_HASH :: Instruction
+I_EVAL :: Instruction

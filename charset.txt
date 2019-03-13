@@ -1,12 +1,12 @@
 ■ OR \0 OR \0 pictorial (␀) // 0x25a0 // 000 // (black square) end program
-\1 //  // RESERVED
-\2 //  // RESERVED
+™ // 0x2122 // get the time
+\2 //  // RESERVED [list dir?]
 \3 //  // RESERVED
 \4 //  // RESERVED
 \5 OR \5 pictorial (␅) // // 005 // (enquiry) TODO
 \6 OR \6 pictorial (␆) //  // (acknowledge) TODO
 🔔 OR \7 OR \7 pictorial (␇) // 0x1f514 // (bell) make a beep
-\8 OR \8 pictorial (␈) //  // (backspace) TODO [jump back 1?]
+\8 OR \8 pictorial (␈) //  // (backspace) clear console??
 \t OR \t pictorial (␉) //  // (h-tab) move to random h-tab in same row
 ¶ OR \n OR \n pictorial (␊␤) //  // (line feed) row delimiter
 \11 OR \11 pictorial (␋) //  // (v-tab) move to random v-tab in same column
@@ -67,7 +67,7 @@ A //  // uppercase alphabet (constant)
 B //  // from binary
 C //  // arc-cosine (maps)
 D //  // contains duplicates
-E //  // natural logarithm
+E //  // exponential notation
 F //  // is a palindrome
 G //  // get-where [filter]
 H //  // tail
@@ -125,7 +125,7 @@ z //  // round (maps)
 | //  // reflection
 } //  // conditonal loop
 ~ //  // negation (maps)
-\127 OR \127 pictorial (␡) //  // (delete) clear console
+\127 OR \127 pictorial (␡) //  // (delete) delete file
 ‼ // 0x203C // print a bunch
 ⁇ // 0x2047 // input till null
 ‽ // 0x203D // execute system command, maybe return file descriptor for pipe to read?
@@ -253,4 +253,4 @@ z //  // round (maps)
 ë // 0x00EB // index at (multidimensional)
 ï // 0x00EF // indexes of (always multidimensional)?
 Ẏ // 0x1E8E // left contains right as infix
-™ // 0x2122 // get the time
+ẽ // 0x1EBD // logarithm

@@ -3,16 +3,16 @@ module main
 import System.IO, System.File
 import Data.Error, Data.Maybe, Data.Func
 import StdEnv, StdDebug
-import Dirty.Backend
+import Dirty.Backend, Dirty.Backend.Rational
 import Dirty.Frontend.Arguments, Dirty.Frontend.Preprocessor, Dirty.Frontend.Parser
 import Dirty.Runtime.Instruction
 import _SystemEnumStrict
-from StdOverloadedList import Sum
+from StdOverloadedList import Sum, Prod
 import Text
 import Regex
 
 //debug
-//Start _ = Sum [(toNumber 0)..(toNumber 9999999)]//S_sort (toStack ['abcef0'])
+//Start _ = Sum [zero..toNumber 9999999]//S_sort (toStack ['abcef0'])
 
 Start world
 	# (opts, world) = parseArguments world

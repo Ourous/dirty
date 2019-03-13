@@ -10,5 +10,6 @@ Clean System Files
 *.tcl
 *.exe
 *.hcl
+*.pcl
 dirty
 !dirty/

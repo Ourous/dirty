@@ -26,31 +26,60 @@ where
 	op _ st=:{dir=West,mem} w
 		= ({st&mem.lhs=push w_val mem.lhs,pos=w_end}, w)
 
+I_LITERAL_SINGLE :: Value -> Instruction
+I_LITERAL_SINGLE val = \ _ st w = ({st&mem.lhs=push val st.mem.lhs}, w)
+
 // tab swapping
 I_HORIZONTAL_TAB_SWAP :: (Vector Point) -> Instruction
-I_HORIZONTAL_TAB_SWAP vec = op
-where
-	op _ st=:{rng=[num:rng]} w
-		= ({st&pos=vec.[num rem(size vec)],rng=rng}, w)
+I_HORIZONTAL_TAB_SWAP vec = \ _ st=:{rng=[num:rng]} w = ({st&pos=vec.[num rem(size vec)],rng=rng}, w)
 	
 I_VERTICAL_TAB_SWAP :: (Vector Point) -> Instruction
-I_VERTICAL_TAB_SWAP vec = op
-where
-	op _ st=:{rng=[num:rng]} w
-		= ({st&pos=vec.[num rem(size vec)],rng=rng}, w)
+I_VERTICAL_TAB_SWAP vec = \ _ st=:{rng=[num:rng]} w = ({st&pos=vec.[num rem(size vec)],rng=rng}, w)
 
 // conditional gotos
 I_MAYBE_GOTO_NORTH :: Point -> Instruction
-I_MAYBE_GOTO_NORTH pos = const undef
+I_MAYBE_GOTO_NORTH pos = op
+where
+	op _ st=:{dir=North} w
+		| toBool st.mem.lhs
+			= ({st&pos=pos}, w)
+		| otherwise
+			= (st, w)
+	op _ st w
+		= (st, w)
 	
 I_MAYBE_GOTO_EAST :: Point -> Instruction
-I_MAYBE_GOTO_EAST pos = const undef
+I_MAYBE_GOTO_EAST pos = op
+where
+	op _ st=:{dir=East} w
+		| toBool st.mem.lhs
+			= ({st&pos=pos}, w)
+		| otherwise
+			= (st, w)
+	op _ st w
+		= (st, w)
 
 I_MAYBE_GOTO_SOUTH :: Point -> Instruction
-I_MAYBE_GOTO_SOUTH pos = const undef
+I_MAYBE_GOTO_SOUTH pos = op
+where
+	op _ st=:{dir=South} w
+		| toBool st.mem.lhs
+			= ({st&pos=pos}, w)
+		| otherwise
+			= (st, w)
+	op _ st w
+		= (st, w)
 
 I_MAYBE_GOTO_WEST :: Point -> Instruction
-I_MAYBE_GOTO_WEST pos = const undef
+I_MAYBE_GOTO_WEST pos = op
+where
+	op _ st=:{dir=West} w
+		| toBool st.mem.lhs
+			= ({st&pos=pos}, w)
+		| otherwise
+			= (st, w)
+	op _ st w
+		= (st, w)
 
 // constant gotos
 I_ALWAYS_GOTO_NORTH :: Point -> Instruction
@@ -87,16 +116,48 @@ where
 
 // conditional loops
 I_MAYBE_LOOP_NORTH :: Point -> Instruction
-I_MAYBE_LOOP_NORTH pos = const undef
+I_MAYBE_LOOP_NORTH pos = op
+where
+	op _ st=:{dir=North} w
+		| toBool st.mem.lhs
+			= ({st&pos=pos}, w)
+		| otherwise
+			= (st, w)
+	op _ st w
+		= (st, w)
 	
 I_MAYBE_LOOP_EAST :: Point -> Instruction
-I_MAYBE_LOOP_EAST pos = const undef
+I_MAYBE_LOOP_EAST pos = op
+where
+	op _ st=:{dir=East} w
+		| toBool st.mem.lhs
+			= ({st&pos=pos}, w)
+		| otherwise
+			= (st, w)
+	op _ st w
+		= (st, w)
 
 I_MAYBE_LOOP_SOUTH :: Point -> Instruction
-I_MAYBE_LOOP_SOUTH pos = const undef
+I_MAYBE_LOOP_SOUTH pos = op
+where
+	op _ st=:{dir=South} w
+		| toBool st.mem.lhs
+			= ({st&pos=pos}, w)
+		| otherwise
+			= (st, w)
+	op _ st w
+		= (st, w)
 
 I_MAYBE_LOOP_WEST :: Point -> Instruction
-I_MAYBE_LOOP_WEST pos = const undef
+I_MAYBE_LOOP_WEST pos = op
+where
+	op _ st=:{dir=West} w
+		| toBool st.mem.lhs
+			= ({st&pos=pos}, w)
+		| otherwise
+			= (st, w)
+	op _ st w
+		= (st, w)
 
 // constant loops
 I_ALWAYS_LOOP_NORTH :: Point -> Instruction
@@ -195,10 +256,7 @@ where
 
 // terminate
 I_TERMINATE :: Instruction
-I_TERMINATE = op
-where
-	op _ st w
-		= ({st&end=True}, w)
+I_TERMINATE = \ _ st w = ({st&end=True}, w)
 
 // reflections
 I_REFLECT_VERTICAL :: Instruction
@@ -366,4 +424,44 @@ where
 		
 // reposition
 I_REPOSITION :: Instruction
-I_REPOSITION = undef
+I_REPOSITION = abort "reposition not implemented"
+
+// io
+I_WRITE_SHORT :: Instruction
+I_WRITE_SHORT = abort "short writing not implemented"
+I_WRITE_LONG :: Instruction
+I_WRITE_LONG = abort "long writing not implemented"
+I_WRITE_FILE :: Instruction
+I_WRITE_FILE = abort "file writing not implemented"
+I_READ_SHORT :: Instruction
+I_READ_SHORT = abort "short reading not implemented"
+I_READ_LONG :: Instruction
+I_READ_LONG = abort "long reading not implemented"
+I_READ_FILE :: Instruction
+I_READ_FILE = abort "file reading not implemented"
+I_GET_TIME :: Instruction
+I_GET_TIME = abort "time not implemented"
+I_GET_ENV_VAR :: Instruction
+I_GET_ENV_VAR = abort "environment var not implemented"
+I_SYSTEM_COMMAND :: Instruction
+I_SYSTEM_COMMAND = abort "system command not implemented"
+I_BEEP :: Instruction
+I_BEEP = abort "beep not implemented"
+
+// no-op
+I_NO_OP :: Instruction
+I_NO_OP = \ _ st w = (st, w)
+
+// number stuff
+I_ADD :: Instruction
+I_SUBTRACT :: Instruction
+I_DIVIDE :: Instruction
+I_MULTIPLY :: Instruction
+I_MODULUS :: Instruction
+I_NEGATE :: Instruction
+I_OR :: Instruction
+I_AND :: Instruction
+I_XOR :: Instruction
+I_NOT :: Instruction
+I_SHIFT_LEFT :: Instruction
+I_SHIFT_RIGHT :: Instruction

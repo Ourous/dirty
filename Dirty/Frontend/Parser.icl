@@ -11,8 +11,8 @@ import StdEnv
 import Regex
 
 START_CHARS :== ['\016\017\020\021\022']
-NUMBER_CHARS :== ['0123456789.:i-']
-NUMBER_REGEX :== regex "^-?\\d*\\.?\\d*(?::\\d*\\.?\\d*)?(?:i(?:-?\\d*\\.?\\d*(?::\\d*\\.?\\d*)?)?)?"
+NUMBER_CHARS :== ['0123456789.:i-E']
+NUMBER_REGEX :== regex "^-?\\d*\\.?\\d*(?:E-?\d+)?(?::\\d*\\.?\\d*(?:E-?\d+)?)?(?:i(?:-?\\d*\\.?\\d*(?:E-?\d+)?(?::\\d*\\.?\\d*(?:E-?\d+)?)?)?)?"
 
 
 parseFile :: (Matrix Char) -> (Matrix Instruction, Vector Point)
@@ -54,8 +54,11 @@ where
 		= sum [1 \\ _ <- takeWhile (\e = sum[1 \\ c <- e | c == this] > sum[1 \\ c <- e | c == other]) (drop 2 (inits str))] 
 
 	parse '\000' pos = I_TERMINATE
+	parse '\001' pos = I_GET_TIME
 	
-	parse '\007' pos = undef
+	parse '\007' pos = I_BEEP
+	
+	parse '\010' pos = I_CLEAR_CONSOLE
 	
 	parse '\016' pos = I_START_NORTH pos
 	parse '\017' pos = I_START_EAST pos
@@ -113,13 +116,13 @@ where
 		dist = sum [1 \\ _ <- takeWhile (\e = /* e <> '\135' && */ e <> '\035') (from_position_east pos)]
 		other = {pos&x=(pos.x + dist) rem (cols m)}
 	
-	parse '\040' pos = undef
-	parse '\041' pos = undef
-	parse '\042' pos = undef
-	parse '\043' pos = undef
-	parse '\044' pos = undef
-	parse '\045' pos = undef
-	parse '\046' pos = undef
+	parse '\040' pos = I_NO_OP
+	parse '\041' pos = I_WRITE_SHORT
+	parse '\042' pos = I_LITERAL_SINGLE (toValue '\'')
+	parse '\043' pos = I_HASH
+	parse '\044' pos = I_GET_ENV_VAR
+	parse '\045' pos = I_MODULUS
+	parse '\046' pos = I_PAIR
 	parse '\047' pos // string
 		= I_LITERAL_REGION (toValue (toStack n_str), n_end) (toValue (toStack e_str), e_end) (toValue (toStack s_str), s_end) (toValue (toStack w_str), w_end)
 	where
@@ -142,9 +145,9 @@ where
 		dist = find_matching_pair_dist (from_position_east pos) '\051' '\050'
 		other = {pos&x=(cols m + pos.x - dist) rem (cols m)}
 		
-	parse '\052' pos = undef
-	parse '\053' pos = undef
-	parse '\054' pos = undef
+	parse '\052' pos = I_DOT_PRODUCT
+	parse '\053' pos = I_ADD
+	parse '\054' pos = I_CONCATENATE
 	
 	parse '\055' pos = parse_literal_number pos
 	parse '\056' pos = parse_literal_number pos
@@ -163,38 +166,38 @@ where
 	parse '\071' pos = parse_literal_number pos
 	parse '\072' pos = parse_literal_number pos
 	
-	parse '\073' pos = undef
-	parse '\074' pos = undef
-	parse '\075' pos = undef
-	parse '\076' pos = undef
-	parse '\077' pos = undef
-	parse '\100' pos = undef
-	parse '\101' pos = undef
-	parse '\102' pos = undef
-	parse '\103' pos = undef
-	parse '\104' pos = undef
-	parse '\105' pos = undef
-	parse '\106' pos = undef
-	parse '\107' pos = undef
-	parse '\110' pos = undef
-	parse '\111' pos = undef
-	parse '\112' pos = undef
-	parse '\113' pos = undef
-	parse '\114' pos = undef
-	parse '\115' pos = undef
-	parse '\116' pos = undef
-	parse '\117' pos = undef
-	parse '\120' pos = undef
-	parse '\121' pos = undef
-	parse '\122' pos = undef
-	parse '\123' pos = undef
-	parse '\124' pos = undef
-	parse '\125' pos = undef
-	parse '\126' pos = undef
-	parse '\127' pos = undef
-	parse '\130' pos = undef
-	parse '\131' pos = undef
-	parse '\132' pos = undef
+	parse '\073' pos = I_UNFLATTEN
+	parse '\074' pos = I_LESS_THAN
+	parse '\075' pos = I_EQUAL_TO
+	parse '\076' pos = I_MORE_THAN
+	parse '\077' pos = I_READ_SHORT
+	parse '\100' pos = I_REGEX
+	parse '\101' pos = I_LITERAL_SINGLE (toValue (toStack ['A'..'Z']))
+	parse '\102' pos = I_FROM_BINARY
+	parse '\103' pos = I_ARC_COSINE
+	parse '\104' pos = I_HAS_DUPLICATES
+	parse '\105' pos = parse_literal_number pos // E for exponential
+	parse '\106' pos = I_IS_PALINDROME
+	parse '\107' pos = I_FILTER
+	parse '\110' pos = I_TAIL
+	parse '\111' pos = I_IMAGINARY_PART
+	parse '\112' pos = I_REAL_PART
+	parse '\113' pos = I_DROP
+	parse '\114' pos = I_IS_LIST
+	parse '\115' pos = I_MAXIMUM
+	parse '\116' pos = I_IS_NUMBER
+	parse '\117' pos = I_IS_SORTED
+	parse '\120' pos = I_IS_PRIME
+	parse '\121' pos = I_IS_RATIONAL
+	parse '\122' pos = I_COUNT_REPEATS
+	parse '\123' pos = I_ARC_SINE
+	parse '\124' pos = I_ARC_TANGENT
+	parse '\125' pos = I_UNIFORM_EXPAND
+	parse '\126' pos = I_EVAL
+	parse '\127' pos = I_DROP_WHILE
+	parse '\130' pos = I_DIAGONALIZE
+	parse '\131' pos = I_JOIN
+	parse '\132' pos = I_IS_INTEGER
 	
 	parse '\133' pos = I_MAYBE_GOTO_WEST other
 	where
@@ -208,36 +211,36 @@ where
 		dist = sum [1 \\ _ <- takeWhile (\e = e <> '\133' /* && e <> '\037' */) (from_position_west pos)]
 		other = {pos&x=(cols m + pos.x - dist) rem (cols m)}
 		
-	parse '\136' pos = undef
+	parse '\136' pos = I_EXPONENTIATE
 	
-	parse '\137' pos = undef
-	parse '\140' pos = undef
-	parse '\141' pos = undef
-	parse '\142' pos = undef
-	parse '\143' pos = undef
-	parse '\144' pos = undef
-	parse '\145' pos = undef
-	parse '\146' pos = undef
-	parse '\147' pos = undef
-	parse '\150' pos = undef
+	parse '\137' pos = I_FLATTEN
+	parse '\140' pos = I_LITERAL_SINGLE (toValue '\n')
+	parse '\141' pos = I_LITERAL_SINGLE (toValue (toStack ['a'..'z']))
+	parse '\142' pos = I_TO_BINARY
+	parse '\143' pos = I_COSINE
+	parse '\144' pos = I_REMOVE_DUPLICATES
+	parse '\145' pos = parse_literal_number pos // euler's constant
+	parse '\146' pos = I_REVERSE
+	parse '\147' pos = I_GROUP
+	parse '\150' pos = I_HEAD
 	parse '\151' pos = parse_literal_number pos // imaginary unit
-	parse '\152' pos = undef
-	parse '\153' pos = undef
-	parse '\154' pos = undef
-	parse '\155' pos = undef
-	parse '\156' pos = undef
-	parse '\157' pos = undef
-	parse '\160' pos = undef
-	parse '\161' pos = undef
-	parse '\162' pos = undef
-	parse '\163' pos = undef
-	parse '\164' pos = undef
-	parse '\165' pos = undef
-	parse '\166' pos = undef
-	parse '\167' pos = undef
-	parse '\170' pos = undef
-	parse '\171' pos = undef
-	parse '\172' pos = undef
+	parse '\152' pos = I_REPOSITION
+	parse '\153' pos = I_TAKE
+	parse '\154' pos = I_LENGTH
+	parse '\155' pos = I_MINIMUM
+	parse '\156' pos = I_RANDOM
+	parse '\157' pos = I_SORT
+	parse '\160' pos = I_PRIMES
+	parse '\161' pos = I_ABSOLUTE
+	parse '\162' pos = I_REPEAT
+	parse '\163' pos = I_SINE
+	parse '\164' pos = I_TANGENT
+	parse '\165' pos = I_UNIFORM_COLLAPSE
+	parse '\166' pos = I_TO_STRING
+	parse '\167' pos = I_TAKE_WHILE
+	parse '\170' pos = I_CROSS_PRODUCT
+	parse '\171' pos = I_SPLIT
+	parse '\172' pos = I_ROUND
 	
 	parse '\173' pos = I_MAYBE_LOOP_WEST other
 	where
@@ -251,18 +254,18 @@ where
 		dist = find_matching_pair_dist (from_position_east pos) '\175' '\173'
 		other = {pos&x=(cols m + pos.x - dist) rem (cols m)}
 		
-	parse '\176' pos = undef
-	parse '\177' pos = undef
-	parse '\200' pos = undef
-	parse '\201' pos = undef
-	parse '\202' pos = undef
-	parse '\203' pos = undef
-	parse '\204' pos = undef
-	parse '\205' pos = undef
-	parse '\206' pos = undef
+	parse '\176' pos = I_NEGATE
+	parse '\177' pos = I_DELETE_FILE
+	parse '\200' pos = I_WRITE_LONG
+	parse '\201' pos = I_READ_LONG
+	parse '\202' pos = I_SYSTEM_COMMAND
+	parse '\203' pos = I_WRITE_FILE
+	parse '\204' pos = I_READ_FILE
+	parse '\205' pos = I_RESTART_LAST
+	parse '\206' pos = I_RESTART_RANDOM start
 	parse '\207' pos = I_REFLECT_HORIZONTAL
-	parse '\210' pos = undef
-	parse '\211' pos = undef
+	parse '\210' pos = I_TURN_ANTICLOCKWISE
+	parse '\211' pos = I_TURN_CLOCKWISE
 	parse '\212' pos = I_MAYBE_MOVE_NORTH
 	parse '\213' pos = I_MAYBE_MOVE_EAST
 	parse '\214' pos = I_MAYBE_MOVE_SOUTH
@@ -283,17 +286,17 @@ where
 	parse '\233' pos = I_ALWAYS_JUMP_NE
 	parse '\234' pos = I_MAYBE_SKIP_NEXT
 	parse '\235' pos = I_ALWAYS_SKIP_NEXT
-	parse '\236' pos = undef
-	parse '\237' pos = undef
-	parse '\240' pos = undef
-	parse '\241' pos = undef
-	parse '\242' pos = undef
-	parse '\243' pos = undef
-	parse '\244' pos = undef
-	parse '\245' pos = undef
-	parse '\246' pos = undef
-	parse '\247' pos = undef
-	parse '\250' pos = undef
+	parse '\236' pos = I_DUPLICATE_TOP
+	parse '\237' pos = I_TOP_RIGHT_TO_LEFT
+	parse '\240' pos = I_TOP_LEFT_TO_RIGHT
+	parse '\241' pos = I_SWAP_STACK_TOPS
+	parse '\242' pos = I_PREPEND_RIGHT_TO_LEFT
+	parse '\243' pos = I_PREPEND_LEFT_TO_RIGHT
+	parse '\244' pos = I_SWAP_FULL_STACKS
+	parse '\245' pos = I_STORE_LEFT
+	parse '\246' pos = I_RECALL_LEFT
+	parse '\247' pos = I_STORE_RIGHT
+	parse '\250' pos = I_RECALL_RIGHT
 	parse '\251' pos = undef
 	parse '\252' pos = undef
 	parse '\253' pos = undef

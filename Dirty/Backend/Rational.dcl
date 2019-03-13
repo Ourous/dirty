@@ -14,8 +14,6 @@ from StdOverloaded import class +, class -, class *, class /, class ^, class ~,
 //:: Rational// (:== Rational_) // do not do this, ends up being far too slow
 // potentially combine this module into Number later
 :: Rational
-	= Int !Int
-	| Real !Real
 
 
 instance + Rational

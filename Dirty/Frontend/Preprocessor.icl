@@ -26,6 +26,7 @@ mapToNative uchar
 	| otherwise
 		= case toInt uchar of
 			0x25A0 =	'\000'
+			0x2122 =	'\001'
 			// reserved
 			0x1F514 =	'\007'
 			// unallocated
@@ -175,4 +176,4 @@ mapToNative uchar
 			0x00EB =	'\374'
 			0x00EF =	'\375'
 			0x1E8E =	'\376'
-			0x2122 =	'\377'
+			0x1EBD =	'\377'

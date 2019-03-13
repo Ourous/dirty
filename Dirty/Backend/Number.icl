@@ -69,38 +69,30 @@ IS_FINITE atomic // Don't use outside of `handle`
 
 handle number //:== number
 	:== case number of
-		(Re (Fin val)) = handleRe val
-		(Im (Fin val)) = handleIm val
-		(Cx (Fin {re, im})) = handleCx re im
+		(Re (Fin val))
+			| RATIONAL_IS_ZERO val = Zero
+			| RATIONAL_IS_FINITE val = number
+			| RATIONAL_IS_NAN val = Invalid
+			| otherwise = (Re (Inf (FIN_SIGN val)))
+		(Im (Fin val))
+			| RATIONAL_IS_ZERO val = Zero
+			| RATIONAL_IS_FINITE val = number
+			| RATIONAL_IS_NAN val = Invalid
+			| otherwise = (Im (Inf (FIN_SIGN val)))
+		(Cx (Fin {re, im}))
+			| RATIONAL_IS_NAN re || RATIONAL_IS_NAN im = Invalid
+			| RATIONAL_IS_ZERO re
+				| RATIONAL_IS_ZERO im = Zero
+				| RATIONAL_IS_FINITE im = (Im (Fin im))
+				| otherwise = (Im (Inf (FIN_SIGN im)))
+			| RATIONAL_IS_FINITE re
+				| RATIONAL_IS_ZERO im = (Re (Fin re))
+				| RATIONAL_IS_FINITE im = number
+				| otherwise = (Im (Inf (FIN_SIGN im)))
+			| otherwise
+				| RATIONAL_IS_FINITE im = (Re (Inf (FIN_SIGN re)))
+				| otherwise = (Cx (Inf Directed))
 		_ = number
-where
-	handleRe val
-		| RATIONAL_IS_ZERO val = Zero
-		| RATIONAL_IS_FINITE val = (Re (Fin val))
-		| RATIONAL_IS_NAN val = Invalid
-		| otherwise = (Re (Inf (FIN_SIGN val)))
-	handleIm val
-		| IS_FINITE val
-			| IS_ZERO val = Zero
-			| otherwise = (Im (Fin val))
-		| IS_NOT_NAN val = (Im (Inf (FIN_SIGN val)))
-		| otherwise = Invalid
-		// TODO : find good tests for complex number performance so I can rewrite it properly
-	handleCx re im
-		| IS_FINITE re
-			| IS_FINITE im
-				| IS_ZERO re
-					| IS_ZERO im = Zero
-					| otherwise = (Im (Fin im))
-				| IS_ZERO im = (Re (Fin re))
-				| otherwise = (Cx (Fin {re=re, im=im}))
-			| IS_NOT_NAN im = (Im (Inf (FIN_SIGN im)))
-			| otherwise = Invalid
-		| IS_NOT_NAN re
-			| IS_FINITE im = (Re (Inf (FIN_SIGN re)))
-			| IS_NOT_NAN im = (Cx (Inf Directed))
-			| otherwise = Invalid
-		| otherwise = Invalid
 		
 		
 instance + Number where

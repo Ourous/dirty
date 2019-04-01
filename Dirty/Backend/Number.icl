@@ -1,6 +1,7 @@
 implementation module Dirty.Backend.Number
 
 import Dirty.Backend.Rational, Math.Geometry, StdEnv, Data.Func, Text
+import Dirty.Backend
 
 :: Number
 	= Zero
@@ -440,6 +441,16 @@ instance fromString Number where
 			[im, "-"] = (Cx (Fin {re= ~one, im=fromString im}))
 			[im, re] = (Cx (Fin {re=fromString re, im=fromString im}))
 			_ = abort ("Bad string format for number: '"+++str+++"'")
+
+instance repr Number where
+	repr _ num = [c \\ c <-: toString num]
+	
+instance eval Number where
+	eval num = abort "eval on numbers not implemented"
+	
+instance disp Number where
+	disp num = [(fromInt o toInt) num]
+
 
 instance ln Number where
 	ln Invalid = Invalid

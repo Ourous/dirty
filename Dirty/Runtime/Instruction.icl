@@ -7,6 +7,8 @@ from Dirty.Types import ::Point(..), ::Region(..), ::Direction(..)
 //import Dirty.Types
 import Data.Matrix, Data.Func, Data.Maybe
 import StdEnv, StdDebug
+import System.IO
+import Text.Unicode.Encodings.UTF8
 
 :: Instruction :== RuntimeFlags -> Operation
 
@@ -437,9 +439,25 @@ I_TURN_CLOCKWISE = \ _ st w = ({st&dir=case st.dir of North=East;East=South;Sout
 
 // io
 I_WRITE_SHORT :: Instruction
-I_WRITE_SHORT = abort "short writing not implemented"
+I_WRITE_SHORT = op where
+	op _ st=:{mem={lhs}} w
+		# val = case peek lhs of (Just val) = repr True val; _ = []
+		# w = foldl (\w c = execIO (print c) w) w val
+		= (st, w)
+		
 I_WRITE_LONG :: Instruction
-I_WRITE_LONG = abort "long writing not implemented"
+I_WRITE_LONG = op where
+	op _ st=:{mem={lhs}} w
+		# val = case peek lhs of (Just val) = disp val; _ = []
+		/*
+		# w = foldl (\w c = execIO (putStr (let
+				str :: UTF8 // required because of ambiguity
+				str = fromUnicode [c]
+			in toString str)) w) w val
+		*/ // don't force UTF8, allow arbitrary char output
+		# w = foldl (\w c = execIO (print [toInt c]) w) w val
+		= (st, w)
+		
 I_WRITE_FILE :: Instruction
 I_WRITE_FILE = abort "file writing not implemented"
 I_READ_SHORT :: Instruction

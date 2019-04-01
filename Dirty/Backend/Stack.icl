@@ -1,7 +1,7 @@
 implementation module Dirty.Backend.Stack
 
 import Dirty.Backend.Number, Dirty.Backend.Value
-import Data.Maybe
+import Data.Maybe, Data.List
 import StdEnv, StdOverloadedList, StdDebug
 
 :: Stack
@@ -87,6 +87,21 @@ where
 instance toStack Number
 where
 	toStack v = (Head (toValue v) Null)
+
+instance repr Stack where
+	repr _ Null = []
+	repr inf (Head h t) = repr inf h ++ case t of Null = []; _ = [',':repr inf t]
+	repr True (Loop l _) = (intercalate [','] o cycle o Map (repr True)) l
+	repr False (Loop l t) = ['('] ++ intercalate [','] (Map (repr False) l) ++ [')':case t of Null = []; _ = [',':repr False t]]
+	repr True (Lazy l _ _) = (intercalate [','] o Map (repr True)) l
+	repr False (Lazy l _ t) = ['...':case t of Null = []; _ = [',':repr False t]]//TODO: find better solution
+	
+instance disp Stack where
+	disp Null = []
+	disp (Head h t) = disp h ++ disp t
+	disp (Loop l _) = (flatten o cycle o Map disp) l
+	disp (Lazy l _ _) = (flatten o Map disp) l
+
 /*	
 instance toStack [!a] | toValue a
 where

@@ -1,9 +1,6 @@
 definition module Dirty.Backend.Value
 
-from Dirty.Backend.Number import ::Number, class isInfinite, class isRational,
-                                 class isImaginary, class isInvalid
-from Dirty.Backend.Stack import ::Stack, class toStack
-from Dirty.Backend import class repr
+import Dirty.Backend
 from Data.Maybe import ::Maybe
 from StdOverloaded import class toBool, class <, class ==, class toString
 
@@ -33,8 +30,10 @@ instance toValue Stack
 instance toValue Value
 //instance toValue a
 
-
+instance toCharList Value
 instance repr Value
+instance eval Value
+instance disp Value
 
 isNumber val :== case val of (Num _) = True; _ = False
 isStack val :== case val of (Stk _) = True; _ = False

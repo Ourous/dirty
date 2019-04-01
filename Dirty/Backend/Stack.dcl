@@ -2,6 +2,7 @@ definition module Dirty.Backend.Stack
 
 from Dirty.Backend.Number import ::Number
 from Dirty.Backend.Value import ::Value, class toValue
+from Dirty.Backend import class repr, class eval, class disp
 from Data.Maybe import ::Maybe
 from _SystemStrictLists import class List
 from StdOverloaded import class zero, class +++, class toBool, class fromString,
@@ -39,6 +40,9 @@ instance toStack Value
 instance toStack Number
 //instance toStack [!a] | toValue a
 //instance toStack [!a!] | toValue a
+
+instance repr Stack
+instance disp Stack
 
 //toLazy :: (l a) Attrs -> Stack | List l a
 

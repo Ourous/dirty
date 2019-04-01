@@ -1,6 +1,6 @@
 implementation module Dirty.Backend.Value
 
-import Dirty.Backend.Number, Dirty.Backend.Stack
+import Dirty.Backend
 import Data.Maybe
 import Text.GenParse
 import StdClass, StdOverloaded, StdBool, StdInt, StdReal, StdEnv
@@ -75,7 +75,27 @@ where toValue val = val
 //instance toValue a
 //where toValue val = Group (toStack val)
 
-instance repr Value
+instance toCharList Value where
+	toCharList (Num num) = undef//toCharList num
+	toCharList (Stk stk) = undef//toCharList stk
+	
+instance repr Value where
+	repr inf (Num num) = repr inf num
+	repr inf (Stk stk) = ['['] ++ repr inf stk ++ [']']
+
+instance eval Value where
+	eval val = undef/*case val of
+		['[':_]
+			# try = eval val
+			| isJust try = Just (Stk (fromJust try))
+		_
+			= case eval val of
+				(Just num) = (Just (Num num))
+				_ = Nothing*/
+				
+instance disp Value where
+	disp (Num num) = disp num
+	disp (Stk stk) = disp stk
 
 vectorizeLeft :: (Number Value -> a) -> (Value Value -> Value) | toValue a
 vectorizeLeft fn = op

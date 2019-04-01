@@ -1,6 +1,7 @@
 definition module Dirty.Backend.Number
 
 from Dirty.Backend.Rational import ::Rational
+from Dirty.Backend import class repr, class eval, class disp
 
 from StdOverloaded import class +, class -, class *, class /, class ^, class ~,
                           class ==, class <, class zero, class one, class abs,
@@ -40,6 +41,10 @@ instance fromInt Number
 instance fromReal Number
 instance fromBool Number
 instance fromString Number
+
+instance repr Number
+instance eval Number
+instance disp Number
 
 instance ln Number
 instance log10 Number

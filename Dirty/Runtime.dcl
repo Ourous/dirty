@@ -23,4 +23,4 @@ from System.IO import ::IO
 	rng :: [Int]
 	}
 	
-//evaluate :: (Matrix Instruction) Stack -> IO ()
+//initialize :: (Matrix Instruction) Stack ->	IO Memory

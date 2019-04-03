@@ -6,6 +6,7 @@ import Dirty.Frontend.Arguments
 import Dirty.Runtime.Instruction
 from Dirty.Types import ::Point(..)
 import Data.Matrix, Data.List
+import StdDebug
 //import Text
 import StdEnv
 import Regex
@@ -126,14 +127,14 @@ where
 	parse '\047' pos // string
 		= I_LITERAL_REGION (toValue (toStack n_str), n_end) (toValue (toStack e_str), e_end) (toValue (toStack s_str), s_end) (toValue (toStack w_str), w_end)
 	where
-		n_str = takeWhile ((<>) '\047') (from_position_north pos)
-		e_str = takeWhile ((<>) '\047') (from_position_east pos)
-		s_str = takeWhile ((<>) '\047') (from_position_south pos)
-		w_str = takeWhile ((<>) '\047') (from_position_west pos)
-		n_end = {pos&y=(abs(pos.y - length n_str)) rem (rows m)}
-		e_end = {pos&x=(abs(pos.x + length e_str)) rem (cols m)}
-		s_end = {pos&y=(abs(pos.y + length s_str)) rem (rows m)}
-		w_end = {pos&x=(abs(pos.x - length w_str)) rem (cols m)}
+		n_str = takeWhile ((<>) '\047') (tl (from_position_north pos))
+		e_str = takeWhile ((<>) '\047') (tl (from_position_east pos))
+		s_str = takeWhile ((<>) '\047') (tl (from_position_south pos))
+		w_str = takeWhile ((<>) '\047') (tl (from_position_west pos))
+		n_end = {pos&y=((pos.y - 1 - length n_str))}
+		e_end = {pos&x=((pos.x + length e_str))+1}
+		s_end = {pos&y=((pos.y + length s_str))+1}
+		w_end = {pos&x=((pos.x - 1 - length w_str))}
 		
 	parse '\050' pos = I_ALWAYS_LOOP_WEST other
 	where

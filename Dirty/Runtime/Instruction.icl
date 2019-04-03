@@ -6,7 +6,7 @@ from Dirty.Frontend.Arguments import ::RuntimeFlags(..)
 from Dirty.Types import ::Point(..), ::Region(..), ::Direction(..)
 //import Dirty.Types
 import Data.Matrix, Data.Func, Data.Maybe
-import StdEnv, StdDebug
+import StdEnv, StdDebug, Text
 import System.IO
 import Text.Unicode.Encodings.UTF8
 
@@ -442,7 +442,7 @@ I_WRITE_SHORT :: Instruction
 I_WRITE_SHORT = op where
 	op _ st=:{mem={lhs}} w
 		# val = case peek lhs of (Just val) = repr True val; _ = []
-		# w = foldl (\w c = execIO (print c) w) w val
+		# w = foldl (\w c = execIO (putStr {#c}) w) w val
 		= (st, w)
 		
 I_WRITE_LONG :: Instruction
@@ -455,7 +455,7 @@ I_WRITE_LONG = op where
 				str = fromUnicode [c]
 			in toString str)) w) w val
 		*/ // don't force UTF8, allow arbitrary char output
-		# w = foldl (\w c = execIO (print [toInt c]) w) w val
+		# w = foldl (\w c = execIO (putStr {#toChar c}) w) w val
 		= (st, w)
 		
 I_WRITE_FILE :: Instruction

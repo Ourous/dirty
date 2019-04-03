@@ -1,10 +1,12 @@
 definition module Dirty.Runtime
 
-from Dirty.Runtime.Instruction import ::Instruction
+from Dirty.Runtime.Instruction import ::Instruction, ::Operation
 from Dirty.Backend.Stack import ::Stack
 from Dirty.Backend.Value import ::Value
+from Dirty.Frontend.Arguments import ::RuntimeFlags
 from Dirty.Types import ::Point, ::Direction, ::Region
 from Data.Maybe import ::Maybe
+from Data.Matrix import ::Matrix, ::Vector
 from System.IO import ::IO
 
 :: Memory = {
@@ -19,8 +21,7 @@ from System.IO import ::IO
 	mem :: Memory,
 	dir :: Direction,
 	pos :: Point,
-	reg :: Region,
 	rng :: [Int]
 	}
 	
-//initialize :: (Matrix Instruction) Stack ->	IO Memory
+initialize :: RuntimeFlags (Matrix Instruction) (Vector Point) Stack -> Int -> *World -> *World 

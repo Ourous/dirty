@@ -1,4 +1,4 @@
-Version: 1.4
+Version: 1.5
 Global
 	ProjectRoot:	.
 	Target:	StdEnv
@@ -7,7 +7,7 @@ Global
 	CodeGen
 		CheckStacks:	False
 		CheckIndexes:	False
-		OptimiseABC:	False
+		OptimiseABC:	True
 		GenerateByteCode:	False
 	Application
 		HeapSize:	2097152
@@ -30,7 +30,7 @@ Global
 			GenericFusion:	True
 			DescExL:	False
 		Output
-			Output:	ShowConstructors
+			Output:	NoReturnType
 			Font:	Monaco
 			FontSize:	9
 			WriteStdErr:	False
@@ -43,14 +43,12 @@ Global
 		ResourceSource:	
 		GenerateDLL:	False
 		ExportedNames:	
-		StripByteCode:	False
+		StripByteCode:	True
 	Paths
 		Path:	{Project}
-		Path:	{Application}*Libraries*Platform
-		Path:	{Application}*Libraries*Dynamics
-		Path:	{Application}*Libraries*CleanRegex
-	OtherPaths
-		Path:	{Application}*Libraries*StdEnv
+		Path:	{Application}*lib*Platform
+		Path:	{Application}*lib*Dynamics
+		Path:	{Application}*lib*CleanRegex
 	Precompile:	
 	Postlink:	
 MainModule
@@ -67,1057 +65,1023 @@ MainModule
 		ReadableABC:	False
 		ReuseUniqueNodes:	True
 		Fusion:	True
-OtherModules
-	Module
-		Name:	Dirty.Backend
+ProjectModules
+	DirModules
 		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Dirty.Backend.Number
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Dirty.Backend.Rational
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Dirty.Backend.Stack
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Dirty.Backend.Value
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Dirty.Frontend.Arguments
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Dirty.Frontend.Parser
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Dirty.Frontend.Preprocessor
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Dirty.Runtime
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Dirty.Runtime.Instruction
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Dirty.Types
-		Dir:	{Project}
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdArray
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdBool
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdChar
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdCharList
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdClass
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdDebug
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdEnum
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdEnv
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdFile
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdFunc
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdFunctions
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdGeneric
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdInt
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdList
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdMaybe
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdMisc
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdOrdList
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdOverloaded
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdOverloadedList
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdReal
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdStrictLists
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdString
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	StdTuple
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	_SystemArray
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	_SystemEnum
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	_SystemEnumStrict
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	_SystemStrictLists
-		Dir:	{Application}*lib*StdEnv
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Control.Applicative
+		Modules
+			Module
+				Name:	Dirty.Backend
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Dirty.Backend.Number
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Dirty.Backend.Rational
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Dirty.Backend.Stack
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Dirty.Backend.Value
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Dirty.Frontend
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Dirty.Frontend.Arguments
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Dirty.Frontend.Parser
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Dirty.Frontend.Preprocessor
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Dirty.Runtime
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Dirty.Runtime.Instruction
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Dirty.Types
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+	DirModules
 		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Control.Monad
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Control.Monad.Trans
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Bifunctor
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Error
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Foldable
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Func
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Functor
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.GenEq
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.List
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Matrix
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Maybe
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Monoid
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Traversable
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Tuple
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Data.Word8
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Math.Geometry
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Math.Random
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System.CommandLine
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System.File
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System.IO
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System.OS
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System.OSError
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System.Options
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System.Time
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System._Pointer
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	System._Posix
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Text
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Text.GenParse
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Text.Unicode
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Text.Unicode.Encodings.UTF8
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Text.Unicode.UChar
-		Dir:	{Application}*lib*Platform
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-		NeededObjFiles
-			ObjectFile:	WCsubst.
-			ObjectFile:	bsearch.
-	Module
-		Name:	Regex
+		Modules
+			Module
+				Name:	Control.Applicative
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Control.Monad
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Control.Monad.Trans
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.Bifunctor
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.Error
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.Foldable
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.Func
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.Functor
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.GenEq
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.List
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.Matrix
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.Maybe
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.Monoid
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.Traversable
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.Tuple
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Data.Word8
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Math.Geometry
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Math.Random
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	System.CommandLine
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	System.File
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	System.IO
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	System.OS
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	System.OSError
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	System.Options
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	System.Time
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	System._Pointer
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	System._Posix
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Text
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Text.GenParse
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Text.Unicode
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Text.Unicode.Encodings.UTF8
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Text.Unicode.UChar
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+				NeededObjFiles
+					ObjectFile:	WCsubst.
+					ObjectFile:	bsearch.
+	DirModules
+		Dir:	{Application}*lib*Dynamics
+		Modules
+			Module
+				Name:	_SystemDynamic
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+	DirModules
 		Dir:	{Application}*lib*CleanRegex
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Regex.Match
-		Dir:	{Application}*lib*CleanRegex
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Regex.Parse
-		Dir:	{Application}*lib*CleanRegex
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Regex.Print
-		Dir:	{Application}*lib*CleanRegex
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
-	Module
-		Name:	Regex.Util
-		Dir:	{Application}*lib*CleanRegex
-		Compiler
-			NeverMemoryProfile:	False
-			NeverTimeProfile:	False
-			StrictnessAnalysis:	True
-			ListTypes:	StrictExportTypes
-			ListAttributes:	True
-			Warnings:	True
-			Verbose:	True
-			ReadableABC:	False
-			ReuseUniqueNodes:	True
-			Fusion:	False
+		Modules
+			Module
+				Name:	Regex
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Regex.Match
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Regex.Parse
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Regex.Print
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	Regex.Util
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+	DirModules
+		Dir:	{Application}*lib*StdEnv
+		Modules
+			Module
+				Name:	StdArray
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdBool
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdChar
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdCharList
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdClass
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdDebug
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdEnum
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdEnv
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdFile
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdFunc
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdFunctions
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdGeneric
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdInt
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdList
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdMaybe
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdMisc
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdOrdList
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdOverloaded
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdOverloadedList
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdReal
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdStrictLists
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdString
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	StdTuple
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	_SystemArray
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	_SystemEnum
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	_SystemEnumStrict
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False
+			Module
+				Name:	_SystemStrictLists
+				Compiler
+					NeverMemoryProfile:	False
+					NeverTimeProfile:	False
+					StrictnessAnalysis:	True
+					ListTypes:	StrictExportTypes
+					ListAttributes:	True
+					Warnings:	True
+					Verbose:	True
+					ReadableABC:	False
+					ReuseUniqueNodes:	True
+					Fusion:	False

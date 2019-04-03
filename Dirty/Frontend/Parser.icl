@@ -12,8 +12,8 @@ import StdEnv
 import Regex
 
 START_CHARS :== ['\016\017\020\021\022']
-NUMBER_CHARS :== ['0123456789.:i-E']
-NUMBER_REGEX :== regex "^-?\\d*\\.?\\d*(?:E-?\d+)?(?::\\d*\\.?\\d*(?:E-?\d+)?)?(?:i(?:-?\\d*\\.?\\d*(?:E-?\d+)?(?::\\d*\\.?\\d*(?:E-?\d+)?)?)?)?"
+NUMBER_CHARS :== ['0123456789.:i-Ee']
+NUMBER_REGEX :== regex "^-?(?:(?:\\d*\\.?\\d*(?:E-?\d+)?)|e)?(?::(?:\\d*\\.?\\d*(?:E-?\d+)?)|e)?(?:i(?:-?(?:(?:\\d*\\.?\\d*(?:E-?\d+)?)|e)?(?::(?:\\d*\\.?\\d*(?:E-?\d+)?)|e)?)?)?"
 
 
 parseFile :: (Matrix Char) -> (Matrix Instruction, Vector Point)
@@ -32,14 +32,14 @@ where
 	parse_literal_number pos // . associates first, then : and i in the order they appear (i multiplies whatever is in front of it by `i`, adjacency behind adds, : behind divides)
 		= I_LITERAL_REGION (toValue n_num, n_end) (toValue e_num, e_end) (toValue s_num, s_end) (toValue w_num, w_end)
 	where
-		n_str = let base_num = from_position_north pos
-		in snd3 (hd (match NUMBER_REGEX (reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num))))
-		e_str = let base_num = from_position_east pos
-		in snd3 (hd (match NUMBER_REGEX (reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num))))
-		s_str = let base_num = from_position_south pos
-		in snd3 (hd (match NUMBER_REGEX (reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num))))
-		w_str = let base_num = from_position_west pos
-		in snd3 (hd (match NUMBER_REGEX (reverse (takeWhile (\e = isMember e NUMBER_CHARS) base_num))))
+		n_str = let base_num = reverse (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_north pos))
+		in if(base_num > []) (snd3 (hd (match NUMBER_REGEX base_num))) []
+		e_str = let base_num = reverse (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_east pos))
+		in if(base_num > []) (snd3 (hd (match NUMBER_REGEX base_num))) []
+		s_str = let base_num = reverse (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_south pos))
+		in if(base_num > []) (snd3 (hd (match NUMBER_REGEX base_num))) []
+		w_str = let base_num = reverse (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_west pos))
+		in if(base_num > []) (snd3 (hd (match NUMBER_REGEX base_num))) []
 		n_end = {pos&y=(rows m + pos.y - length n_str) rem (rows m)}
 		e_end = {pos&x=(pos.x + length e_str) rem (cols m)}
 		s_end = {pos&y=(pos.y + length s_str) rem (rows m)}

@@ -1,19 +1,14 @@
 module main
 
 import System.IO, System.File, System.Time
-import Data.Error, Data.Maybe, Data.Func, Data.Matrix
+import Data.Error, Data.Maybe
 import StdEnv, StdDebug
-import Dirty.Backend, Dirty.Backend.Rational
-import Dirty.Frontend.Arguments, Dirty.Frontend.Preprocessor, Dirty.Frontend.Parser
-import Dirty.Runtime, Dirty.Types
-import Dirty.Runtime.Instruction
-import _SystemEnumStrict
-from StdOverloadedList import Sum, Prod
+import Dirty.Backend
+import Dirty.Frontend
+import Dirty.Runtime
+import Dirty.Types
 import Text
-import Regex
 
-//debug
-//Start _ = Sum [zero..toNumber 9999999]//S_sort (toStack ['abcef0'])
 
 Start world
 	# (opts, world) = parseArguments world
@@ -30,8 +25,5 @@ Start world
 	# seed = toInt tm
 	# runtime = (initialize flags.runtime instrs starts stack seed)
 	= runtime world
-	// =from_position_east {{'a', 'b', 'c', 'd', 'e'}} {x=3,y=0}//
+
 usage :== "usage: dirty [config] [options] <file> [<args>...]"
-
-
-from_position_east m pos = [m.[pos.y,x] \\ x <- [pos.x..cols m-1] ++ [0..pos.x-1]]

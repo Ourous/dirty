@@ -26,8 +26,8 @@ Global
 			MemoryMinimumHeapSize:	0
 			Time:	False
 			Stack:	False
-			Dynamics:	False
-			GenericFusion:	False
+			Dynamics:	True
+			GenericFusion:	True
 			DescExL:	False
 		Output
 			Output:	ShowConstructors
@@ -46,9 +46,11 @@ Global
 		StripByteCode:	False
 	Paths
 		Path:	{Project}
-		Path:	{Application}*lib*StdEnv
-		Path:	{Application}*lib*Platform
-		Path:	{Application}*lib*CleanRegex
+		Path:	{Application}*Libraries*Platform
+		Path:	{Application}*Libraries*Dynamics
+		Path:	{Application}*Libraries*CleanRegex
+	OtherPaths
+		Path:	{Application}*Libraries*StdEnv
 	Precompile:	
 	Postlink:	
 MainModule

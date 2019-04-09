@@ -7,7 +7,7 @@ Global
 	CodeGen
 		CheckStacks:	False
 		CheckIndexes:	True
-		OptimiseABC:	False
+		OptimiseABC:	True
 		GenerateByteCode:	False
 	Application
 		HeapSize:	2097152000

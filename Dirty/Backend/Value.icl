@@ -97,6 +97,12 @@ instance disp Value where
 	disp (Num num) = disp num
 	disp (Stk stk) = disp stk
 
+vectorizeUnary :: (Number -> a) -> (Value -> Value) | toValue a
+vectorizeUnary fn = op
+where
+	op (Num num) = toValue (fn num)
+	op (Stk stk) = toValue (S_map op stk)
+
 vectorizeLeft :: (Number Value -> a) -> (Value Value -> Value) | toValue a
 vectorizeLeft fn = op
 where

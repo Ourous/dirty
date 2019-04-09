@@ -42,6 +42,7 @@ appN fn val :== case val of (Num v) = toValue (fn v); _ = val
 appS fn val :== case val of (Stk v) = toValue (fn v); _ = val
 appV fnN fnS val :== case val of (Num n) = (fnN n); (Stk s) = (fnS s)
 
+vectorizeUnary :: (Number -> a) -> (Value -> Value) | toValue a
 vectorizeLeft :: (Number Value -> a) -> (Value Value -> Value) | toValue a
 vectorizeRight :: (Value Number -> a) -> (Value Value -> Value) | toValue a
 vectorizeFull :: (Number Number -> a) -> (Value Value -> Value) | toValue a

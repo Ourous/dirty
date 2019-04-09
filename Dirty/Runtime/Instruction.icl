@@ -18,6 +18,10 @@ finalizeProgram f m = hyperstrict {{i f \\ i <-: j} \\ j <-: m}
 maybePrepend val :== case val of Nothing = id; (Just v) = push v
 maybeAppH fn lhs rhs :== appH (maybe id fn (peek rhs)) lhs
 
+vectorizedInstr :: (Number -> Number) -> (RuntimeFlags State *World -> *(State, *World))
+vectorizedInstr fn = \_ st w = ({st&mem.lhs=appH (vectorizeUnary fn) st.mem.lhs}, w)
+//vectorizedInstr fn :== \_ st w = ({st&mem.lhs=appH (vectorizeUnary fn) st.mem.lhs}, w)
+
 // region literals
 I_LITERAL_REGION :: (Value, Point) (Value, Point) (Value, Point) (Value, Point) -> Instruction
 I_LITERAL_REGION (n_val, n_end) (e_val, e_end) (s_val, s_end) (w_val, w_end) = op
@@ -528,13 +532,13 @@ I_DIVIDE = abort "I_DIVIDE  not implemented"
 I_MULTIPLY :: Instruction
 I_MULTIPLY = abort "I_MULTIPLY  not implemented"
 I_RECIPROCAL :: Instruction
-I_RECIPROCAL = abort "I_RECIPROCAL  not implemented"
+I_RECIPROCAL = vectorizedInstr ((/)one) //abort "I_RECIPROCAL  not implemented"
 I_SQUARE_ROOT :: Instruction
-I_SQUARE_ROOT = abort "I_SQUARE_ROOT  not implemented"
+I_SQUARE_ROOT = vectorizedInstr sqrt//abort "I_SQUARE_ROOT  not implemented"
 I_MODULUS :: Instruction
 I_MODULUS = abort "I_MODULUS  not implemented"
 I_NEGATE :: Instruction
-I_NEGATE = abort "I_NEGATE  not implemented"
+I_NEGATE = vectorizedInstr (~)//abort "I_NEGATE  not implemented"
 I_OR :: Instruction
 I_OR = abort "I_OR  not implemented"
 I_AND :: Instruction
@@ -542,29 +546,29 @@ I_AND = abort "I_AND  not implemented"
 I_XOR :: Instruction
 I_XOR = abort "I_XOR  not implemented"
 I_NOT :: Instruction
-I_NOT = abort "I_NOT  not implemented"
+I_NOT = vectorizedInstr bitNOT//abort "I_NOT  not implemented"
 I_SHIFT_LEFT :: Instruction
 I_SHIFT_LEFT = abort "I_SHIFT_LEFT  not implemented"
 I_SHIFT_RIGHT :: Instruction
 I_SHIFT_RIGHT = abort "I_SHIFT_RIGHT  not implemented"
 I_ARC_SINE :: Instruction
-I_ARC_SINE = abort "I_ARC_SINE  not implemented"
+I_ARC_SINE = vectorizedInstr asin//abort "I_ARC_SINE  not implemented"
 I_SINE :: Instruction
-I_SINE = abort "I_SINE  not implemented"
+I_SINE = vectorizedInstr sin//abort "I_SINE  not implemented"
 I_ARC_COSINE :: Instruction
-I_ARC_COSINE = abort "I_ARC_COSINE  not implemented"
+I_ARC_COSINE = vectorizedInstr acos//abort "I_ARC_COSINE  not implemented"
 I_COSINE :: Instruction
-I_COSINE = abort "I_COSINE  not implemented"
+I_COSINE = vectorizedInstr cos//abort "I_COSINE  not implemented"
 I_ARC_TANGENT :: Instruction
-I_ARC_TANGENT = abort "I_ARC_TANGENT  not implemented"
+I_ARC_TANGENT = vectorizedInstr atan//abort "I_ARC_TANGENT  not implemented"
 I_TANGENT :: Instruction
-I_TANGENT = abort "I_TANGENT  not implemented"
+I_TANGENT = vectorizedInstr tan
 I_TO_BINARY :: Instruction
 I_TO_BINARY = abort "I_TO_BINARY  not implemented"
 I_FROM_BINARY :: Instruction
 I_FROM_BINARY = abort "I_FROM_BINARY  not implemented"
 I_ABSOLUTE :: Instruction
-I_ABSOLUTE = abort "I_ABSOLUTE  not implemented"
+I_ABSOLUTE = vectorizedInstr abs
 I_PRIMES :: Instruction
 I_PRIMES = abort "I_PRIMES  not implemented"
 I_IS_PRIME :: Instruction
@@ -572,7 +576,7 @@ I_IS_PRIME = abort "I_IS_PRIME  not implemented"
 I_RANDOM :: Instruction
 I_RANDOM = abort "I_RANDOM  not implemented"
 I_LOGARITHM :: Instruction
-I_LOGARITHM = abort "I_LOGARITHM  not implemented"
+I_LOGARITHM = vectorizedInstr ln //abort "I_LOGARITHM  not implemented"
 I_EXPONENTIATE :: Instruction
 I_EXPONENTIATE = abort "I_EXPONENTIATE  not implemented"
 I_ROUND :: Instruction

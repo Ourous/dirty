@@ -40,8 +40,8 @@ where
 	
 instance < Stack
 where
-	(<) Null _ = True
 	(<) _ Null = False
+	(<) Null _ = True
 	(<) (Head lh lt) (Head rh rt)
 		= lh < rh && lt < rt
 	
@@ -146,7 +146,10 @@ S_isEmpty _ = False
 
 S_isSorted :: Stack -> Bool
 S_isSorted Null = True
-S_isSorted _ = undef
+S_isSorted (Head h t) = maybe True ((<) h) (peek t) && S_isSorted t
+S_isSorted (Loop [!v!] t) = maybe True ((<) v) (peek t) && S_isSorted t
+S_isSorted (Loop _ _) = False
+S_isSorted (Lazy _ _ _) = abort "Sequence tracking not implemented"
 
 S_reduce :: (Value -> Value -> Value) Value Stack -> Value
 S_reduce _ st Null = st
@@ -208,6 +211,7 @@ S_removeDup :: Stack -> Stack
 S_removeDup Null = Null
 S_removeDup stack = removeDup` stack []
 where
+	removeDup Null _ = Null
 	removeDup` (Head h t) seen // TODO use ordered list to make this faster
 		| any ((==)h) seen
 			= removeDup` t seen
@@ -215,7 +219,20 @@ where
 			= (Head h (removeDup` t [h:seen]))		
 
 S_countDup :: Stack -> Int
-S_countDup _ = undef
-
+S_countDup Null = 0
+S_countDup stack = countDup` stack []
+where
+	countDup` Null _ = 0
+	countDup` (Head h t) seen
+		| any ((==)h) seen
+			= inc (countDup` t seen)
+		| otherwise
+			= countDup` t [h:seen]
+S_hasDup :: Stack -> Bool
+S_hasDup stack = hasDup` stack []
+where
+	hasDup` Null _ = False
+	hasDup` (Head h t) seen
+		= any ((==)h) seen || hasDup` t [h:seen]
 
 

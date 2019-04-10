@@ -16,10 +16,19 @@ finalizeProgram :: RuntimeFlags (Matrix Instruction) -> Matrix Operation
 finalizeProgram f m = hyperstrict {{i f \\ i <-: j} \\ j <-: m}
 
 maybePrepend val :== case val of Nothing = id; (Just v) = push v
-maybeAppH fn lhs rhs :== appH (maybe id fn (peek rhs)) lhs
+//maybeAppH fn lhs rhs :== appH (maybe id fn (peek rhs)) lhs
+maybeAppBinary fn mem :== case (pop mem.lhs, peek mem.rhs) of
+	((Just l, lhs), Just r) = {mem&lhs=lhs,rhs=push (fn l r) mem.rhs}
+	_ = mem
 
-vectorizedInstr :: (Number -> Number) -> (RuntimeFlags State *World -> *(State, *World))
-vectorizedInstr fn = \_ st w = ({st&mem.lhs=appH (vectorizeUnary fn) st.mem.lhs}, w)
+appUnary :: (Value -> Value) -> Instruction
+appUnary fn = \_ st w = ({st&mem.lhs=appH fn st.mem.lhs}, w)
+
+vecBinary :: (Value Value -> Value) -> Instruction
+vecBinary fn = \_ st w = ({st&mem=maybeAppBinary fn st.mem}, w)
+
+vecUnary :: (Number -> a) -> Instruction | toValue a
+vecUnary fn = \_ st w = ({st&mem.lhs=appH (vectorizeUnary fn) st.mem.lhs}, w)
 //vectorizedInstr fn :== \_ st w = ({st&mem.lhs=appH (vectorizeUnary fn) st.mem.lhs}, w)
 
 // region literals
@@ -524,51 +533,51 @@ I_NO_OP = \ _ st w = (st, w)
 
 // number stuff
 I_ADD :: Instruction
-I_ADD = abort "I_ADD  not implemented"
+I_ADD = vecBinary (vectorizeFull (+))//\ _ st w = ({st&mem=maybeAppBinary (vectorizeFull (+)) st.mem}, w)
 I_SUBTRACT :: Instruction
-I_SUBTRACT = abort "I_SUBTRACT  not implemented"
+I_SUBTRACT = vecBinary (vectorizeFull (-))//abort "I_SUBTRACT  not implemented"
 I_DIVIDE :: Instruction
-I_DIVIDE = abort "I_DIVIDE  not implemented"
+I_DIVIDE = vecBinary (vectorizeFull (/))
 I_MULTIPLY :: Instruction
-I_MULTIPLY = abort "I_MULTIPLY  not implemented"
+I_MULTIPLY = vecBinary (vectorizeFull (*))
 I_RECIPROCAL :: Instruction
-I_RECIPROCAL = vectorizedInstr ((/)one) //abort "I_RECIPROCAL  not implemented"
+I_RECIPROCAL = vecUnary ((/)one) //abort "I_RECIPROCAL  not implemented"
 I_SQUARE_ROOT :: Instruction
-I_SQUARE_ROOT = vectorizedInstr sqrt//abort "I_SQUARE_ROOT  not implemented"
+I_SQUARE_ROOT = vecUnary sqrt//abort "I_SQUARE_ROOT  not implemented"
 I_MODULUS :: Instruction
-I_MODULUS = abort "I_MODULUS  not implemented"
+I_MODULUS = vecBinary (vectorizeFull (mod)) //abort "I_MODULUS  not implemented"
 I_NEGATE :: Instruction
-I_NEGATE = vectorizedInstr (~)//abort "I_NEGATE  not implemented"
+I_NEGATE = vecUnary (~)//abort "I_NEGATE  not implemented"
 I_OR :: Instruction
-I_OR = abort "I_OR  not implemented"
+I_OR = vecBinary (vectorizeFull bitOR)
 I_AND :: Instruction
-I_AND = abort "I_AND  not implemented"
+I_AND = vecBinary (vectorizeFull bitAND)
 I_XOR :: Instruction
-I_XOR = abort "I_XOR  not implemented"
+I_XOR = vecBinary (vectorizeFull bitXOR)
 I_NOT :: Instruction
-I_NOT = vectorizedInstr bitNOT//abort "I_NOT  not implemented"
+I_NOT = vecUnary bitNOT
 I_SHIFT_LEFT :: Instruction
-I_SHIFT_LEFT = abort "I_SHIFT_LEFT  not implemented"
+I_SHIFT_LEFT = vecBinary (vectorizeFull bitLEFT)
 I_SHIFT_RIGHT :: Instruction
-I_SHIFT_RIGHT = abort "I_SHIFT_RIGHT  not implemented"
+I_SHIFT_RIGHT = vecBinary (vectorizeFull bitRIGHT)
 I_ARC_SINE :: Instruction
-I_ARC_SINE = vectorizedInstr asin//abort "I_ARC_SINE  not implemented"
+I_ARC_SINE = vecUnary asin
 I_SINE :: Instruction
-I_SINE = vectorizedInstr sin//abort "I_SINE  not implemented"
+I_SINE = vecUnary sin
 I_ARC_COSINE :: Instruction
-I_ARC_COSINE = vectorizedInstr acos//abort "I_ARC_COSINE  not implemented"
+I_ARC_COSINE = vecUnary acos
 I_COSINE :: Instruction
-I_COSINE = vectorizedInstr cos//abort "I_COSINE  not implemented"
+I_COSINE = vecUnary cos
 I_ARC_TANGENT :: Instruction
-I_ARC_TANGENT = vectorizedInstr atan//abort "I_ARC_TANGENT  not implemented"
+I_ARC_TANGENT = vecUnary atan
 I_TANGENT :: Instruction
-I_TANGENT = vectorizedInstr tan
+I_TANGENT = vecUnary tan
 I_TO_BINARY :: Instruction
 I_TO_BINARY = abort "I_TO_BINARY  not implemented"
 I_FROM_BINARY :: Instruction
 I_FROM_BINARY = abort "I_FROM_BINARY  not implemented"
 I_ABSOLUTE :: Instruction
-I_ABSOLUTE = vectorizedInstr abs
+I_ABSOLUTE = vecUnary abs
 I_PRIMES :: Instruction
 I_PRIMES = abort "I_PRIMES  not implemented"
 I_IS_PRIME :: Instruction
@@ -576,11 +585,11 @@ I_IS_PRIME = abort "I_IS_PRIME  not implemented"
 I_RANDOM :: Instruction
 I_RANDOM = abort "I_RANDOM  not implemented"
 I_LOGARITHM :: Instruction
-I_LOGARITHM = vectorizedInstr ln //abort "I_LOGARITHM  not implemented"
+I_LOGARITHM = vecUnary ln //abort "I_LOGARITHM  not implemented"
 I_EXPONENTIATE :: Instruction
 I_EXPONENTIATE = abort "I_EXPONENTIATE  not implemented"
 I_ROUND :: Instruction
-I_ROUND = abort "I_ROUND  not implemented"
+I_ROUND = vecUnary numRound
 I_IS_INTEGER :: Instruction
 I_IS_INTEGER = abort "I_IS_INTEGER  not implemented"
 I_IS_NUMBER :: Instruction
@@ -632,21 +641,21 @@ I_DROP = abort "I_DROP  not implemented"
 I_DROP_WHILE :: Instruction
 I_DROP_WHILE = abort "I_DROP_WHILE  not implemented"
 I_SORT :: Instruction
-I_SORT = \ _ st w = ({st&mem.lhs=appH (appS S_sort) st.mem.lhs}, w)
+I_SORT = appUnary (appS S_sort)
 I_IS_SORTED :: Instruction
-I_IS_SORTED = abort "I_IS_SORTED  not implemented"
+I_IS_SORTED = appUnary (appS S_sort)
 I_MINIMUM :: Instruction
 I_MINIMUM = abort "I_MINIMUM  not implemented"
 I_MAXIMUM :: Instruction
 I_MAXIMUM = abort "I_MAXIMUM  not implemented"
 I_LENGTH :: Instruction
-I_LENGTH = \ _ st w = ({st&mem.lhs=appH (appS S_length) st.mem.lhs}, w)
+I_LENGTH = appUnary (appS S_sort)
 I_IS_LIST :: Instruction
-I_IS_LIST = abort "I_IS_LIST  not implemented"
+I_IS_LIST = appUnary (toValue o isStack)
 I_REMOVE_DUPLICATES :: Instruction
-I_REMOVE_DUPLICATES = \_ st=:{mem={lhs}} w = ({st&mem.lhs=appH (appS S_removeDup) lhs}, w)
+I_REMOVE_DUPLICATES = appUnary (appS S_removeDup)
 I_HAS_DUPLICATES :: Instruction
-I_HAS_DUPLICATES = abort "I_HAS_DUPLICATES  not implemented"
+I_HAS_DUPLICATES = appUnary (appS S_hasDup)
 I_HEAD :: Instruction
 I_HEAD = op
 where
@@ -694,11 +703,11 @@ I_REGEX = abort "I_REGEX  not implemented"
 
 // other stuff
 I_EQUAL_TO :: Instruction
-I_EQUAL_TO = abort "I_EQUAL_TO  not implemented"
+I_EQUAL_TO = vecBinary (vectorizeFull (==))//abort "I_EQUAL_TO  not implemented"
 I_LESS_THAN :: Instruction
-I_LESS_THAN = abort "I_LESS_THAN  not implemented"
+I_LESS_THAN = vecBinary (vectorizeFull (<))//abort "I_LESS_THAN  not implemented"
 I_MORE_THAN :: Instruction
-I_MORE_THAN = abort "I_MORE_THAN  not implemented"
+I_MORE_THAN = vecBinary (vectorizeFull (>)) //abort "I_MORE_THAN  not implemented"
 I_HASH :: Instruction
 I_HASH = abort "I_HASH  not implemented"
 I_EVAL :: Instruction

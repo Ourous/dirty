@@ -2,7 +2,7 @@ definition module Dirty.Backend.Value
 
 import Dirty.Backend
 from Data.Maybe import ::Maybe
-from StdOverloaded import class toBool, class <, class ==, class toString
+from StdOverloaded import class toBool, class <, class ==, class toString, class fromBool
 
 //:: Item :== Number
 :: Value
@@ -12,6 +12,7 @@ from StdOverloaded import class toBool, class <, class ==, class toString
 tryParseValue :: String -> Maybe Value
 
 instance toBool Value
+instance fromBool Value
 instance < Value
 instance == Value
 //instance toString Value
@@ -28,6 +29,7 @@ instance toValue Char
 instance toValue Number
 instance toValue Stack
 instance toValue Value
+instance toValue Bool
 //instance toValue a
 
 instance toCharList Value

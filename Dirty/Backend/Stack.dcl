@@ -73,3 +73,4 @@ S_repeat :: Int Value -> Stack
 S_zipWith :: (Value Value -> Value) Stack Stack -> Stack
 S_removeDup :: Stack -> Stack
 S_countDup :: Stack -> Int
+S_hasDup :: Stack -> Bool

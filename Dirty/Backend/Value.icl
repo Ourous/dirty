@@ -72,6 +72,8 @@ instance toValue Stack
 where toValue val = Stk val
 instance toValue Value
 where toValue val = val
+instance toValue Bool
+where toValue val = Num (fromBool val)
 //instance toValue a
 //where toValue val = Group (toStack val)
 

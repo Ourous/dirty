@@ -639,7 +639,10 @@ I_TAKE_WHILE
 I_DROP :: Instruction
 I_DROP = abort "I_DROP  not implemented"
 I_DROP_WHILE :: Instruction
-I_DROP_WHILE = abort "I_DROP_WHILE  not implemented"
+I_DROP_WHILE
+	= \_ st=:{mem={lhs,rhs}} w = let
+		dropWhileNum num stk = if(toBool num) stk zero
+	in ({st&mem.lhs=appH (appS ((maybe id (appV dropWhileNum S_dropWhile)) (peek rhs))) lhs}, w)
 I_SORT :: Instruction
 I_SORT = appUnary (appS S_sort)
 I_IS_SORTED :: Instruction

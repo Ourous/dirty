@@ -86,14 +86,14 @@ instance repr Value where
 	repr inf (Stk stk) = ['['] ++ repr inf stk ++ [']']
 
 instance eval Value where
-	eval val = undef/*case val of
+	eval val = case val of
 		['[':_]
 			# try = eval val
 			| isJust try = Just (Stk (fromJust try))
 		_
 			= case eval val of
 				(Just num) = (Just (Num num))
-				_ = Nothing*/
+				_ = Nothing
 				
 instance disp Value where
 	disp (Num num) = disp num

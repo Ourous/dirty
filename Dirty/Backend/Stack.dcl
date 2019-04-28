@@ -3,7 +3,7 @@ definition module Dirty.Backend.Stack
 from Dirty.Backend.Number import ::Number
 from Dirty.Backend.Value import ::Value, class toValue
 from Dirty.Backend import class repr, class eval, class disp
-from Data.Maybe import ::Maybe
+from Data.Maybe import ::Maybe(..)
 from _SystemStrictLists import class List
 from StdOverloaded import class zero, class +++, class toBool, class fromString,
                           class <, class ==, class toString
@@ -43,6 +43,7 @@ instance toStack Number
 
 instance repr Stack
 instance disp Stack
+instance eval Stack
 
 //toLazy :: (l a) Attrs -> Stack | List l a
 
@@ -51,8 +52,18 @@ fromValue :: Value -> Stack
 push :: Value Stack -> Stack
 
 pop :: Stack -> (Maybe Value, Stack)
+//pop2 :: Stack -> (Maybe (Value, Value), Stack)
+pop2 stack :== case pop stack of
+	(Just a, stack) = case pop stack of
+		(Just b, stack) = (Just (a, b), stack)
+	_ = (Nothing, stack)
 
 peek :: Stack -> Maybe Value
+//peek2 :: Stack -> Maybe (Value, Value)
+peek2 stack :== case pop stack of
+	(Just a, stack) = case peek stack of
+		Just b = Just (a, b)
+	_ = Nothing
 
 appH :: (Value -> Value) Stack -> Stack
 

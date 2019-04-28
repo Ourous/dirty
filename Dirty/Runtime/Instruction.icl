@@ -17,12 +17,17 @@ finalizeProgram f m = hyperstrict {{i f \\ i <-: j} \\ j <-: m}
 
 maybePrepend val :== case val of Nothing = id; (Just v) = push v
 //maybeAppH fn lhs rhs :== appH (maybe id fn (peek rhs)) lhs
+maybeAppBinary fn mem :== case pop2 mem.lhs of
+	(Just (a, b), lhs) = {mem&lhs=push (fn a b) lhs,rhs=push b (push a mem.rhs)}
+	_ = mem
+/*
 maybeAppBinary fn mem :== case (pop mem.lhs, peek mem.rhs) of
 	((Just l, lhs), Just r) = {mem&lhs=lhs,rhs=push (fn l r) mem.rhs}
 	_ = mem
+*/
 
 appUnary :: (Value -> Value) -> Instruction
-appUnary fn = \_ st w = ({st&mem.lhs=appH fn st.mem.lhs}, w)
+appUnary fn = \_ st=:{mem={lhs,rhs}} w = ({st&mem.lhs=appH fn lhs,mem.rhs=maybe rhs (\e=push e rhs) (peek lhs)}, w)
 
 vecBinary :: (Value Value -> Value) -> Instruction
 vecBinary fn = \_ st w = ({st&mem=maybeAppBinary fn st.mem}, w)

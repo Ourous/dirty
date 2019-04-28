@@ -1,7 +1,7 @@
 implementation module Dirty.Runtime
 
 import Dirty.Backend.Stack, Dirty.Backend.Value
-import Dirty.Frontend.Parser
+import Dirty.Frontend
 import Dirty.Runtime.Instruction
 import Dirty.Types
 import Math.Random
@@ -27,8 +27,13 @@ where
 	rs = rows source
 	cs = cols source
 	program :: State !*World -> *World
-	program state=:{end=True} w = w
+	program state=:{end=True} w
+		| flags.debug
+			= trace_n ("Terminated with state:\n L: "<+repr False state.mem.lhs<+"\n R: "<+repr False state.mem.rhs) w
+		| otherwise
+			= w
 	program state w
+		# w = trace_n ("Located at ("<+state.pos.x<+","<+state.pos.y<+")") w
 		# (state=:{pos,dir}, w) = source.[state.pos.y, state.pos.x] state w
 		# pos = case dir of
 			North = {pos&y=pos.y-1}

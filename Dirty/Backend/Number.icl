@@ -1,6 +1,7 @@
 implementation module Dirty.Backend.Number
 
-import Dirty.Backend.Rational, Math.Geometry, StdEnv, Data.Func, Text
+import Math.Geometry, StdEnv, Data.Func, Text, Data.Maybe
+import Dirty.Backend.Rational
 import Dirty.Backend
 
 :: Number
@@ -398,6 +399,9 @@ instance toReal Number where
 instance toBool Number where
 	toBool Zero = False
 	toBool Invalid = False
+	toBool (Re (Inf _)) = False
+	toBool (Im (Inf _)) = False
+	toBool (Cx (Inf _)) = False
 	toBool _ = True
 	
 instance toString Number where
@@ -446,7 +450,23 @@ instance repr Number where
 	repr _ num = [c \\ c <-: toString num]
 	
 instance eval Number where
-	eval num = abort "eval on numbers not implemented"
+	eval ['0'] = Just Zero
+	eval ['i'] = Just (Im (Fin one))
+	eval ['-'] = Just (Re (Fin (~one)))
+	eval ['-i'] = Just (Im (Fin (~one)))
+	eval ['NaN'] = Just Invalid
+	eval ['?CxInf'] = Just (Cx (Inf Directed))
+	eval ['-ReInf'] = Just (Re (Inf Negative))
+	eval ['ReInf'] = Just (Re (Inf Positive))
+	eval ['-ImInf'] = Just (Im (Inf Negative))
+	eval ['ImInf'] = Just (Im (Inf Positive))
+	eval str
+		= case split ['i'] str of
+			[re] = Just (Re (Fin (fromString (toString re))))
+			[im, []] = Just (Im (Fin (fromString (toString im))))
+			[im, ['-']] = Just (Cx (Fin {re= ~one, im=fromString (toString im)}))
+			[im, re] = Just (Cx (Fin {re=fromString (toString re), im=fromString (toString im)}))
+			_ = Nothing
 	
 instance disp Number where
 	disp num = [(fromInt o toInt) num]

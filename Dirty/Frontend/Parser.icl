@@ -40,10 +40,10 @@ where
 		in if(base_num > []) (snd3 (hd (match NUMBER_REGEX base_num))) []
 		w_str = let base_num = reverse (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_west pos))
 		in if(base_num > []) (snd3 (hd (match NUMBER_REGEX base_num))) []
-		n_end = {pos&y=(rows m + pos.y - length n_str) rem (rows m)}
-		e_end = {pos&x=(pos.x + length e_str) rem (cols m)}
-		s_end = {pos&y=(pos.y + length s_str) rem (rows m)}
-		w_end = {pos&x=(cols m + pos.x - length w_str) rem (cols m)}
+		n_end = {pos&y=((pos.y + 1 - length n_str))}
+		e_end = {pos&x=((pos.x - 1 + length e_str))}
+		s_end = {pos&y=((pos.y - 1 + length s_str))}
+		w_end = {pos&x=((pos.x + 1 - length w_str))}
 		sub_parse_number :: [Char] -> Number
 		sub_parse_number str = fromString (toString str)
 		n_num = sub_parse_number n_str
@@ -52,7 +52,7 @@ where
 		w_num = sub_parse_number w_str
 		
 	find_matching_pair_dist str this other
-		= sum [1 \\ _ <- takeWhile (\e = sum[1 \\ c <- e | c == this] > sum[1 \\ c <- e | c == other]) (drop 2 (inits str))] 
+		= 1 + sum [1 \\ _ <- takeWhile (\e = sum[1 \\ c <- e | c == this] > sum[1 \\ c <- e | c == other]) (drop 2 (inits str))]
 
 	parse '\000' pos = I_TERMINATE
 	parse '\001' pos = I_GET_TIME
@@ -303,17 +303,17 @@ where
 	parse '\253' pos = undef
 	parse '\254' pos = undef
 	parse '\255' pos = undef
-	parse '\256' pos = undef
-	parse '\257' pos = undef
-	parse '\260' pos = undef
-	parse '\261' pos = undef
+	parse '\256' pos = undef//I_WIPE_LEFT
+	parse '\257' pos = undef//I_POP_LEFT
+	parse '\260' pos = undef//I_WIPE_RIGHT
+	parse '\261' pos = undef//I_POP_RIGHT
 	parse '\262' pos = undef
 	parse '\263' pos = undef
-	parse '\264' pos = undef
-	parse '\265' pos = undef
-	parse '\266' pos = undef
-	parse '\267' pos = undef
-	parse '\270' pos = undef
+	parse '\264' pos = I_SUBTRACT
+	parse '\265' pos = I_MULTIPLY
+	parse '\266' pos = I_DIVIDE
+	parse '\267' pos = I_RECIPROCAL
+	parse '\270' pos = I_SQUARE_ROOT
 	parse '\271' pos = undef
 	parse '\272' pos = undef
 	parse '\273' pos = undef

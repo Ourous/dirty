@@ -101,6 +101,9 @@ instance disp Stack where
 	disp (Head h t) = disp h ++ disp t
 	disp (Loop l _) = (flatten o cycle o Map disp) l
 	disp (Lazy l _ _) = (flatten o Map disp) l
+	
+instance eval Stack where
+	eval _ = abort "Eval for stacks not implemented yet"
 
 /*	
 instance toStack [!a] | toValue a

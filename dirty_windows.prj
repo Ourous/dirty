@@ -30,7 +30,7 @@ Global
 			GenericFusion:	True
 			DescExL:	False
 		Output
-			Output:	ShowConstructors
+			Output:	NoReturnType
 			Font:	Courier
 			FontSize:	9
 			WriteStdErr:	False

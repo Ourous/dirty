@@ -76,7 +76,7 @@ S_isSorted :: Stack -> Bool
 
 S_reduce :: (Value -> Value -> Value) Value Stack -> Value
 S_map :: (Value -> Value) Stack -> Stack
-//reverse :: Stack -> Stack
+S_reverse :: Stack -> Stack
 S_indexOf :: Stack Value -> Value
 S_valueAt :: Stack Value -> Value
 S_length :: Stack -> Int

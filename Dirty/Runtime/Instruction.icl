@@ -38,7 +38,7 @@ vecBinary :: (Value Value -> Value) -> Instruction
 vecBinary fn = \_ st w = ({st&mem=maybeAppBinary fn st.mem}, w)
 
 vecUnary :: (Number -> a) -> Instruction | toValue a
-vecUnary fn = \_ st w = ({st&mem.arg=appH (vectorizeUnary fn) st.mem.arg}, w)
+vecUnary fn = \_ st w = ({st&mem=maybeAppUnary (vectorizeUnary fn) st.mem}, w)
 //vectorizedInstr fn :== \_ st w = ({st&mem.arg=appH (vectorizeUnary fn) st.mem.arg}, w)
 
 // region literals
@@ -526,11 +526,11 @@ I_CLEAR_CONSOLE = abort "clear console not implemented"
 
 // memory stuff
 I_STORE_LEFT :: Instruction
-I_STORE_LEFT = \_ st=:{mem={arg}} w = ({st&mem.tmp=peek arg}, w)
+I_STORE_LEFT = \_ st=:{mem={arg}} w = ({st&mem.tmp=peek arg,mem.arg=snd(pop arg)}, w)
 I_RECALL_LEFT :: Instruction
 I_RECALL_LEFT = \_ st=:{mem={arg,tmp}} w =({st&mem.arg=maybePrepend tmp arg}, w)
 I_STORE_RIGHT :: Instruction
-I_STORE_RIGHT = \_ st=:{mem={out}} w = ({st&mem.tmp=peek out}, w)
+I_STORE_RIGHT = \_ st=:{mem={out}} w = ({st&mem.tmp=peek out,mem.out=snd(pop out)}, w)
 I_RECALL_RIGHT :: Instruction
 I_RECALL_RIGHT = \_ st=:{mem={out,tmp}} w = ({st&mem.out=maybePrepend tmp out}, w)
 I_DUPLICATE_TOP :: Instruction
@@ -558,6 +558,26 @@ I_PREPEND_LEFT_TO_RIGHT :: Instruction
 I_PREPEND_LEFT_TO_RIGHT = \_ st=:{mem={arg,out}} w = ({st&mem.out=arg+++out,mem.arg=zero}, w)
 I_SWAP_FULL_STACKS :: Instruction
 I_SWAP_FULL_STACKS = \_ st=:{mem={arg,out}} w = ({st&mem.arg=out,mem.out=arg}, w)
+I_WIPE_ARG :: Instruction
+I_WIPE_ARG = \_ st w = ({st&mem.arg=zero}, w)
+I_POP_ARG :: Instruction
+I_POP_ARG = \_ st w = ({st&mem.arg=snd (pop st.mem.arg)}, w)
+I_WIPE_OUT :: Instruction
+I_WIPE_OUT = \_ st w = ({st&mem.out=zero}, w)
+I_POP_OUT :: Instruction
+I_POP_OUT = \_ st w = ({st&mem.out=snd (pop st.mem.out)}, w)
+I_SWAP_ARG_TOP :: Instruction
+I_SWAP_ARG_TOP
+	= \_ st=:{mem={arg}} w
+		= ({st&mem.arg=case pop2 arg of (Nothing, _) = arg; (Just (a, b), arg) = push b (push a arg)}, w)
+I_ENLIST_FULL_ARG :: Instruction
+I_ENLIST_FULL_ARG = \_ st=:{mem={arg}} w = ({st&mem.arg=toStack (toValue arg)}, w)
+I_ENLIST_TOP_ARG :: Instruction
+I_ENLIST_TOP_ARG = \_ st=:{mem={arg}} w = ({st&mem.arg=appH (toValue o toStack) arg}, w)
+I_EXPLODE_TOP_ARG :: Instruction
+I_EXPLODE_TOP_ARG
+	= \_ st=:{mem={arg}} w
+		= ({st&mem.arg=case pop arg of (Just (Stk a), arg) = a +++ arg; _ = arg}, w) 
 
 // no-op
 I_NO_OP :: Instruction
@@ -619,7 +639,7 @@ I_RANDOM = abort "I_RANDOM  not implemented"
 I_LOGARITHM :: Instruction
 I_LOGARITHM = vecUnary ln //abort "I_LOGARITHM  not implemented"
 I_EXPONENTIATE :: Instruction
-I_EXPONENTIATE = abort "I_EXPONENTIATE  not implemented"
+I_EXPONENTIATE = vecBinary (vectorizeFull (^))
 I_ROUND :: Instruction
 I_ROUND = vecUnary numRound
 I_IS_INTEGER :: Instruction
@@ -714,7 +734,7 @@ where
 I_GROUP :: Instruction
 I_GROUP = abort "I_GROUP  not implemented"
 I_REVERSE :: Instruction
-I_REVERSE = abort "I_REVERSE  not implemented"
+I_REVERSE = appUnary (appS S_reverse)
 I_IS_PALINDROME :: Instruction
 I_IS_PALINDROME = abort "I_IS_PALINDROME  not implemented"
 I_FLATTEN :: Instruction

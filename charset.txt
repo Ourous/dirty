@@ -168,10 +168,10 @@ z //  // round (maps)
 ↙ // 0x2199 // store right
 ↗ // 0x2197 // recall right
 ∅ // 0x2205 // (empty set) push empty list
-ļ // 0x013C // enlist top of left
-ŗ // 0x0157 // enlist top of right
-ḻ // 0x1E3B // swap top of left stack
-ṟ // 0x1E5F // swap top of right stack
+ļ // 0x013C // enlist top of argument stack
+Ļ // 0x013B // enlist all of argument stack
+↕ // 0x2195 // swap top of argument stack
+ḻ // 0x1E3B // swap top of right stack
 Ẁ // 0x1E80 // (capital w with grave) wipe entire left stack
 ẁ // 0x1E81 // (lower w with grave) pop left stack
 Ẃ // 0x1E82 // (capital w with acute) wipe entire right stack

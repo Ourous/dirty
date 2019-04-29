@@ -166,7 +166,10 @@ S_map _ Null = Null
 S_map f (Head h t) = (Head (f h) (S_map f t))
 S_map f (Loop h t) = (Loop (Map f h) (S_map f t))
 S_map f (Lazy h _ t) = (Lazy (Map f h) zero (trace_n "Error: access past end of infinite list" t))
-//reverse :: Stack -> Stack
+
+S_reverse :: Stack -> Stack
+S_reverse Null = Null
+S_reverse (Head h t) = (S_reverse t) +++ (Head h Null)
 
 S_indexOf :: Stack Value -> Value
 S_indexOf _ _ = undef

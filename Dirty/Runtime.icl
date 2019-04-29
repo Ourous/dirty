@@ -35,7 +35,7 @@ where
 	program :: State !*World -> *World
 	program state=:{end=True} w
 		| flags.debug
-			= trace_n ("Terminated with state:\n L: "<+repr False state.mem.arg<+"\n R: "<+repr False state.mem.out) w
+			= trace_n ("Terminated with state:\n T: "<+maybe ['_'] (repr False) state.mem.tmp<+"\n A: "<+repr False state.mem.arg<+"\n O: "<+repr False state.mem.out) w
 		| otherwise
 			= w
 	program state w

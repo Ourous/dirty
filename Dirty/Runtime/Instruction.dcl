@@ -134,6 +134,14 @@ I_SWAP_STACK_TOPS :: Instruction
 I_PREPEND_RIGHT_TO_LEFT :: Instruction
 I_PREPEND_LEFT_TO_RIGHT :: Instruction
 I_SWAP_FULL_STACKS :: Instruction
+I_WIPE_ARG :: Instruction
+I_POP_ARG :: Instruction
+I_WIPE_OUT :: Instruction
+I_POP_OUT :: Instruction
+I_SWAP_ARG_TOP :: Instruction
+I_ENLIST_FULL_ARG :: Instruction
+I_ENLIST_TOP_ARG :: Instruction
+I_EXPLODE_TOP_ARG :: Instruction
 
 // no-op
 I_NO_OP :: Instruction

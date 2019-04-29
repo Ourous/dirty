@@ -179,6 +179,8 @@ I_CONJUGATE :: Instruction
 
 
 // list stuff
+I_SUM :: Instruction
+I_PRODUCT :: Instruction
 I_CROSS_PRODUCT :: Instruction
 I_DOT_PRODUCT :: Instruction
 I_DIAGONALIZE :: Instruction

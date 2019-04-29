@@ -24,26 +24,26 @@ where
 	// "^(-?\\d*\\.?\\d*(?:(?::\\d*\\.*\\d*)?(?:i-?\\d*\\.?\\d*(?::\\d*\\.*\\d*)?)?)?)" should match valid numeric literals
 	// will have to be manually constructed from smaller parse sections
 	
-	from_position_north pos = reverse [m.[y,pos.x] \\ y <- [pos.y..rows m-1] ++ [0..pos.y-1]]
-	from_position_east pos = [m.[pos.y,x] \\ x <- [pos.x..cols m-1] ++ [0..pos.x-1]]
-	from_position_south pos = [m.[y,pos.x] \\ y <- [pos.y..rows m-1] ++ [0..pos.y-1]]
-	from_position_west pos = reverse [m.[pos.y,x] \\ x <- [pos.x..cols m-1] ++ [0..pos.x-1]]
+	from_position_north pos = [m.[y,pos.x] \\ y <- [pos.y, pos.y-1 ..0] ++ [rows m-1, rows m-2 ..pos.y]]
+	from_position_east pos = [m.[pos.y,x] \\ x <- [pos.x ..cols m-1] ++ [0 ..pos.x-1]]
+	from_position_south pos = [m.[y,pos.x] \\ y <- [pos.y ..rows m-1] ++ [0 ..pos.y-1]]
+	from_position_west pos = [m.[pos.y,x] \\ x <- [pos.x, pos.x-1 ..0] ++ [cols m-1, cols m-2 ..pos.x]]
 	
 	parse_literal_number pos // . associates first, then : and i in the order they appear (i multiplies whatever is in front of it by `i`, adjacency behind adds, : behind divides)
 		= I_LITERAL_REGION (toValue n_num, n_end) (toValue e_num, e_end) (toValue s_num, s_end) (toValue w_num, w_end)
 	where
-		n_str = let base_num = reverse (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_north pos))
+		n_str = let base_num = (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_north pos))
 		in if(base_num > []) (snd3 (hd (match NUMBER_REGEX base_num))) []
-		e_str = let base_num = reverse (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_east pos))
+		e_str = let base_num = (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_east pos))
 		in if(base_num > []) (snd3 (hd (match NUMBER_REGEX base_num))) []
-		s_str = let base_num = reverse (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_south pos))
+		s_str = let base_num = (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_south pos))
 		in if(base_num > []) (snd3 (hd (match NUMBER_REGEX base_num))) []
-		w_str = let base_num = reverse (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_west pos))
+		w_str = let base_num = (takeWhile (\e = isMember e NUMBER_CHARS) (from_position_west pos))
 		in if(base_num > []) (snd3 (hd (match NUMBER_REGEX base_num))) []
-		n_end = {pos&y=((pos.y + 1 - length n_str))}
-		e_end = {pos&x=((pos.x - 1 + length e_str))}
-		s_end = {pos&y=((pos.y - 1 + length s_str))}
-		w_end = {pos&x=((pos.x + 1 - length w_str))}
+		n_end = {pos&y=((rows m + pos.y + 1 - length n_str))rem(rows m)}
+		e_end = {pos&x=((cols m + pos.x - 1 + length e_str))rem(cols m)}
+		s_end = {pos&y=((rows m + pos.y - 1 + length s_str))rem(rows m)}
+		w_end = {pos&x=((cols m + pos.x + 1 - length w_str))rem(cols m)}
 		sub_parse_number :: [Char] -> Number
 		sub_parse_number str = fromString (toString str)
 		n_num = sub_parse_number n_str
@@ -143,7 +143,7 @@ where
 		
 	parse '\051' pos = I_ALWAYS_LOOP_EAST other
 	where
-		dist = find_matching_pair_dist (from_position_east pos) '\051' '\050'
+		dist = find_matching_pair_dist (from_position_west pos) '\051' '\050'
 		other = {pos&x=(cols m + pos.x - dist) rem (cols m)}
 		
 	parse '\052' pos = I_DOT_PRODUCT
@@ -252,7 +252,7 @@ where
 	
 	parse '\175' pos = I_MAYBE_LOOP_EAST other
 	where
-		dist = find_matching_pair_dist (from_position_east pos) '\175' '\173'
+		dist = find_matching_pair_dist (from_position_west pos) '\175' '\173'
 		other = {pos&x=(cols m + pos.x - dist) rem (cols m)}
 		
 	parse '\176' pos = I_NEGATE

@@ -10,8 +10,8 @@ from Data.Matrix import ::Matrix, ::Vector
 from System.IO import ::IO
 
 :: Memory = {
-	lhs :: Stack,
-	rhs :: Stack,
+	arg :: Stack,
+	out :: Stack,
 	tmp :: Maybe Value
 	}
 

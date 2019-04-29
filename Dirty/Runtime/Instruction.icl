@@ -16,41 +16,46 @@ finalizeProgram :: RuntimeFlags (Matrix Instruction) -> Matrix Operation
 finalizeProgram f m = hyperstrict {{i f \\ i <-: j} \\ j <-: m}
 
 maybePrepend val :== case val of Nothing = id; (Just v) = push v
-//maybeAppH fn lhs rhs :== appH (maybe id fn (peek rhs)) lhs
-maybeAppBinary fn mem :== case pop2 mem.lhs of
-	(Just (a, b), lhs) = {mem&lhs=push (fn a b) lhs,rhs=push b (push a mem.rhs)}
+//maybeAppH fn arg out :== appH (maybe id fn (peek out)) arg
+maybeAppBinary fn mem :== case pop2 mem.arg of
+	(Just (a, b), arg) = {mem&arg=push (fn a b) arg,out=push b (push a mem.out)}
 	_ = mem
+	
+maybeAppUnary fn mem :== case pop mem.arg of
+	(Just a, arg) = {mem&arg=push (fn a) arg,out=push a mem.out}
+	_ = mem
+
 /*
-maybeAppBinary fn mem :== case (pop mem.lhs, peek mem.rhs) of
-	((Just l, lhs), Just r) = {mem&lhs=lhs,rhs=push (fn l r) mem.rhs}
+maybeAppBinary fn mem :== case (pop mem.arg, peek mem.out) of
+	((Just l, arg), Just r) = {mem&arg=arg,out=push (fn l r) mem.out}
 	_ = mem
 */
 
 appUnary :: (Value -> Value) -> Instruction
-appUnary fn = \_ st=:{mem={lhs,rhs}} w = ({st&mem.lhs=appH fn lhs,mem.rhs=maybe rhs (\e=push e rhs) (peek lhs)}, w)
+appUnary fn = \_ st=:{mem={arg,out}} w = ({st&mem.arg=appH fn arg,mem.out=maybe out (\e=push e out) (peek arg)}, w)
 
 vecBinary :: (Value Value -> Value) -> Instruction
 vecBinary fn = \_ st w = ({st&mem=maybeAppBinary fn st.mem}, w)
 
 vecUnary :: (Number -> a) -> Instruction | toValue a
-vecUnary fn = \_ st w = ({st&mem.lhs=appH (vectorizeUnary fn) st.mem.lhs}, w)
-//vectorizedInstr fn :== \_ st w = ({st&mem.lhs=appH (vectorizeUnary fn) st.mem.lhs}, w)
+vecUnary fn = \_ st w = ({st&mem.arg=appH (vectorizeUnary fn) st.mem.arg}, w)
+//vectorizedInstr fn :== \_ st w = ({st&mem.arg=appH (vectorizeUnary fn) st.mem.arg}, w)
 
 // region literals
 I_LITERAL_REGION :: (Value, Point) (Value, Point) (Value, Point) (Value, Point) -> Instruction
 I_LITERAL_REGION (n_val, n_end) (e_val, e_end) (s_val, s_end) (w_val, w_end) = op
 where
 	op _ st=:{dir=North,mem} w
-		= ({st&mem.lhs=push n_val mem.lhs,pos=n_end}, w)
+		= ({st&mem.arg=push n_val mem.arg,pos=n_end}, w)
 	op _ st=:{dir=East,mem} w
-		= ({st&mem.lhs=push e_val mem.lhs,pos=e_end}, w)
+		= ({st&mem.arg=push e_val mem.arg,pos=e_end}, w)
 	op _ st=:{dir=South,mem} w
-		= ({st&mem.lhs=push s_val mem.lhs,pos=s_end}, w)
+		= ({st&mem.arg=push s_val mem.arg,pos=s_end}, w)
 	op _ st=:{dir=West,mem} w
-		= ({st&mem.lhs=push w_val mem.lhs,pos=w_end}, w)
+		= ({st&mem.arg=push w_val mem.arg,pos=w_end}, w)
 
 I_LITERAL_SINGLE :: Value -> Instruction
-I_LITERAL_SINGLE val = \ _ st w = ({st&mem.lhs=push val st.mem.lhs}, w)
+I_LITERAL_SINGLE val = \ _ st w = ({st&mem.arg=push val st.mem.arg}, w)
 
 // tab swapping
 I_HORIZONTAL_TAB_SWAP :: (Vector Point) -> Instruction
@@ -64,7 +69,7 @@ I_MAYBE_GOTO_NORTH :: Point -> Instruction
 I_MAYBE_GOTO_NORTH pos = op
 where
 	op _ st=:{dir=North} w
-		| toBool st.mem.lhs
+		| toBool st.mem.arg
 			= ({st&pos=pos}, w)
 		| otherwise
 			= (st, w)
@@ -75,7 +80,7 @@ I_MAYBE_GOTO_EAST :: Point -> Instruction
 I_MAYBE_GOTO_EAST pos = op
 where
 	op _ st=:{dir=East} w
-		| toBool st.mem.lhs
+		| toBool st.mem.arg
 			= ({st&pos=pos}, w)
 		| otherwise
 			= (st, w)
@@ -86,7 +91,7 @@ I_MAYBE_GOTO_SOUTH :: Point -> Instruction
 I_MAYBE_GOTO_SOUTH pos = op
 where
 	op _ st=:{dir=South} w
-		| toBool st.mem.lhs
+		| toBool st.mem.arg
 			= ({st&pos=pos}, w)
 		| otherwise
 			= (st, w)
@@ -97,7 +102,7 @@ I_MAYBE_GOTO_WEST :: Point -> Instruction
 I_MAYBE_GOTO_WEST pos = op
 where
 	op _ st=:{dir=West} w
-		| toBool st.mem.lhs
+		| toBool st.mem.arg
 			= ({st&pos=pos}, w)
 		| otherwise
 			= (st, w)
@@ -142,7 +147,7 @@ I_MAYBE_LOOP_NORTH :: Point -> Instruction
 I_MAYBE_LOOP_NORTH pos = op
 where
 	op _ st=:{dir=North} w
-		| toBool st.mem.lhs
+		| toBool st.mem.arg
 			= ({st&pos=pos}, w)
 		| otherwise
 			= (st, w)
@@ -153,7 +158,7 @@ I_MAYBE_LOOP_EAST :: Point -> Instruction
 I_MAYBE_LOOP_EAST pos = op
 where
 	op _ st=:{dir=East} w
-		| toBool st.mem.lhs
+		| toBool st.mem.arg
 			= ({st&pos=pos}, w)
 		| otherwise
 			= (st, w)
@@ -164,7 +169,7 @@ I_MAYBE_LOOP_SOUTH :: Point -> Instruction
 I_MAYBE_LOOP_SOUTH pos = op
 where
 	op _ st=:{dir=South} w
-		| toBool st.mem.lhs
+		| toBool st.mem.arg
 			= ({st&pos=pos}, w)
 		| otherwise
 			= (st, w)
@@ -175,7 +180,7 @@ I_MAYBE_LOOP_WEST :: Point -> Instruction
 I_MAYBE_LOOP_WEST pos = op
 where
 	op _ st=:{dir=West} w
-		| toBool st.mem.lhs
+		| toBool st.mem.arg
 			= ({st&pos=pos}, w)
 		| otherwise
 			= (st, w)
@@ -333,7 +338,7 @@ I_MAYBE_SKIP_NEXT :: Instruction
 I_MAYBE_SKIP_NEXT = op
 where
 	op _ st=:{mem,pos,dir} w
-		| toBool mem.lhs
+		| toBool mem.arg
 			= ({st&pos=case dir of
 					North = {pos&y=pos.y-1}
 					East = {pos&x=pos.x+1}
@@ -361,7 +366,7 @@ I_MAYBE_JUMP_SE :: Instruction
 I_MAYBE_JUMP_SE = op
 where
 	op _ st=:{mem,pos} w
-		| toBool mem.lhs
+		| toBool mem.arg
 			= ({st&pos.y=pos.y+1,pos.x=pos.x+1}, w)
 		| otherwise
 			= (st, w)
@@ -370,7 +375,7 @@ I_MAYBE_JUMP_SW :: Instruction
 I_MAYBE_JUMP_SW = op
 where
 	op _ st=:{mem,pos} w
-		| toBool mem.lhs
+		| toBool mem.arg
 			= ({st&pos.y=pos.y+1,pos.x=pos.x-1}, w)
 		| otherwise
 			= (st, w)
@@ -379,7 +384,7 @@ I_MAYBE_JUMP_NW :: Instruction
 I_MAYBE_JUMP_NW = op
 where
 	op _ st=:{mem,pos} w
-		| toBool mem.lhs
+		| toBool mem.arg
 			= ({st&pos.y=pos.y-1,pos.x=pos.x-1}, w)
 		| otherwise
 			= (st, w)
@@ -388,7 +393,7 @@ I_MAYBE_JUMP_NE :: Instruction
 I_MAYBE_JUMP_NE = op
 where
 	op _ st=:{mem,pos} w
-		| toBool mem.lhs
+		| toBool mem.arg
 			= ({st&pos.y=pos.y-1,pos.x=pos.x+1}, w)
 		| otherwise
 			= (st, w)
@@ -407,22 +412,22 @@ I_ALWAYS_JUMP_NE = \ _ st=:{pos={x,y}} w = ({st&pos={y=y-1,x=x-1}}, w)
 	
 // direction swaps
 I_MAYBE_MOVE_NORTH :: Instruction
-I_MAYBE_MOVE_NORTH =: \ _ st w | toBool st.mem.lhs = ({st&dir=North}, w) = (st, w)
+I_MAYBE_MOVE_NORTH =: \ _ st w | toBool st.mem.arg = ({st&dir=North}, w) = (st, w)
 			
 I_MAYBE_MOVE_EAST :: Instruction
-I_MAYBE_MOVE_EAST =: \ _ st w | toBool st.mem.lhs = ({st&dir=East}, w) = (st, w)
+I_MAYBE_MOVE_EAST =: \ _ st w | toBool st.mem.arg = ({st&dir=East}, w) = (st, w)
 			
 I_MAYBE_MOVE_SOUTH :: Instruction
-I_MAYBE_MOVE_SOUTH =: \ _ st w | toBool st.mem.lhs = ({st&dir=South}, w) = (st, w)
+I_MAYBE_MOVE_SOUTH =: \ _ st w | toBool st.mem.arg = ({st&dir=South}, w) = (st, w)
 			
 I_MAYBE_MOVE_WEST :: Instruction
-I_MAYBE_MOVE_WEST =: \ _ st w | toBool st.mem.lhs = ({st&dir=West}, w) = (st, w)
+I_MAYBE_MOVE_WEST =: \ _ st w | toBool st.mem.arg = ({st&dir=West}, w) = (st, w)
 
 I_MAYBE_MOVE_RANDOM :: Instruction
 I_MAYBE_MOVE_RANDOM = op
 where
 	op _ st=:{mem, rng=[num:rng]} w
-		| toBool mem.lhs
+		| toBool mem.arg
 			= ({st&dir=case num rem 4 of 0 = North; 1 = East; 2 = South; 3 = West,rng=rng}, w)
 		| otherwise
 			= (st, w)
@@ -458,15 +463,36 @@ I_TURN_CLOCKWISE = \ _ st w = ({st&dir=case st.dir of North=East;East=South;Sout
 // io
 I_WRITE_SHORT :: Instruction
 I_WRITE_SHORT = op where
-	op _ st=:{mem={lhs}} w
-		# val = case peek lhs of (Just val) = repr True val; _ = []
+	op _ st=:{mem={arg,out}} w
+		# (val, out) = app2 (mapMaybe (repr True), id) (pop out)
+		| isNothing val
+			# (val, arg) = app2 (maybe [] (repr True), id) (pop arg)
+			# w = foldl (\w c = execIO (putStr {#c}) w) w (val ++ ['\n'])
+			= ({st&mem.arg=arg}, w)
+		| otherwise
+			#w = foldl (\w c = execIO (putStr {#c}) w) w ((fromJust val) ++ ['\n'])
+			= ({st&mem.out=out}, w)
+	
+	/*
+		# val = case peek out of (Just val) = repr True val; _ = []
 		# w = foldl (\w c = execIO (putStr {#c}) w) w val
 		= (st, w)
+	*/
 		
 I_WRITE_LONG :: Instruction
 I_WRITE_LONG = op where
-	op _ st=:{mem={lhs}} w
-		# val = case peek lhs of (Just val) = disp val; _ = []
+	op _ st=:{mem={arg,out}} w
+		# (val, out) = app2 (mapMaybe disp, id) (pop out)
+		| isNothing val
+			# (val, arg) = app2 (maybe [] disp, id) (pop arg)
+			# w = foldl (\w c = execIO (putStr {#toChar c}) w) w val
+			= ({st&mem.arg=arg}, w)
+		| otherwise
+			#w = foldl (\w c = execIO (putStr {#toChar c}) w) w (fromJust val)
+			= ({st&mem.out=out}, w)
+	
+	/*
+		# val = case peek out of (Just val) = disp val; _ = []
 		/*
 		# w = foldl (\w c = execIO (putStr (let
 				str :: UTF8 // required because of ambiguity
@@ -475,6 +501,7 @@ I_WRITE_LONG = op where
 		*/ // don't force UTF8, allow arbitrary char output
 		# w = foldl (\w c = execIO (putStr {#toChar c}) w) w val
 		= (st, w)
+	*/
 		
 I_WRITE_FILE :: Instruction
 I_WRITE_FILE = abort "file writing not implemented"
@@ -499,38 +526,38 @@ I_CLEAR_CONSOLE = abort "clear console not implemented"
 
 // memory stuff
 I_STORE_LEFT :: Instruction
-I_STORE_LEFT = \_ st=:{mem={lhs}} w = ({st&mem.tmp=peek lhs}, w)
+I_STORE_LEFT = \_ st=:{mem={arg}} w = ({st&mem.tmp=peek arg}, w)
 I_RECALL_LEFT :: Instruction
-I_RECALL_LEFT = \_ st=:{mem={lhs,tmp}} w =({st&mem.lhs=maybePrepend tmp lhs}, w)
+I_RECALL_LEFT = \_ st=:{mem={arg,tmp}} w =({st&mem.arg=maybePrepend tmp arg}, w)
 I_STORE_RIGHT :: Instruction
-I_STORE_RIGHT = \_ st=:{mem={rhs}} w = ({st&mem.tmp=peek rhs}, w)
+I_STORE_RIGHT = \_ st=:{mem={out}} w = ({st&mem.tmp=peek out}, w)
 I_RECALL_RIGHT :: Instruction
-I_RECALL_RIGHT = \_ st=:{mem={rhs,tmp}} w = ({st&mem.rhs=maybePrepend tmp rhs}, w)
+I_RECALL_RIGHT = \_ st=:{mem={out,tmp}} w = ({st&mem.out=maybePrepend tmp out}, w)
 I_DUPLICATE_TOP :: Instruction
-I_DUPLICATE_TOP = \_ st=:{mem={lhs}} w = ({st&mem.lhs=maybePrepend (peek lhs) lhs}, w)
+I_DUPLICATE_TOP = \_ st=:{mem={arg}} w = ({st&mem.arg=maybePrepend (peek arg) arg}, w)
 I_TOP_RIGHT_TO_LEFT :: Instruction
 I_TOP_RIGHT_TO_LEFT
-	= \_ st=:{mem={lhs,rhs}} w = let
-		(h, t) = pop rhs
-	in ({st&mem.lhs=maybePrepend h lhs,mem.rhs=t}, w)
+	= \_ st=:{mem={arg,out}} w = let
+		(h, t) = pop out
+	in ({st&mem.arg=maybePrepend h arg,mem.out=t}, w)
 I_TOP_LEFT_TO_RIGHT :: Instruction
 I_TOP_LEFT_TO_RIGHT
-	= \_ st=:{mem={lhs,rhs}} w = let 
-		(h, t) = pop lhs
-	in ({st&mem.rhs=maybePrepend h rhs,mem.lhs=t}, w)
+	= \_ st=:{mem={arg,out}} w = let 
+		(h, t) = pop arg
+	in ({st&mem.out=maybePrepend h out,mem.arg=t}, w)
 I_SWAP_STACK_TOPS :: Instruction
 I_SWAP_STACK_TOPS
-	= \_ st=:{mem={lhs,rhs}} w = let
-		(lh, lt) = pop lhs
-		(rh, rt) = pop rhs
-	in ({st&mem.lhs=maybePrepend rh lt,mem.rhs=maybePrepend lh rt}, w)
+	= \_ st=:{mem={arg,out}} w = let
+		(lh, lt) = pop arg
+		(rh, rt) = pop out
+	in ({st&mem.arg=maybePrepend rh lt,mem.out=maybePrepend lh rt}, w)
 	
 I_PREPEND_RIGHT_TO_LEFT :: Instruction
-I_PREPEND_RIGHT_TO_LEFT = \_ st=:{mem={lhs,rhs}} w = ({st&mem.lhs=rhs+++lhs,mem.rhs=zero}, w)
+I_PREPEND_RIGHT_TO_LEFT = \_ st=:{mem={arg,out}} w = ({st&mem.arg=out+++arg,mem.out=zero}, w)
 I_PREPEND_LEFT_TO_RIGHT :: Instruction
-I_PREPEND_LEFT_TO_RIGHT = \_ st=:{mem={lhs,rhs}} w = ({st&mem.rhs=lhs+++rhs,mem.lhs=zero}, w)
+I_PREPEND_LEFT_TO_RIGHT = \_ st=:{mem={arg,out}} w = ({st&mem.out=arg+++out,mem.arg=zero}, w)
 I_SWAP_FULL_STACKS :: Instruction
-I_SWAP_FULL_STACKS = \_ st=:{mem={lhs,rhs}} w = ({st&mem.lhs=rhs,mem.rhs=lhs}, w)
+I_SWAP_FULL_STACKS = \_ st=:{mem={arg,out}} w = ({st&mem.arg=out,mem.out=arg}, w)
 
 // no-op
 I_NO_OP :: Instruction
@@ -614,6 +641,10 @@ I_CONJUGATE = abort "I_CONJUGATE  not implemented"
 
 
 // list stuff
+I_SUM :: Instruction
+I_SUM = appUnary (appS (S_reduce (vectorizeFull (+)) (toValue 0)))
+I_PRODUCT :: Instruction
+I_PRODUCT = appUnary (appS (S_reduce (vectorizeFull (*)) (toValue 0)))
 I_CROSS_PRODUCT :: Instruction
 I_CROSS_PRODUCT = abort "I_CROSS_PRODUCT  not implemented"
 I_DOT_PRODUCT :: Instruction
@@ -625,7 +656,7 @@ I_UNIFORM_COLLAPSE = abort "I_UNIFORM_COLLAPSE  not implemented"
 I_UNIFORM_EXPAND :: Instruction
 I_UNIFORM_EXPAND = abort "I_UNIFORM_EXPAND  not implemented"
 I_REPEAT :: Instruction
-I_REPEAT = \_ st=:{mem={lhs,rhs}} w = ({st&mem.lhs=appH (maybe id (vectorizeLeft (S_repeat o toInt)) (peek rhs)) lhs}, w)
+I_REPEAT = \_ st=:{mem={arg,out}} w = ({st&mem.arg=appH (maybe id (vectorizeLeft (S_repeat o toInt)) (peek out)) arg}, w)
 I_COUNT_REPEATS :: Instruction
 I_COUNT_REPEATS = abort "I_COUNT_REPEATS  not implemented"
 I_PAIR :: Instruction
@@ -638,26 +669,26 @@ I_TAKE :: Instruction
 I_TAKE = abort "I_TAKE  not implemented"
 I_TAKE_WHILE :: Instruction
 I_TAKE_WHILE
-	= \_ st=:{mem={lhs,rhs}} w = let
+	= \_ st=:{mem={arg,out}} w = let
 		takeWhileNum num stk = if(toBool num) stk zero
-	in ({st&mem.lhs=appH (appS ((maybe id (appV takeWhileNum S_takeWhile)) (peek rhs))) lhs}, w)
+	in ({st&mem.arg=appH (appS ((maybe id (appV takeWhileNum S_takeWhile)) (peek out))) arg}, w)
 I_DROP :: Instruction
 I_DROP = abort "I_DROP  not implemented"
 I_DROP_WHILE :: Instruction
 I_DROP_WHILE
-	= \_ st=:{mem={lhs,rhs}} w = let
+	= \_ st=:{mem={arg,out}} w = let
 		dropWhileNum num stk = if(toBool num) stk zero
-	in ({st&mem.lhs=appH (appS ((maybe id (appV dropWhileNum S_dropWhile)) (peek rhs))) lhs}, w)
+	in ({st&mem.arg=appH (appS ((maybe id (appV dropWhileNum S_dropWhile)) (peek out))) arg}, w)
 I_SORT :: Instruction
 I_SORT = appUnary (appS S_sort)
 I_IS_SORTED :: Instruction
-I_IS_SORTED = appUnary (appS S_sort)
+I_IS_SORTED = appUnary (toValue o (appV (const True) S_isSorted))
 I_MINIMUM :: Instruction
-I_MINIMUM = abort "I_MINIMUM  not implemented"
+I_MINIMUM = appUnary (appS \stk = case pop stk of (Nothing, _) = toValue stk; (Just h, t) = S_reduce min h t)//abort "I_MINIMUM  not implemented"
 I_MAXIMUM :: Instruction
-I_MAXIMUM = abort "I_MAXIMUM  not implemented"
+I_MAXIMUM = appUnary (appS \stk = case pop stk of (Nothing, _) = toValue stk; (Just h, t) = S_reduce max h t)//abort "I_MAXIMUM  not implemented"
 I_LENGTH :: Instruction
-I_LENGTH = appUnary (appS S_sort)
+I_LENGTH = appUnary (appS S_length)
 I_IS_LIST :: Instruction
 I_IS_LIST = appUnary (toValue o isStack)
 I_REMOVE_DUPLICATES :: Instruction
@@ -667,17 +698,17 @@ I_HAS_DUPLICATES = appUnary (appS S_hasDup)
 I_HEAD :: Instruction
 I_HEAD = op
 where
-	op _ st=:{mem={lhs}} w
-		= case pop lhs of
-			(Just (Stk h), t) = ({st&mem.lhs=maybe lhs (\e = push e t) (peek h)}, w)
+	op _ st=:{mem={arg}} w
+		= case pop arg of
+			(Just (Stk h), t) = ({st&mem.arg=maybe arg (\e = push e t) (peek h)}, w)
 			_ = (st, w)
 			
 I_TAIL :: Instruction
 I_TAIL = op
 where
-	op _ st=:{mem={lhs}} w
-		= case pop lhs of
-			(Just (Stk h), t) = ({st&mem.lhs=push ((toValue o snd o pop) h) t}, w)
+	op _ st=:{mem={arg}} w
+		= case pop arg of
+			(Just (Stk h), t) = ({st&mem.arg=push ((toValue o snd o pop) h) t}, w)
 			_ = (st, w)
 		
 I_GROUP :: Instruction
@@ -693,11 +724,11 @@ I_UNFLATTEN = abort "I_UNFLATTEN  not implemented"
 I_CONCATENATE :: Instruction
 I_CONCATENATE = op
 where
-	op _ st=:{mem={lhs,rhs}} w
-		= case (peek lhs, peek rhs) of
+	op _ st=:{mem={arg,out}} w
+		= case (peek arg, peek out) of
 			(Nothing, Nothing) = (st, w)
 			(l, r) = let fn = maybe zero (appV toStack id)
-			in ({st&mem.rhs=push (toValue ((fn l) +++ (fn r))) rhs}, w)
+			in ({st&mem.out=push (toValue ((fn l) +++ (fn r))) out}, w)
 I_FILTER :: Instruction
 I_FILTER = abort "I_FILTER  not implemented"
 

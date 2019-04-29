@@ -54,8 +54,9 @@ push :: Value Stack -> Stack
 pop :: Stack -> (Maybe Value, Stack)
 //pop2 :: Stack -> (Maybe (Value, Value), Stack)
 pop2 stack :== case pop stack of
-	(Just a, stack) = case pop stack of
-		(Just b, stack) = (Just (a, b), stack)
+	(Just a, t) = case pop t of
+		(Just b, tt) = (Just (a, b), tt)
+		_ = (Nothing, stack)
 	_ = (Nothing, stack)
 
 peek :: Stack -> Maybe Value
@@ -63,6 +64,7 @@ peek :: Stack -> Maybe Value
 peek2 stack :== case pop stack of
 	(Just a, stack) = case peek stack of
 		Just b = Just (a, b)
+		_ = Nothing
 	_ = Nothing
 
 appH :: (Value -> Value) Stack -> Stack

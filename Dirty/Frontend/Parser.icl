@@ -167,7 +167,7 @@ where
 	parse '\071' pos = parse_literal_number pos
 	parse '\072' pos = parse_literal_number pos
 	
-	parse '\073' pos = I_UNFLATTEN
+	parse '\073' pos = I_ENLIST_FULL_ARG
 	parse '\074' pos = I_LESS_THAN
 	parse '\075' pos = I_EQUAL_TO
 	parse '\076' pos = I_MORE_THAN
@@ -299,8 +299,8 @@ where
 	parse '\247' pos = I_STORE_RIGHT
 	parse '\250' pos = I_RECALL_RIGHT
 	parse '\251' pos = abort "\\251 unparseable"
-	parse '\252' pos = I_ENLIST_TOP_ARG
-	parse '\253' pos = I_ENLIST_FULL_ARG
+	parse '\252' pos = abort "\\252 unparseable"
+	parse '\253' pos = abort "\\253 unparseable"
 	parse '\254' pos = I_SWAP_ARG_TOP
 	parse '\255' pos = I_EXPLODE_TOP_ARG
 	parse '\256' pos = I_WIPE_ARG

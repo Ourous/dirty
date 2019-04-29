@@ -572,8 +572,6 @@ I_SWAP_ARG_TOP
 		= ({st&mem.arg=case pop2 arg of (Nothing, _) = arg; (Just (a, b), arg) = push b (push a arg)}, w)
 I_ENLIST_FULL_ARG :: Instruction
 I_ENLIST_FULL_ARG = \_ st=:{mem={arg}} w = ({st&mem.arg=toStack (toValue arg)}, w)
-I_ENLIST_TOP_ARG :: Instruction
-I_ENLIST_TOP_ARG = \_ st=:{mem={arg}} w = ({st&mem.arg=appH (toValue o toStack) arg}, w)
 I_EXPLODE_TOP_ARG :: Instruction
 I_EXPLODE_TOP_ARG
 	= \_ st=:{mem={arg}} w
@@ -635,7 +633,7 @@ I_PRIMES = abort "I_PRIMES  not implemented"
 I_IS_PRIME :: Instruction
 I_IS_PRIME = abort "I_IS_PRIME  not implemented"
 I_RANDOM :: Instruction
-I_RANDOM = abort "I_RANDOM  not implemented"
+I_RANDOM = \_ st=:{rng=[num:rng],mem={arg}} w = ({st&rng=rng,mem.arg=push (toValue num) arg}, w)
 I_LOGARITHM :: Instruction
 I_LOGARITHM = vecUnary ln //abort "I_LOGARITHM  not implemented"
 I_EXPONENTIATE :: Instruction
@@ -712,7 +710,7 @@ I_LENGTH = appUnary (appS S_length)
 I_IS_LIST :: Instruction
 I_IS_LIST = appUnary (toValue o isStack)
 I_REMOVE_DUPLICATES :: Instruction
-I_REMOVE_DUPLICATES = appUnary (appS S_removeDup)
+I_REMOVE_DUPLICATES = appUnary (appS S_removeDup) // TODO: make this put *just* the duplicates in the out stack
 I_HAS_DUPLICATES :: Instruction
 I_HAS_DUPLICATES = appUnary (appS S_hasDup)
 I_HEAD :: Instruction
@@ -739,8 +737,6 @@ I_IS_PALINDROME :: Instruction
 I_IS_PALINDROME = abort "I_IS_PALINDROME  not implemented"
 I_FLATTEN :: Instruction
 I_FLATTEN = abort "I_FLATTEN  not implemented"
-I_UNFLATTEN :: Instruction
-I_UNFLATTEN = abort "I_UNFLATTEN  not implemented"
 I_CONCATENATE :: Instruction
 I_CONCATENATE = op
 where

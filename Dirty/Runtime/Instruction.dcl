@@ -140,7 +140,6 @@ I_WIPE_OUT :: Instruction
 I_POP_OUT :: Instruction
 I_SWAP_ARG_TOP :: Instruction
 I_ENLIST_FULL_ARG :: Instruction
-I_ENLIST_TOP_ARG :: Instruction
 I_EXPLODE_TOP_ARG :: Instruction
 
 // no-op
@@ -217,7 +216,6 @@ I_GROUP :: Instruction
 I_REVERSE :: Instruction
 I_IS_PALINDROME :: Instruction
 I_FLATTEN :: Instruction
-I_UNFLATTEN :: Instruction
 I_CONCATENATE :: Instruction
 I_FILTER :: Instruction
 
